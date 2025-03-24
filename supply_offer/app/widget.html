@@ -49,16 +49,9 @@
                 const logoPath = "logo.jpeg";
                 const logoData = await loadImage(logoPath);
 
-                const addLogoAndLine = () => {
-                    if (logoData) {
-                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                        // Add yellow line across the full page width
-                        doc.setDrawColor(255, 255, 0); // Yellow color (RGB)
-                        doc.setLineWidth(1, 25); // Line thickness
-                        doc.line(8, 36.5, 205, 36.5); // Line from (0, 35) to (210, 35) - full page width
-                    }
+                if (logoData) {
+                    doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                 }
-                addLogoAndLine();
 
                 doc.setFontSize(10);
                 const quoteDate = new Date("2025-03-24");
@@ -130,9 +123,8 @@
                 doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 130, 290);
 
                 doc.addPage();
-                addLogoAndLine();
                 if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 41);
+                doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
 
                 doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
 
@@ -172,13 +164,17 @@
 
                 }
 
-                const totalSum = quoteData.Product_Details.reduce((acc, item) => acc + (item.Net_Total ?? 0), 0);
+                console.log(quoteData.Product_Details);
+
+                const totalSum = quoteData.Product_Details.reduce((acc, item) => acc + (item.total ?? 0), 0);
                 const TotalQuantity = quoteData.Product_Details.reduce((acc, item) => acc + (item.quantity ?? 0), 0);
+                const TotalTax = quoteData.Product_Details.reduce((acc, item) => acc + (item.Tax ?? 0), 0);
+                const NetTotal = quoteData.Product_Details.reduce((acc, item) => acc + (item.net_total ?? 0), 0);
 
                 tableData.push(["", "Total Quantity in Spaces", TotalQuantity ?? 0, "", ""]);
-                tableData.push(["", "", "", "Net Contract Value", `INR ${quoteData.Total ?? 0}`]);
-                tableData.push(["", "", "", "IGST @%", "INR 0.00"]);
-                tableData.push(["", "", "", "Gross Contract Value", `INR ${totalSum}`]);
+                tableData.push(["", "", "", "Net Contract Value", `INR ${totalSum ?? 0}`]);
+                tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
+                tableData.push(["", "", "", "Gross Contract Value", `INR ${NetTotal + TotalTax}`]);
 
 
                 doc.autoTable({
