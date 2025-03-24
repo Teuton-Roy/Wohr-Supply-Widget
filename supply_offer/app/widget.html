@@ -13,12 +13,48 @@
     <!-- jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #ddd;
+            border-top: 6px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 
 <body>
     <iframe id="pdfViewer" width="100%" height="100%"
         style="border: none; position: absolute; top: 0; left: 0;"></iframe>
 
+    <div id="loader" style="
+position: fixed;
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background-color: rgba(255, 255, 255, 0.85);
+z-index: 9999;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+">
+        <div class="spinner"></div>
+        <p style="margin-top: 20px; font-family: sans-serif; color: #555;">Loading Quotation PDF...</p>
+    </div>
     <script>
         const { jsPDF } = window.jspdf;
 
@@ -54,7 +90,7 @@
                 }
 
                 doc.setFontSize(10);
-                const quoteDate = new Date("2025-03-24");
+                const quoteDate = new Date(quoteData.Quote_Date);
                 const formattedDate = quoteDate.toLocaleDateString('en-US', {
                     year: 'numeric', month: 'long', day: 'numeric',
                 });
@@ -178,7 +214,7 @@
 
 
                 doc.autoTable({
-                    startY: 50,
+                    margin: { top: 55 },
                     head: [["Product Image", "Product", "Quantity in Spaces", "Unit Price (INR)", "Net Contract Value (INR)"]],
                     body: tableData,
                     theme: "grid",
@@ -212,8 +248,15 @@
                         if (data.section === 'body' && data.column.index === 0) {
                             data.cell.styles.minCellHeight = MAX_IMAGE_HEIGHT;
                         }
+                    },
+                    didDrawPage: function (data) {
+                        if (logoData) {
+                            doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                        }
+                        doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
                     }
                 });
+
 
                 doc.setFont('Times New Roman', 'bold');
                 doc.text("Rounded-off Amount in Words:", 10, doc.lastAutoTable.finalY + 10);
@@ -250,12 +293,13 @@
                     return result.trim() + " Only";
                 }
 
-                const totalSumInWords = numberToWords(totalSum);
+                const totalSumInWords = numberToWords(NetTotal + TotalTax);
                 doc.text(`Rupees ${totalSumInWords}`, 10, doc.lastAutoTable.finalY + 20);
 
                 const pdfBlob = doc.output("blob");
                 const blobURL = URL.createObjectURL(pdfBlob);
                 document.getElementById("pdfViewer").src = blobURL;
+                document.getElementById("loader").style.display = "none";
 
             } catch (err) {
                 console.error("PDF Generation Error:", err);
