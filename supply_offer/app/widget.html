@@ -1,9 +1,349 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-  </head>
-  <body>
-    <h2><center>WOHR Parking Systems Private Limited Supply offer</center></h2>
-  </body>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quotation Template</title>
+
+    <!-- Zoho SDK -->
+    <script src="https://static.zohocdn.com/zohocrm/v2.0/sdk/4.0.0/sdk.js"></script>
+    <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body>
+    <iframe id="pdfViewer" width="100%" height="100%"
+        style="border: none; position: absolute; top: 0; left: 0;"></iframe>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+
+        function loadImage(url) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = "Anonymous";
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = Math.min(img.width, 200);
+                    canvas.height = Math.min(img.height, 150);
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const dataURL = canvas.toDataURL("image/jpeg", 0.7);
+                    resolve(dataURL);
+                };
+                img.onerror = () => {
+                    console.error("Error loading image:", url);
+                    resolve(null);
+                };
+                img.src = url;
+            });
+        }
+
+        async function createPDF(quoteData, AccountData, ContactData, OppData, productImages, ProductDataMap) {
+            try {
+                const doc = new jsPDF();
+                const logoPath = "logo.jpeg";
+                const logoData = await loadImage(logoPath);
+
+                const addLogoAndLine = () => {
+                    if (logoData) {
+                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                        // Add yellow line across the full page width
+                        doc.setDrawColor(255, 255, 0); // Yellow color (RGB)
+                        doc.setLineWidth(1, 25); // Line thickness
+                        doc.line(8, 36.5, 205, 36.5); // Line from (0, 35) to (210, 35) - full page width
+                    }
+                }
+                addLogoAndLine();
+
+                doc.setFontSize(10);
+                const quoteDate = new Date("2025-03-24");
+                const formattedDate = quoteDate.toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric',
+                });
+
+                doc.setFontSize(13).setFont('Times', 'bold');
+                doc.text("WOHR Parking Systems Private Limited Installation Offer:", 40, 50);
+
+                doc.setFontSize(10).setFont('Times', 'normal');
+                doc.text(`Date: ${formattedDate}`, 175, 40);
+
+                doc.setFontSize(12).setFont('Times', 'bold');
+                doc.text("Offer for Supply of Parking System:", 10, 65);
+                doc.setFont('Times', 'normal');
+
+                const content = `We, Wohr Parking Systems Private Limited (Wohr/We), express our thanks, for giving us an opportunity to provide a proposal, for “Multi-level Car Parking Systems”, at your prestigious project. Wohr is a worldwide leader in mechanized and automated car parking systems with more than 60 years of industry experience, with a total worldwide installation base of more than 700,000 spaces and a presence in across 100 countries. We assure you the highest quality, reliability, and support, to solve all parking concerns.`;
+                doc.text(doc.splitTextToSize(content, 180), 10, 75);
+
+                doc.setFontSize(12).setFont('Times', 'bold');
+                doc.text("Company Details", 10, 105);
+                doc.setFont('Times', 'normal');
+                doc.text("1206/41A, Vyas Vertex", 10, 110);
+                doc.text("J M Road", 10, 120);
+                doc.text("Pune 411004", 10, 130);
+                doc.text("India", 10, 140);
+                doc.text("Tel: 020 66748848", 10, 150);
+                doc.text("Email: info@wohrparking.in", 10, 160);
+                doc.text("GST No.: 27AAACW6100A1ZZ", 10, 170);
+
+                doc.setFont('Times', 'bold');
+                doc.text("Quotation Details", 130, 105);
+                doc.setFont('Times', 'normal');
+                doc.text(`Quote Number: ${quoteData?.Quotation_Number || "N/A"}`, 130, 110);
+                doc.text(`Order No.: ${quoteData?.Order_Number || "N/A"}`, 130, 120);
+                doc.text(`Customer Name: ${ContactData?.Full_Name || "N/A"}`, 130, 130);
+                doc.text(`Valid Spaces: ${quoteData?.Number_of_Spaces || "N/A"}`, 130, 140);
+                doc.text(`Sales Representative: ${quoteData?.Owner?.name || "N/A"}`, 130, 150);
+                doc.text(`Phone No.: ${ContactData?.Phone || "N/A"}`, 130, 160);
+                doc.text(`Email: ${ContactData?.Email || "N/A"}`, 130, 170);
+
+                doc.setFont('Times', 'bold');
+                doc.text("Customer Details", 10, 180);
+                doc.setFont('Times', 'normal');
+                doc.text(`Customer Name: ${AccountData?.Account_Name || "N/A"}`, 10, 190);
+                doc.text(`GST No.: ${AccountData?.GSTIN_Number || "N/A"}`, 10, 200);
+                doc.text(`PAN: ${AccountData?.PAN_Number || "N/A"}`, 10, 210);
+                doc.text(`Contact person’s name: ${ContactData?.Full_Name || "N/A"}`, 10, 220);
+
+                doc.setFont('Times', 'bold');
+                doc.text("Site Address", 10, 230);
+                doc.setFont('Times', 'normal');
+                doc.text(`Project Name: ${OppData?.Deal_Name || "N/A"}`, 10, 240);
+                doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 10, 250);
+                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 10, 260);
+                doc.text(`State: ${AccountData?.Billing_State || "N/A"}`, 10, 270);
+                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 10, 280);
+                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 10, 290);
+
+                doc.setFont('Times', 'bold');
+                doc.text("Billing Address", 130, 230);
+                doc.setFont('Times', 'normal');
+                doc.text(`Customer Name: ${AccountData?.Account_Name || "N/A"}`, 130, 240);
+                doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 130, 250);
+                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 130, 260);
+                doc.text(`State: ${AccountData?.Billing_State || "N/A"}`, 130, 270);
+                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 130, 280);
+                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 130, 290);
+
+                doc.addPage();
+                addLogoAndLine();
+                if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 41);
+
+                doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+
+                const MAX_IMAGE_HEIGHT = 50;
+                let tableData = [];
+
+                if (quoteData.Product_Details && quoteData.Product_Details.length > 0) {
+                    for (let i = 0; i < quoteData.Product_Details.length; i++) {
+                        const item = quoteData.Product_Details[i];
+                        const ProductID = item.product?.id || null;
+                        const productImage = ProductID && productImages[ProductID] ? productImages[ProductID] : null;
+
+                        // Fetch product fields from ProductDataMap
+                        const product = ProductID ? ProductDataMap[ProductID] : null;
+
+                        const platformWidth = product?.Platform_Width || "N/A";
+                        const platformLength = product?.Platform_Length || "N/A";
+                        const carWeight = product?.Car_Weight_In_Kg || "N/A";
+                        const clearHeight = product?.Clear_Height || "N/A";
+                        const coating = product?.System_Coating || "N/A";
+                        const productName = product?.Product_Name || "Product";
+                        const ProductTax = product?.Tax || "N/A";
+
+                        const description = `Type:${productName}\n` +
+                            `\nPlatform width: ${platformWidth}\nPlatform length: ${platformLength}\n` +
+                            `Car Weight: ${carWeight}\nClear Height: ${clearHeight}\n` +
+                            `System Coating: ${coating}\n\nTax:${ProductTax}`;
+
+                        tableData.push([
+                            productImage ? "" : "",
+                            description,
+                            item.quantity ?? 0,
+                            `INR ${item.list_price ?? 0}`,
+                            `INR ${item.total ?? 0}`
+                        ]);
+                    }
+
+                }
+
+                const totalSum = quoteData.Product_Details.reduce((acc, item) => acc + (item.Net_Total ?? 0), 0);
+                const TotalQuantity = quoteData.Product_Details.reduce((acc, item) => acc + (item.quantity ?? 0), 0);
+
+                tableData.push(["", "Total Quantity in Spaces", TotalQuantity ?? 0, "", ""]);
+                tableData.push(["", "", "", "Net Contract Value", `INR ${quoteData.Total ?? 0}`]);
+                tableData.push(["", "", "", "IGST @%", "INR 0.00"]);
+                tableData.push(["", "", "", "Gross Contract Value", `INR ${totalSum}`]);
+
+
+                doc.autoTable({
+                    startY: 50,
+                    head: [["Product Image", "Product", "Quantity in Spaces", "Unit Price (INR)", "Net Contract Value (INR)"]],
+                    body: tableData,
+                    theme: "grid",
+                    styles: { fontSize: 10, cellPadding: 5 },
+                    headStyles: { fillColor: [200, 200, 200] },
+                    columnStyles: {
+                        0: { cellWidth: 50, halign: "center" },
+                        1: { cellWidth: 50, halign: "left" },
+                        2: { cellWidth: 30, halign: "center" },
+                        3: { cellWidth: 30, halign: "right" },
+                        4: { cellWidth: 30, halign: "right" }
+                    },
+                    didDrawCell: async function (data) {
+                        if (data.section === "body" && data.column.index === 0 && data.row.index < quoteData.Product_Details.length) {
+                            const productItem = quoteData.Product_Details[data.row.index];
+                            const ProductID = productItem.product?.id || null;
+                            if (ProductID && productImages[ProductID]) {
+                                try {
+                                    const imgWidth = 40;
+                                    const imgHeight = Math.min(MAX_IMAGE_HEIGHT, data.cell.height - 10);
+                                    const xPos = data.cell.x + (data.cell.width - imgWidth) / 2;
+                                    const yPos = data.cell.y + (data.cell.height - imgHeight) / 2;
+                                    doc.addImage(productImages[ProductID], 'PNG', xPos, yPos, imgWidth, imgHeight);
+                                } catch (error) {
+                                    console.error(`Error adding image for product ${ProductID}:`, error);
+                                }
+                            }
+                        }
+                    },
+                    didParseCell: function (data) {
+                        if (data.section === 'body' && data.column.index === 0) {
+                            data.cell.styles.minCellHeight = MAX_IMAGE_HEIGHT;
+                        }
+                    }
+                });
+
+                doc.setFont('Times New Roman', 'bold');
+                doc.text("Rounded-off Amount in Words:", 10, doc.lastAutoTable.finalY + 10);
+                doc.setFont('Times New Roman', 'normal');
+
+                function numberToWords(num) {
+                    const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+                        "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+                        "Seventeen", "Eighteen", "Nineteen"];
+                    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+                    const c = ["", "Thousand", "Lakh", "Crore"];
+
+                    if (num === 0) return "Zero";
+
+                    function convertToWords(n) {
+                        if (n < 20) return a[n];
+                        if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+                        if (n < 1000) return a[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + convertToWords(n % 100) : "");
+                        return "";
+                    }
+
+                    let result = "";
+                    let place = 0;
+
+                    while (num > 0) {
+                        let chunk = num % 1000;
+                        if (chunk) {
+                            result = convertToWords(chunk) + (c[place] ? " " + c[place] + " " : " ") + result;
+                        }
+                        num = Math.floor(num / 1000);
+                        place++;
+                    }
+
+                    return result.trim() + " Only";
+                }
+
+                const totalSumInWords = numberToWords(totalSum);
+                doc.text(`Rupees ${totalSumInWords}`, 10, doc.lastAutoTable.finalY + 20);
+
+                const pdfBlob = doc.output("blob");
+                const blobURL = URL.createObjectURL(pdfBlob);
+                document.getElementById("pdfViewer").src = blobURL;
+
+            } catch (err) {
+                console.error("PDF Generation Error:", err);
+                alert("Error generating PDF. Check console for details.");
+            }
+        }
+
+        ZOHO.embeddedApp.on("PageLoad", function (data) {
+            ZOHO.CRM.UI.Resize({ height: "100%", width: "100%" });
+
+            if (data && data.EntityId && data.EntityId.length > 0) {
+                const EntityID = data.EntityId[0];
+
+                ZOHO.CRM.API.getRecord({ Entity: "Quotes", RecordID: EntityID }).then(function (response) {
+                    if (response?.data?.length > 0) {
+                        const quoteData = response.data[0];
+                        const AccountID = quoteData.Account_Name?.id;
+                        const ContactID = quoteData.Contact_Name?.id;
+                        const OpportunityID = quoteData.Deal_Name?.id;
+
+                        let AccountData = null;
+                        let ContactData = null;
+                        let OpportunityData = null;
+                        let productImages = {};
+                        let ProductDataMap = {};
+                        let productPromises = [];
+
+                        if (quoteData.Product_Details?.length > 0) {
+                            quoteData.Product_Details.forEach(item => {
+                                const ProductID = item.product?.id;
+                                if (!ProductID) return;
+
+                                productPromises.push(
+                                    ZOHO.CRM.API.getRecord({ Entity: "Products", RecordID: ProductID }).then(res => {
+                                        if (res?.data?.length > 0) {
+                                            ProductDataMap[ProductID] = res.data[0];
+
+                                        }
+                                    }),
+                                    ZOHO.CRM.FUNCTIONS.execute("product_image", {
+                                        arguments: JSON.stringify({ ProductID }),
+                                    }).then(res => {
+                                        if (res?.details?.output) {
+                                            productImages[ProductID] = res.details.output;
+                                        }
+                                    })
+                                );
+                            });
+                        }
+
+                        const accountPromise = AccountID
+                            ? ZOHO.CRM.API.getRecord({ Entity: "Accounts", RecordID: AccountID }).then(res => {
+                                AccountData = res?.data?.[0] || null;
+                            })
+                            : Promise.resolve();
+
+                        const contactPromise = ContactID
+                            ? ZOHO.CRM.API.getRecord({ Entity: "Contacts", RecordID: ContactID }).then(res => {
+                                ContactData = res?.data?.[0] || null;
+                            })
+                            : Promise.resolve();
+
+                        const opportunityPromise = OpportunityID
+                            ? ZOHO.CRM.API.getRecord({ Entity: "Deals", RecordID: OpportunityID }).then(res => {
+                                OpportunityData = res?.data?.[0] || null;
+                            })
+                            : Promise.resolve();
+
+                        Promise.all([
+                            accountPromise,
+                            contactPromise,
+                            opportunityPromise,
+                            ...productPromises
+                        ]).then(() => {
+                            createPDF(quoteData, AccountData, ContactData, OpportunityData, productImages, ProductDataMap);
+                        });
+                    }
+                });
+            }
+        });
+
+
+        ZOHO.embeddedApp.init();
+    </script>
+</body>
+
 </html>
