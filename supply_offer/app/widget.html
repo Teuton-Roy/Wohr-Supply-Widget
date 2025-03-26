@@ -163,181 +163,231 @@ justify-content: center;
                 doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
 
                 doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                //-----------------------------------------------------------------------------------------------------------------
+                // Product Table
+                //-----------------------------------------------------------------------------------------------------------------
 
-                const MAX_IMAGE_HEIGHT = 50;
+                const MAX_IMAGE_HEIGHT = 40;
                 let tableData = [];
+
                 if (quoteData.Product_Details && quoteData.Product_Details.length > 0) {
-    const productsPerPage = 3;
-    let tableData = [];
+            for (let i = 0; i < quoteData.Product_Details.length; i++) {
+                const item = quoteData.Product_Details[i];
+                const ProductID = item.product?.id || null;
+                const product = ProductID ? ProductDataMap[ProductID] : null;
 
-    for (let i = 0; i < quoteData.Product_Details.length; i++) {
-        if (i % productsPerPage === 0 && i !== 0) {
-            doc.autoTable({
-                margin: { top: 55 },
-                head: [["Product Image", "Product", "Quantity in Spaces", "Unit Price (INR)", "Net Contract Value (INR)"]],
-                body: tableData,
-                theme: "grid",
-                styles: { fontSize: 10, cellPadding: 5 },
-                headStyles: { fillColor: [200, 200, 200] },
-                columnStyles: {
-                    0: { cellWidth: 50, halign: "center" },
-                    1: { cellWidth: 50, halign: "left" },
-                    2: { cellWidth: 30, halign: "center" },
-                    3: { cellWidth: 30, halign: "right" },
-                    4: { cellWidth: 30, halign: "right" }
-                },
-                didDrawCell: function (data) {
-                    if (data.section === "body" && data.column.index === 0) {
-                        const productItem = quoteData.Product_Details[i - tableData.length + data.row.index];
-                        const ProductID = productItem.product?.id || null;
-                        if (ProductID && productImages[ProductID]) {
-                            try {
-                                const imgWidth = 40;
-                                const imgHeight = 40;
-                                const xPos = data.cell.x + (data.cell.width - imgWidth) / 2;
-                                const yPos = data.cell.y + (data.cell.height - imgHeight) / 2;
-                                doc.addImage(productImages[ProductID], "PNG", xPos, yPos, imgWidth, imgHeight);
-                            } catch (error) {
-                                console.error(`Error adding image for product ${ProductID}:`, error);
-                            }
-                        }
-                    }
-                }
-            });
+                const productName = product?.Product_Name || "Product";
+                const platformWidth = product?.Platform_Width || "N/A";
+                const platformLength = product?.Platform_Length || "N/A";
+                const carWeight = product?.Car_Weight_In_Kg || "N/A";
+                const clearHeight = product?.Clear_Height || "N/A";
+                const coating = product?.System_Coating || "N/A";
+                const ProductTax = product?.Tax || "N/A";
 
-            doc.addPage();
-            doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-            doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
-            tableData = [];
-        }
+                const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating: ${coating}\nTax: ${ProductTax}`;
 
-        const item = quoteData.Product_Details[i];
-        const ProductID = item.product?.id || null;
-        const productImage = ProductID && productImages[ProductID] ? productImages[ProductID] : null;
-        const product = ProductID ? ProductDataMap[ProductID] : null;
-
-        const platformWidth = product?.Platform_Width || "N/A";
-        const platformLength = product?.Platform_Length || "N/A";
-        const carWeight = product?.Car_Weight_In_Kg || "N/A";
-        const clearHeight = product?.Clear_Height || "N/A";
-        const coating = product?.System_Coating || "N/A";
-        const productName = product?.Product_Name || "Product";
-        const ProductTax = product?.Tax || "N/A";
-
-        const description = `Type: ${productName}\n` +
-            `Platform width: ${platformWidth}\nPlatform length: ${platformLength}\n` +
-            `Car Weight: ${carWeight}\nClear Height: ${clearHeight}\n` +
-            `System Coating: ${coating}\n\nTax: ${ProductTax}`;
-
-        tableData.push([
-            productImage ? "" : "",
-            description,
-            item.quantity ?? 0,
-            `INR ${item.list_price ?? 0}`,
-            `INR ${item.total ?? 0}`
-        ]);
-    }
-
-    if (tableData.length > 0) {
-        doc.autoTable({
-            margin: { top: 55 },
-            head: [["Product Image", "Product", "Quantity in Spaces", "Unit Price (INR)", "Net Contract Value (INR)"]],
-            body: tableData,
-            theme: "grid",
-            styles: { fontSize: 10, cellPadding: 5 },
-            headStyles: { fillColor: [200, 200, 200] },
-            columnStyles: {
-                0: { cellWidth: 50, halign: "center" },
-                1: { cellWidth: 50, halign: "left" },
-                2: { cellWidth: 30, halign: "center" },
-                3: { cellWidth: 30, halign: "right" },
-                4: { cellWidth: 30, halign: "right" }
-            },
-            didDrawCell: function (data) {
-                if (data.section === "body" && data.column.index === 0) {
-                    const productItem = quoteData.Product_Details[quoteData.Product_Details.length - tableData.length + data.row.index];
-                    const ProductID = productItem.product?.id || null;
-                    if (ProductID && productImages[ProductID]) {
-                        try {
-                            const imgWidth = 40;
-                            const imgHeight = 40;
-                            const xPos = data.cell.x + (data.cell.width - imgWidth) / 2;
-                            const yPos = data.cell.y + (data.cell.height - imgHeight) / 2;
-                            doc.addImage(productImages[ProductID], "PNG", xPos, yPos, imgWidth, imgHeight);
-                        } catch (error) {
-                            console.error(`Error adding image for product ${ProductID}:`, error);
-                        }
-                    }
-                }
+                tableData.push([
+                    productImages[ProductID] ? "" : "",
+                    description,
+                    item.quantity ?? 0,
+                    `INR ${item.list_price ?? 0}`,
+                    `INR ${item.total ?? 0}`
+                ]);
             }
-        });
-    }
-}
-
-// Calculate totals
-const totalSum = quoteData.Product_Details.reduce((acc, item) => acc + (item.total ?? 0), 0);
-const TotalQuantity = quoteData.Product_Details.reduce((acc, item) => acc + (item.quantity ?? 0), 0);
-const TotalTax = quoteData.Product_Details.reduce((acc, item) => acc + (item.Tax ?? 0), 0);
-const NetTotal = quoteData.Product_Details.reduce((acc, item) => acc + (item.net_total ?? 0), 0);
-const GrandTotal = NetTotal + TotalTax;
-
-
-
-// Convert total to words
-function numberToWords(num) {
-    const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
-        "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
-        "Seventeen", "Eighteen", "Nineteen"];
-    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-    const c = ["", "Thousand", "Lakh", "Crore"];
-
-    if (num === 0) return "Zero";
-
-    function convertToWords(n) {
-        if (n < 20) return a[n];
-        if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
-        if (n < 1000) return a[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + convertToWords(n % 100) : "");
-        return "";
-    }
-
-    let result = "";
-    let place = 0;
-
-    while (num > 0) {
-        let chunk = num % 1000;
-        if (chunk) {
-            result = convertToWords(chunk) + (c[place] ? " " + c[place] + " " : " ") + result;
         }
-        num = Math.floor(num / 1000);
-        place++;
-    }
 
-    return result.trim() + " Only";
-}
+                const totalSum = quoteData.Product_Details.reduce((acc, item) => acc + (item.total ?? 0), 0);
+                const TotalQuantity = quoteData.Product_Details.reduce((acc, item) => acc + (item.quantity ?? 0), 0);
+                const TotalTax = quoteData.Product_Details.reduce((acc, item) => acc + (item.Tax ?? 0), 0);
+                const NetTotal = quoteData.Product_Details.reduce((acc, item) => acc + (item.net_total ?? 0), 0);
 
-const totalSumInWords = numberToWords(GrandTotal);
-
-// Summary section
-doc.autoTable({
-    body: [
-        ["", "Total Quantity in Spaces", TotalQuantity, "", ""],
-        ["", "", "", "Net Contract Value", `INR ${totalSum}`],
-        ["", "", "", "Total Tax", `INR ${TotalTax}`],
-        ["", "", "", "Gross Contract Value", `INR ${GrandTotal}`]
-    ],
-    theme: "grid",
-    styles: { fontSize: 10, cellPadding: 5 }
-});
+                tableData.push(["", "Total Quantity in Spaces", TotalQuantity ?? 0, "Net Contract Value", `INR ${totalSum ?? 0}`]);
+                tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
+                tableData.push(["", "", "", "Gross Contract Value", `INR ${NetTotal + TotalTax}`]);
 
 
-// Display amount in words
-doc.setFont("Times New Roman", "bold");
-doc.text("Rounded-off Amount in Words:", 10, doc.lastAutoTable.finalY + 10);
-doc.setFont("Times New Roman", "normal");
-doc.text(`Rupees ${totalSumInWords}`, 10, doc.lastAutoTable.finalY + 20);
+                // const MAX_IMAGE_HEIGHT = 40;
+                const PAGE_HEIGHT = doc.internal.pageSize.height;
+                const TOP_MARGIN = 60;
+                const BOTTOM_MARGIN = 20;
+                const SAFE_AREA = PAGE_HEIGHT - BOTTOM_MARGIN;
+
+                const processedChunks = [];
+                let currentChunk = [];
+                let estimatedY = TOP_MARGIN;
+
+                const estimateRowHeight = (rowIndex) => {
+                    const row = tableData[rowIndex];
+                    const isTotalRow = row[1]?.includes("Total Quantity in Spaces") ||
+                        row[1]?.includes("Net Contract Value") ||
+                        row[1]?.includes("Total Tax") ||
+                        row[1]?.includes("Gross Contract Value");
+
+                    if (isTotalRow) return 10;
+
+                    const productItem = quoteData.Product_Details[rowIndex];
+                    const ProductID = productItem?.product?.id || null;
+
+                    if (ProductID && productImages[ProductID]) {
+                        return MAX_IMAGE_HEIGHT + 6;
+                    }
+
+                    return 15;
+                };
+
+                for (let i = 0; i < tableData.length; i++) {
+                    const rowHeight = estimateRowHeight(i);
+
+                    if (estimatedY + rowHeight > SAFE_AREA) {
+                        processedChunks.push(currentChunk);
+                        currentChunk = [];
+                        estimatedY = TOP_MARGIN;
+                    }
+
+                    currentChunk.push(tableData[i]);
+                    estimatedY += rowHeight;
+                }
+
+                if (currentChunk.length > 0) {
+                    processedChunks.push(currentChunk);
+                }
+
+                // Render chunks page by page
+                processedChunks.forEach((chunk, index) => {
+                    if (index > 0) doc.addPage();
+
+                    doc.autoTable({
+                        margin: { top: TOP_MARGIN },
+                        head: [["Product Image", "Product", "Quantity in Spaces", "Unit Price (INR)", "Net Contract Value (INR)"]],
+                        body: chunk,
+                        theme: "grid",
+                        styles: { font: "Times", fontSize: 10, cellPadding: 3, lineWidth: 0.2, lineColor: [0, 0, 0] },
+                        headStyles: { fillColor: [255, 255, 255],  halign: 'center', fontSize: 12, textColor:[0, 0, 0], fontStyle: 'bold' },
+                        columnStyles: {
+                            0: { cellWidth: 50, halign: "center" },
+                            1: { cellWidth: 50, halign: "left" },
+                            2: { cellWidth: 30, halign: "center" },
+                            3: { cellWidth: 30, halign: "right" },
+                            4: { cellWidth: 30, halign: "right" }
+                        },
+                        showHead: index === 0 ? 'firstPage' : false,
+
+                        didDrawCell: async function (data) {
+                            if (
+                                data.section === "body" &&
+                                data.column.index === 0 &&
+                                data.row.index < chunk.length
+                            ) {
+                                const globalRowIndex = tableData.findIndex(r => r === chunk[data.row.index]);
+                                const productItem = quoteData.Product_Details[globalRowIndex];
+                                const ProductID = productItem?.product?.id || null;
+
+                                if (ProductID && productImages[ProductID]) {
+                                    try {
+                                        const imgWidth = 40;
+                                        const imgHeight = Math.min(MAX_IMAGE_HEIGHT, data.cell.height - 10);
+                                        const xPos = data.cell.x + (data.cell.width - imgWidth) / 2;
+                                        const yPos = data.cell.y + (data.cell.height - imgHeight) / 2;
+                                        doc.addImage(productImages[ProductID], "PNG", xPos, yPos, imgWidth, imgHeight);
+                                    } catch (error) {
+                                        console.error(`Error adding image for product ${ProductID}:`, error);
+                                    }
+                                }
+                            }
+                        },
+
+                        didParseCell: function (data) {
+                            if (data.section === "body") {
+                                const row = data.row.raw;
+                                const isImageCol = data.column.index === 0;
+
+                                const isTotalQtyRow = row.includes("Total Quantity in Spaces");
+                                const isNetContractRow = row.includes("Net Contract Value");
+                                const isTotalTaxRow = row.includes("Total Tax");
+                                const isGrossRow = row.includes("Gross Contract Value");
+
+                                if (isImageCol && !isTotalQtyRow && !isNetContractRow && !isTotalTaxRow && !isGrossRow) {
+                                    data.cell.styles.minCellHeight = MAX_IMAGE_HEIGHT;
+                                }
+
+                                if (isTotalQtyRow || isNetContractRow || isTotalTaxRow || isGrossRow) {
+                                    data.cell.styles.minCellHeight = 10;
+                                    data.cell.styles.fontStyle = "normal";
+                                    data.cell.styles.textColor = [0, 0, 0];
+                                }
+                            }
+                        },
+
+                        didDrawPage: function () {
+                            if (logoData) {
+                                doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                            }
+                            doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
+                        }
+                    });
+                });
+
+                doc.setFont('Times New Roman', 'bold');
+                doc.text("Rounded-off Amount in Words:", 10, doc.lastAutoTable.finalY + 10);
+                doc.setFont('Times New Roman', 'normal');
+                function numberToWords(num) {
+                    const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+                        "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+                        "Seventeen", "Eighteen", "Nineteen"];
+                    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+                    function convertToWords(n) {
+                        if (n < 20) return a[n];
+                        if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+                        if (n < 1000) return a[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + convertToWords(n % 100) : "");
+                        return "";
+                    }
+
+                    function formatIndianNumber(n) {
+                        const c = ["", "Thousand", "Lakh", "Crore"];
+                        let result = "";
+                        let place = 0;
+
+                        // Break number into Indian format chunks
+                        if (n > 999) {
+                            const crore = Math.floor(n / 10000000);
+                            const lakh = Math.floor((n % 10000000) / 100000);
+                            const thousand = Math.floor((n % 100000) / 1000);
+                            const hundred = Math.floor(n % 1000);
+
+                            if (crore) result += convertToWords(crore) + " Crore ";
+                            if (lakh) result += convertToWords(lakh) + " Lakh ";
+                            if (thousand) result += convertToWords(thousand) + " Thousand ";
+                            if (hundred) result += convertToWords(hundred);
+                        } else {
+                            result = convertToWords(n);
+                        }
+
+                        return result.trim();
+                    }
+
+                    const [rupeesPart, paisePart] = num.toString().split(".");
+                    const rupees = parseInt(rupeesPart);
+                    const paise = parseInt((paisePart || "0").substring(0, 2)); // get only 2 digits
+
+                    let words = "";
+
+                    if (rupees > 0) {
+                        words += formatIndianNumber(rupees) + " Rupees";
+                    }
+
+                    if (paise > 0) {
+                        words += (rupees > 0 ? " and " : "") + convertToWords(paise) + " Paise";
+                    }
+
+                    return words ? words + " Only" : "Zero Only";
+                }
 
 
-                //----------------------------------------------------------------------------------------------------------------------------------------------------------
+                const totalSumInWords = numberToWords(NetTotal + TotalTax);
+                doc.text(`Rupees ${totalSumInWords}`, 10, doc.lastAutoTable.finalY + 20);
+
+                //-----------------------------------------------------------------------------------------------------------------
 
                 doc.addPage();
                 if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
