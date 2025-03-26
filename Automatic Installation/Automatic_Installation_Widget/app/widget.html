@@ -112,7 +112,6 @@ justify-content: center;
 
                 doc.setFontSize(10).setFont('Times', 'bold');
                 doc.text("Company Details", 11, 100);
-                doc.line(11, 102, 36, 102); // Underline
                 doc.setFont('Times', 'normal');
                 doc.text("1206/41A, Vyas Vertex", 11, 115);
                 doc.text("J M Road", 11, 110);
@@ -124,7 +123,6 @@ justify-content: center;
 
                 doc.setFont('Times', 'bold');
                 doc.text("Quotation Details", 125, 100);
-                doc.line(125, 102, 152, 102);
                 doc.setFont('Times', 'normal');
                 doc.text(`Quote Number: ${quoteData?.Quotation_Number || "N/A"}`, 125, 110);
                 doc.text(`Order No.: ${quoteData?.Order_Number || "N/A"}`, 125, 115);
@@ -139,7 +137,6 @@ justify-content: center;
 
                 doc.setFont('Times', 'bold');
                 doc.text("Customer Details", 11, 165);
-                doc.line(11, 167, 37, 167);
                 doc.setFont('Times', 'normal');
                 doc.text(`Customer Name: ${AccountData?.Account_Name || "N/A"}`, 11, 175);
                 doc.text(`GST No.: ${AccountData?.GSTIN_Number || "N/A"}`, 11, 180);
@@ -150,7 +147,6 @@ justify-content: center;
 
                 doc.setFont('Times', 'bold');
                 doc.text("Site Address", 11, 215);
-                doc.line(11, 217, 30, 217);
                 doc.setFont('Times', 'normal');
                 doc.text(`Project Name: ${OppData?.Deal_Name || "N/A"}`, 11, 225);
                 doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 11, 230);
@@ -161,7 +157,6 @@ justify-content: center;
 
                 doc.setFont('Times', 'bold');
                 doc.text("Billing Address", 130, 215);
-                doc.line(130, 217, 153, 217);
                 doc.setFont('Times', 'normal');
                 doc.text(`Customer Name: ${AccountData?.Account_Name || "N/A"}`, 130, 225);
                 doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 130, 230);
