@@ -157,6 +157,7 @@ justify-content: center;
 
                 doc.setFont('Times', 'bold');
                 doc.text("Billing Address", 130, 215);
+
                 doc.setFont('Times', 'normal');
                 doc.text(`Customer Name: ${AccountData?.Account_Name || "N/A"}`, 130, 225);
                 doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 130, 230);
