@@ -98,7 +98,7 @@ justify-content: center;
                 });
 
                 doc.setFontSize(13).setFont('Times', 'bold');
-                doc.text("WOHR Parking Systems Private Limited Supply Offer:", 40, 45);
+                doc.text("WOHR Parking Systems Private Limited Supply + Installation Offer:", 40, 50);
 
                 doc.setFontSize(10).setFont('Times', 'normal');
                 doc.text(`Date: ${formattedDate}`, 175, 40);
@@ -126,7 +126,9 @@ justify-content: center;
                 doc.text("Quotation Details", 125, 100);
                 doc.setFont('Times', 'normal');
                 doc.text(`Quote Number: ${quoteData?.Quotation_Number || "N/A"}`, 125, 110);
-                doc.text(`Order No.: ${quoteData?.Order_Number || "N/A"}`, 125, 115);
+                const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || quoteData?.EPS_Number || "N/A"; // Display Order No. with the first available value
+                // doc.text(`Order No.: ${quoteData?.Order_Number || "N/A"}`, 125, 115);
+                doc.text(`Order No.: ${orderNumber}`, 125, 115);
                 doc.text(`Customer Name: ${ContactData?.Full_Name || "N/A"}`, 125, 120);
                 doc.text(`Valid Spaces: ${quoteData?.Number_of_Spaces || "N/A"}`, 125, 125);
                 doc.text(`Sales Representative: ${quoteData?.Owner?.name || "N/A"}`, 125, 130);
@@ -245,16 +247,6 @@ justify-content: center;
                 };
 
                 for (let i = 0; i < tableData.length - 3; i++) {
-                    // const rowHeight = estimateRowHeight(i);
-
-                    // if (estimatedY + rowHeight > SAFE_AREA) {
-                    //     processedChunks.push(currentChunk);
-                    //     currentChunk = [];
-                    //     estimatedY = TOP_MARGIN;
-                    // }
-
-                    // currentChunk.push(tableData[i]);
-                    // estimatedY += rowHeight;
                     if (currentChunk.length === MAX_PRODUCTS_PER_PAGE) {
                         processedChunks.push(currentChunk);
                         currentChunk = [];
@@ -448,10 +440,7 @@ justify-content: center;
                 doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
 
                 // Payment Terms Section
-                // doc.setFontSize(10).setFont('Times', 'bold');
-                // doc.text("PAYMENT TERMS", 16, 72);
 
-                // Draw the outer rectangle
                 doc.setLineWidth(0.5);
                 doc.setDrawColor(0, 0, 0);
                 let startY = 55;
@@ -501,34 +490,37 @@ justify-content: center;
 
                 // Draw milestone box
                 doc.setLineWidth(0.5);
-                doc.rect(15, currentY, 190, 40);
+                doc.rect(15, currentY, 190, 50);
                 doc.line(15, currentY + 16, 205, currentY + 16);
                 doc.line(15, currentY + 28, 205, currentY + 28);
-                doc.line(50, currentY, 50, currentY + 40);
+                doc.line(15, currentY + 40, 205, currentY + 40);
+                doc.line(55, currentY, 55, currentY + 50);
 
                 // Milestone content
                 doc.setFontSize(10).setFont('Times', 'bold');
                 doc.text("Delivery Schedule", 16, currentY + 10);
                 doc.text("Warranty ('DLP')", 16, currentY + 22);
-                doc.text("Wohr’s scope of work", 16, currentY + 34);
+                doc.text("Free Maintenance Period", 16, currentY + 34);
+                doc.text("Wohr’s scope of work", 16, currentY + 44);
                 doc.setFont('Times', 'normal');
-                doc.text("14 to 24 weeks from the date of manufacturing advance and shop drawing approvals receipt whichever is later subject to site readiness.", 55, currentY + 8, { maxWidth: 135 });
-                doc.text("15 Months from the date of delivery on manufactured equipment only.", 55, currentY + 23, { maxWidth: 135 });
-                doc.text("Parking Solution, Supply, Transportation till site only.", 55, currentY + 34, { maxWidth: 135 });
+                doc.text("14 to 24 weeks from the date of manufacturing advance and shop drawing approvals receipt whichever is later subject to site readiness.", 60, currentY + 8, { maxWidth: 135 });
+                doc.text("15 Months from the delivery on manufactured equipment only.", 60, currentY + 23, { maxWidth: 135 });
+                doc.text("12 months from completion of installation subject to Wohr standard terms and conditions.", 60, currentY + 34, { maxWidth: 135 });
+                doc.text("Parking solution, supply, transportation, one time material unloading at site, Parking System Installation, commissioning and hand-over of equipment.", 60, currentY + 44, { maxWidth: 135 });
 
                 // Adjust Wohr/Supplier and Purchase/Customer sections dynamically
                 currentY += 50;
-                doc.text("Wohr/Supplier:", 15, currentY);
-                doc.rect(15, currentY + 12, 50, 0);
-                doc.text("Name:", 15, currentY + 17);
-                doc.text("Designation:", 15, currentY + 22);
-                doc.text("Date:", 15, currentY + 32);
+                doc.text("Wohr/Supplier:", 15, currentY+10);
+                doc.rect(15, currentY + 20, 50, 0);
+                doc.text("Name:", 15, currentY + 25);
+                doc.text("Designation:", 15, currentY + 30);
+                doc.text("Date:", 15, currentY + 36);
 
-                doc.text("Purchase/Customer", 150, currentY);
-                doc.rect(150, currentY + 12, 50, 0);
-                doc.text("Name:", 150, currentY + 17);
-                doc.text("Designation:", 150, currentY + 22);
-                doc.text("Date:", 150, currentY + 32);
+                doc.text("Purchase/Customer", 150, currentY+10);
+                doc.rect(150, currentY + 20, 50, 0);
+                doc.text("Name:", 150, currentY + 25);
+                doc.text("Designation:", 150, currentY + 30);
+                doc.text("Date:", 150, currentY + 36);
 
 
 
