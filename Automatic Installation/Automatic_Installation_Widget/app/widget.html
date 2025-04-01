@@ -14,25 +14,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
-.spinner {
-        width: 50px;
-        height: 50px;
-        border: 6px solid #ddd;
-        border-top: 6px solid #007bff;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 6px solid #ddd;
+            border-top: 6px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
 
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
 
-    /* Ensure consistent typography */
-    body {
-        font-family: 'Times New Roman', Times, serif;
-        line-height: 1.2;
-    }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Ensure consistent typography */
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.2;
+        }
     </style>
 </head>
 
@@ -132,7 +137,7 @@ justify-content: center;
                 doc.text(`Phone No.: ${ContactData?.Phone || "N/A"}`, 125, 135);
                 doc.text(`Email: ${ContactData?.Email || "N/A"}`, 125, 140);
 
-                doc.line(10,150,200,150);
+                doc.line(10, 150, 200, 150);
 
 
                 doc.setFont('Times', 'bold');
@@ -143,7 +148,7 @@ justify-content: center;
                 doc.text(`PAN: ${AccountData?.PAN_Number || "N/A"}`, 11, 185);
                 doc.text(`Contact person’s name: ${ContactData?.Full_Name || "N/A"}`, 11, 190);
 
-                doc.line(10,205,200,205);
+                doc.line(10, 205, 200, 205);
 
                 doc.setFont('Times', 'bold');
                 doc.text("Site Address", 11, 215);
@@ -176,30 +181,30 @@ justify-content: center;
                 let tableData = [];
 
                 if (quoteData.Product_Details && quoteData.Product_Details.length > 0) {
-            for (let i = 0; i < quoteData.Product_Details.length; i++) {
-                const item = quoteData.Product_Details[i];
-                const ProductID = item.product?.id || null;
-                const product = ProductID ? ProductDataMap[ProductID] : null;
+                    for (let i = 0; i < quoteData.Product_Details.length; i++) {
+                        const item = quoteData.Product_Details[i];
+                        const ProductID = item.product?.id || null;
+                        const product = ProductID ? ProductDataMap[ProductID] : null;
 
-                const productName = product?.Product_Name || "Product";
-                const platformWidth = product?.Platform_Width || "N/A";
-                const platformLength = product?.Platform_Length || "N/A";
-                const carWeight = product?.Car_Weight_In_Kg || "N/A";
-                const clearHeight = product?.Clear_Height || "N/A";
-                const coating = product?.System_Coating || "N/A";
-                const ProductTax = product?.Tax || "N/A";
+                        const productName = product?.Product_Name || "Product";
+                        const platformWidth = product?.Platform_Width || "N/A";
+                        const platformLength = product?.Platform_Length || "N/A";
+                        const carWeight = product?.Car_Weight_In_Kg || "N/A";
+                        const clearHeight = product?.Clear_Height || "N/A";
+                        const coating = product?.System_Coating || "N/A";
+                        const ProductTax = product?.Tax || "N/A";
 
-                const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating: ${coating}\nTax: ${ProductTax}`;
+                        const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating: ${coating}\nTax: ${ProductTax}`;
 
-                tableData.push([
-                    productImages[ProductID] ? "" : "",
-                    description,
-                    item.quantity ?? 0,
-                    `INR ${item.list_price ?? 0}`,
-                    `INR ${item.total ?? 0}`
-                ]);
-            }
-        }
+                        tableData.push([
+                            productImages[ProductID] ? "" : "",
+                            description,
+                            item.quantity ?? 0,
+                            `INR ${item.list_price ?? 0}`,
+                            `INR ${item.total ?? 0}`
+                        ]);
+                    }
+                }
 
                 const totalSum = quoteData.Product_Details.reduce((acc, item) => acc + (item.total ?? 0), 0);
                 const TotalQuantity = quoteData.Product_Details.reduce((acc, item) => acc + (item.quantity ?? 0), 0);
@@ -267,7 +272,7 @@ justify-content: center;
                         body: chunk,
                         theme: "grid",
                         styles: { font: "Times", fontSize: 10, cellPadding: 3, lineWidth: 0.2, lineColor: [0, 0, 0] },
-                        headStyles: { fillColor: [255, 255, 255],  halign: 'center', fontSize: 12, textColor:[0, 0, 0], fontStyle: 'bold' },
+                        headStyles: { fillColor: [255, 255, 255], halign: 'center', fontSize: 12, textColor: [0, 0, 0], fontStyle: 'bold' },
                         columnStyles: {
                             0: { cellWidth: 50, halign: "center" },
                             1: { cellWidth: 50, halign: "left" },

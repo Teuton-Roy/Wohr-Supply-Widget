@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-
+<!-- Created by Teuton (27-03-25) -->
+<!-- Edited [Payment Terms] by Teuton (01-04-25) -->
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -214,11 +215,12 @@ justify-content: center;
 
                 // const MAX_IMAGE_HEIGHT = 40;
                 const PAGE_HEIGHT = doc.internal.pageSize.height;
-                const TOP_MARGIN = 60;
-                const BOTTOM_MARGIN = 20;
+                const TOP_MARGIN = 55;
+                const BOTTOM_MARGIN = 10;
                 const SAFE_AREA = PAGE_HEIGHT - BOTTOM_MARGIN;
 
                 const processedChunks = [];
+                const MAX_PRODUCTS_PER_PAGE = 3; // new added line
                 let currentChunk = [];
                 let estimatedY = TOP_MARGIN;
 
@@ -241,21 +243,37 @@ justify-content: center;
                     return 15;
                 };
 
-                for (let i = 0; i < tableData.length; i++) {
-                    const rowHeight = estimateRowHeight(i);
+                for (let i = 0; i < tableData.length - 3; i++) {
+                    // const rowHeight = estimateRowHeight(i);
 
-                    if (estimatedY + rowHeight > SAFE_AREA) {
+                    // if (estimatedY + rowHeight > SAFE_AREA) {
+                    //     processedChunks.push(currentChunk);
+                    //     currentChunk = [];
+                    //     estimatedY = TOP_MARGIN;
+                    // }
+
+                    // currentChunk.push(tableData[i]);
+                    // estimatedY += rowHeight;
+                    if (currentChunk.length === MAX_PRODUCTS_PER_PAGE) {
                         processedChunks.push(currentChunk);
                         currentChunk = [];
-                        estimatedY = TOP_MARGIN;
                     }
-
                     currentChunk.push(tableData[i]);
-                    estimatedY += rowHeight;
                 }
 
                 if (currentChunk.length > 0) {
                     processedChunks.push(currentChunk);
+                }
+
+                const totalRows = tableData.slice(-3);
+                const lastChunkIndex = processedChunks.length - 1;
+
+                if (processedChunks.length > 0 && processedChunks[lastChunkIndex].length < MAX_PRODUCTS_PER_PAGE) {
+                    // If last product page has space, add totals on the same page
+                    processedChunks[lastChunkIndex] = [...processedChunks[lastChunkIndex], ...totalRows];
+                } else {
+                    // Otherwise, push totals to a new page
+                    processedChunks.push(totalRows);
                 }
 
                 // Render chunks page by page
