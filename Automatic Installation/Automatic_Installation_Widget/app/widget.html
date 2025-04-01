@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-
+<!-- Created by Teuton (26-03-2025) -->
+<!-- Edited [Paymeny Terms & Product Table] by Teuton (01-04-2025) -->
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -171,6 +172,10 @@ justify-content: center;
                 doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 130, 245);
                 doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 130, 250);
 
+                // -----------------------------------------------------------------------------------
+                //  Product Table
+                // -----------------------------------------------------------------------------------
+
                 doc.addPage();
                 if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                 doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
@@ -218,11 +223,12 @@ justify-content: center;
 
                 // const MAX_IMAGE_HEIGHT = 40;
                 const PAGE_HEIGHT = doc.internal.pageSize.height;
-                const TOP_MARGIN = 60;
-                const BOTTOM_MARGIN = 20;
+                const TOP_MARGIN = 55;
+                const BOTTOM_MARGIN = 10;
                 const SAFE_AREA = PAGE_HEIGHT - BOTTOM_MARGIN;
 
                 const processedChunks = [];
+                const MAX_PRODUCTS_PER_PAGE = 3; // new added line
                 let currentChunk = [];
                 let estimatedY = TOP_MARGIN;
 
@@ -245,21 +251,37 @@ justify-content: center;
                     return 15;
                 };
 
-                for (let i = 0; i < tableData.length; i++) {
-                    const rowHeight = estimateRowHeight(i);
+                for (let i = 0; i < tableData.length - 3; i++) {
+                    // const rowHeight = estimateRowHeight(i);
 
-                    if (estimatedY + rowHeight > SAFE_AREA) {
+                    // if (estimatedY + rowHeight > SAFE_AREA) {
+                    //     processedChunks.push(currentChunk);
+                    //     currentChunk = [];
+                    //     estimatedY = TOP_MARGIN;
+                    // }
+
+                    // currentChunk.push(tableData[i]);
+                    // estimatedY += rowHeight;
+                    if (currentChunk.length === MAX_PRODUCTS_PER_PAGE) {
                         processedChunks.push(currentChunk);
                         currentChunk = [];
-                        estimatedY = TOP_MARGIN;
                     }
-
                     currentChunk.push(tableData[i]);
-                    estimatedY += rowHeight;
                 }
 
                 if (currentChunk.length > 0) {
                     processedChunks.push(currentChunk);
+                }
+
+                const totalRows = tableData.slice(-3);
+                const lastChunkIndex = processedChunks.length - 1;
+
+                if (processedChunks.length > 0 && processedChunks[lastChunkIndex].length < MAX_PRODUCTS_PER_PAGE) {
+                    // If last product page has space, add totals on the same page
+                    processedChunks[lastChunkIndex] = [...processedChunks[lastChunkIndex], ...totalRows];
+                } else {
+                    // Otherwise, push totals to a new page
+                    processedChunks.push(totalRows);
                 }
 
                 // Render chunks page by page
@@ -338,7 +360,7 @@ justify-content: center;
                 });
 
                 doc.setFont('Times New Roman', 'bold');
-                doc.text("Rounded-off Amount in Words:", 10, doc.lastAutoTable.finalY + 10);
+                doc.text("Rounded-off Amount in Words:", 15, doc.lastAutoTable.finalY + 10);
                 doc.setFont('Times New Roman', 'normal');
                 function numberToWords(num) {
                     const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
@@ -395,7 +417,10 @@ justify-content: center;
 
 
                 const totalSumInWords = numberToWords(NetTotal + TotalTax);
-                doc.text(`Rupees ${totalSumInWords}`, 10, doc.lastAutoTable.finalY + 20);
+                doc.text(`Rupees ${totalSumInWords}`, 15, doc.lastAutoTable.finalY + 20);
+
+                // ---------------------------------------------------------------------------------------------
+
 
                 doc.addPage();
                 doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
@@ -425,58 +450,144 @@ justify-content: center;
                 doc.text("Designation: ", 130, 100);
                 doc.text("Date: ", 130, 108);
 
+                // doc.addPage();
+                // doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                // doc.setFontSize(11).setFont('Times', 'normal');
+                // doc.text(`Date: ${formattedDate}`, 175, 40);
+                // doc.rect(10, 50, 30, 30);
+                // doc.setFont("Times", "bold");
+                // doc.text("Payment Terms", 12, 65);
+                // doc.rect(40, 50, 165, 30);
+                // doc.setFont("Times", "normal");
+                // doc.text("-    50% + GST on commencement of installation against submission of proforma invoice.", 45, 58);
+                // var PaymentTerms = "-    Balance 50% after commissioning of the Equipment. Tax Invoice for 100 % of the installation contract value shall be submitted after commissioning of the systems. The tax invoice shall bear the necessary GST details & SAC 995442.";
+                // var SplitPaymentTerms = doc.splitTextToSize(PaymentTerms, 160);
+                // doc.text(SplitPaymentTerms, 45, 65);
+
+                // //Milestone Creation
+                // doc.setFontSize(15);
+                // doc.text("Milestone: ", 10, 98);
+                // doc.rect(10, 100, 35, 17);
+                // doc.setFontSize(12);
+                // doc.text("Completion Period", 11, 109);
+                // doc.rect(45, 100, 160, 17);
+                // const Period = "14 - 24 Weeks from receipt of material at Site and subject to uninterrupted availability of site area along with uninterrupted power supply and storage facility. The total period depends on total quantity of Equipment.";
+                // const SplitPeriod = doc.splitTextToSize(Period, 160);
+                // doc.text(SplitPeriod, 46, 105);
+                // doc.rect(10, 117, 35, 17);
+                // const Maintenance = "Free Maintenance Period";
+                // const SplitMaintenance = doc.splitTextToSize(Maintenance, 40);
+                // doc.text(SplitMaintenance, 12, 124);
+                // doc.rect(45, 117, 160, 17);
+                // doc.text("12 months from completion of installation subject to Wohr standard terms and conditions.", 46, 125);
+                // doc.rect(10, 134, 35, 17);
+                // const Scope = "Wohr's Scope Of Work";
+                // const SplitScope = doc.splitTextToSize(Scope, 30);
+                // doc.text(SplitScope, 12, 140);
+                // doc.rect(45, 134, 160, 17);
+                // const WohrScope = "Material Unloading at site, Parking System Installation and Commissioning and Hand-over of Equipment";
+                // const SplitWohrScope = doc.splitTextToSize(WohrScope, 155);
+                // doc.text(SplitWohrScope, 47, 140);
+
+
+                // doc.text("Wohr/Supplier:", 10, 188);
+                // doc.rect(10, 200, 50, 0);
+                // doc.text("Name:", 10, 205);
+                // doc.text("Designation:", 10, 210);
+                // doc.text("Date:", 10, 215);
+
+                // doc.text("Purchase/Customer", 150, 188);
+                // doc.rect(150, 200, 50, 0);
+                // doc.text("Name:", 150, 205);
+                // doc.text("Designation:", 150, 210);
+                // doc.text("Date:", 150, 215);
+
                 doc.addPage();
-                doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                //Supplier Information
-                doc.setFontSize(11).setFont('Times', 'normal');
-                doc.text(`Date: ${formattedDate}`, 175, 40);
-                doc.rect(10, 50, 30, 30);
-                doc.setFont("Times", "bold");
-                doc.text("Payment Terms", 12, 65);
-                doc.rect(40, 50, 165, 30);
-                doc.setFont("Times", "normal");
-                doc.text("-    50% + GST on commencement of installation against submission of proforma invoice.", 45, 58);
-                var PaymentTerms = "-    Balance 50% after commissioning of the Equipment. Tax Invoice for 100 % of the installation contract value shall be submitted after commissioning of the systems. The tax invoice shall bear the necessary GST details & SAC 995442.";
-                var SplitPaymentTerms = doc.splitTextToSize(PaymentTerms, 160);
-                doc.text(SplitPaymentTerms, 45, 65);
+                if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
 
-                //Milestone Creation
-                doc.setFontSize(15);
-                doc.text("Milestone: ", 10, 98);
-                doc.rect(10, 100, 35, 17);
-                doc.setFontSize(12);
-                doc.text("Completion Period", 11, 109);
-                doc.rect(45, 100, 160, 17);
-                const Period = "14 - 24 Weeks from receipt of material at Site and subject to uninterrupted availability of site area along with uninterrupted power supply and storage facility. The total period depends on total quantity of Equipment.";
-                const SplitPeriod = doc.splitTextToSize(Period, 160);
-                doc.text(SplitPeriod, 46, 105);
-                doc.rect(10, 117, 35, 17);
-                const Maintenance = "Free Maintenance Period";
-                const SplitMaintenance = doc.splitTextToSize(Maintenance, 40);
-                doc.text(SplitMaintenance, 12, 124);
-                doc.rect(45, 117, 160, 17);
-                doc.text("12 months from completion of installation subject to Wohr standard terms and conditions.", 46, 125);
-                doc.rect(10, 134, 35, 17);
-                const Scope = "Wohr's Scope Of Work";
-                const SplitScope = doc.splitTextToSize(Scope, 30);
-                doc.text(SplitScope, 12, 140);
-                doc.rect(45, 134, 160, 17);
-                const WohrScope = "Material Unloading at site, Parking System Installation and Commissioning and Hand-over of Equipment";
-                const SplitWohrScope = doc.splitTextToSize(WohrScope, 155);
-                doc.text(SplitWohrScope, 47, 140);
+                // Payment Terms Section
+                // doc.setFontSize(10).setFont('Times', 'bold');
+                // doc.text("PAYMENT TERMS", 16, 72);
 
+                // Draw the outer rectangle
+                doc.setLineWidth(0.5);
+                doc.setDrawColor(0, 0, 0);
+                let startY = 55;
+                let boxHeight1 = 10; // Initial padding height
+                const textStartX = 55;
+                const textMaxWidth = 145;
 
-                doc.text("Wohr/Supplier:", 10, 188);
-                doc.rect(10, 200, 50, 0);
-                doc.text("Name:", 10, 205);
-                doc.text("Designation:", 10, 210);
-                doc.text("Date:", 10, 215);
+                // Extract payment terms dynamically from quoteData
+                console.log(quoteData.Payment_Terms);
+                const paymentTerms = quoteData.Payment_Terms || [];
+                let textHeights = [];
+                let currentY = startY + 7;
 
-                doc.text("Purchase/Customer", 150, 188);
-                doc.rect(150, 200, 50, 0);
-                doc.text("Name:", 150, 205);
-                doc.text("Designation:", 150, 210);
-                doc.text("Date:", 150, 215);
+                // Calculate required height dynamically
+                paymentTerms.forEach(term => {
+                    let paymentPercentage = term.Payment_Percentage || "";
+                    let paymentDescription = term.Payment_Terms_Description || "";
+                    let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
+                    let splitText = doc.splitTextToSize(combinedText, textMaxWidth);
+                    textHeights.push(splitText.length * 5 + 2);
+                    boxHeight1 += splitText.length * 5 + 2;
+                });
+
+                // Draw the payment terms box
+                doc.rect(15, startY, 190, boxHeight1);
+                doc.line(50, startY, 50, startY + boxHeight1);
+
+                // Render payment terms
+                doc.setFontSize(10).setFont('Times', 'bold');
+                const titleY = startY + (boxHeight1 / 2); // Middle of the box height
+                doc.text("PAYMENT TERMS", 16, titleY);
+
+                doc.setFontSize(10).setFont('Times', 'normal')
+                paymentTerms.forEach((term, index) => {
+                    let paymentPercentage = term.Payment_Percentage || "";
+                    let paymentDescription = term.Payment_Terms_Description || "";
+                    let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
+                    doc.text(doc.splitTextToSize(combinedText, textMaxWidth), textStartX, currentY);
+                    currentY += textHeights[index];
+                });
+
+                // Adjust milestone section based on payment terms height
+                currentY += 10;
+                doc.setFontSize(12).setFont('Times', 'bold');
+                doc.text("Milestone:", 15, currentY);
+                currentY += 5;
+
+                // Draw milestone box
+                doc.setLineWidth(0.5);
+                doc.rect(15, currentY, 190, 45);
+                doc.line(15, currentY + 18, 205, currentY + 18);
+                doc.line(15, currentY + 30, 205, currentY + 30);
+                doc.line(56, currentY, 56, currentY + 45);
+
+                // Milestone content
+                doc.setFontSize(10).setFont('Times', 'bold');
+                doc.text("Completion Period", 16, currentY + 10);
+                doc.text("Free Maintenance Period", 16, currentY + 22);
+                doc.text("Wohr's Scope Of Work", 16, currentY + 34);
+                doc.setFont('Times', 'normal');
+                doc.text("14 - 24 Weeks from receipt of material at Site and subject to uninterrupted availability of site area along with uninterrupted power supply and storage facility. The total period depends on total quantity of Equipment.", 58, currentY + 8, { maxWidth: 135 });
+                doc.text("12 months from completion of installation subject to Wohr standard terms and conditions.", 58, currentY + 23, { maxWidth: 135 });
+                doc.text("Material Unloading at site, Parking System Installation and Commissioning and Hand-over of Equipment", 58, currentY + 34, { maxWidth: 135 });
+
+                // Adjust Wohr/Supplier and Purchase/Customer sections dynamically
+                currentY += 55;
+                doc.text("Wohr/Supplier:", 15, currentY+2);
+                doc.rect(15, currentY + 12, 50, 0);
+                doc.text("Name:", 15, currentY + 17);
+                doc.text("Designation:", 15, currentY + 22);
+                doc.text("Date:", 15, currentY + 32);
+                
+                doc.text("Purchase/Customer:", 150, currentY+2);
+                doc.rect(150, currentY + 12, 50, 0);
+                doc.text("Name:", 150, currentY + 17);
+                doc.text("Designation:", 150, currentY + 22);
+                doc.text("Date:", 150, currentY + 32);
 
                 doc.addPage();
                 const lineHeight = 7;
