@@ -2,6 +2,7 @@
 <html>
 <!-- Created by Teuton (27-03-25) -->
 <!-- Edited [Payment Terms] by Teuton (01-04-25) -->
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -92,6 +93,7 @@ justify-content: center;
 
                 doc.setFontSize(10);
                 const quoteDate = new Date(quoteData.Quote_Date);
+                console.log(quoteData)
                 const formattedDate = quoteDate.toLocaleDateString('en-US', {
                     year: 'numeric', month: 'long', day: 'numeric',
                 });
@@ -447,83 +449,89 @@ justify-content: center;
                 doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
 
                 // Payment Terms Section
-                doc.setFontSize(10).setFont('Times', 'bold');
-                doc.text("PAYMENT TERMS", 16, 85);
+                // doc.setFontSize(10).setFont('Times', 'bold');
+                // doc.text("PAYMENT TERMS", 16, 72);
 
                 // Draw the outer rectangle
                 doc.setLineWidth(0.5);
                 doc.setDrawColor(0, 0, 0);
-                doc.rect(15, 55, 190, 60);
+                let startY = 55;
+                let boxHeight1 = 10; // Initial padding height
+                const textStartX = 55;
+                const textMaxWidth = 145;
 
-                // Draw a vertical divider to split the two sections
-                doc.line(50, 55, 50, 115);
+                // Extract payment terms dynamically from quoteData
+                console.log(quoteData.Payment_Terms);
+                const paymentTerms = quoteData.Payment_Terms || [];
+                let textHeights = [];
+                let currentY = startY + 7;
 
-                // Payment Terms Content
-                doc.setFontSize(10).setFont('Times', 'normal');
+                // Calculate required height dynamically
+                paymentTerms.forEach(term => {
+                    let paymentPercentage = term.Payment_Percentage || "";
+                    let paymentDescription = term.Payment_Terms_Description || "";
+                    let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
+                    let splitText = doc.splitTextToSize(combinedText, textMaxWidth);
+                    textHeights.push(splitText.length * 5 + 2);
+                    boxHeight1 += splitText.length * 5 + 2;
+                });
 
-                const PaymentTerms = "10% interest free advance along with signed contract documents (when this offer is accepted, as it is by the person to whom the proposal is submitted) on total contract value.";
-                const PaymentTerms1 = "35% against intimation for commencement of manufacturing approximately 13 to 14 weeks before readiness of material for stack parking (PL 411 / 5 series only) and 21 weeks before readiness of material for puzzle and other stack systems.";
-                const PaymentTerms2 = "55% along with GST against intimation at the material readiness - minimum 21 Days before dispatch from FACTORY.";
-                const PaymentTerms3 = "The final invoice to the Customer, at the time of final dispatch of the Equipment, shall contain the GST along with HSN Code Of the Equipment by the Supplier i.e. 84289090.";
+                // Draw the payment terms box
+                doc.rect(15, startY, 190, boxHeight1);
+                doc.line(50, startY, 50, startY + boxHeight1);
 
-                const splitPaymentTerms = doc.splitTextToSize(PaymentTerms, 145);
-                const splitPaymentTerms1 = doc.splitTextToSize(PaymentTerms1, 145);
-                const splitPaymentTerms2 = doc.splitTextToSize(PaymentTerms2, 145);
-                const splitPaymentTerms3 = doc.splitTextToSize(PaymentTerms3, 145);
+                // Render payment terms
+                doc.setFontSize(10).setFont('Times', 'bold');
+                const titleY = startY + (boxHeight1 / 2); // Middle of the box height
+                doc.text("PAYMENT TERMS", 16, titleY);
 
-                let currentY = 62;
+                doc.setFontSize(10).setFont('Times', 'normal')
+                paymentTerms.forEach((term, index) => {
+                    let paymentPercentage = term.Payment_Percentage || "";
+                    let paymentDescription = term.Payment_Terms_Description || "";
+                    let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
+                    doc.text(doc.splitTextToSize(combinedText, textMaxWidth), textStartX, currentY);
+                    currentY += textHeights[index];
+                });
 
-                doc.text(splitPaymentTerms, 55, currentY);
-                currentY += splitPaymentTerms.length * 5 + 2;
-
-                doc.text(splitPaymentTerms1, 55, currentY);
-                currentY += splitPaymentTerms1.length * 5 + 2;
-
-                doc.text(splitPaymentTerms2, 55, currentY);
-                currentY += splitPaymentTerms2.length * 5 + 2;
-
-                doc.text(splitPaymentTerms3, 55, currentY);
-
-
-                // Milestone Title
+                // Adjust milestone section based on payment terms height
+                currentY += 10;
                 doc.setFontSize(12).setFont('Times', 'bold');
-                doc.text("Milestone:", 15, currentY + 23);
+                doc.text("Milestone:", 15, currentY);
+                currentY += 5;
 
-                currentY += 25; // Move down
-
-                // Draw the outer rectangle for Milestones (Increased height to 36)
+                // Draw milestone box
                 doc.setLineWidth(0.5);
                 doc.rect(15, currentY, 190, 40);
-
-                // Draw horizontal lines for rows
-                doc.line(15, currentY + 16, 205, currentY + 16); // Increased Delivery Schedule height
+                doc.line(15, currentY + 16, 205, currentY + 16);
                 doc.line(15, currentY + 28, 205, currentY + 28);
-
-                // Draw vertical divider for two-column layout
                 doc.line(50, currentY, 50, currentY + 40);
 
-                // Set normal font for content
+                // Milestone content
                 doc.setFontSize(10).setFont('Times', 'bold');
                 doc.text("Delivery Schedule", 16, currentY + 10);
                 doc.text("Warranty ('DLP')", 16, currentY + 22);
                 doc.text("Wohr’s scope of work", 16, currentY + 34);
-
                 doc.setFont('Times', 'normal');
                 doc.text("14 to 24 weeks from the date of manufacturing advance and shop drawing approvals receipt whichever is later subject to site readiness.", 55, currentY + 8, { maxWidth: 135 });
                 doc.text("15 Months from the date of delivery on manufactured equipment only.", 55, currentY + 23, { maxWidth: 135 });
                 doc.text("Parking Solution, Supply, Transportation till site only.", 55, currentY + 34, { maxWidth: 135 });
 
-                doc.text("Wohr/Supplier:", 15, 188);
-                doc.rect(15, 200, 50, 0);
-                doc.text("Name:", 15, 205);
-                doc.text("Designation:", 15, 210);
-                doc.text("Date:", 15, 220);
+                // Adjust Wohr/Supplier and Purchase/Customer sections dynamically
+                currentY += 50;
+                doc.text("Wohr/Supplier:", 15, currentY);
+                doc.rect(15, currentY + 12, 50, 0);
+                doc.text("Name:", 15, currentY + 17);
+                doc.text("Designation:", 15, currentY + 22);
+                doc.text("Date:", 15, currentY + 32);
 
-                doc.text("Purchase/Customer", 150, 188);
-                doc.rect(150, 200, 50, 0);
-                doc.text("Name:", 150, 205);
-                doc.text("Designation:", 150, 210);
-                doc.text("Date:", 150, 220);
+                doc.text("Purchase/Customer", 150, currentY);
+                doc.rect(150, currentY + 12, 50, 0);
+                doc.text("Name:", 150, currentY + 17);
+                doc.text("Designation:", 150, currentY + 22);
+                doc.text("Date:", 150, currentY + 32);
+
+
 
                 doc.addPage();
                 if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
