@@ -577,47 +577,55 @@ justify-content: center;
 
                 doc.setFont("Times", "bold");
                 doc.setFontSize(12);
-                doc.text("(2) Exclusions And Dependencies", 15, 45);
+                doc.text("(2) Exclusions And Dependencies", 15, 40);
 
                 const exclusionsText = [
-                    "a) Any scope of work which is not explicitly set out under this Offer is excluded from Wohr’s scope of work. The technical and commercial terms submitted in this Offer are based and relied upon the technical requirement and information provided by the Customer while seeking this quote.",
-                    "b) Customer shall provide timely inputs to Wohr regarding space availability, approval of CPL, site readiness and other required inputs to enable Wohr to perform its part. Notwithstanding the agreed Installation dates, the Installation start and completion shall be subjected to readiness of the site as specified by Wohr projects team and the payment release as per the Agreement.",
-                    "c) Customer agrees that Wohr shall not be liable for any delay caused in installation, due to failure of the Customer to provide any component, access or any other deliverables or inputs regarding installation, space availability, utilities, approval of CPL, site readiness or other."
+                    "A) Any scope of work which is not explicitly set out under this Offer is excluded from Wohr’s scope of work. The technical and commercial terms submitted in this Offer are based and relied upon the technical requirement and information provided by the Customer while seeking this quote.",
+                    "B) Customer shall provide timely inputs to Wohr regarding space availability, approval of CPL, site readiness and other required inputs to enable Wohr to perform its part. Notwithstanding the agreed Installation dates, the Installation start and completion shall be subjected to readiness of the site as specified by Wohr projects team and the payment release as per the Agreement.",
+                    "C) Customer agrees that Wohr shall not be liable for any delay caused in installation, due to failure of the Customer to provide any component, access or any other deliverables or inputs regarding installation, space availability, utilities, approval of CPL, site readiness or other.",
+                    "D) Customer agrees that Wohr shall not be liable for any delay caused in supply, due to failure of the Customer, to provide any component, access or any other deliverables or inputs regarding, design approval, space availability, approval of CPL, site readiness or other."
                 ];
 
-                let yExclusions = 55;
+                let yExclusions = 45;
                 doc.setFont("Times", "normal");
                 doc.setFontSize(11);
                 exclusionsText.forEach(paragraph => {
                     const wrappedText = doc.splitTextToSize(paragraph, 190);
                     doc.text(wrappedText, 15, yExclusions);
-                    yExclusions += wrappedText.length * lineHeight;
+                    yExclusions += wrappedText.length * lineHeight ;
                 });
 
                 doc.setFont("Times", "bold");
                 doc.setFontSize(12);
-                doc.text("(3) Preparation at the site by Customer:", 15, yExclusions + 15); // Add some spacing after Exclusions
+                doc.text("(3) Preparation at the site by Customer:", 15, yExclusions-2); // Add some spacing after Exclusions
 
                 // Set normal font for content
                 doc.setFontSize(11).setFont("Times", "normal");
 
                 const preparationText = [
                     "Purchaser shall be bound to provide:",
-                    "",
                     "a) Safe, dry, clean, weatherproof, and lockable space to keep the materials or part thereof during the pendency of supply, as per this Offer.",
                     "b) Site ready for supply.",
                     "c) Assistance and co-operation in material movement at the site.",
-                    "d) All statutory permissions/approvals from government or any other regulatory authorities pertaining to procurement and use of the Equipment offered.",
-                    "e) If the Equipment is not being delivered to Purchaser on account of the Purchaser's failure to pay the outstanding amount for the Equipment as on due date or before the Equipment is ready for delivery; or for any other reason whatsoever attributable to the default of the Purchaser, Wohr shall be entitled to:",
+                    "d) Lighting, ventilation, in installations area/pits, fire extinguisher/alarm systems.",
+                    "e) Basements/ parking levels with flooring complete and the white wash or painting, complete on the walls, ceilings and columns and on other part of the structure.",
+                    "f) Adequate safety and security measures to prevent any damage, theft or pilferage of Equipment’s during installation, testing or before handing over of the Equipment or any part thereof or during the pendency of this Offer.",
+                    "g) All statutory permissions/approvals from government or any other relevant authorities pertaining to procurement installation and use of the Equipment offered.",
+                    "h) Single phase and three phase electric power supply free of cost along with backup generator of suitable capacity as specified by Wohr.",
+                    "i) Guarding, railing and pit covers wherever necessary",
+                    "j) Shed, walling, canopy etc. for the rainwater protection and weather protection of the Equipment or material at the Site.",
+                    "k) All civil work including foundations, concrete pedestal, core cuttings etc. with tolerances must be as specified by Wohr. Third Party Supplier Equipment or for shifting materials in case if the location of Installation is other than on ground floor to any upper or lower floor shall be the responsibility of the Customer.",
+                    "l) If the site is not ready for any reason for taking up installation, Wohr shall deploy installation team upon receipt of Customer’s written confirmation of site readiness as required by Wohr. Wohr need minimum three weeks advance information to depute its personnel. Wohr may have to reschedule the erection program if the readiness of the site is inordinately delayed.",
+                    "m) If the Equipment is not being delivered to Purchaser on account of the Purchaser's failure to pay the outstanding amount for the Equipment as on due date or before the Equipment is ready for delivery; or for any other reason whatsoever attributable to the default of the Purchaser, Wohr shall be entitled to:",
                     "i) Store and insure, the Equipment’s Purchaser shall bear the cost of such storage and insurance of Equipment at actuals.",
                     "ii) Wohr shall entitle to add such cost to the balance of the supply amount payable by the Purchaser against delivery of the Equipment.",
-                    "iii) Wohr, at its option, shall be entitled to recover such cost as part of the outstanding payment.",
-                    "iv) Customer shall be liable for all damages suffered by Wohr and/or other persons and damages to the Equipment supplied by Wohr, due to unsafe condition at the Site or arising from delay or defect or deficiency in the performance of the obligations of the Purchaser."
+                    "iii) Wohr shall be entitled to recover such cost as part of the outstanding payment, if decided by Wohr.",
+                    "iv) Customer shall be liable for all damages suffered by Wohr and/or other persons, due to unsafe condition at the Site or arising from delay or defect or deficiency in the performance of the obligations of the Purchaser"
                 ];
 
                 // Adjust the starting position for this section
-                let yPreparation = yExclusions + 25; // Provide some space after the last Exclusions text
-                const lineHeight2 = 6; // Line spacing
+                let yPreparation = yExclusions + 3; // Provide some space after the last Exclusions text
+                const lineHeight2 = 5; // Line spacing
 
                 preparationText.forEach(paragraph => {
                     const wrappedText = doc.splitTextToSize(paragraph, 190);
@@ -714,21 +722,23 @@ justify-content: center;
 
                 doc.setFont("Times", "bold");
                 doc.setFontSize(12);
-                doc.text("(5) Delivery of Car Parking System:", 15, yExclusions - 12); // Add some spacing after Exclusions
+                doc.text("(5)  Delivery, Installation and Handover of Car Parking System", 15, yExclusions-25); // Add some spacing after Exclusions
 
                 // Set normal font for content
                 doc.setFontSize(11).setFont("Times", "normal");
 
                 const DeliveryText = [
                     "a) Delivery of materials shall be subjected to Car Parking System drawing approval, the readiness of the site as specified by Wohr projects team and the payment received by Wohr, as per this Offer.",
-                    "b) The Warranty Period shall commence from the date of supply of the Equipment, as per the terms mentioned herein.",
-                    "c) After the receipt of full and final Payments from the Customer, Wohr shall handover the Car Parking System and its title to the Customer along with the operator box/ control panel keys/RFID.",
-                    "d) Wohr reserves the rights to make the changes in the specification in due course of time for the betterment of its Product line and no claims shall be entertained on any such accounts from the Customer."
+                    "b) On Installation completion, Wohr representative shall issue an installation completion certificate i.e., “Installation Completion Certificate (ICC)” to the Customer. The customer shall acknowledge the ICC within 7 days from receipt of ICC on pro-rata basis. If customer delays the acknowledgement of Installation completion certificate beyond 7 days, it will be treated as deemed acceptance of Installation completion certificate by customer.",
+                    "c) The Warranty Period shall commence from the date of Installation completion certificate or supply of the Equipment, as per the terms mentioned herein whichever is earlier",
+                    "d) After the receipt of full and final Payments from the Customer, Wohr shall handover the Car Parking System and its title to the Customer along with the operator box/ control panel keys/RFID.",
+                    "e) Wohr reserves the rights to make the changes in the specification in due course of time for the betterment of its Product line and no claims shall be entertained on any such accounts from the Customer.",
+                    "f) Wohr reserves the rights to make the changes in the specification in due course of time for the betterment of its Product line and no claims shall be entertained on any such accounts from the Customer",
                 ];
 
                 // Adjust the starting position for this section
-                let yDelivery = yExclusions; // Ensure proper spacing
-                const lineHeight6 = 6; // Line spacing
+                let yDelivery = yExclusions-17; // Ensure proper spacing
+                const lineHeight6 = 5; // Line spacing
 
                 // Iterate over each paragraph and wrap text properly
                 DeliveryText.forEach(paragraph => {
