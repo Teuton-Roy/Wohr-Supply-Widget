@@ -554,17 +554,15 @@ justify-content: center;
 
                 const definitions = [
                     "a) Car Parking Layout/CPL means the detailed layout of the Car Parking System, finalized and approved by the Customer, containing the specifications of the Car which can be parked in the Car Parking System.",
-                    "b) Handover of Car Parking System shall mean and include the physical handing over of the Car Parking System after Installation completion and issue of handover documents along with the keys to the Employer and shall include unilateral handover of the Car Parking System.",
-                    "c) Installation shall mean all the services performed for the purposes of installation and commissioning of the materials at the Customer site.",
-                    "d) Installation completion shall mean when Wohr has successfully completed mechanical and electrical installation & commissioning of the Car Parking System and intimation of the same to Customer by the representative(s) of Wohr.",
-                    "e) Wohr means Wohr Parking Systems Private Limited including its affiliates and subsidiaries.",
-                    "f) Person shall mean natural persons, legal entities and persons who, in conducting their business or profession, are the other party in this Offer, quotations, representations and agreements or a Government.",
-                    "g) PO shall mean Purchase Order signed and agreed by both the parties to this Offer.",
-                    "h) Third Party Supplier Equipment means and includes any equipment supplied by a third-party supplier which is procured by Wohr for the purposes of Installation.",
-                    "i) Vehicle(s) shall mean the specified Car as detailed in the Car Parking Layout.",
-                    "j) Order shall mean contractual relationship(s), whereby Wohr installs Car Parking System as per the requirement of the Customer i.e., this Offer if accepted.",
-                    "k) The Purchaser/Employer/Customer and Wohr shall individually be referred to as Party and collectively referred to as Parties.",
-                    "l) Purchaser/Employer/Customer shall mean the person to whom this offer is made and who has accepted this document, as it is without any change, additional, deletion in any of the details."
+                    "b) “Car Parking Layout/CPL” mean the detailed layout of the Car Parking System, finalized and approved by the Customer, containing the specifications of the Car which can be parked in the Car Parking System",
+                    "c) “IP Rights” means rights in and to any intellectual property whether registerable or not including names, trademarks, trade names, service marks, insignias, designs, patents, domain names, bill of material, specifications, design of parts/members of the Equipment, software, inventions, whether or not copyrightable or patentable, trade secret or confidential information, and any other intellectual and/or industrial property.",
+                    "d) Wohr means Wohr Parking Systems Private Limited including its affiliates and subsidiaries.",
+                    "e) Person shall mean natural persons, legal entities and persons who, in conducting their business or profession, are the other party in this Offer, quotations, representations and agreements or a Government.",
+                    "f) PO shall mean Purchase Order signed and agreed by both the parties to this Offer.",
+                    "g) Vehicle(s) shall mean the specified Car as detailed in the Car Parking Layout.",
+                    "h) Order shall mean contractual relationship(s), whereby Wohr installs Car Parking System as per the requirement of the Customer i.e., this Offer if accepted.",
+                    "i) The Purchaser/Employer/Customer and Wohr shall individually be referred to as Party and collectively referred to as Parties.",
+                    "j) Purchaser/Employer/Customer shall mean the person to whom this offer is made and who has accepted this document, as it is without any change, additional, deletion in any of the details."
                 ];
 
                 let y = 80;
@@ -589,7 +587,9 @@ justify-content: center;
                 const exclusionsText = [
                     "a) Any scope of work which is not explicitly set out under this Offer is excluded from Wohr’s scope of work. The technical and commercial terms submitted in this Offer are based and relied upon the technical requirement and information provided by the Customer while seeking this quote.",
                     "b) Customer shall provide timely inputs to Wohr regarding space availability, approval of CPL, site readiness and other required inputs to enable Wohr to perform its part. Notwithstanding the agreed Installation dates, the Installation start and completion shall be subjected to readiness of the site as specified by Wohr projects team and the payment release as per the Agreement.",
-                    "c) Customer agrees that Wohr shall not be liable for any delay caused in installation, due to failure of the Customer to provide any component, access or any other deliverables or inputs regarding installation, space availability, utilities, approval of CPL, site readiness or other."
+                    "c) Customer agrees that Wohr shall not be liable for any delay caused in installation, due to failure of the Customer to provide any component, access or any other deliverables or inputs regarding installation, space availability, utilities, approval of CPL, site readiness or other.",
+                    "d) Customer agrees that Wohr shall not be liable for any delay caused in supply, due to failure of the Customer, to provide any component, access or any other deliverables or inputs regarding, parking solution/design approval, space availability, utilities, approval of CPL, site readiness or other.",
+                    "e) Customer shall provide the adequate and suitable storage space for the delivery and proper storage of the Equipment at the Site"
                 ];
 
                 let yExclusions = 60;
@@ -598,12 +598,12 @@ justify-content: center;
                 exclusionsText.forEach(paragraph => {
                     const wrappedText = doc.splitTextToSize(paragraph, 190);
                     doc.text(wrappedText, 15, yExclusions);
-                    yExclusions += wrappedText.length * lineHeight + 3;
+                    yExclusions += wrappedText.length * lineHeight + 2;
                 });
 
                 doc.setFont("Times", "bold");
                 doc.setFontSize(12);
-                doc.text("(3) Preparation at the site by Customer:", 15, yExclusions + 15); // Add some spacing after Exclusions
+                doc.text("(3) Preparation at the site by Customer:", 15, yExclusions + 10); // Add some spacing after Exclusions
 
                 // Set normal font for content
                 doc.setFontSize(11).setFont("Times", "normal");
@@ -623,7 +623,7 @@ justify-content: center;
                 ];
 
                 // Adjust the starting position for this section
-                let yPreparation = yExclusions + 25; // Provide some space after the last Exclusions text
+                let yPreparation = yExclusions + 15; // Provide some space after the last Exclusions text
                 const lineHeight2 = 6; // Line spacing
 
                 preparationText.forEach(paragraph => {
