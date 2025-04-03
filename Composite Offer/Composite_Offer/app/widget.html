@@ -125,14 +125,15 @@ justify-content: center;
                 doc.setFont('Times', 'bold');
                 doc.text("Quotation Details", 125, 100);
                 doc.setFont('Times', 'normal');
+                let totalQuantity = (quoteData?.Product_Details?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0).toFixed(2);
                 doc.text(`Quote Number: ${quoteData?.Quotation_Number || "N/A"}`, 125, 110);
-                const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || quoteData?.EPS_Number || "N/A"; // Display Order No. with the first available value
+                const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || "N/A"; // Display Order No. with the first available value
                 // doc.text(`Order No.: ${quoteData?.Order_Number || "N/A"}`, 125, 115);
                 doc.text(`Order No.: ${orderNumber}`, 125, 115);
                 doc.text(`Customer Name: ${ContactData?.Full_Name || "N/A"}`, 125, 120);
-                doc.text(`Valid Spaces: ${quoteData?.Number_of_Spaces || "N/A"}`, 125, 125);
+                doc.text(`Valid Spaces: ${totalQuantity}`, 125, 125);
                 doc.text(`Sales Representative: ${quoteData?.Owner?.name || "N/A"}`, 125, 130);
-                doc.text(`Phone No.: ${ContactData?.Phone || "N/A"}`, 125, 135);
+                doc.text(`Phone No.: ${ContactData?.Mobile || "N/A"}`, 125, 135);
                 doc.text(`Email: ${ContactData?.Email || "N/A"}`, 125, 140);
 
                 doc.line(10, 150, 200, 150);
@@ -151,22 +152,32 @@ justify-content: center;
                 doc.setFont('Times', 'bold');
                 doc.text("Site Address", 11, 215);
                 doc.setFont('Times', 'normal');
+                let siteStreet = AccountData?.Billing_Street || "N/A";
+                let siteStreetLines = doc.splitTextToSize(siteStreet, 65);
+
                 doc.text(`Project Name: ${OppData?.Deal_Name || "N/A"}`, 11, 225);
-                doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 11, 230);
-                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 11, 235);
-                doc.text(`State: ${AccountData?.Billing_State || "N/A"}`, 11, 240);
-                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 11, 245);
-                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 11, 250);
+                // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 11, 230);
+                doc.text("Street:", 11, 230);
+                doc.text(siteStreetLines, 22, 230); 
+                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 11, 240);
+                doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 11, 245);
+                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 11, 250);
+                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 11, 255);
 
                 doc.setFont('Times', 'bold');
                 doc.text("Billing Address", 130, 215);
                 doc.setFont('Times', 'normal');
+                let billingStreet = AccountData?.Billing_Street || "N/A";
+                let billingStreetLines = doc.splitTextToSize(siteStreet, 65);
+
                 doc.text(`Customer Name: ${AccountData?.Account_Name || "N/A"}`, 130, 225);
-                doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 130, 230);
-                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 130, 235);
-                doc.text(`State: ${AccountData?.Billing_State || "N/A"}`, 130, 240);
-                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 130, 245);
-                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 130, 250);
+                // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 130, 230);
+                doc.text("Street:", 130, 230);
+                doc.text(billingStreetLines, 140, 230);
+                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 130, 240);
+                doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 130, 245);
+                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 130, 250);
+                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 130, 255);
 
                 doc.addPage();
                 if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
