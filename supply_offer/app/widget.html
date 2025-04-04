@@ -114,6 +114,7 @@ justify-content: center;
                 doc.text(doc.splitTextToSize(content, 180), 10, 70);
 
 
+                // ---Company Details---
                 doc.setFontSize(10).setFont('Times', 'bold');
                 doc.text("Company Details", 11, 100);
                 doc.setFont('Times', 'normal');
@@ -125,6 +126,7 @@ justify-content: center;
                 doc.text("Email: info@wohrparking.in", 11, 135);
                 doc.text("GST No.: 27AAACW6100A1ZZ", 11, 140);
 
+                // ---Quotation Details---
                 doc.setFont('Times', 'bold');
                 doc.text("Quotation Details", 125, 100);
                 doc.setFont('Times', 'normal');
@@ -144,16 +146,20 @@ justify-content: center;
                 doc.line(10, 150, 200, 150);
 
 
+                // ---Customer Details---
                 doc.setFont('Times', 'bold');
                 doc.text("Customer Details", 11, 165);
                 doc.setFont('Times', 'normal');
                 doc.text(`Customer Name: ${AccountData?.Account_Name || "N/A"}`, 11, 175);
                 doc.text(`GST No.: ${AccountData?.GSTIN_Number || "N/A"}`, 11, 180);
                 doc.text(`PAN: ${AccountData?.PAN_Number || "N/A"}`, 11, 185);
-                doc.text(`Contact person’s name: ${ContactData?.Full_Name || "N/A"}`, 11, 190);
+                doc.text(`TAN: ${AccountData?.TAN_Number || "N/A"}`, 11, 190);
+                doc.text(`Contact person’s name: ${ContactData?.Full_Name || "N/A"}`, 11, 195);
 
                 doc.line(10, 205, 200, 205);
 
+
+                // --- Site Address ---
                 doc.setFont('Times', 'bold');
                 doc.text("Site Address", 11, 215);
                 doc.setFont('Times', 'normal');
@@ -170,6 +176,8 @@ justify-content: center;
                 doc.text(`Country: ${AccountData?.Shipping_Country || "N/A"}`, 11, 255);
                 doc.text(`Postal Code: ${AccountData?.Shipping_Code || "N/A"}`, 11, 260);
 
+
+                // --- Billing Address ---
                 doc.setFont('Times', 'bold');
                 doc.text("Billing Address", 130, 215);
                 doc.setFont('Times', 'normal');
@@ -185,14 +193,17 @@ justify-content: center;
                 doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 130, 255);
                 doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 130, 260);
 
+
+
+                //-----------------------------------------------------------------------------------------------------------------
+                // Product Table
+                //-----------------------------------------------------------------------------------------------------------------
+
                 doc.addPage();
                 if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                 doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
 
                 doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                //-----------------------------------------------------------------------------------------------------------------
-                // Product Table
-                //-----------------------------------------------------------------------------------------------------------------
 
                 const MAX_IMAGE_HEIGHT = 40;
                 let tableData = [];
@@ -228,7 +239,7 @@ justify-content: center;
                 const TotalTax = quoteData.Product_Details.reduce((acc, item) => acc + (item.Tax ?? 0), 0);
                 const NetTotal = quoteData.Product_Details.reduce((acc, item) => acc + (item.net_total ?? 0), 0);
 
-                tableData.push(["", "Total Quantity in Spaces", TotalQuantity ?? 0, "Net Contract Value", `INR ${totalSum ?? 0}`]);
+                tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${totalSum ?? 0}`]);
                 tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
                 tableData.push(["", "", "", "Gross Contract Value", `INR ${NetTotal + TotalTax}`]);
 
@@ -246,7 +257,7 @@ justify-content: center;
 
                 const estimateRowHeight = (rowIndex) => {
                     const row = tableData[rowIndex];
-                    const isTotalRow = row[1]?.includes("Total Quantity in Spaces / Unit") ||
+                    const isTotalRow = row[1]?.includes("Total Quantity in Spaces/Unit") ||
                         row[1]?.includes("Net Contract Value") ||
                         row[1]?.includes("Total Tax") ||
                         row[1]?.includes("Gross Contract Value");
@@ -345,7 +356,7 @@ justify-content: center;
                                 const row = data.row.raw;
                                 const isImageCol = data.column.index === 0;
 
-                                const isTotalQtyRow = row.includes("Total Quantity in Spaces");
+                                const isTotalQtyRow = row.includes("Total Quantity in Spaces/Unit");
                                 const isNetContractRow = row.includes("Net Contract Value");
                                 const isTotalTaxRow = row.includes("Total Tax");
                                 const isGrossRow = row.includes("Gross Contract Value");
