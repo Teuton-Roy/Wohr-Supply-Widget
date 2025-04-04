@@ -91,11 +91,11 @@ justify-content: center;
                     doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                 }
 
-                console.log(quoteData.Product_Details);
+                // console.log(quoteData.Product_Details);
                 
                 doc.setFontSize(10);
                 const quoteDate = new Date(quoteData.Quote_Date);
-                console.log(quoteData)
+                // console.log(quoteData)
                 const formattedDate = quoteDate.toLocaleDateString('en-US', {
                     year: 'numeric', month: 'long', day: 'numeric',
                 });
@@ -157,23 +157,24 @@ justify-content: center;
                 doc.setFont('Times', 'bold');
                 doc.text("Site Address", 11, 215);
                 doc.setFont('Times', 'normal');
-                let siteStreet = AccountData?.Billing_Street || "N/A";
+                let siteStreet = AccountData?.Shipping_Street || "N/A";
                 let siteStreetLines = doc.splitTextToSize(siteStreet, 65);
-
+                // console.log(AccountData);
+                
                 doc.text(`Project Name: ${OppData?.Deal_Name || "N/A"}`, 11, 225);
                 // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 11, 230);
                 doc.text("Street:", 11, 230);
                 doc.text(siteStreetLines, 22, 230); 
-                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 11, 245);
-                doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 11, 250);
-                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 11, 255);
-                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 11, 260);
+                doc.text(`City: ${AccountData?.Shipping_City || "N/A"}`, 11, 245);
+                doc.text(`State: ${AccountData?.Shipping_State	 || "N/A"}`, 11, 250);
+                doc.text(`Country: ${AccountData?.Shipping_Country || "N/A"}`, 11, 255);
+                doc.text(`Postal Code: ${AccountData?.Shipping_Code || "N/A"}`, 11, 260);
 
                 doc.setFont('Times', 'bold');
                 doc.text("Billing Address", 130, 215);
                 doc.setFont('Times', 'normal');
                 let billingStreet = AccountData?.Billing_Street || "N/A";
-                let billingStreetLines = doc.splitTextToSize(siteStreet, 65);
+                let billingStreetLines = doc.splitTextToSize(billingStreet, 65);
 
                 doc.text(`Customer Name: ${AccountData?.Account_Name || "N/A"}`, 130, 225);
                 // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 130, 230);
@@ -208,9 +209,9 @@ justify-content: center;
                         const carWeight = product?.Car_Weight_In_Kg || "N/A";
                         const clearHeight = product?.Clear_Height || "N/A";
                         const coating = product?.System_Coating || "N/A";
-                        const ProductTax = product?.Tax || "N/A";
+                        // const ProductTax = product?.Tax || "N/A";
 
-                        const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating: ${coating}\nTax: ${ProductTax}`;
+                        const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating`;
 
                         tableData.push([
                             productImages[ProductID] ? "" : "",
@@ -245,7 +246,7 @@ justify-content: center;
 
                 const estimateRowHeight = (rowIndex) => {
                     const row = tableData[rowIndex];
-                    const isTotalRow = row[1]?.includes("Total Quantity in Spaces") ||
+                    const isTotalRow = row[1]?.includes("Total Quantity in Spaces / Unit") ||
                         row[1]?.includes("Net Contract Value") ||
                         row[1]?.includes("Total Tax") ||
                         row[1]?.includes("Gross Contract Value");
