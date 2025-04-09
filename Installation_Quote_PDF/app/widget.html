@@ -472,11 +472,11 @@ justify-content: center;
                 doc.text("Price", 170, boxStartY + 5);
 
                 // Add vertical lines for columns
-                doc.line(60, boxStartY, 60, boxStartY + boxHeight); // After "Service Name"
-                doc.line(95, boxStartY, 95, boxStartY + boxHeight); // After "Product Code"
-                doc.line(115, boxStartY, 115, boxStartY + boxHeight); // After "Quantity"
-                doc.line(140, boxStartY, 140, boxStartY + boxHeight); // After "UoM"
-                doc.line(165, boxStartY, 165, boxStartY + boxHeight); // After "Capacity"
+                doc.line(60, boxStartY, 60, boxStartY + boxHeight); 
+                doc.line(95, boxStartY, 95, boxStartY + boxHeight); 
+                doc.line(115, boxStartY, 115, boxStartY + boxHeight); 
+                doc.line(140, boxStartY, 140, boxStartY + boxHeight);
+                doc.line(165, boxStartY, 165, boxStartY + boxHeight);
 
                 let startY1 = boxStartY + boxHeight; // Start Y position for the rows
 
@@ -514,13 +514,13 @@ justify-content: center;
                     doc.text(`INR ${info.Installation_Products_Price || "N/A"}`, 170, startY1 + 7);
 
                     // Add vertical lines for columns in each row
-                    doc.line(60, startY1, 60, startY1 + 10); // After "Service Name"
-                    doc.line(95, startY1, 95, startY1 + 10); // After "Product Code"
-                    doc.line(115, startY1, 115, startY1 + 10); // After "Quantity"
-                    doc.line(140, startY1, 140, startY1 + 10); // After "UoM"
-                    doc.line(165, startY1, 165, startY1 + 10); // After "Capacity"
+                    doc.line(60, startY1, 60, startY1 + 10);
+                    doc.line(95, startY1, 95, startY1 + 10);
+                    doc.line(115, startY1, 115, startY1 + 10);
+                    doc.line(140, startY1, 140, startY1 + 10);
+                    doc.line(165, startY1, 165, startY1 + 10); 
 
-                    startY1 += 10; // Increment Y position for the next row
+                    startY1 += 10; 
                 });
                 doc.rect(10, boxStartY, 195, startY1 - boxStartY); // Draw enclosing box for the entire section
 
