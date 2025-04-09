@@ -454,159 +454,159 @@ justify-content: center;
                 doc.text(`Date: ${formattedDate}`, 175, 40);
 
                 // Add Installation Information Section
-doc.setFontSize(12).setFont("Times", "bold");
-doc.text("Installation Information", 10, 50);
+                doc.setFontSize(12).setFont("Times", "bold");
+                doc.text("Installation Information", 10, 50);
 
-let boxStartY = 55; // Starting Y position of the box
-let boxHeight = 7; // Initial height for the header row
+                let boxStartY = 55; // Starting Y position of the box
+                let boxHeight = 7; // Initial height for the header row
 
-// Table headers for Installation Information
-doc.setLineWidth(0.5);
-doc.rect(10, boxStartY, 195, boxHeight); // Draw the header box
-doc.setFontSize(10).setFont("Times", "bold");
-doc.text("Installation Service Name", 12, boxStartY + 5);
-doc.text("Product Code", 65, boxStartY + 5);
-doc.text("Quantity", 100, boxStartY + 5);
-doc.text("UoM", 120, boxStartY + 5);
-doc.text("Capacity", 145, boxStartY + 5);
-doc.text("Price", 170, boxStartY + 5);
+                // Table headers for Installation Information
+                doc.setLineWidth(0.5);
+                doc.rect(10, boxStartY, 195, boxHeight); // Draw the header box
+                doc.setFontSize(10).setFont("Times", "bold");
+                doc.text("Installation Service Name", 12, boxStartY + 5);
+                doc.text("Product Code", 65, boxStartY + 5);
+                doc.text("Quantity", 100, boxStartY + 5);
+                doc.text("UoM", 120, boxStartY + 5);
+                doc.text("Capacity", 145, boxStartY + 5);
+                doc.text("Price", 170, boxStartY + 5);
 
-// Add vertical lines for columns
-doc.line(60, boxStartY, 60, boxStartY + boxHeight); // After "Service Name"
-doc.line(95, boxStartY, 95, boxStartY + boxHeight); // After "Product Code"
-doc.line(115, boxStartY, 115, boxStartY + boxHeight); // After "Quantity"
-doc.line(140, boxStartY, 140, boxStartY + boxHeight); // After "UoM"
-doc.line(165, boxStartY, 165, boxStartY + boxHeight); // After "Capacity"
+                // Add vertical lines for columns
+                doc.line(60, boxStartY, 60, boxStartY + boxHeight); // After "Service Name"
+                doc.line(95, boxStartY, 95, boxStartY + boxHeight); // After "Product Code"
+                doc.line(115, boxStartY, 115, boxStartY + boxHeight); // After "Quantity"
+                doc.line(140, boxStartY, 140, boxStartY + boxHeight); // After "UoM"
+                doc.line(165, boxStartY, 165, boxStartY + boxHeight); // After "Capacity"
 
-let startY1 = boxStartY + boxHeight; // Start Y position for the rows
+                let startY1 = boxStartY + boxHeight; // Start Y position for the rows
 
-doc.setFont("Times", "normal");
-const installationInfo = quoteData.Installation_Information || [];
-installationInfo.forEach((info) => {    
-    if (startY1 + 10 > 280) { // Add a new page if content exceeds the page height
-        doc.rect(10, boxStartY, 195, startY1 - boxStartY); // Draw enclosing box
-        doc.addPage();
-        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-        doc.setFontSize(10).setFont("Times", "normal");
-        doc.text(`Date: ${formattedDate}`, 175, 40);
+                doc.setFont("Times", "normal");
+                const installationInfo = quoteData.Installation_Information || [];
+                installationInfo.forEach((info) => {
+                    if (startY1 + 10 > 280) { // Add a new page if content exceeds the page height
+                        doc.rect(10, boxStartY, 195, startY1 - boxStartY); // Draw enclosing box
+                        doc.addPage();
+                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                        doc.setFontSize(10).setFont("Times", "normal");
+                        doc.text(`Date: ${formattedDate}`, 175, 40);
 
-        // Re-add table headers
-        boxStartY = 50;
-        startY1 = boxStartY + 7;
-        doc.rect(10, boxStartY, 195, 7);
-        doc.setFontSize(10).setFont("Times", "bold");
-        doc.text("Service Name", 12, boxStartY + 5);
-        doc.text("Product Code", 65, boxStartY + 5);
-        doc.text("Quantity", 100, boxStartY + 5);
-        doc.text("UoM", 120, boxStartY + 5);
-        doc.text("Capacity", 145, boxStartY + 5);
-        doc.text("Price", 170, boxStartY + 5);
+                        // Re-add table headers
+                        boxStartY = 50;
+                        startY1 = boxStartY + 7;
+                        doc.rect(10, boxStartY, 195, 7);
+                        doc.setFontSize(10).setFont("Times", "bold");
+                        doc.text("Service Name", 12, boxStartY + 5);
+                        doc.text("Product Code", 65, boxStartY + 5);
+                        doc.text("Quantity", 100, boxStartY + 5);
+                        doc.text("UoM", 120, boxStartY + 5);
+                        doc.text("Capacity", 145, boxStartY + 5);
+                        doc.text("Price", 170, boxStartY + 5);
 
-    }
+                    }
 
-    // Add row data
-    doc.rect(10, startY1, 195, 10); // Draw a box for each row
-    doc.text(info.Installation_Service_Name?.name || "N/A", 12, startY1 + 7);
-    doc.text(info.Product_Code || "N/A", 65, startY1 + 7);
-    doc.text(`${info.Quantity || "N/A"}`, 100, startY1 + 7);
-    doc.text(info.UoM || "N/A", 120, startY1 + 7);
-    doc.text(info.Installation_Product_Capacity_kg_1 || "N/A", 145, startY1 + 7);
-    doc.text(`INR ${info.Installation_Products_Price || "N/A"}`, 170, startY1 + 7);
+                    // Add row data
+                    doc.rect(10, startY1, 195, 10); // Draw a box for each row
+                    doc.text(info.Installation_Service_Name?.name || "N/A", 12, startY1 + 7);
+                    doc.text(info.Product_Code || "N/A", 65, startY1 + 7);
+                    doc.text(`${info.Quantity || "N/A"}`, 100, startY1 + 7);
+                    doc.text(info.UoM || "N/A", 120, startY1 + 7);
+                    doc.text(info.Installation_Product_Capacity_kg_1 || "N/A", 145, startY1 + 7);
+                    doc.text(`INR ${info.Installation_Products_Price || "N/A"}`, 170, startY1 + 7);
 
-       // Add vertical lines for columns in each row
-    doc.line(60, startY1, 60, startY1 + 10); // After "Service Name"
-    doc.line(95, startY1, 95, startY1 + 10); // After "Product Code"
-    doc.line(115, startY1, 115, startY1 + 10); // After "Quantity"
-    doc.line(140, startY1, 140, startY1 + 10); // After "UoM"
-    doc.line(165, startY1, 165, startY1 + 10); // After "Capacity"
+                    // Add vertical lines for columns in each row
+                    doc.line(60, startY1, 60, startY1 + 10); // After "Service Name"
+                    doc.line(95, startY1, 95, startY1 + 10); // After "Product Code"
+                    doc.line(115, startY1, 115, startY1 + 10); // After "Quantity"
+                    doc.line(140, startY1, 140, startY1 + 10); // After "UoM"
+                    doc.line(165, startY1, 165, startY1 + 10); // After "Capacity"
 
-    startY1 += 10; // Increment Y position for the next row
-});
-doc.rect(10, boxStartY, 195, startY1 - boxStartY); // Draw enclosing box for the entire section
+                    startY1 += 10; // Increment Y position for the next row
+                });
+                doc.rect(10, boxStartY, 195, startY1 - boxStartY); // Draw enclosing box for the entire section
 
-// Add Installation Payment Term Section
-doc.setFontSize(12).setFont("Times", "bold");
-doc.text("Installation Payment Term", 10, startY1 + 15);
+                // Add Installation Payment Term Section
+                doc.setFontSize(12).setFont("Times", "bold");
+                doc.text("Installation Payment Term", 10, startY1 + 15);
 
-let paymentBoxStartY = startY1 + 20; // Starting Y position of the payment term box
-let paymentBoxHeight = 7; // Initial height for the header row
+                let paymentBoxStartY = startY1 + 20; // Starting Y position of the payment term box
+                let paymentBoxHeight = 7; // Initial height for the header row
 
-// Table headers for Installation Payment Term
-doc.setLineWidth(0.5);
-doc.rect(10, paymentBoxStartY, 195, paymentBoxHeight); // Draw the header box
-doc.setFontSize(10).setFont("Times", "bold");
-doc.text("Description", 12, paymentBoxStartY + 5);
-doc.text("Split Contract Value (%)", 100, paymentBoxStartY + 5);
-doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
+                // Table headers for Installation Payment Term
+                doc.setLineWidth(0.5);
+                doc.rect(10, paymentBoxStartY, 195, paymentBoxHeight); // Draw the header box
+                doc.setFontSize(10).setFont("Times", "bold");
+                doc.text("Description", 12, paymentBoxStartY + 5);
+                doc.text("Split Contract Value (%)", 100, paymentBoxStartY + 5);
+                doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
 
-// Add vertical lines for columns in the header
-doc.line(95, paymentBoxStartY, 95, paymentBoxStartY + paymentBoxHeight);
-doc.line(155, paymentBoxStartY, 155, paymentBoxStartY + paymentBoxHeight);
+                // Add vertical lines for columns in the header
+                doc.line(95, paymentBoxStartY, 95, paymentBoxStartY + paymentBoxHeight);
+                doc.line(155, paymentBoxStartY, 155, paymentBoxStartY + paymentBoxHeight);
 
-let paymentStartY = paymentBoxStartY + paymentBoxHeight; // Start Y position for the rows
+                let paymentStartY = paymentBoxStartY + paymentBoxHeight; // Start Y position for the rows
 
-doc.setFont("Times", "normal");
-const InsatallationPaymentTerms = quoteData.Installation_Payment_Term || [];
-InsatallationPaymentTerms.forEach((term) => {
-    if (paymentStartY + 10 > 280) { // Add a new page if content exceeds the page height
-        doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY); // Draw enclosing box
-        doc.addPage();
-        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-        doc.setFontSize(10).setFont("Times", "normal");
-        doc.text(`Date: ${formattedDate}`, 175, 40);
+                doc.setFont("Times", "normal");
+                const InsatallationPaymentTerms = quoteData.Installation_Payment_Term || [];
+                InsatallationPaymentTerms.forEach((term) => {
+                    if (paymentStartY + 10 > 280) { // Add a new page if content exceeds the page height
+                        doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY); // Draw enclosing box
+                        doc.addPage();
+                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                        doc.setFontSize(10).setFont("Times", "normal");
+                        doc.text(`Date: ${formattedDate}`, 175, 40);
 
-        // Re-add table headers
-        paymentBoxStartY = 50;
-        paymentStartY = paymentBoxStartY + 7;
-        doc.rect(10, paymentBoxStartY, 195, 7);
-        doc.setFontSize(10).setFont("Times", "bold");
-        doc.text("Description", 12, paymentBoxStartY + 5);
-        doc.text("Split Contract Value (%)", 100, paymentBoxStartY + 5);
-        doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
-    }
+                        // Re-add table headers
+                        paymentBoxStartY = 50;
+                        paymentStartY = paymentBoxStartY + 7;
+                        doc.rect(10, paymentBoxStartY, 195, 7);
+                        doc.setFontSize(10).setFont("Times", "bold");
+                        doc.text("Description", 12, paymentBoxStartY + 5);
+                        doc.text("Split Contract Value (%)", 100, paymentBoxStartY + 5);
+                        doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
+                    }
 
-    // Add row data
-    doc.rect(10, paymentStartY, 195, 10); // Draw a box for each row
-    doc.text(term.Description_Milestone || "N/A", 12, paymentStartY + 7);
-    doc.text(`${term.of_Split_Contract_Value || "N/A"}%`, 100, paymentStartY + 7);
-    doc.text(`INR ${term.Amount || "N/A"}`, 160, paymentStartY + 7);
+                    // Add row data
+                    doc.rect(10, paymentStartY, 195, 10); // Draw a box for each row
+                    doc.text(term.Description_Milestone || "N/A", 12, paymentStartY + 7);
+                    doc.text(`${term.of_Split_Contract_Value || "N/A"}%`, 100, paymentStartY + 7);
+                    doc.text(`INR ${term.Amount || "N/A"}`, 160, paymentStartY + 7);
 
-    doc.line(95, paymentStartY, 95, paymentStartY + 10); // After "Description"
-    doc.line(155, paymentStartY, 155, paymentStartY + 10); // After "Split Contract Value (%)"
+                    doc.line(95, paymentStartY, 95, paymentStartY + 10); // After "Description"
+                    doc.line(155, paymentStartY, 155, paymentStartY + 10); // After "Split Contract Value (%)"
 
-    paymentStartY += 10; // Increment Y position for the next row
-});
-doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY); // Draw enclosing box for the entire section
+                    paymentStartY += 10; // Increment Y position for the next row
+                });
+                doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY); // Draw enclosing box for the entire section
 
-// Add Supplier and Purchaser Information Section
-let supplierPurchaserStartY = paymentStartY + 20; // Start Y position for this section
-let boxHeight2 = 65; // Adjusted height to enclose the full section, including the header
+                // Add Supplier and Purchaser Information Section
+                let supplierPurchaserStartY = paymentStartY + 20; // Start Y position for this section
+                let boxHeight2 = 65; // Adjusted height to enclose the full section, including the header
 
-// Draw the enclosing box for the full section
-doc.setLineWidth(0.5);
-doc.rect(10, supplierPurchaserStartY - 10, 195, boxHeight2); // Draw the box
+                // Draw the enclosing box for the full section
+                doc.setLineWidth(0.5);
+                doc.rect(10, supplierPurchaserStartY - 10, 195, boxHeight2); // Draw the box
 
-// Supplier Information
-doc.setFontSize(12).setFont("Times", "bold");
-doc.text("Supplier Information", 15, supplierPurchaserStartY);
+                // Supplier Information
+                doc.setFontSize(12).setFont("Times", "bold");
+                doc.text("Supplier Information", 15, supplierPurchaserStartY);
 
-doc.setFont("Times", "normal");
-doc.text("Wohr Parking Systems Pvt Ltd.", 15, supplierPurchaserStartY + 10);
-doc.text("Sign", 15, supplierPurchaserStartY + 20);
-doc.text("Name: Milind Deshpande", 15, supplierPurchaserStartY + 30);
-doc.text("Designation: Deputy General Manager", 15, supplierPurchaserStartY + 40);
-doc.text("Date:", 15, supplierPurchaserStartY + 50);
+                doc.setFont("Times", "normal");
+                doc.text("Wohr Parking Systems Pvt Ltd.", 15, supplierPurchaserStartY + 10);
+                doc.text("Sign", 15, supplierPurchaserStartY + 20);
+                doc.text("Name: Milind Deshpande", 15, supplierPurchaserStartY + 30);
+                doc.text("Designation: Deputy General Manager", 15, supplierPurchaserStartY + 40);
+                doc.text("Date:", 15, supplierPurchaserStartY + 50);
 
-// Purchaser/Customer Information
-doc.setFont("Times", "bold");
-doc.text("Purchaser/Customer Information", 135, supplierPurchaserStartY);
+                // Purchaser/Customer Information
+                doc.setFont("Times", "bold");
+                doc.text("Purchaser/Customer Information", 135, supplierPurchaserStartY);
 
-doc.setFont("Times", "normal");
-doc.text(`${AccountData?.Account_Name || "N/A"}`, 135, supplierPurchaserStartY + 10);
-doc.text("Sign", 135, supplierPurchaserStartY + 20);
-doc.text("Name:", 135, supplierPurchaserStartY + 30);
-doc.text("Designation:", 135, supplierPurchaserStartY + 40);
-doc.text("Date:", 135, supplierPurchaserStartY + 50);
+                doc.setFont("Times", "normal");
+                doc.text(`${AccountData?.Account_Name || "N/A"}`, 135, supplierPurchaserStartY + 10);
+                doc.text("Sign", 135, supplierPurchaserStartY + 20);
+                doc.text("Name:", 135, supplierPurchaserStartY + 30);
+                doc.text("Designation:", 135, supplierPurchaserStartY + 40);
+                doc.text("Date:", 135, supplierPurchaserStartY + 50);
 
 
 
@@ -617,7 +617,7 @@ doc.text("Date:", 135, supplierPurchaserStartY + 50);
                 doc.setLineWidth(0.5);
                 doc.setDrawColor(0, 0, 0);
                 let startY = 55;
-                let boxHeight1 = 10; 
+                let boxHeight1 = 10;
                 const textStartX = 55;
                 const textMaxWidth = 145;
 
