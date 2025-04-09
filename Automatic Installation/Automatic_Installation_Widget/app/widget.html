@@ -446,91 +446,169 @@ justify-content: center;
 
                 doc.addPage();
                 doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                //Supplier Information
                 doc.setFontSize(10).setFont('Times', 'normal');
                 doc.text(`Date: ${formattedDate}`, 175, 40);
-                doc.rect(10, 50, 195, 60);
-                doc.setFontSize(12);
-                doc.setFont("Times", "bold");
-                doc.text("Supplier", 20, 60);
+
+
+// Add Installation Information Section
+doc.setFontSize(12).setFont("Times", "bold");
+                doc.text("Installation Information", 10, 50);
+
+                let boxStartY = 55; // Starting Y position of the box
+                let boxHeight = 7; // Initial height for the header row
+
+                // Table headers for Installation Information
+                doc.setLineWidth(0.5);
+                doc.rect(10, boxStartY, 195, boxHeight); // Draw the header box
+                doc.setFontSize(10).setFont("Times", "bold");
+                doc.text("Installation Service Name", 12, boxStartY + 5);
+                doc.text("Product Code", 65, boxStartY + 5);
+                doc.text("Quantity", 100, boxStartY + 5);
+                doc.text("UoM", 120, boxStartY + 5);
+                doc.text("Capacity", 145, boxStartY + 5);
+                doc.text("Price", 170, boxStartY + 5);
+
+                // Add vertical lines for columns
+                doc.line(60, boxStartY, 60, boxStartY + boxHeight); 
+                doc.line(95, boxStartY, 95, boxStartY + boxHeight); 
+                doc.line(115, boxStartY, 115, boxStartY + boxHeight); 
+                doc.line(140, boxStartY, 140, boxStartY + boxHeight);
+                doc.line(165, boxStartY, 165, boxStartY + boxHeight);
+
+                let startY1 = boxStartY + boxHeight; // Start Y position for the rows
+
                 doc.setFont("Times", "normal");
-                doc.text("Wohr Parking Systems Pvt Ltd.", 20, 70);
-                doc.text("Sign", 20, 80);
-                doc.text("Name:", 20, 90);
-                doc.text("Milind Deshpande", 32, 90);
-                doc.text("Designation: ", 20, 100);
-                doc.text("Deputy General Manager", 43, 100);
-                doc.text("Date: ", 20, 108);
+                const installationInfo = quoteData.Installation_Information || [];
+                installationInfo.forEach((info) => {
+                    if (startY1 + 10 > 280) { // Add a new page if content exceeds the page height
+                        doc.rect(10, boxStartY, 195, startY1 - boxStartY); // Draw enclosing box
+                        doc.addPage();
+                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                        doc.setFontSize(10).setFont("Times", "normal");
+                        doc.text(`Date: ${formattedDate}`, 175, 40);
 
-                //Purchaser Information
-                doc.setFont("Times", "bold");
-                doc.text("Purchaser/Customer", 130, 60);
+                        // Re-add table headers
+                        boxStartY = 50;
+                        startY1 = boxStartY + 7;
+                        doc.rect(10, boxStartY, 195, 7);
+                        doc.setFontSize(10).setFont("Times", "bold");
+                        doc.text("Service Name", 12, boxStartY + 5);
+                        doc.text("Product Code", 65, boxStartY + 5);
+                        doc.text("Quantity", 100, boxStartY + 5);
+                        doc.text("UoM", 120, boxStartY + 5);
+                        doc.text("Capacity", 145, boxStartY + 5);
+                        doc.text("Price", 170, boxStartY + 5);
+
+                    }
+
+                    // Add row data
+                    doc.rect(10, startY1, 195, 10); // Draw a box for each row
+                    doc.text(info.Installation_Service_Name?.name || "N/A", 12, startY1 + 7);
+                    doc.text(info.Product_Code || "N/A", 65, startY1 + 7);
+                    doc.text(`${info.Quantity || "N/A"}`, 100, startY1 + 7);
+                    doc.text(info.UoM || "N/A", 120, startY1 + 7);
+                    doc.text(info.Installation_Product_Capacity_kg_1 || "N/A", 145, startY1 + 7);
+                    doc.text(`INR ${info.Installation_Products_Price || "N/A"}`, 170, startY1 + 7);
+
+                    // Add vertical lines for columns in each row
+                    doc.line(60, startY1, 60, startY1 + 10);
+                    doc.line(95, startY1, 95, startY1 + 10);
+                    doc.line(115, startY1, 115, startY1 + 10);
+                    doc.line(140, startY1, 140, startY1 + 10);
+                    doc.line(165, startY1, 165, startY1 + 10); 
+
+                    startY1 += 10; 
+                });
+                doc.rect(10, boxStartY, 195, startY1 - boxStartY); // Draw enclosing box for the entire section
+
+                // Add Installation Payment Term Section
+                doc.setFontSize(12).setFont("Times", "bold");
+                doc.text("Installation Payment Term", 10, startY1 + 15);
+
+                let paymentBoxStartY = startY1 + 20; // Starting Y position of the payment term box
+                let paymentBoxHeight = 7; // Initial height for the header row
+
+                // Table headers for Installation Payment Term
+                doc.setLineWidth(0.5);
+                doc.rect(10, paymentBoxStartY, 195, paymentBoxHeight); // Draw the header box
+                doc.setFontSize(10).setFont("Times", "bold");
+                doc.text("Description", 12, paymentBoxStartY + 5);
+                doc.text("Split Contract Value (%)", 100, paymentBoxStartY + 5);
+                doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
+
+                // Add vertical lines for columns in the header
+                doc.line(95, paymentBoxStartY, 95, paymentBoxStartY + paymentBoxHeight);
+                doc.line(155, paymentBoxStartY, 155, paymentBoxStartY + paymentBoxHeight);
+
+                let paymentStartY = paymentBoxStartY + paymentBoxHeight; // Start Y position for the rows
+
                 doc.setFont("Times", "normal");
-                doc.text(`${AccountData?.Account_Name || "N/A"}`, 130, 70);
-                doc.text("Sign", 130, 80);
-                doc.text("Name:", 130, 90);
-                doc.text("Designation: ", 130, 100);
-                doc.text("Date: ", 130, 108);
+                const InsatallationPaymentTerms = quoteData.Installation_Payment_Term || [];
+                InsatallationPaymentTerms.forEach((term) => {
+                    if (paymentStartY + 10 > 280) { // Add a new page if content exceeds the page height
+                        doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY); // Draw enclosing box
+                        doc.addPage();
+                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                        doc.setFontSize(10).setFont("Times", "normal");
+                        doc.text(`Date: ${formattedDate}`, 175, 40);
 
-                // doc.addPage();
-                // doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                // doc.setFontSize(11).setFont('Times', 'normal');
-                // doc.text(`Date: ${formattedDate}`, 175, 40);
-                // doc.rect(10, 50, 30, 30);
-                // doc.setFont("Times", "bold");
-                // doc.text("Payment Terms", 12, 65);
-                // doc.rect(40, 50, 165, 30);
-                // doc.setFont("Times", "normal");
-                // doc.text("-    50% + GST on commencement of installation against submission of proforma invoice.", 45, 58);
-                // var PaymentTerms = "-    Balance 50% after commissioning of the Equipment. Tax Invoice for 100 % of the installation contract value shall be submitted after commissioning of the systems. The tax invoice shall bear the necessary GST details & SAC 995442.";
-                // var SplitPaymentTerms = doc.splitTextToSize(PaymentTerms, 160);
-                // doc.text(SplitPaymentTerms, 45, 65);
+                        // Re-add table headers
+                        paymentBoxStartY = 50;
+                        paymentStartY = paymentBoxStartY + 7;
+                        doc.rect(10, paymentBoxStartY, 195, 7);
+                        doc.setFontSize(10).setFont("Times", "bold");
+                        doc.text("Description", 12, paymentBoxStartY + 5);
+                        doc.text("Split Contract Value (%)", 100, paymentBoxStartY + 5);
+                        doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
+                    }
 
-                // //Milestone Creation
-                // doc.setFontSize(15);
-                // doc.text("Milestone: ", 10, 98);
-                // doc.rect(10, 100, 35, 17);
-                // doc.setFontSize(12);
-                // doc.text("Completion Period", 11, 109);
-                // doc.rect(45, 100, 160, 17);
-                // const Period = "14 - 24 Weeks from receipt of material at Site and subject to uninterrupted availability of site area along with uninterrupted power supply and storage facility. The total period depends on total quantity of Equipment.";
-                // const SplitPeriod = doc.splitTextToSize(Period, 160);
-                // doc.text(SplitPeriod, 46, 105);
-                // doc.rect(10, 117, 35, 17);
-                // const Maintenance = "Free Maintenance Period";
-                // const SplitMaintenance = doc.splitTextToSize(Maintenance, 40);
-                // doc.text(SplitMaintenance, 12, 124);
-                // doc.rect(45, 117, 160, 17);
-                // doc.text("12 months from completion of installation subject to Wohr standard terms and conditions.", 46, 125);
-                // doc.rect(10, 134, 35, 17);
-                // const Scope = "Wohr's Scope Of Work";
-                // const SplitScope = doc.splitTextToSize(Scope, 30);
-                // doc.text(SplitScope, 12, 140);
-                // doc.rect(45, 134, 160, 17);
-                // const WohrScope = "Material Unloading at site, Parking System Installation and Commissioning and Hand-over of Equipment";
-                // const SplitWohrScope = doc.splitTextToSize(WohrScope, 155);
-                // doc.text(SplitWohrScope, 47, 140);
+                    // Add row data
+                    doc.rect(10, paymentStartY, 195, 10); // Draw a box for each row
+                    doc.text(term.Description_Milestone || "N/A", 12, paymentStartY + 7);
+                    doc.text(`${term.of_Split_Contract_Value || "N/A"}%`, 100, paymentStartY + 7);
+                    doc.text(`INR ${term.Amount || "N/A"}`, 160, paymentStartY + 7);
 
+                    doc.line(95, paymentStartY, 95, paymentStartY + 10); // After "Description"
+                    doc.line(155, paymentStartY, 155, paymentStartY + 10); // After "Split Contract Value (%)"
 
-                // doc.text("Wohr/Supplier:", 10, 188);
-                // doc.rect(10, 200, 50, 0);
-                // doc.text("Name:", 10, 205);
-                // doc.text("Designation:", 10, 210);
-                // doc.text("Date:", 10, 215);
+                    paymentStartY += 10; // Increment Y position for the next row
+                });
+                doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY); // Draw enclosing box for the entire section
 
-                // doc.text("Purchase/Customer", 150, 188);
-                // doc.rect(150, 200, 50, 0);
-                // doc.text("Name:", 150, 205);
-                // doc.text("Designation:", 150, 210);
-                // doc.text("Date:", 150, 215);
+                // Add Supplier and Purchaser Information Section
+                let supplierPurchaserStartY = paymentStartY + 20; // Start Y position for this section
+                let boxHeight2 = 65; // Adjusted height to enclose the full section, including the header
 
+                // Draw the enclosing box for the full section
+                doc.setLineWidth(0.5);
+                doc.rect(10, supplierPurchaserStartY - 10, 195, boxHeight2); // Draw the box
+
+                // Supplier Information
+                doc.setFontSize(12).setFont("Times", "bold");
+                doc.text("Supplier Information", 15, supplierPurchaserStartY);
+
+                doc.setFont("Times", "normal");
+                doc.text("Wohr Parking Systems Pvt Ltd.", 15, supplierPurchaserStartY + 10);
+                doc.text("Sign", 15, supplierPurchaserStartY + 20);
+                doc.text("Name: Milind Deshpande", 15, supplierPurchaserStartY + 30);
+                doc.text("Designation: Deputy General Manager", 15, supplierPurchaserStartY + 40);
+                doc.text("Date:", 15, supplierPurchaserStartY + 50);
+
+                // Purchaser/Customer Information
+                doc.setFont("Times", "bold");
+                doc.text("Purchaser/Customer Information", 135, supplierPurchaserStartY);
+
+                doc.setFont("Times", "normal");
+                doc.text(`${AccountData?.Account_Name || "N/A"}`, 135, supplierPurchaserStartY + 10);
+                doc.text("Sign", 135, supplierPurchaserStartY + 20);
+                doc.text("Name:", 135, supplierPurchaserStartY + 30);
+                doc.text("Designation:", 135, supplierPurchaserStartY + 40);
+                doc.text("Date:", 135, supplierPurchaserStartY + 50);
+
+                
                 doc.addPage();
                 if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                 doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
-
-                // Payment Terms Section
-                // doc.setFontSize(10).setFont('Times', 'bold');
-                // doc.text("PAYMENT TERMS", 16, 72);
 
                 // Draw the outer rectangle
                 doc.setLineWidth(0.5);
