@@ -188,18 +188,23 @@ justify-content: center;
 
                 // --- Billing Address ---
                 doc.setFont('Times', 'bold');
-                doc.text("Billing Address", 120, 225);
+                doc.text("Billing Address", 120, 215);
                 doc.setFont('Times', 'normal');
                 let billingStreet = AccountData?.Billing_Street || "N/A";
-                let billingStreetLines = doc.splitTextToSize(siteStreet, 65);
-                doc.text(`Customer Name: ${AccountData?.Account_Name || "N/A"}`, 120, 232);
-                // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 130, 239);
-                doc.text("Street:", 120, 239);
-                doc.text(billingStreetLines, 132, 239);
-                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 120, 255);
-                doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 120, 260);
-                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 120, 265);
-                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 120, 270);
+                let billingStreetLines = doc.splitTextToSize(billingStreet, 65);
+
+                let customerName = AccountData?.Account_Name || "N/A";
+                let customerNameLines = doc.splitTextToSize(customerName, 60); // Split customer name into multiple lines if necessary
+
+                doc.text("Customer Name:", 120, 225);
+                doc.text(customerNameLines, 145, 225); 
+                // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 130, 230);
+                doc.text("Street:", 120, 235);
+                doc.text(billingStreetLines, 130, 235);
+                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 120, 250);
+                doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 120, 255);
+                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 120, 260);
+                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 120, 265);
 
                 doc.addPage();
                 if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
@@ -599,14 +604,17 @@ justify-content: center;
 
                 // Purchaser/Customer Information
                 doc.setFont("Times", "bold");
-                doc.text("Purchaser/Customer Information", 135, supplierPurchaserStartY);
+                doc.text("Purchaser/Customer Information", 120, supplierPurchaserStartY);
 
                 doc.setFont("Times", "normal");
-                doc.text(`${AccountData?.Account_Name || "N/A"}`, 135, supplierPurchaserStartY + 10);
-                doc.text("Sign", 135, supplierPurchaserStartY + 20);
-                doc.text("Name:", 135, supplierPurchaserStartY + 30);
-                doc.text("Designation:", 135, supplierPurchaserStartY + 40);
-                doc.text("Date:", 135, supplierPurchaserStartY + 50);
+                let accountName = AccountData?.Account_Name || "N/A";
+                let accountNameLines = doc.splitTextToSize(accountName, 70); // Adjust width to fit within the box
+
+                doc.text(accountNameLines, 120, supplierPurchaserStartY + 10); // Render wrapped text
+                doc.text("Sign", 120, supplierPurchaserStartY + 15 + accountNameLines.length * 5); // Adjust position based on wrapped text height
+                doc.text("Name:", 120, supplierPurchaserStartY + 22 + accountNameLines.length * 5);
+                doc.text("Designation:", 120, supplierPurchaserStartY + 30 + accountNameLines.length * 5);
+                doc.text("Date:", 120, supplierPurchaserStartY + 38 + accountNameLines.length * 5);
 
 
 
