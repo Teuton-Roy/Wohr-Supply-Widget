@@ -90,8 +90,13 @@ justify-content: center;
                 if (logoData) {
                     doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                 }
+                
+                
+                // console.log(quoteData);
+                console.log(AccountData);
+                
+                
 
-                // console.log(quoteData.Product_Details);
                 
                 doc.setFontSize(10);
                 const quoteDate = new Date(quoteData.Quote_Date);
@@ -1027,8 +1032,10 @@ justify-content: center;
                         }
 
                         const accountPromise = AccountID
-                            ? ZOHO.CRM.API.getRecord({ Entity: "Accounts", RecordID: AccountID }).then(res => {
+                            ? ZOHO.CRM.API.getRecord({ Entity: "Accounts", approved: "both", RecordID: AccountID}).then(res => {
                                 AccountData = res?.data?.[0] || null;
+                                console.log("Account Data:", AccountData);
+                                
                             })
                             : Promise.resolve();
 

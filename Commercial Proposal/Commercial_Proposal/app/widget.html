@@ -172,19 +172,23 @@ justify-content: center;
 
                 // ---Billing Address---
                 doc.setFont('Times', 'bold');
-                doc.text("Billing Address", 130, 215);
+                doc.text("Billing Address", 120, 215);
                 doc.setFont('Times', 'normal');
                 let billingStreet = AccountData?.Billing_Street || "N/A";
                 let billingStreetLines = doc.splitTextToSize(billingStreet, 65);
 
-                doc.text(`Customer Name: ${AccountData?.Account_Name || "N/A"}`, 130, 225);
+                let customerName = AccountData?.Account_Name || "N/A";
+                let customerNameLines = doc.splitTextToSize(customerName, 60); // Split customer name into multiple lines if necessary
+
+                doc.text("Customer Name:", 120, 225);
+                doc.text(customerNameLines, 145, 225); 
                 // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 130, 230);
-                doc.text("Street:", 130, 230);
-                doc.text(billingStreetLines, 140, 230);
-                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 130, 245);
-                doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 130, 250);
-                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 130, 255);
-                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 130, 260);
+                doc.text("Street:", 120, 235);
+                doc.text(billingStreetLines, 130, 235);
+                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 120, 250);
+                doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 120, 255);
+                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 120, 260);
+                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 120, 265);
 
                 
                 //-----------------------------------------------------------------------------------------------------------------
@@ -437,22 +441,25 @@ justify-content: center;
                 doc.setFont('Times New Roman', 'normal');
 
                 doc.text("Wohr Parking Systems Pvt. Ltd.", 18, 68);
-                doc.text(`${AccountData?.Account_Name || ''}`, 110, 68);
+                const PurchaserName = `${AccountData?.Account_Name || ''}`;
+                const SplitPurchaser = doc.splitTextToSize(PurchaserName, 55);
+                doc.text(SplitPurchaser, 110, 65);
 
-                doc.text("Sign:", 18, 75);
-                doc.text("Sign:", 110, 75);
+                doc.text("Sign:", 18, 75); // Adjusted Y position for Sign
+                doc.text("Sign:", 110, 80);
 
                 doc.text("Name: Milind Deshpande", 18, 85);
-                doc.text(`Name: ${ContactData?.Full_Name || ''}`, 110, 85);
+                doc.text(`Name: ${ContactData?.Full_Name || ''}`, 110, 90);
 
                 doc.text("Designation: Deputy General Manager", 18, 93);
-                doc.text("Designation:", 110, 93);
+                doc.text("Designation:", 110, 100);
 
                 doc.text("Date: ", 18, 105);
-                doc.text("Date: ", 110, 105);
+                doc.text("Date: ", 110, 110);
 
                 doc.rect(15, 55, 170, 60);
                 doc.line(100, 55, 100, 115);
+
 
 
                 doc.addPage();
