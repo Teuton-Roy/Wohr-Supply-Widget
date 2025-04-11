@@ -1127,7 +1127,7 @@ justify-content: center;
                         }
 
                         const accountPromise = AccountID
-                            ? ZOHO.CRM.API.getRecord({ Entity: "Accounts", RecordID: AccountID }).then(res => {
+                            ? ZOHO.CRM.API.getRecord({ Entity: "Accounts", approved: "both", RecordID: AccountID }).then(res => {
                                 AccountData = res?.data?.[0] || null;
                             })
                             : Promise.resolve();
