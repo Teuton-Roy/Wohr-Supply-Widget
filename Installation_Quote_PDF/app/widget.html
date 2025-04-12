@@ -104,9 +104,6 @@ justify-content: center;
                 const logoPath = "logo.jpeg";
                 const logoData = await loadImage(logoPath);
 
-                console.log(quoteData.Installation_Information);
-                console.log(quoteData.Installation_Payment_Term);
-
                 if (logoData) {
                     doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                 }
@@ -188,7 +185,7 @@ justify-content: center;
 
                 // --- Billing Address ---
                 doc.setFont('Times', 'bold');
-                doc.text("Billing Address", 120, 215);
+                doc.text("Billing Address", 118, 225);
                 doc.setFont('Times', 'normal');
                 let billingStreet = AccountData?.Billing_Street || "N/A";
                 let billingStreetLines = doc.splitTextToSize(billingStreet, 65);
@@ -196,15 +193,15 @@ justify-content: center;
                 let customerName = AccountData?.Account_Name || "N/A";
                 let customerNameLines = doc.splitTextToSize(customerName, 60); // Split customer name into multiple lines if necessary
 
-                doc.text("Customer Name:", 120, 225);
-                doc.text(customerNameLines, 145, 225); 
+                doc.text("Customer Name:", 118, 232);
+                doc.text(customerNameLines, 145, 232); 
                 // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 130, 230);
-                doc.text("Street:", 120, 235);
-                doc.text(billingStreetLines, 130, 235);
-                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 120, 250);
-                doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 120, 255);
-                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 120, 260);
-                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 120, 265);
+                doc.text("Street:", 118, 239);
+                doc.text(billingStreetLines, 130, 239);
+                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 118, 255);
+                doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 118, 260);
+                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 118, 265);
+                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 118, 270);
 
                 doc.addPage();
                 if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
@@ -246,8 +243,25 @@ justify-content: center;
                 const TotalTax = quoteData.Product_Details.reduce((acc, item) => acc + (item.Tax ?? 0), 0);
                 const NetTotal = quoteData.Product_Details.reduce((acc, item) => acc + (item.net_total ?? 0), 0);
 
+                // Extract unique tax names and percentages
+                const taxDetails = [];
+                quoteData.Product_Details.forEach((item) => {
+                    if (item.line_tax && item.line_tax.length > 0) {
+                        item.line_tax.forEach((tax) => {
+                            const taxEntry = `${tax.name} (${tax.percentage}%)`;
+                            if (!taxDetails.includes(taxEntry)) {
+                                taxDetails.push(taxEntry);
+                            }
+                        });
+                    }
+                });
+                const taxDetailsString = taxDetails.length > 0 ? taxDetails.join(", ") : "No Tax";
+
+                
+
                 tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${totalSum ?? 0}`]);
-                tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
+                tableData.push(["", "", "", taxDetailsString, `INR ${TotalTax}`]); 
+                
                 tableData.push(["", "", "", "Gross Contract Value", `INR ${NetTotal + TotalTax}`]);
 
 
@@ -266,7 +280,7 @@ justify-content: center;
                     const row = tableData[rowIndex];
                     const isTotalRow = row[1]?.includes("Total Quantity in Spaces") ||
                         row[1]?.includes("Net Contract Value") ||
-                        row[1]?.includes("Total Tax") ||
+                        // row[1]?.includes("Total Tax") ||
                         row[1]?.includes("Gross Contract Value");
 
                     if (isTotalRow) return 10;
