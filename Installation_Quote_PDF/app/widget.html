@@ -156,52 +156,72 @@ justify-content: center;
                 doc.text(`Phone No.: ${ContactData?.Mobile || "N/A"}`, 130, 142);
                 doc.text(`Email: ${ContactData?.Email || "N/A"}`, 130, 149);
 
-                doc.line(10, 165, 200, 165);
+                doc.line(10, 155, 200, 155);
 
                 // --- Customer Details ---
                 doc.setFont('Times', 'bold');
-                doc.text("Customer Details", 10, 177);
+                doc.text("Customer Details", 10, 165);
                 doc.setFont('Times', 'normal');
-                doc.text(`Customer Name: ${AccountData?.Account_Name || "N/A"}`, 10, 184);
-                doc.text(`GST No.: ${AccountData?.GSTIN_Number || "N/A"}`, 10, 191);
-                doc.text(`PAN: ${AccountData?.PAN_Number || "N/A"}`, 10, 198);
-                doc.text(`TAN No.: ${AccountData?.TAN_Number || "N/A"}`, 10, 205);
-                doc.text(`Contact person’s name: ${ContactData?.Full_Name || "N/A"}`, 10, 212);
+                doc.text(`Customer Name: ${AccountData?.Account_Name || "N/A"}`, 10, 172);
+                doc.text(`GST No.: ${AccountData?.GSTIN_Number || "N/A"}`, 10, 178);
+                doc.text(`PAN: ${AccountData?.PAN_Number || "N/A"}`, 10, 184);
+                doc.text(`TAN No.: ${AccountData?.TAN_Number || "N/A"}`, 10, 190);
+                doc.text(`Contact person’s name: ${ContactData?.Full_Name || "N/A"}`, 10, 196);
+
+                doc.line(10, 201, 200, 201);
 
                 // --- Site Address ---
                 doc.setFont('Times', 'bold');
-                doc.text("Site Address", 10, 225);
+                doc.text("Site Address", 10, 210);
                 doc.setFont('Times', 'normal');
+                // Dynamically calculate positions
+                let siteCurrentY = 215;
+                let projectName = OppData?.Deal_Name || "N/A";
+                let projectNameLines = doc.splitTextToSize(projectName, 60);
+                doc.text("Project Name:", 10, siteCurrentY);
+                doc.text(projectNameLines, 35, siteCurrentY);
+                siteCurrentY += projectNameLines.length * 5;
                 let siteStreet = OppData?.Project_Street || "N/A";
-                let siteStreetLines = doc.splitTextToSize(siteStreet, 65);
-                doc.text(`Project Name: ${OppData?.Deal_Name || "N/A"}`, 10, 232);
-                // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 10, 239);
-                doc.text("Street:", 10, 239);
-                doc.text(siteStreetLines, 22, 239);
-                doc.text(`City: ${OppData?.Project_City || "N/A"}`, 10, 255);
-                doc.text(`State: ${OppData?.Project_State || "N/A"}`, 10, 260);
-                doc.text(`Country: ${OppData?.Project_Country || "N/A"}`, 10, 265);
-                doc.text(`Postal Code: ${OppData?.Project_Zip_Code || "N/A"}`, 10, 270);
+                let siteStreetLines = doc.splitTextToSize(siteStreet, 70);
+                doc.text("Street:", 10, siteCurrentY);
+                doc.text(siteStreetLines, 22, siteCurrentY);
+                siteCurrentY += siteStreetLines.length * 5;
+                doc.text(`City: ${OppData?.Project_City || "N/A"}`, 10, siteCurrentY);
+                siteCurrentY += 5; 
+                doc.text(`State: ${OppData?.Project_State || "N/A"}`, 10, siteCurrentY);
+                siteCurrentY += 5; 
+                doc.text(`Country: ${OppData?.Project_Country || "N/A"}`, 10, siteCurrentY);
+                siteCurrentY += 5; 
+                doc.text(`Postal Code: ${OppData?.Project_Zip_Code || "N/A"}`, 10, siteCurrentY);
+
 
                 // --- Billing Address ---
                 doc.setFont('Times', 'bold');
-                doc.text("Billing Address", 118, 225);
+                doc.text("Billing Address", 118, 210);
                 doc.setFont('Times', 'normal');
-                let billingStreet = AccountData?.Billing_Street || "N/A";
-                let billingStreetLines = doc.splitTextToSize(billingStreet, 65);
-
+                // Dynamically calculate positions
+                let BcurrentY = 215;
                 let customerName = AccountData?.Account_Name || "N/A";
-                let customerNameLines = doc.splitTextToSize(customerName, 60); // Split customer name into multiple lines if necessary
+                let customerNameLines = doc.splitTextToSize(customerName, 60);
+                doc.text("Customer Name:", 118, BcurrentY);
+                doc.text(customerNameLines, 145, BcurrentY);
+                BcurrentY += customerNameLines.length * 5; 
+                let billingStreet = AccountData?.Billing_Street || "N/A";
+                let billingStreetLines = doc.splitTextToSize(billingStreet, 70);
+                doc.text("Street:", 118, BcurrentY);
+                doc.text(billingStreetLines, 130, BcurrentY);
+                BcurrentY += billingStreetLines.length * 5; 
+                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 118, BcurrentY);
+                BcurrentY += 5; 
+                doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 118, BcurrentY);
+                BcurrentY += 5; 
+                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 118, BcurrentY);
+                BcurrentY += 5;
+                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 118, BcurrentY);
 
-                doc.text("Customer Name:", 118, 232);
-                doc.text(customerNameLines, 145, 232); 
-                // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 130, 230);
-                doc.text("Street:", 118, 239);
-                doc.text(billingStreetLines, 130, 239);
-                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 118, 255);
-                doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 118, 260);
-                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 118, 265);
-                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 118, 270);
+                //------------------------------------------------------------------------------------------------
+                // Product Details Table
+                //------------------------------------------------------------------------------------------------
 
                 doc.addPage();
                 if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
@@ -224,7 +244,7 @@ justify-content: center;
                         const carWeight = product?.Car_Weight_In_Kg || "N/A";
                         const clearHeight = product?.Clear_Height || "N/A";
                         const coating = product?.System_Coating || "N/A";
-                        const ProductTax = product?.Tax || "N/A";
+                        // const ProductTax = product?.Tax || "N/A";
 
                         const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating: ${coating}\n`;
 
@@ -238,6 +258,7 @@ justify-content: center;
                     }
                 }
 
+
                 const totalSum = quoteData.Product_Details.reduce((acc, item) => acc + (item.total ?? 0), 0);
                 const TotalQuantity = quoteData.Product_Details.reduce((acc, item) => acc + (item.quantity ?? 0), 0);
                 const TotalTax = quoteData.Product_Details.reduce((acc, item) => acc + (item.Tax ?? 0), 0);
@@ -248,20 +269,20 @@ justify-content: center;
                 quoteData.Product_Details.forEach((item) => {
                     if (item.line_tax && item.line_tax.length > 0) {
                         item.line_tax.forEach((tax) => {
-                            const taxEntry = `${tax.name} (${tax.percentage}%)`;
+                            const taxEntry = `${tax.name}@ ${tax.percentage}%`;
                             if (!taxDetails.includes(taxEntry)) {
                                 taxDetails.push(taxEntry);
                             }
                         });
                     }
                 });
-                const taxDetailsString = taxDetails.length > 0 ? taxDetails.join(", ") : "No Tax";
-
+                console.log("Tax Details:", taxDetails);
+                // const taxDetailsString = taxDetails.length > 0 ? taxDetails.join(", ") : "No Tax";
+                const taxDetailsString = taxDetails.join(", ");
                 
-
                 tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${totalSum ?? 0}`]);
-                tableData.push(["", "", "", taxDetailsString, `INR ${TotalTax}`]); 
-                
+                // tableData.push(["", "", "", "Total Tax", `INR ${TotalTax}`]); 
+                tableData.push(["", "", "", taxDetailsString, `INR ${TotalTax}`]);
                 tableData.push(["", "", "", "Gross Contract Value", `INR ${NetTotal + TotalTax}`]);
 
 
@@ -379,7 +400,7 @@ justify-content: center;
 
                                 const isTotalQtyRow = row.includes("Total Quantity in Spaces");
                                 const isNetContractRow = row.includes("Net Contract Value");
-                                const isTotalTaxRow = row.includes("Total Tax");
+                                const isTotalTaxRow = row.includes(taxDetailsString);
                                 const isGrossRow = row.includes("Gross Contract Value");
 
                                 if (isImageCol && !isTotalQtyRow && !isNetContractRow && !isTotalTaxRow && !isGrossRow) {
@@ -402,10 +423,6 @@ justify-content: center;
                         }
                     });
                 });
-
-
-
-
 
                 doc.setFont('Times New Roman', 'bold');
                 doc.text("Rounded-off Amount in Words:", 14, doc.lastAutoTable.finalY + 10);
@@ -466,6 +483,7 @@ justify-content: center;
 
                 const totalSumInWords = numberToWords(NetTotal + TotalTax);
                 doc.text(`Rupees ${totalSumInWords}`, 14, doc.lastAutoTable.finalY + 20);
+                //---------------------------------------------------------------------------------
 
                 doc.addPage();
                 doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
