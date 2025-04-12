@@ -141,20 +141,17 @@ justify-content: center;
 
                 // --- Quotation Details ---
                 doc.setFont('Times', 'bold');
-                doc.text("Quotation Details", 130, 100);
+                doc.text("Quotation Details", 118, 100);
                 doc.setFont('Times', 'normal');
                 let totalQuantity = (quoteData?.Product_Details?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0).toFixed(2);
-                // doc.text(`Quote Number: ${quoteData?.Quotation_Number || "N/A"}`, 125, 110);
-                const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || "N/A"; // Display Order No. with the first available value
-                doc.text(`Quote Number: ${quoteData?.Quotation_Number || "N/A"}`, 130, 107);
-                // doc.text(`Order No.: ${quoteData?.Order_Number || "N/A"}`, 130, 114);
-                doc.text(`Order No.: ${orderNumber}`, 130, 115);
-                doc.text(`Customer Name: ${ContactData?.Full_Name || "N/A"}`, 130, 121);
-                // doc.text(`Valid Spaces: ${quoteData?.Number_of_Spaces || "N/A"}`, 130, 128);
-                doc.text(`Valid Spaces: ${totalQuantity}`, 130, 128);
-                doc.text(`Sales Representative: ${quoteData?.Owner?.name || "N/A"}`, 130, 135);
-                doc.text(`Phone No.: ${ContactData?.Mobile || "N/A"}`, 130, 142);
-                doc.text(`Email: ${ContactData?.Email || "N/A"}`, 130, 149);
+                const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || "N/A"; 
+                doc.text(`Quote Number: ${quoteData?.Quotation_Number || "N/A"}`, 118, 107);
+                doc.text(`Order No.: ${orderNumber}`, 118, 113);
+                doc.text(`Customer Name: ${ContactData?.Full_Name || "N/A"}`, 118, 119);
+                doc.text(`Valid Spaces: ${totalQuantity}`, 118, 125);
+                doc.text(`Sales Representative: ${quoteData?.Owner?.name || "N/A"}`, 118, 132);
+                doc.text(`Phone No.: ${ContactData?.Mobile || "N/A"}`, 118, 139);
+                doc.text(`Email: ${ContactData?.Email || "N/A"}`, 118, 146);
 
                 doc.line(10, 155, 200, 155);
 
@@ -276,7 +273,7 @@ justify-content: center;
                         });
                     }
                 });
-                console.log("Tax Details:", taxDetails);
+                // console.log("Tax Details:", taxDetails);
                 // const taxDetailsString = taxDetails.length > 0 ? taxDetails.join(", ") : "No Tax";
                 const taxDetailsString = taxDetails.join(", ");
                 
@@ -425,7 +422,7 @@ justify-content: center;
                 });
 
                 doc.setFont('Times New Roman', 'bold');
-                doc.text("Rounded-off Amount in Words:", 14, doc.lastAutoTable.finalY + 10);
+                doc.text("Rounded-off Amount in Words:", 14, doc.lastAutoTable.finalY + 8);
                 doc.setFont('Times New Roman', 'normal');
 
                 function numberToWords(num) {
@@ -482,7 +479,7 @@ justify-content: center;
                 }
 
                 const totalSumInWords = numberToWords(NetTotal + TotalTax);
-                doc.text(`Rupees ${totalSumInWords}`, 14, doc.lastAutoTable.finalY + 20);
+                doc.text(`Rupees ${totalSumInWords}`, 14, doc.lastAutoTable.finalY + 15);
                 //---------------------------------------------------------------------------------
 
                 doc.addPage();
