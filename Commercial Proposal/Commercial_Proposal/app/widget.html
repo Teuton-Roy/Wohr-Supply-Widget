@@ -153,21 +153,20 @@ justify-content: center;
 
                 doc.line(10, 205, 200, 205);
 
-                // ---Shipping Address---
+                // ---Site Address---
                 doc.setFont('Times', 'bold');
-                doc.text("Site Address", 11, 215);
+                doc.text("Site Address", 10, 215);
                 doc.setFont('Times', 'normal');
-                let siteStreet = AccountData?.Shipping_Street || "N/A";
+                let siteStreet = OppData?.Project_Street || "N/A";
                 let siteStreetLines = doc.splitTextToSize(siteStreet, 65);
-
-                doc.text(`Project Name: ${OppData?.Deal_Name || "N/A"}`, 11, 225);
-                // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 11, 230);
-                doc.text("Street:", 11, 230);
-                doc.text(siteStreetLines, 22, 230); 
-                doc.text(`City: ${AccountData?.Shipping_City || "N/A"}`, 11, 245);
-                doc.text(`State: ${AccountData?.Shipping_State || "N/A"}`, 11, 250);
-                doc.text(`Country: ${AccountData?.Shipping_Country || "N/A"}`, 11, 255);
-                doc.text(`Postal Code: ${AccountData?.Shipping_Code || "N/A"}`, 11, 260);
+                doc.text(`Project Name: ${OppData?.Deal_Name || "N/A"}`, 10, 225);
+                // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 10, 239);
+                doc.text("Street:", 10, 235);
+                doc.text(siteStreetLines, 22, 235);
+                doc.text(`City: ${OppData?.Project_City || "N/A"}`, 10, 250);
+                doc.text(`State: ${OppData?.Project_State || "N/A"}`, 10, 255);
+                doc.text(`Country: ${OppData?.Project_Country || "N/A"}`, 10, 260);
+                doc.text(`Postal Code: ${OppData?.Project_Zip_Code || "N/A"}`, 10, 265);
 
 
                 // ---Billing Address---
@@ -235,8 +234,23 @@ justify-content: center;
                 const TotalTax = quoteData.Product_Details.reduce((acc, item) => acc + (item.Tax ?? 0), 0);
                 const NetTotal = quoteData.Product_Details.reduce((acc, item) => acc + (item.net_total ?? 0), 0);
 
+                // Extract unique tax names and percentages
+                const taxDetails = [];
+                quoteData.Product_Details.forEach((item) => {
+                    if (item.line_tax && item.line_tax.length > 0) {
+                        item.line_tax.forEach((tax) => {
+                            const taxEntry = `${tax.name} (${tax.percentage}%)`;
+                            if (!taxDetails.includes(taxEntry)) {
+                                taxDetails.push(taxEntry);
+                            }
+                        });
+                    }
+                });
+                const taxDetailsString = taxDetails.length > 0 ? taxDetails.join(", ") : "No Tax";
+
                 tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${totalSum ?? 0}`]);
-                tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
+                // tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
+                tableData.push(["", "", "", taxDetailsString, `INR ${TotalTax}`]); 
                 tableData.push(["", "", "", "Gross Contract Value", `INR ${NetTotal + TotalTax}`]);
 
 
