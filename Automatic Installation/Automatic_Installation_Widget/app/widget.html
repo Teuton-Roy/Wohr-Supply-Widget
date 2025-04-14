@@ -163,39 +163,52 @@ justify-content: center;
 
                 // --- Site Address
                 doc.setFont('Times', 'bold');
-                doc.text("Site Address", 10, 215);
+                doc.text("Site Address", 10, 210);
                 doc.setFont('Times', 'normal');
+                // Dynamically calculate positions
+                let siteCurrentY = 215;
+                let projectName = OppData?.Deal_Name || "N/A";
+                let projectNameLines = doc.splitTextToSize(projectName, 60);
+                doc.text("Project Name:", 10, siteCurrentY);
+                doc.text(projectNameLines, 35, siteCurrentY);
+                siteCurrentY += projectNameLines.length * 5;
                 let siteStreet = OppData?.Project_Street || "N/A";
-                let siteStreetLines = doc.splitTextToSize(siteStreet, 65);
-                doc.text(`Project Name: ${OppData?.Deal_Name || "N/A"}`, 10, 225);
-                // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 10, 239);
-                doc.text("Street:", 10, 235);
-                doc.text(siteStreetLines, 22, 235);
-                doc.text(`City: ${OppData?.Project_City || "N/A"}`, 10, 250);
-                doc.text(`State: ${OppData?.Project_State || "N/A"}`, 10, 255);
-                doc.text(`Country: ${OppData?.Project_Country || "N/A"}`, 10, 260);
-                doc.text(`Postal Code: ${OppData?.Project_Zip_Code || "N/A"}`, 10, 265);
+                let siteStreetLines = doc.splitTextToSize(siteStreet, 70);
+                doc.text("Street:", 10, siteCurrentY);
+                doc.text(siteStreetLines, 22, siteCurrentY);
+                siteCurrentY += siteStreetLines.length * 5;
+                doc.text(`City: ${OppData?.Project_City || "N/A"}`, 10, siteCurrentY);
+                siteCurrentY += 5; 
+                doc.text(`State: ${OppData?.Project_State || "N/A"}`, 10, siteCurrentY);
+                siteCurrentY += 5; 
+                doc.text(`Country: ${OppData?.Project_Country || "N/A"}`, 10, siteCurrentY);
+                siteCurrentY += 5; 
+                doc.text(`Postal Code: ${OppData?.Project_Zip_Code || "N/A"}`, 10, siteCurrentY);
 
 
                 // --- Billing Address
                 doc.setFont('Times', 'bold');
-                doc.text("Billing Address", 120, 215);
+                doc.text("Billing Address", 118, 210);
                 doc.setFont('Times', 'normal');
-                let billingStreet = AccountData?.Billing_Street || "N/A";
-                let billingStreetLines = doc.splitTextToSize(billingStreet, 65);
-
+                // Dynamically calculate positions
+                let BcurrentY = 215;
                 let customerName = AccountData?.Account_Name || "N/A";
-                let customerNameLines = doc.splitTextToSize(customerName, 60); // Split customer name into multiple lines if necessary
-
-                doc.text("Customer Name:", 120, 225);
-                doc.text(customerNameLines, 145, 225); 
-                // doc.text(`Street: ${AccountData?.Billing_Street || "N/A"}`, 130, 230);
-                doc.text("Street:", 120, 235);
-                doc.text(billingStreetLines, 130, 235);
-                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 120, 250);
-                doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 120, 255);
-                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 120, 260);
-                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 120, 265);
+                let customerNameLines = doc.splitTextToSize(customerName, 60);
+                doc.text("Customer Name:", 118, BcurrentY);
+                doc.text(customerNameLines, 145, BcurrentY);
+                BcurrentY += customerNameLines.length * 5; 
+                let billingStreet = AccountData?.Billing_Street || "N/A";
+                let billingStreetLines = doc.splitTextToSize(billingStreet, 70);
+                doc.text("Street:", 118, BcurrentY);
+                doc.text(billingStreetLines, 130, BcurrentY);
+                BcurrentY += billingStreetLines.length * 5; 
+                doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 118, BcurrentY);
+                BcurrentY += 5; 
+                doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 118, BcurrentY);
+                BcurrentY += 5; 
+                doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 118, BcurrentY);
+                BcurrentY += 5;
+                doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 118, BcurrentY);
 
                 // -----------------------------------------------------------------------------------
                 //  Product Table
@@ -246,7 +259,7 @@ justify-content: center;
                 quoteData.Product_Details.forEach((item) => {
                     if (item.line_tax && item.line_tax.length > 0) {
                         item.line_tax.forEach((tax) => {
-                            const taxEntry = `${tax.name} (${tax.percentage}%)`;
+                            const taxEntry = `${tax.name}@${tax.percentage}%`;
                             if (!taxDetails.includes(taxEntry)) {
                                 taxDetails.push(taxEntry);
                             }
@@ -276,7 +289,7 @@ justify-content: center;
                     const row = tableData[rowIndex];
                     const isTotalRow = row[1]?.includes("Total Quantity in Spaces/Unit") ||
                         row[1]?.includes("Net Contract Value") ||
-                        row[1]?.includes("Total Tax") ||
+                        // row[1]?.includes("Total Tax") ||
                         row[1]?.includes("Gross Contract Value");
 
                     if (isTotalRow) return 10;
@@ -375,7 +388,7 @@ justify-content: center;
 
                                 const isTotalQtyRow = row.includes("Total Quantity in Spaces/Unit");
                                 const isNetContractRow = row.includes("Net Contract Value");
-                                const isTotalTaxRow = row.includes("Total Tax");
+                                const isTotalTaxRow = row.includes(taxDetailsString);
                                 const isGrossRow = row.includes("Gross Contract Value");
 
                                 if (isImageCol && !isTotalQtyRow && !isNetContractRow && !isTotalTaxRow && !isGrossRow) {
