@@ -245,259 +245,423 @@ justify-content: center;
                 if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                 doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
 
-                doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-
-                const MAX_IMAGE_HEIGHT = 40;
-                let tableData = [];
-
-                if (quoteData.Product_Details && quoteData.Product_Details.length > 0) {
-                    for (let i = 0; i < quoteData.Product_Details.length; i++) {
-                        const item = quoteData.Product_Details[i];
-                        const ProductID = item.product?.id || null;
-                        const product = ProductID ? ProductDataMap[ProductID] : null;
-
-                        const productName = product?.Product_Name || "Product";
-                        const platformWidth = product?.Platform_Width || "N/A";
-                        const platformLength = product?.Platform_Length || "N/A";
-                        const carWeight = product?.Car_Weight_In_Kg || "N/A";
-                        const clearHeight = product?.Clear_Height || "N/A";
-                        const coating = product?.System_Coating || "N/A";
-                        // const ProductTax = product?.Tax || "N/A";
-
-                        const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating: ${coating}`;
-
-                        tableData.push([
-                            productImages[ProductID] ? "" : "",
-                            description,
-                            item.quantity ?? 0,
-                            `INR ${item.list_price ?? 0}`,
-                            `INR ${item.total ?? 0}`
-                        ]);
-                    }
-                }
-
-                const totalSum = quoteData.Product_Details.reduce((acc, item) => acc + (item.total ?? 0), 0);
-                const TotalQuantity = quoteData.Product_Details.reduce((acc, item) => acc + (item.quantity ?? 0), 0);
-                const TotalTax = quoteData.Product_Details.reduce((acc, item) => acc + (item.Tax ?? 0), 0);
-                const NetTotal = quoteData.Product_Details.reduce((acc, item) => acc + (item.net_total ?? 0), 0);
-
-                // Extract unique tax names and percentages
-                const taxDetails = [];
-                quoteData.Product_Details.forEach((item) => {
-                    if (item.line_tax && item.line_tax.length > 0) {
-                        item.line_tax.forEach((tax) => {
-                            const taxEntry = `${tax.name}@${tax.percentage}%`;
-                            if (!taxDetails.includes(taxEntry)) {
-                                taxDetails.push(taxEntry);
-                            }
-                        });
-                    }
-                });
-                const taxDetailsString = taxDetails.length > 0 ? taxDetails.join(", ") : "No Tax";
-
-                tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${totalSum ?? 0}`]);
-                // tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
-                tableData.push(["", "", "", taxDetailsString, `INR ${TotalTax}`]); 
-                tableData.push(["", "", "", "Gross Contract Value", `INR ${totalSum + TotalTax}`]);
-
+                // doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
 
                 // const MAX_IMAGE_HEIGHT = 40;
-                const PAGE_HEIGHT = doc.internal.pageSize.height;
-                const TOP_MARGIN = 55;
-                const BOTTOM_MARGIN = 10;
-                const SAFE_AREA = PAGE_HEIGHT - BOTTOM_MARGIN;
+                // let tableData = [];
 
-                const processedChunks = [];
-                const MAX_PRODUCTS_PER_PAGE = 3; // new added line
-                let currentChunk = [];
-                let estimatedY = TOP_MARGIN;
+                // if (quoteData.Product_Details && quoteData.Product_Details.length > 0) {
+                //     for (let i = 0; i < quoteData.Product_Details.length; i++) {
+                //         const item = quoteData.Product_Details[i];
+                //         const ProductID = item.product?.id || null;
+                //         const product = ProductID ? ProductDataMap[ProductID] : null;
 
-                const estimateRowHeight = (rowIndex) => {
-                    const row = tableData[rowIndex];
-                    const isTotalRow = row[1]?.includes("Total Quantity in Spaces/Unit") ||
-                        row[1]?.includes("Net Contract Value") ||
-                        // row[1]?.includes("Total Tax") ||
-                        row[1]?.includes("Gross Contract Value");
+                //         const productName = product?.Product_Name || "Product";
+                //         const platformWidth = product?.Platform_Width || "N/A";
+                //         const platformLength = product?.Platform_Length || "N/A";
+                //         const carWeight = product?.Car_Weight_In_Kg || "N/A";
+                //         const clearHeight = product?.Clear_Height || "N/A";
+                //         const coating = product?.System_Coating || "N/A";
+                //         // const ProductTax = product?.Tax || "N/A";
 
-                    if (isTotalRow) return 10;
+                //         const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating: ${coating}`;
 
-                    const productItem = quoteData.Product_Details[rowIndex];
-                    const ProductID = productItem?.product?.id || null;
+                //         tableData.push([
+                //             productImages[ProductID] ? "" : "",
+                //             description,
+                //             item.quantity ?? 0,
+                //             `INR ${item.list_price ?? 0}`,
+                //             `INR ${item.total ?? 0}`
+                //         ]);
+                //     }
+                // }
 
-                    if (ProductID && productImages[ProductID]) {
-                        return MAX_IMAGE_HEIGHT + 6;
-                    }
+                // const totalSum = quoteData.Product_Details.reduce((acc, item) => acc + (item.total ?? 0), 0);
+                // const TotalQuantity = quoteData.Product_Details.reduce((acc, item) => acc + (item.quantity ?? 0), 0);
+                // const TotalTax = quoteData.Product_Details.reduce((acc, item) => acc + (item.Tax ?? 0), 0);
+                // const NetTotal = quoteData.Product_Details.reduce((acc, item) => acc + (item.net_total ?? 0), 0);
 
-                    return 15;
-                };
+                // // Extract unique tax names and percentages
+                // const taxDetails = [];
+                // quoteData.Product_Details.forEach((item) => {
+                //     if (item.line_tax && item.line_tax.length > 0) {
+                //         item.line_tax.forEach((tax) => {
+                //             const taxEntry = `${tax.name}@${tax.percentage}%`;
+                //             if (!taxDetails.includes(taxEntry)) {
+                //                 taxDetails.push(taxEntry);
+                //             }
+                //         });
+                //     }
+                // });
+                // const taxDetailsString = taxDetails.length > 0 ? taxDetails.join(", ") : "No Tax";
 
-                for (let i = 0; i < tableData.length - 3; i++) {
-                    // const rowHeight = estimateRowHeight(i);
+                // tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${totalSum ?? 0}`]);
+                // // tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
+                // tableData.push(["", "", "", taxDetailsString, `INR ${TotalTax}`]); 
+                // tableData.push(["", "", "", "Gross Contract Value", `INR ${totalSum + TotalTax}`]);
 
-                    // if (estimatedY + rowHeight > SAFE_AREA) {
-                    //     processedChunks.push(currentChunk);
-                    //     currentChunk = [];
-                    //     estimatedY = TOP_MARGIN;
-                    // }
 
-                    // currentChunk.push(tableData[i]);
-                    // estimatedY += rowHeight;
-                    if (currentChunk.length === MAX_PRODUCTS_PER_PAGE) {
-                        processedChunks.push(currentChunk);
-                        currentChunk = [];
-                    }
-                    currentChunk.push(tableData[i]);
-                }
+                // // const MAX_IMAGE_HEIGHT = 40;
+                // const PAGE_HEIGHT = doc.internal.pageSize.height;
+                // const TOP_MARGIN = 55;
+                // const BOTTOM_MARGIN = 10;
+                // const SAFE_AREA = PAGE_HEIGHT - BOTTOM_MARGIN;
 
-                if (currentChunk.length > 0) {
-                    processedChunks.push(currentChunk);
-                }
+                // const processedChunks = [];
+                // const MAX_PRODUCTS_PER_PAGE = 3; // new added line
+                // let currentChunk = [];
+                // let estimatedY = TOP_MARGIN;
 
-                const totalRows = tableData.slice(-3);
-                const lastChunkIndex = processedChunks.length - 1;
+                // const estimateRowHeight = (rowIndex) => {
+                //     const row = tableData[rowIndex];
+                //     const isTotalRow = row[1]?.includes("Total Quantity in Spaces/Unit") ||
+                //         row[1]?.includes("Net Contract Value") ||
+                //         // row[1]?.includes("Total Tax") ||
+                //         row[1]?.includes("Gross Contract Value");
 
-                if (processedChunks.length > 0 && processedChunks[lastChunkIndex].length < MAX_PRODUCTS_PER_PAGE) {
-                    // If last product page has space, add totals on the same page
-                    processedChunks[lastChunkIndex] = [...processedChunks[lastChunkIndex], ...totalRows];
-                } else {
-                    // Otherwise, push totals to a new page
-                    processedChunks.push(totalRows);
-                }
+                //     if (isTotalRow) return 10;
 
-                // Render chunks page by page
-                processedChunks.forEach((chunk, index) => {
-                    if (index > 0) doc.addPage();
+                //     const productItem = quoteData.Product_Details[rowIndex];
+                //     const ProductID = productItem?.product?.id || null;
 
-                    doc.autoTable({
-                        margin: { top: TOP_MARGIN },
-                        head: [["Product Image", "Product", "Quantity in Spaces/Unit", "Unit Price (INR)", "Net Contract Value (INR)"]],
-                        body: chunk,
-                        theme: "grid",
-                        styles: { font: "Times", fontSize: 10, cellPadding: 3, lineWidth: 0.2, lineColor: [0, 0, 0] },
-                        headStyles: { fillColor: [255, 255, 255], halign: 'center', fontSize: 12, textColor: [0, 0, 0], fontStyle: 'bold' },
-                        columnStyles: {
-                            0: { cellWidth: 50, halign: "center" },
-                            1: { cellWidth: 50, halign: "left" },
-                            2: { cellWidth: 30, halign: "center" },
-                            3: { cellWidth: 30, halign: "right" },
-                            4: { cellWidth: 30, halign: "right" }
-                        },
-                        showHead: index === 0 ? 'firstPage' : false,
+                //     if (ProductID && productImages[ProductID]) {
+                //         return MAX_IMAGE_HEIGHT + 6;
+                //     }
 
-                        didDrawCell: async function (data) {
-                            if (
-                                data.section === "body" &&
-                                data.column.index === 0 &&
-                                data.row.index < chunk.length
-                            ) {
-                                const globalRowIndex = tableData.findIndex(r => r === chunk[data.row.index]);
-                                const productItem = quoteData.Product_Details[globalRowIndex];
-                                const ProductID = productItem?.product?.id || null;
+                //     return 15;
+                // };
 
-                                if (ProductID && productImages[ProductID]) {
-                                    try {
-                                        const imgWidth = 40;
-                                        const imgHeight = Math.min(MAX_IMAGE_HEIGHT, data.cell.height - 10);
-                                        const xPos = data.cell.x + (data.cell.width - imgWidth) / 2;
-                                        const yPos = data.cell.y + (data.cell.height - imgHeight) / 2;
-                                        doc.addImage(productImages[ProductID], "PNG", xPos, yPos, imgWidth, imgHeight);
-                                    } catch (error) {
-                                        console.error(`Error adding image for product ${ProductID}:`, error);
-                                    }
-                                }
-                            }
-                        },
+                // for (let i = 0; i < tableData.length - 3; i++) {
+                //     // const rowHeight = estimateRowHeight(i);
 
-                        didParseCell: function (data) {
-                            if (data.section === "body") {
-                                const row = data.row.raw;
-                                const isImageCol = data.column.index === 0;
+                //     // if (estimatedY + rowHeight > SAFE_AREA) {
+                //     //     processedChunks.push(currentChunk);
+                //     //     currentChunk = [];
+                //     //     estimatedY = TOP_MARGIN;
+                //     // }
 
-                                const isTotalQtyRow = row.includes("Total Quantity in Spaces/Unit");
-                                const isNetContractRow = row.includes("Net Contract Value");
-                                const isTotalTaxRow = row.includes(taxDetailsString);
-                                const isGrossRow = row.includes("Gross Contract Value");
+                //     // currentChunk.push(tableData[i]);
+                //     // estimatedY += rowHeight;
+                //     if (currentChunk.length === MAX_PRODUCTS_PER_PAGE) {
+                //         processedChunks.push(currentChunk);
+                //         currentChunk = [];
+                //     }
+                //     currentChunk.push(tableData[i]);
+                // }
 
-                                if (isImageCol && !isTotalQtyRow && !isNetContractRow && !isTotalTaxRow && !isGrossRow) {
-                                    data.cell.styles.minCellHeight = MAX_IMAGE_HEIGHT;
-                                }
+                // if (currentChunk.length > 0) {
+                //     processedChunks.push(currentChunk);
+                // }
 
-                                if (isTotalQtyRow || isNetContractRow || isTotalTaxRow || isGrossRow) {
-                                    data.cell.styles.minCellHeight = 10;
-                                    data.cell.styles.fontStyle = "normal";
-                                    data.cell.styles.textColor = [0, 0, 0];
-                                }
-                            }
-                        },
+                // const totalRows = tableData.slice(-3);
+                // const lastChunkIndex = processedChunks.length - 1;
 
-                        didDrawPage: function () {
-                            if (logoData) {
-                                doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                            }
-                            doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
-                        }
-                    });
+                // if (processedChunks.length > 0 && processedChunks[lastChunkIndex].length < MAX_PRODUCTS_PER_PAGE) {
+                //     // If last product page has space, add totals on the same page
+                //     processedChunks[lastChunkIndex] = [...processedChunks[lastChunkIndex], ...totalRows];
+                // } else {
+                //     // Otherwise, push totals to a new page
+                //     processedChunks.push(totalRows);
+                // }
+
+                // // Render chunks page by page
+                // processedChunks.forEach((chunk, index) => {
+                //     if (index > 0) doc.addPage();
+
+                //     doc.autoTable({
+                //         margin: { top: TOP_MARGIN },
+                //         head: [["Product Image", "Product", "Quantity in Spaces/Unit", "Unit Price (INR)", "Net Contract Value (INR)"]],
+                //         body: chunk,
+                //         theme: "grid",
+                //         styles: { font: "Times", fontSize: 10, cellPadding: 3, lineWidth: 0.2, lineColor: [0, 0, 0] },
+                //         headStyles: { fillColor: [255, 255, 255], halign: 'center', fontSize: 12, textColor: [0, 0, 0], fontStyle: 'bold' },
+                //         columnStyles: {
+                //             0: { cellWidth: 50, halign: "center" },
+                //             1: { cellWidth: 50, halign: "left" },
+                //             2: { cellWidth: 30, halign: "center" },
+                //             3: { cellWidth: 30, halign: "right" },
+                //             4: { cellWidth: 30, halign: "right" }
+                //         },
+                //         showHead: index === 0 ? 'firstPage' : false,
+
+                //         didDrawCell: async function (data) {
+                //             if (
+                //                 data.section === "body" &&
+                //                 data.column.index === 0 &&
+                //                 data.row.index < chunk.length
+                //             ) {
+                //                 const globalRowIndex = tableData.findIndex(r => r === chunk[data.row.index]);
+                //                 const productItem = quoteData.Product_Details[globalRowIndex];
+                //                 const ProductID = productItem?.product?.id || null;
+
+                //                 if (ProductID && productImages[ProductID]) {
+                //                     try {
+                //                         const imgWidth = 40;
+                //                         const imgHeight = Math.min(MAX_IMAGE_HEIGHT, data.cell.height - 10);
+                //                         const xPos = data.cell.x + (data.cell.width - imgWidth) / 2;
+                //                         const yPos = data.cell.y + (data.cell.height - imgHeight) / 2;
+                //                         doc.addImage(productImages[ProductID], "PNG", xPos, yPos, imgWidth, imgHeight);
+                //                     } catch (error) {
+                //                         console.error(`Error adding image for product ${ProductID}:`, error);
+                //                     }
+                //                 }
+                //             }
+                //         },
+
+                //         didParseCell: function (data) {
+                //             if (data.section === "body") {
+                //                 const row = data.row.raw;
+                //                 const isImageCol = data.column.index === 0;
+
+                //                 const isTotalQtyRow = row.includes("Total Quantity in Spaces/Unit");
+                //                 const isNetContractRow = row.includes("Net Contract Value");
+                //                 const isTotalTaxRow = row.includes(taxDetailsString);
+                //                 const isGrossRow = row.includes("Gross Contract Value");
+
+                //                 if (isImageCol && !isTotalQtyRow && !isNetContractRow && !isTotalTaxRow && !isGrossRow) {
+                //                     data.cell.styles.minCellHeight = MAX_IMAGE_HEIGHT;
+                //                 }
+
+                //                 if (isTotalQtyRow || isNetContractRow || isTotalTaxRow || isGrossRow) {
+                //                     data.cell.styles.minCellHeight = 10;
+                //                     data.cell.styles.fontStyle = "normal";
+                //                     data.cell.styles.textColor = [0, 0, 0];
+                //                 }
+                //             }
+                //         },
+
+                //         didDrawPage: function () {
+                //             if (logoData) {
+                //                 doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                //             }
+                //             doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
+                //         }
+                //     });
+                // });
+
+                // doc.setFont('Times New Roman', 'bold');
+                // doc.text("Rounded-off Amount in Words:", 15, doc.lastAutoTable.finalY + 10);
+                // doc.setFont('Times New Roman', 'normal');
+                // function numberToWords(num) {
+                //     const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+                //         "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+                //         "Seventeen", "Eighteen", "Nineteen"];
+                //     const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+                //     function convertToWords(n) {
+                //         if (n < 20) return a[n];
+                //         if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+                //         if (n < 1000) return a[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + convertToWords(n % 100) : "");
+                //         return "";
+                //     }
+
+                //     function formatIndianNumber(n) {
+                //         const c = ["", "Thousand", "Lakh", "Crore"];
+                //         let result = "";
+                //         let place = 0;
+
+                //         // Break number into Indian format chunks
+                //         if (n > 999) {
+                //             const crore = Math.floor(n / 10000000);
+                //             const lakh = Math.floor((n % 10000000) / 100000);
+                //             const thousand = Math.floor((n % 100000) / 1000);
+                //             const hundred = Math.floor(n % 1000);
+
+                //             if (crore) result += convertToWords(crore) + " Crore ";
+                //             if (lakh) result += convertToWords(lakh) + " Lakh ";
+                //             if (thousand) result += convertToWords(thousand) + " Thousand ";
+                //             if (hundred) result += convertToWords(hundred);
+                //         } else {
+                //             result = convertToWords(n);
+                //         }
+
+                //         return result.trim();
+                //     }
+
+                //     const [rupeesPart, paisePart] = num.toString().split(".");
+                //     const rupees = parseInt(rupeesPart);
+                //     const paise = parseInt((paisePart || "0").substring(0, 2)); // get only 2 digits
+
+                //     let words = "";
+
+                //     if (rupees > 0) {
+                //         words += formatIndianNumber(rupees) + " Rupees";
+                //     }
+
+                //     if (paise > 0) {
+                //         words += (rupees > 0 ? " and " : "") + convertToWords(paise) + " Paise";
+                //     }
+
+                //     return words ? words + " Only" : "Zero Only";
+                // }
+
+
+                // const totalSumInWords = numberToWords(totalSum + TotalTax);
+                // doc.text(`Rupees ${totalSumInWords}`, 15, doc.lastAutoTable.finalY + 20);
+
+                let boxStartY = 55; // Starting Y position of the box
+                let boxHeight = 10; // Initial height for the header row
+
+                // Define column headers and their widths
+                const columns = [
+                    { header: "Installation Service Name", width: 50 },
+                    { header: "Product Code", width: 35 },
+                    { header: "Quantity", width: 25 },
+                    { header: "UoM", width: 20 },
+                    { header: "Capacity", width: 25 },
+                    { header: "Price", width: 40 }
+                ];
+
+                // Calculate column positions dynamically
+                let currentX = 10; // Starting X position
+                const columnPositions = [];
+                columns.forEach((col) => {
+                    columnPositions.push(currentX);
+                    currentX += col.width;
+                });
+                columnPositions.push(currentX); // Add the final position for the last vertical line
+
+                // Draw table headers
+                doc.setLineWidth(0.5);
+                doc.rect(10, boxStartY, 195, boxHeight); // Draw the header box
+                doc.setFontSize(10).setFont("Times", "bold");
+                columns.forEach((col, index) => {
+                    const textX = columnPositions[index] + 2; // Add padding for text
+                    doc.text(col.header, textX, boxStartY + 5);
                 });
 
-                doc.setFont('Times New Roman', 'bold');
-                doc.text("Rounded-off Amount in Words:", 15, doc.lastAutoTable.finalY + 10);
-                doc.setFont('Times New Roman', 'normal');
-                function numberToWords(num) {
-                    const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
-                        "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
-                        "Seventeen", "Eighteen", "Nineteen"];
-                    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+                // Draw vertical lines dynamically for the header
+                columnPositions.forEach((xPosition) => {
+                    doc.line(xPosition, boxStartY, xPosition, boxStartY + boxHeight);
+                });
 
-                    function convertToWords(n) {
-                        if (n < 20) return a[n];
-                        if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
-                        if (n < 1000) return a[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + convertToWords(n % 100) : "");
-                        return "";
-                    }
+                let startY1 = boxStartY + boxHeight; // Start Y position for the rows
 
-                    function formatIndianNumber(n) {
-                        const c = ["", "Thousand", "Lakh", "Crore"];
-                        let result = "";
-                        let place = 0;
+                doc.setFont("Times", "normal");
+                const installationInfo = quoteData.Installation_Information || [];
 
-                        // Break number into Indian format chunks
-                        if (n > 999) {
-                            const crore = Math.floor(n / 10000000);
-                            const lakh = Math.floor((n % 10000000) / 100000);
-                            const thousand = Math.floor((n % 100000) / 1000);
-                            const hundred = Math.floor(n % 1000);
+                let totalQuantity1 = 0;
+                let netContractValue = 0;
+                let taxDetails = {};
+                let totalTaxAmount = 0;
+                let grossTotal = 0; 
 
-                            if (crore) result += convertToWords(crore) + " Crore ";
-                            if (lakh) result += convertToWords(lakh) + " Lakh ";
-                            if (thousand) result += convertToWords(thousand) + " Thousand ";
-                            if (hundred) result += convertToWords(hundred);
+                installationInfo.forEach((info) => {
+                    totalQuantity1 += info.Quantity || 0;
+                    netContractValue += (info.Quantity || 0) * (info.Installation_Products_Price || 0); // Calculate Net Contract Value
+
+                    if (info.Tax && Array.isArray(info.Tax)) {
+                        const taxNames = info.Tax.map((tax) => {
+                            const [taxName, taxPercentage] = tax.split(" - "); // Split tax name and percentage
+                            return `${taxName}@${taxPercentage.trim()}`;
+                        }).join(", "); // Combine tax names into a single string
+
+                        if (!taxDetails[taxNames]) {
+                            taxDetails[taxNames] = info.Tax_Amount || 0; // Store the tax amount for the combined tax names
                         } else {
-                            result = convertToWords(n);
+                            taxDetails[taxNames] += info.Tax_Amount || 0; // Accumulate tax amount if the same tax combination exists
                         }
 
-                        return result.trim();
+                        totalTaxAmount += info.Tax_Amount || 0; // Accumulate total tax amount
                     }
 
-                    const [rupeesPart, paisePart] = num.toString().split(".");
-                    const rupees = parseInt(rupeesPart);
-                    const paise = parseInt((paisePart || "0").substring(0, 2)); // get only 2 digits
+                    grossTotal = netContractValue + totalTaxAmount; // Calculate gross total
 
-                    let words = "";
+                    if (startY1 + 10 > 280) { // Add a new page if content exceeds the page height
+                        doc.rect(10, boxStartY, 195, startY1 - boxStartY); // Draw enclosing box
+                        doc.addPage();
+                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                        doc.setFontSize(10).setFont("Times", "normal");
+                        doc.text(`Date: ${formattedDate}`, 175, 40);
 
-                    if (rupees > 0) {
-                        words += formatIndianNumber(rupees) + " Rupees";
+                        // Re-add table headers
+                        boxStartY = 50;
+                        startY1 = boxStartY + 7;
+                        doc.rect(10, boxStartY, 195, 7);
+                        doc.setFontSize(10).setFont("Times", "bold");
+                        columns.forEach((col, index) => {
+                            const textX = columnPositions[index] + 2; // Add padding for text
+                            doc.text(col.header, textX, boxStartY + 5);
+                        });
+
+                        // Draw vertical lines dynamically for the header
+                        columnPositions.forEach((xPosition) => {
+                            doc.line(xPosition, boxStartY, xPosition, boxStartY + boxHeight);
+                        });
                     }
 
-                    if (paise > 0) {
-                        words += (rupees > 0 ? " and " : "") + convertToWords(paise) + " Paise";
-                    }
+                    // Add row data
+                    doc.rect(10, startY1, 195, 10); // Draw a box for each row
+                    let currentX = 10; // Reset X position for each row
 
-                    return words ? words + " Only" : "Zero Only";
-                }
+                    columns.forEach((col) => {
+                        const textX = currentX + 2; // Add padding for text
+                        let value = "N/A"; // Default value
+                        switch (col.header) {
+                            case "Installation Service Name":
+                                value = info.Installation_Service_Name?.name || "N/A";
+                                break;
+                            case "Product Code":
+                                value = info.Product_Code || "N/A";
+                                break;
+                            case "Quantity":
+                                value = `${info.Quantity || "N/A"}`;
+                                break;
+                            case "UoM":
+                                value = info.UoM || "N/A";
+                                break;
+                            case "Capacity":
+                                value = info.Installation_Product_Capacity_kg_1 || "N/A";
+                                break;
+                            case "Price":
+                                value = `INR ${info.Installation_Products_Price || "N/A"}`;
+                                break;
+                        }
+                        doc.text(value, textX, startY1 + 7);
+                        currentX += col.width; // Move to the next column
+                    });
 
+                    startY1 += 10; // Increment Y position for the next row
+                });
 
-                const totalSumInWords = numberToWords(totalSum + TotalTax);
-                doc.text(`Rupees ${totalSumInWords}`, 15, doc.lastAutoTable.finalY + 20);
+                doc.rect(10, startY1, 195, 10);
+                doc.text("Total Quantity", 65, startY1 + 7);
+                doc.text(`${totalQuantity1}`, 100, startY1 + 7);
+                const text = "Net Contract Value";
+                const value = doc.splitTextToSize(text, 25);
+                doc.text(value, 142, startY1 + 5);
+                doc.text(`INR ${netContractValue}`, 170, startY1 + 7);
+
+                startY1 += 10;
+
+                // Render tax details in a single row
+                const taxSummary = Object.keys(taxDetails).join("\n");
+                doc.rect(10, startY1, 195, 10 + (Object.keys(taxDetails).length - 1) * 5);
+                doc.text("", 12, startY1 + 7);
+                doc.text("", 100, startY1 + 7); 
+                const tax = doc.splitTextToSize(taxSummary, 25);
+                doc.text(tax, 142, startY1 + 5);
+                doc.text(`INR ${totalTaxAmount}`, 170, startY1 + 7);
+
+                startY1 += 10 + (Object.keys(taxDetails).length - 1) * 5;
+
+                // Add gross total row
+                doc.rect(10, startY1, 195, 10);
+                doc.text("", 12, startY1 + 7);
+                doc.text("", 100, startY1 + 7);
+                const text2 = "Gross Contract Value";
+                const value2 = doc.splitTextToSize(text2, 25);
+                doc.text(value2, 142, startY1 + 5);
+                doc.text(`INR ${grossTotal}`, 170, startY1 + 7);
+
+                // Draw vertical lines dynamically for the entire table (header + rows)
+                columnPositions.forEach((xPosition) => {
+                    doc.line(xPosition, boxStartY, xPosition, startY1+10); // Adjust height dynamically
+                });
+
+                // Draw enclosing box for the entire section
+                doc.rect(10, boxStartY, 195, startY1 - boxStartY);
+
 
                 // ---------------------------------------------------------------------------------------------
 
@@ -509,80 +673,80 @@ justify-content: center;
 
 
                 // Add Installation Information Section
-                doc.setFontSize(12).setFont("Times", "bold");
-                doc.text("Installation Information", 10, 50);
+                // doc.setFontSize(12).setFont("Times", "bold");
+                // doc.text("Installation Information", 10, 50);
 
-                let boxStartY = 55;
-                let boxHeight = 7; 
+                // let boxStartY = 55;
+                // let boxHeight = 7; 
                 // Table headers for Installation Information
-                doc.setLineWidth(0.5);
-                doc.rect(10, boxStartY, 195, boxHeight);
-                doc.setFontSize(10).setFont("Times", "bold");
-                doc.text("Installation Service Name", 12, boxStartY + 5);
-                doc.text("Product Code", 65, boxStartY + 5);
-                doc.text("Quantity", 100, boxStartY + 5);
-                doc.text("UoM", 120, boxStartY + 5);
-                doc.text("Capacity", 145, boxStartY + 5);
-                doc.text("Price", 170, boxStartY + 5);
+                // doc.setLineWidth(0.5);
+                // doc.rect(10, boxStartY, 195, boxHeight);
+                // doc.setFontSize(10).setFont("Times", "bold");
+                // doc.text("Installation Service Name", 12, boxStartY + 5);
+                // doc.text("Product Code", 65, boxStartY + 5);
+                // doc.text("Quantity", 100, boxStartY + 5);
+                // doc.text("UoM", 120, boxStartY + 5);
+                // doc.text("Capacity", 145, boxStartY + 5);
+                // doc.text("Price", 170, boxStartY + 5);
 
-                // Add vertical lines for columns
-                doc.line(60, boxStartY, 60, boxStartY + boxHeight);
-                doc.line(95, boxStartY, 95, boxStartY + boxHeight);
-                doc.line(115, boxStartY, 115, boxStartY + boxHeight);
-                doc.line(140, boxStartY, 140, boxStartY + boxHeight);
-                doc.line(165, boxStartY, 165, boxStartY + boxHeight);
+                // // Add vertical lines for columns
+                // doc.line(60, boxStartY, 60, boxStartY + boxHeight);
+                // doc.line(95, boxStartY, 95, boxStartY + boxHeight);
+                // doc.line(115, boxStartY, 115, boxStartY + boxHeight);
+                // doc.line(140, boxStartY, 140, boxStartY + boxHeight);
+                // doc.line(165, boxStartY, 165, boxStartY + boxHeight);
 
-                let startY1 = boxStartY + boxHeight; // Start Y position for the rows
+                // let startY1 = boxStartY + boxHeight; // Start Y position for the rows
 
-                doc.setFont("Times", "normal");
-                const installationInfo = quoteData.Installation_Information || [];
-                installationInfo.forEach((info) => {
-                    if (startY1 + 10 > 280) { // Add a new page if content exceeds the page height
-                        doc.rect(10, boxStartY, 195, startY1 - boxStartY); 
-                        doc.addPage();
-                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                        doc.setFontSize(10).setFont("Times", "normal");
-                        doc.text(`Date: ${formattedDate}`, 175, 40);
+                // doc.setFont("Times", "normal");
+                // const installationInfo = quoteData.Installation_Information || [];
+                // installationInfo.forEach((info) => {
+                //     if (startY1 + 10 > 280) { // Add a new page if content exceeds the page height
+                //         doc.rect(10, boxStartY, 195, startY1 - boxStartY); 
+                //         doc.addPage();
+                //         doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                //         doc.setFontSize(10).setFont("Times", "normal");
+                //         doc.text(`Date: ${formattedDate}`, 175, 40);
 
-                        // Re-add table headers
-                        boxStartY = 50;
-                        startY1 = boxStartY + 7;
-                        doc.rect(10, boxStartY, 195, 7);
-                        doc.setFontSize(10).setFont("Times", "bold");
-                        doc.text("Service Name", 12, boxStartY + 5);
-                        doc.text("Product Code", 65, boxStartY + 5);
-                        doc.text("Quantity", 100, boxStartY + 5);
-                        doc.text("UoM", 120, boxStartY + 5);
-                        doc.text("Capacity", 145, boxStartY + 5);
-                        doc.text("Price", 170, boxStartY + 5);
+                //         // Re-add table headers
+                //         boxStartY = 50;
+                //         startY1 = boxStartY + 7;
+                //         doc.rect(10, boxStartY, 195, 7);
+                //         doc.setFontSize(10).setFont("Times", "bold");
+                //         doc.text("Service Name", 12, boxStartY + 5);
+                //         doc.text("Product Code", 65, boxStartY + 5);
+                //         doc.text("Quantity", 100, boxStartY + 5);
+                //         doc.text("UoM", 120, boxStartY + 5);
+                //         doc.text("Capacity", 145, boxStartY + 5);
+                //         doc.text("Price", 170, boxStartY + 5);
 
-                    }
+                //     }
 
-                    // Add row data
-                    doc.rect(10, startY1, 195, 10); // Draw a box for each row
-                    doc.text(info.Installation_Service_Name?.name || "N/A", 12, startY1 + 7);
-                    doc.text(info.Product_Code || "N/A", 65, startY1 + 7);
-                    doc.text(`${info.Quantity || "N/A"}`, 100, startY1 + 7);
-                    doc.text(info.UoM || "N/A", 120, startY1 + 7);
-                    doc.text(info.Installation_Product_Capacity_kg_1 || "N/A", 145, startY1 + 7);
-                    doc.text(`INR ${info.Installation_Products_Price || "N/A"}`, 170, startY1 + 7);
+                //     // Add row data
+                //     doc.rect(10, startY1, 195, 10); // Draw a box for each row
+                //     doc.text(info.Installation_Service_Name?.name || "N/A", 12, startY1 + 7);
+                //     doc.text(info.Product_Code || "N/A", 65, startY1 + 7);
+                //     doc.text(`${info.Quantity || "N/A"}`, 100, startY1 + 7);
+                //     doc.text(info.UoM || "N/A", 120, startY1 + 7);
+                //     doc.text(info.Installation_Product_Capacity_kg_1 || "N/A", 145, startY1 + 7);
+                //     doc.text(`INR ${info.Installation_Products_Price || "N/A"}`, 170, startY1 + 7);
 
-                    // Add vertical lines for columns in each row
-                    doc.line(60, startY1, 60, startY1 + 10);
-                    doc.line(95, startY1, 95, startY1 + 10);
-                    doc.line(115, startY1, 115, startY1 + 10);
-                    doc.line(140, startY1, 140, startY1 + 10);
-                    doc.line(165, startY1, 165, startY1 + 10);
+                //     // Add vertical lines for columns in each row
+                //     doc.line(60, startY1, 60, startY1 + 10);
+                //     doc.line(95, startY1, 95, startY1 + 10);
+                //     doc.line(115, startY1, 115, startY1 + 10);
+                //     doc.line(140, startY1, 140, startY1 + 10);
+                //     doc.line(165, startY1, 165, startY1 + 10);
 
-                    startY1 += 10;
-                });
-                doc.rect(10, boxStartY, 195, startY1 - boxStartY); // Draw enclosing box for the entire section
+                //     startY1 += 10;
+                // });
+                // doc.rect(10, boxStartY, 195, startY1 - boxStartY); // Draw enclosing box for the entire section
 
                 // Add Installation Payment Term Section
                 doc.setFontSize(12).setFont("Times", "bold");
-                doc.text("Installation Payment Term", 10, startY1 + 15);
+                doc.text("Installation Payment Term", 10, startY1 - 45);
 
-                let paymentBoxStartY = startY1 + 20; // Starting Y position of the payment term box
+                let paymentBoxStartY = startY1 - 40; // Starting Y position of the payment term box
                 let paymentBoxHeight = 7; // Initial height for the header row
 
                 // Table headers for Installation Payment Term
@@ -685,32 +849,32 @@ justify-content: center;
                 let currentY = startY + 7;
 
                 // Calculate required height dynamically
-                paymentTerms.forEach(term => {
-                    let paymentPercentage = term.Payment_Percentage || "";
-                    let paymentDescription = term.Payment_Terms_Description || "";
-                    let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
-                    let splitText = doc.splitTextToSize(combinedText, textMaxWidth);
-                    textHeights.push(splitText.length * 5 + 2);
-                    boxHeight1 += splitText.length * 5 + 2;
-                });
+                // paymentTerms.forEach(term => {
+                //     let paymentPercentage = term.Payment_Percentage || "";
+                //     let paymentDescription = term.Payment_Terms_Description || "";
+                //     let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
+                //     let splitText = doc.splitTextToSize(combinedText, textMaxWidth);
+                //     textHeights.push(splitText.length * 5 + 2);
+                //     boxHeight1 += splitText.length * 5 + 2;
+                // });
 
-                // Draw the payment terms box
-                doc.rect(15, startY, 190, boxHeight1);
-                doc.line(50, startY, 50, startY + boxHeight1);
+                // // Draw the payment terms box
+                // doc.rect(15, startY, 190, boxHeight1);
+                // doc.line(50, startY, 50, startY + boxHeight1);
 
-                // Render payment terms
-                doc.setFontSize(10).setFont('Times', 'bold');
-                const titleY = startY + (boxHeight1 / 2); // Middle of the box height
-                doc.text("PAYMENT TERMS", 16, titleY);
+                // // Render payment terms
+                // doc.setFontSize(10).setFont('Times', 'bold');
+                // const titleY = startY + (boxHeight1 / 2); // Middle of the box height
+                // doc.text("PAYMENT TERMS", 16, titleY);
 
                 doc.setFontSize(10).setFont('Times', 'normal')
-                paymentTerms.forEach((term, index) => {
-                    let paymentPercentage = term.Payment_Percentage || "";
-                    let paymentDescription = term.Payment_Terms_Description || "";
-                    let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
-                    doc.text(doc.splitTextToSize(combinedText, textMaxWidth), textStartX, currentY);
-                    currentY += textHeights[index];
-                });
+                // paymentTerms.forEach((term, index) => {
+                //     let paymentPercentage = term.Payment_Percentage || "";
+                //     let paymentDescription = term.Payment_Terms_Description || "";
+                //     let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
+                //     doc.text(doc.splitTextToSize(combinedText, textMaxWidth), textStartX, currentY);
+                //     currentY += textHeights[index];
+                // });
 
                 // Adjust milestone section based on payment terms height
                 currentY += 10;
