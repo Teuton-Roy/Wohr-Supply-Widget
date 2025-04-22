@@ -272,14 +272,14 @@ justify-content: center;
                         const product = ProductID ? ProductDataMap[ProductID] : null;
 
                         const productName = product?.Product_Name || "Product";
-                        const platformWidth = product?.Platform_Width || "N/A";
-                        const platformLength = product?.Platform_Length || "N/A";
-                        const carWeight = product?.Car_Weight_In_Kg || "N/A";
-                        const clearHeight = product?.Clear_Height || "N/A";
-                        const coating = product?.System_Coating || "N/A";
+                        const platformWidth = product?.Platform_Width || "";
+                        const platformLength = product?.Platform_Length || "";
+                        const carWeight = product?.Car_Weight_In_Kg || "";
+                        const clearHeight = product?.Clear_Height || "";
+                        const coating = product?.System_Coating || "";
                         // const ProductTax = product?.Tax || "N/A";
 
-                        const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating`;
+                        const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating: ${coating}`;
 
                         // const description = 
                         // `\u2022  ${"\u0001Type:\u0001"} ${productName}\n` +
@@ -319,10 +319,10 @@ justify-content: center;
                 });
                 const taxDetailsString = taxDetails.length > 0 ? taxDetails.join(", ") : "No Tax";
 
-                tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${totalSum ?? 0}`]);
+                tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${(totalSum ?? 0).toFixed(2)}`]);
                 // tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
-                tableData.push(["", "", "", taxDetailsString, `INR ${TotalTax}`]); 
-                tableData.push(["", "", "", "Gross Contract Value", `INR ${totalSum + TotalTax}`]);
+                tableData.push(["", "", "", taxDetailsString, `INR ${(TotalTax).toFixed(2)}`]); 
+                tableData.push(["", "", "", "Gross Contract Value", `INR ${(totalSum + TotalTax).toFixed(2)}`]);
 
 
                 // const MAX_IMAGE_HEIGHT = 40;
