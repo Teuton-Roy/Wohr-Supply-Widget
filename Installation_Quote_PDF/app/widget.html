@@ -306,10 +306,10 @@ justify-content: center;
                     totalQuantity1 += info.Quantity || 0;
                     netContractValue += (info.Quantity || 0) * (info.Installation_Products_Price || 0); // Calculate Net Contract Value
 
-                    if (info.Tax && Array.isArray(info.Tax)) {
+                    if (info.Tax && Array.isArray(info.Tax) && info.Tax.length > 0) {
                         const taxNames = info.Tax.map((tax) => {
                             const [taxName, taxPercentage] = tax.split(" - "); // Split tax name and percentage
-                            return `${taxName}@${taxPercentage.trim()}`;
+                            return `${taxName || "N/A"}@${taxPercentage.trim() || "N/A"}`; // Format tax name
                         }).join(", "); // Combine tax names into a single string
 
                         if (!taxDetails[taxNames]) {
@@ -319,6 +319,13 @@ justify-content: center;
                         }
 
                         totalTaxAmount += info.Tax_Amount || 0; // Accumulate total tax amount
+                    }else{
+                        // const taxText = "No Tax Available";
+                        // const taxNames = doc.splitTextToSize(taxText, 13);
+                        const taxNames = "N/A"
+                        if (!taxDetails[taxNames]){
+                            taxDetails[taxNames] = 0
+                        }
                     }
 
                     grossTotal = netContractValue + totalTaxAmount; // Calculate gross total
@@ -398,7 +405,6 @@ justify-content: center;
                 const tax = doc.splitTextToSize(taxSummary, 25);
                 doc.text(tax, 142, startY1 + 5);
                 doc.text(`INR ${totalTaxAmount}`, 170, startY1 + 7);
-
                 startY1 += 10 + (Object.keys(taxDetails).length - 1) * 5;
 
                 // Add gross total row
