@@ -900,13 +900,13 @@ justify-content: center;
                     doc.text(`Date: ${formattedDate}`, 175, 40);
                 }
 
-                let supplierPurchaserStartY = Math.max(paymentStartY + 20, 50); // Ensure it starts below the logo (at least 50)
+                let supplierPurchaserStartY = Math.max(paymentStartY + 20, 50); 
                 let boxHeight2 = 65; // Height of the enclosing box
 
                 // Check if the section exceeds the page height
-                if (supplierPurchaserStartY + boxHeight2 > 280) { // Assuming 280 is the page height limit
-                    addNewPageWithHeader(doc, logoData, formattedDate); // Add a new page with the header
-                    supplierPurchaserStartY = 50; // Reset the starting Y position for the new page, below the logo
+                if (supplierPurchaserStartY + boxHeight2 > 280) { 
+                    addNewPageWithHeader(doc, logoData, formattedDate); 
+                    supplierPurchaserStartY = 50; 
                 }
 
                 // Draw the enclosing box for the full section
@@ -929,7 +929,7 @@ justify-content: center;
                 doc.text("Purchaser/Customer Information", 115, supplierPurchaserStartY);
 
                 doc.setFont("Times", "normal");
-                let accountName = AccountData?.Account_Name || "N/A";
+                let accountName = AccountData?.Account_Name || "";
                 let accountNameLines = doc.splitTextToSize(accountName, 70);
 
                 doc.text(accountNameLines, 115, supplierPurchaserStartY + 10); // Render wrapped text
