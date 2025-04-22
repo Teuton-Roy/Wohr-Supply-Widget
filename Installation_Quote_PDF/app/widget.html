@@ -178,7 +178,7 @@ justify-content: center;
                 let projectName = OppData?.Deal_Name || "";
                 let projectNameLines = doc.splitTextToSize(projectName, 60);
                 doc.text("Project Name:", 10, siteCurrentY);
-                doc.text(projectNameLines, 35, siteCurrentY);
+                doc.text(projectNameLines, 31.5, siteCurrentY);
                 siteCurrentY += projectNameLines.length * 5;
 
                 let siteStreet = OppData?.Project_Street || "";
@@ -221,7 +221,7 @@ justify-content: center;
                 let customerName = AccountData?.Account_Name || "";
                 let customerNameLines = doc.splitTextToSize(customerName, 60);
                 doc.text("Customer Name:", 118, BcurrentY);
-                doc.text(customerNameLines, 145, BcurrentY);
+                doc.text(customerNameLines, 143, BcurrentY);
                 BcurrentY += customerNameLines.length * 5;
 
                 let billingStreet = AccountData?.Billing_Street || "";
@@ -385,7 +385,7 @@ justify-content: center;
                                 value = info.Installation_Product_Capacity_kg_1 || "";
                                 break;
                             case "Price":
-                                value = `INR ${info.Installation_Products_Price || ""}`;
+                                value = `INR ${(info.Installation_Products_Price).toFixed(2) || ""}`;
                                 break;
                         }
                         doc.text(value, textX, startY1 + 7);
@@ -401,7 +401,7 @@ justify-content: center;
                 const text = "Net Contract Value";
                 const value = doc.splitTextToSize(text, 25);
                 doc.text(value, 142, startY1 + 5);
-                doc.text(`INR ${netContractValue}`, 167, startY1 + 7);
+                doc.text(`INR ${netContractValue.toFixed(2)}`, 167, startY1 + 7);
 
                 startY1 += 10;
 
@@ -412,7 +412,7 @@ justify-content: center;
                 doc.text("", 100, startY1 + 7); 
                 const tax = doc.splitTextToSize(taxSummary, 25);
                 doc.text(tax, 142, startY1 + 5);
-                doc.text(`INR ${totalTaxAmount}`, 167, startY1 + 7);
+                doc.text(`INR ${totalTaxAmount.toFixed(2)}`, 167, startY1 + 7);
                 startY1 += 10 + (Object.keys(taxDetails).length - 1) * 5;
 
                 // Add gross total row
@@ -422,7 +422,7 @@ justify-content: center;
                 const text2 = "Gross Contract Value";
                 const value2 = doc.splitTextToSize(text2, 25);
                 doc.text(value2, 142, startY1 + 5);
-                doc.text(`INR ${grossTotal}`, 167, startY1 + 7);
+                doc.text(`INR ${grossTotal.toFixed(2)}`, 167, startY1 + 7);
 
                 // Draw vertical lines dynamically for the entire table (header + rows)
                 columnPositions.forEach((xPosition) => {
@@ -769,10 +769,67 @@ justify-content: center;
                 // doc.rect(10, boxStartY, 195, startY1 - boxStartY); // Draw enclosing box for the entire section
 
                 // Add Installation Payment Term Section
-                doc.setFontSize(12).setFont("Times", "bold");
-                doc.text("Installation Payment Term", 10, startY1-45);
+                // doc.setFontSize(12).setFont("Times", "bold");
+                // doc.text("Installation Payment Term", 10, startY1-45);
 
-                let paymentBoxStartY = startY1 - 40; // Starting Y position of the payment term box
+                // let paymentBoxStartY = startY1 - 40; // Starting Y position of the payment term box
+                // let paymentBoxHeight = 7; // Initial height for the header row
+
+                // // Table headers for Installation Payment Term
+                // doc.setLineWidth(0.5);
+                // doc.rect(10, paymentBoxStartY, 195, paymentBoxHeight); // Draw the header box
+                // doc.setFontSize(10).setFont("Times", "bold");
+                // doc.text("Description", 12, paymentBoxStartY + 5);
+                // doc.text("Split Contract Value (%)", 100, paymentBoxStartY + 5);
+                // doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
+
+                // // Add vertical lines for columns in the header
+                // doc.line(95, paymentBoxStartY, 95, paymentBoxStartY + paymentBoxHeight);
+                // doc.line(155, paymentBoxStartY, 155, paymentBoxStartY + paymentBoxHeight);
+
+                // let paymentStartY = paymentBoxStartY + paymentBoxHeight; // Start Y position for the rows
+
+                // doc.setFont("Times", "normal");
+                // const InsatallationPaymentTerms = quoteData.Installation_Payment_Term || [];
+                // InsatallationPaymentTerms.forEach((term) => {
+                //     if (paymentStartY + 10 > 280) { // Add a new page if content exceeds the page height
+                //         doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY); // Draw enclosing box
+                //         doc.addPage();
+                //         doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                //         doc.setFontSize(10).setFont("Times", "normal");
+                //         doc.text(`Date: ${formattedDate}`, 175, 40);
+
+                //         // Re-add table headers
+                //         paymentBoxStartY = 50;
+                //         paymentStartY = paymentBoxStartY + 7;
+                //         doc.rect(10, paymentBoxStartY, 195, 7);
+                //         doc.setFontSize(10).setFont("Times", "bold");
+                //         doc.text("Description", 12, paymentBoxStartY + 5);
+                //         doc.text("Split Contract Value (%)", 100, paymentBoxStartY + 5);
+                //         doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
+                //     }
+
+                //     // Add row data
+                //     doc.rect(10, paymentStartY, 195, 10); // Draw a box for each row
+                //     doc.text(term.Description_Milestone || "N/A", 12, paymentStartY + 7);
+                //     doc.text(`${term.of_Split_Contract_Value || "N/A"}%`, 100, paymentStartY + 7);
+                //     doc.text(`INR ${term.Amount || "N/A"}`, 160, paymentStartY + 7);
+
+                //     doc.line(95, paymentStartY, 95, paymentStartY + 10); // After "Description"
+                //     doc.line(155, paymentStartY, 155, paymentStartY + 10); // After "Split Contract Value (%)"
+
+                //     paymentStartY += 10; // Increment Y position for the next row
+                // });
+                // doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY); // Draw enclosing box for the entire section
+
+
+                //---------------------------------------------------------------------------------
+                // Add Installation Payment Terms Section
+
+                doc.setFontSize(12).setFont("Times", "bold");
+                doc.text("Installation Payment Term", 10, startY1 - 60);
+
+                let paymentBoxStartY = startY1 - 55; // Starting Y position of the payment term box
                 let paymentBoxHeight = 7; // Initial height for the header row
 
                 // Table headers for Installation Payment Term
@@ -792,7 +849,10 @@ justify-content: center;
                 doc.setFont("Times", "normal");
                 const InsatallationPaymentTerms = quoteData.Installation_Payment_Term || [];
                 InsatallationPaymentTerms.forEach((term) => {
-                    if (paymentStartY + 10 > 280) { // Add a new page if content exceeds the page height
+                    const descriptionLines = doc.splitTextToSize(term.Description_Milestone || "", 75); 
+                    const rowHeight = descriptionLines.length * 4 + 5; 
+
+                    if (paymentStartY + rowHeight > 280) { 
                         doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY); // Draw enclosing box
                         doc.addPage();
                         doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
@@ -807,28 +867,51 @@ justify-content: center;
                         doc.text("Description", 12, paymentBoxStartY + 5);
                         doc.text("Split Contract Value (%)", 100, paymentBoxStartY + 5);
                         doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
+                        doc.setFont("Times", "normal");
+
+                        doc.line(95, paymentBoxStartY, 95, paymentBoxStartY + paymentBoxHeight);
+                        doc.line(155, paymentBoxStartY, 155, paymentBoxStartY + paymentBoxHeight);
+                        paymentStartY = paymentBoxStartY + paymentBoxHeight; 
                     }
 
                     // Add row data
-                    doc.rect(10, paymentStartY, 195, 10); // Draw a box for each row
-                    doc.text(term.Description_Milestone || "N/A", 12, paymentStartY + 7);
-                    doc.text(`${term.of_Split_Contract_Value || "N/A"}%`, 100, paymentStartY + 7);
-                    doc.text(`INR ${term.Amount || "N/A"}`, 160, paymentStartY + 7);
+                    doc.rect(10, paymentStartY, 195, rowHeight); // Draw a box for each row
+                    doc.text(descriptionLines, 12, paymentStartY + 5); // Render wrapped description text
+                    doc.text(`${(term.of_Split_Contract_Value || "")}`, 100, paymentStartY + 5);
+                    doc.text(`INR ${(term.Amount || 0).toFixed(2)}`, 160, paymentStartY + 5);
 
-                    doc.line(95, paymentStartY, 95, paymentStartY + 10); // After "Description"
-                    doc.line(155, paymentStartY, 155, paymentStartY + 10); // After "Split Contract Value (%)"
+                    // Add vertical lines for columns in each row
+                    doc.line(95, paymentStartY, 95, paymentStartY + rowHeight); // After "Description"
+                    doc.line(155, paymentStartY, 155, paymentStartY + rowHeight); // After "Split Contract Value (%)"
 
-                    paymentStartY += 10; // Increment Y position for the next row
+                    paymentStartY += rowHeight; // Increment Y position for the next row
                 });
-                doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY); // Draw enclosing box for the entire section
+
+                // Draw enclosing box for the entire section
+                doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY);
+                //------------------------------------------------------------------------------------
+
 
                 // Add Supplier and Purchaser Information Section
-                let supplierPurchaserStartY = paymentStartY + 20; // Start Y position for this section
-                let boxHeight2 = 65; // Adjusted height to enclose the full section, including the header
+                function addNewPageWithHeader(doc, logoData, formattedDate) {
+                    doc.addPage();
+                    doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                    doc.setFontSize(10).setFont("Times", "normal");
+                    doc.text(`Date: ${formattedDate}`, 175, 40);
+                }
+
+                let supplierPurchaserStartY = Math.max(paymentStartY + 20, 50); // Ensure it starts below the logo (at least 50)
+                let boxHeight2 = 65; // Height of the enclosing box
+
+                // Check if the section exceeds the page height
+                if (supplierPurchaserStartY + boxHeight2 > 280) { // Assuming 280 is the page height limit
+                    addNewPageWithHeader(doc, logoData, formattedDate); // Add a new page with the header
+                    supplierPurchaserStartY = 50; // Reset the starting Y position for the new page, below the logo
+                }
 
                 // Draw the enclosing box for the full section
                 doc.setLineWidth(0.5);
-                doc.rect(10, supplierPurchaserStartY - 10, 195, boxHeight2); // Draw the box
+                doc.rect(10, supplierPurchaserStartY-5 , 195, boxHeight2); // Draw the box
 
                 // Supplier Information
                 doc.setFontSize(12).setFont("Times", "bold");
@@ -843,17 +926,17 @@ justify-content: center;
 
                 // Purchaser/Customer Information
                 doc.setFont("Times", "bold");
-                doc.text("Purchaser/Customer Information", 120, supplierPurchaserStartY);
+                doc.text("Purchaser/Customer Information", 115, supplierPurchaserStartY);
 
                 doc.setFont("Times", "normal");
                 let accountName = AccountData?.Account_Name || "N/A";
-                let accountNameLines = doc.splitTextToSize(accountName, 70); // Adjust width to fit within the box
+                let accountNameLines = doc.splitTextToSize(accountName, 70);
 
-                doc.text(accountNameLines, 120, supplierPurchaserStartY + 10); // Render wrapped text
-                doc.text("Sign", 120, supplierPurchaserStartY + 15 + accountNameLines.length * 5); // Adjust position based on wrapped text height
-                doc.text("Name:", 120, supplierPurchaserStartY + 22 + accountNameLines.length * 5);
-                doc.text("Designation:", 120, supplierPurchaserStartY + 30 + accountNameLines.length * 5);
-                doc.text("Date:", 120, supplierPurchaserStartY + 38 + accountNameLines.length * 5);
+                doc.text(accountNameLines, 115, supplierPurchaserStartY + 10); // Render wrapped text
+                doc.text("Sign:", 115, supplierPurchaserStartY + 15 + accountNameLines.length * 5);
+                doc.text("Name:", 115, supplierPurchaserStartY + 25 + accountNameLines.length * 5);
+                doc.text("Designation:", 115, supplierPurchaserStartY + 35 + accountNameLines.length * 5);
+                doc.text("Date:", 115, supplierPurchaserStartY + 45 + accountNameLines.length * 5);     
                 //---------------------------------------------------------------------------------------------------------    
 
 
