@@ -173,7 +173,7 @@ justify-content: center;
                 let projectName = OppData?.Deal_Name || "";
                 let projectNameLines = doc.splitTextToSize(projectName, 60);
                 doc.text("Project Name:", 10, siteCurrentY);
-                doc.text(projectNameLines, 35, siteCurrentY);
+                doc.text(projectNameLines, 31.5, siteCurrentY);
                 siteCurrentY += projectNameLines.length * 5;
 
                 let siteStreet = OppData?.Project_Street || "";
@@ -216,7 +216,7 @@ justify-content: center;
                 let customerName = AccountData?.Account_Name || "";
                 let customerNameLines = doc.splitTextToSize(customerName, 60);
                 doc.text("Customer Name:", 118, BcurrentY);
-                doc.text(customerNameLines, 145, BcurrentY);
+                doc.text(customerNameLines, 143, BcurrentY);
                 BcurrentY += customerNameLines.length * 5;
 
                 let billingStreet = AccountData?.Billing_Street || "";
@@ -293,8 +293,8 @@ justify-content: center;
                             productImages[ProductID] ? "" : "",
                             description,
                             item.quantity ?? 0,
-                            `INR ${item.list_price ?? 0}`,
-                            `INR ${item.total ?? 0}`
+                            `INR ${(item.list_price ?? 0).toFixed(2)}`,
+                            `INR ${(item.total ?? 0).toFixed(2)}`
                         ]);
                     }
                 }
