@@ -607,22 +607,22 @@ justify-content: center;
                         let value = "N/A"; // Default value
                         switch (col.header) {
                             case "Installation Service Name":
-                                value = info.Installation_Service_Name?.name || "N/A";
+                                value = info.Installation_Service_Name?.name || "";
                                 break;
                             case "Product Code":
-                                value = info.Product_Code || "N/A";
+                                value = info.Product_Code || "";
                                 break;
                             case "Quantity":
-                                value = `${info.Quantity || "N/A"}`;
+                                value = `${info.Quantity || ""}`;
                                 break;
                             case "UoM":
-                                value = info.UoM || "N/A";
+                                value = info.UoM || "";
                                 break;
                             case "Capacity":
-                                value = info.Installation_Product_Capacity_kg_1 || "N/A";
+                                value = info.Installation_Product_Capacity_kg_1 || "";
                                 break;
                             case "Price":
-                                value = `INR ${info.Installation_Products_Price || "N/A"}`;
+                                value = `INR ${info.Installation_Products_Price || ""}`;
                                 break;
                         }
                         doc.text(value, textX, startY1 + 7);
@@ -633,12 +633,12 @@ justify-content: center;
                 });
 
                 doc.rect(10, startY1, 195, 10);
-                doc.text("Total Quantity", 65, startY1 + 7);
-                doc.text(`${totalQuantity1}`, 100, startY1 + 7);
+                doc.text("Total Quantity", 62, startY1 + 7);
+                doc.text(`${totalQuantity1}`, 97, startY1 + 7);
                 const text = "Net Contract Value";
                 const value = doc.splitTextToSize(text, 25);
                 doc.text(value, 142, startY1 + 5);
-                doc.text(`INR ${netContractValue}`, 170, startY1 + 7);
+                doc.text(`INR ${netContractValue}`, 167, startY1 + 7);
 
                 startY1 += 10;
 
@@ -649,7 +649,7 @@ justify-content: center;
                 doc.text("", 100, startY1 + 7); 
                 const tax = doc.splitTextToSize(taxSummary, 25);
                 doc.text(tax, 142, startY1 + 5);
-                doc.text(`INR ${totalTaxAmount}`, 170, startY1 + 7);
+                doc.text(`INR ${totalTaxAmount}`, 167, startY1 + 7);
 
                 startY1 += 10 + (Object.keys(taxDetails).length - 1) * 5;
 
@@ -660,7 +660,7 @@ justify-content: center;
                 const text2 = "Gross Contract Value";
                 const value2 = doc.splitTextToSize(text2, 25);
                 doc.text(value2, 142, startY1 + 5);
-                doc.text(`INR ${grossTotal}`, 170, startY1 + 7);
+                doc.text(`INR ${grossTotal}`, 167, startY1 + 7);
 
                 // Draw vertical lines dynamically for the entire table (header + rows)
                 columnPositions.forEach((xPosition) => {
