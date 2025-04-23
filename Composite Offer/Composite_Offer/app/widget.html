@@ -162,7 +162,7 @@ justify-content: center;
                 let projectName = OppData?.Deal_Name || "";
                 let projectNameLines = doc.splitTextToSize(projectName, 60);
                 doc.text("Project Name:", 10, siteCurrentY);
-                doc.text(projectNameLines, 35, siteCurrentY);
+                doc.text(projectNameLines, 31.5, siteCurrentY);
                 siteCurrentY += projectNameLines.length * 5;
 
                 let siteStreet = OppData?.Project_Street || "";
@@ -205,7 +205,7 @@ justify-content: center;
                 let customerName = AccountData?.Account_Name || "";
                 let customerNameLines = doc.splitTextToSize(customerName, 60);
                 doc.text("Customer Name:", 118, BcurrentY);
-                doc.text(customerNameLines, 145, BcurrentY);
+                doc.text(customerNameLines, 142.5, BcurrentY);
                 BcurrentY += customerNameLines.length * 5;
 
                 let billingStreet = AccountData?.Billing_Street || "";
@@ -260,11 +260,11 @@ justify-content: center;
                         const product = ProductID ? ProductDataMap[ProductID] : null;
 
                         const productName = product?.Product_Name || "Product";
-                        const platformWidth = product?.Platform_Width || "N/A";
-                        const platformLength = product?.Platform_Length || "N/A";
-                        const carWeight = product?.Car_Weight_In_Kg || "N/A";
-                        const clearHeight = product?.Clear_Height || "N/A";
-                        const coating = product?.System_Coating || "N/A";
+                        const platformWidth = product?.Platform_Width || "";
+                        const platformLength = product?.Platform_Length || "";
+                        const carWeight = product?.Car_Weight_In_Kg || "";
+                        const clearHeight = product?.Clear_Height || "";
+                        const coating = product?.System_Coating || "";
                         // const ProductTax = product?.Tax || "N/A";
 
                         const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating: ${coating}`;
@@ -494,86 +494,254 @@ justify-content: center;
 
                 //-----------------------------------------------------------------------------------------------------------------
 
+                // doc.addPage();
+                // if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                // doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
+
+                // doc.setFontSize(12);
+                // doc.setFont('Times New Roman', 'bold');
+                // doc.text("Supplier:", 18, 60);
+                // doc.text("Purchaser:", 110, 60);
+                // doc.setFont('Times New Roman', 'normal');
+
+                // doc.text("Wohr Parking Systems Pvt. Ltd.", 18, 68);
+                // const PurchaserName = `${AccountData?.Account_Name || ''}`;
+                // const SplitPurchaser = doc.splitTextToSize(PurchaserName, 55);
+                // doc.text(SplitPurchaser, 110, 65);
+
+                // doc.text("Sign:", 18, 75); // Adjusted Y position for Sign
+                // doc.text("Sign:", 110, 80);
+
+                // doc.text("Name: Milind Deshpande", 18, 85);
+                // doc.text(`Name: ${ContactData?.Full_Name || ''}`, 110, 90);
+
+                // doc.text("Designation: Deputy General Manager", 18, 93);
+                // doc.text("Designation:", 110, 100);
+
+                // doc.text("Date: ", 18, 105);
+                // doc.text("Date: ", 110, 110);
+
+                // doc.rect(15, 55, 170, 60);
+                // doc.line(100, 55, 100, 115);
+
+
+                // doc.addPage();
+                // if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                // doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
+
+                // // Payment Terms Section
+
+                // doc.setLineWidth(0.5);
+                // doc.setDrawColor(0, 0, 0);
+                // let startY = 55;
+                // let boxHeight1 = 10; // Initial padding height
+                // const textStartX = 55;
+                // const textMaxWidth = 145;
+
+                // // Extract payment terms dynamically from quoteData
+                // console.log(quoteData.Payment_Terms);
+                // const paymentTerms = quoteData.Payment_Terms || [];
+                // let textHeights = [];
+                // let currentY = startY + 7;
+
+                // // Calculate required height dynamically
+                // paymentTerms.forEach(term => {
+                //     let paymentPercentage = term.Payment_Percentage || "";
+                //     let paymentDescription = term.Payment_Terms_Description || "";
+                //     let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
+                //     let splitText = doc.splitTextToSize(combinedText, textMaxWidth);
+                //     textHeights.push(splitText.length * 5 + 2);
+                //     boxHeight1 += splitText.length * 5 + 2;
+                // });
+
+                // // Draw the payment terms box
+                // doc.rect(15, startY, 190, boxHeight1);
+                // doc.line(50, startY, 50, startY + boxHeight1);
+
+                // // Render payment terms
+                // doc.setFontSize(10).setFont('Times', 'bold');
+                // const titleY = startY + (boxHeight1 / 2); // Middle of the box height
+                // doc.text("PAYMENT TERMS", 16, titleY);
+
+                // doc.setFontSize(10).setFont('Times', 'normal')
+                // paymentTerms.forEach((term, index) => {
+                //     let paymentPercentage = term.Payment_Percentage || "";
+                //     let paymentDescription = term.Payment_Terms_Description || "";
+                //     let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
+                //     doc.text(doc.splitTextToSize(combinedText, textMaxWidth), textStartX, currentY);
+                //     currentY += textHeights[index];
+                // });
+
+                // // Adjust milestone section based on payment terms height
+                // currentY += 10;
+                // doc.setFontSize(12).setFont('Times', 'bold');
+                // doc.text("Milestone:", 15, currentY);
+                // currentY += 5;
+
+                // // Draw milestone box
+                // doc.setLineWidth(0.5);
+                // doc.rect(15, currentY, 190, 50);
+                // doc.line(15, currentY + 16, 205, currentY + 16);
+                // doc.line(15, currentY + 28, 205, currentY + 28);
+                // doc.line(15, currentY + 40, 205, currentY + 40);
+                // doc.line(55, currentY, 55, currentY + 50);
+
+                // // Milestone content
+                // doc.setFontSize(10).setFont('Times', 'bold');
+                // doc.text("Delivery Schedule", 16, currentY + 10);
+                // doc.text("Warranty ('DLP')", 16, currentY + 22);
+                // doc.text("Free Maintenance Period", 16, currentY + 34);
+                // doc.text("Wohr’s scope of work", 16, currentY + 44);
+                // doc.setFont('Times', 'normal');
+                // doc.text("14 to 24 weeks from the date of manufacturing advance and shop drawing approvals receipt whichever is later subject to site readiness.", 60, currentY + 8, { maxWidth: 135 });
+                // doc.text("15 Months from the delivery on manufactured equipment only.", 60, currentY + 23, { maxWidth: 135 });
+                // doc.text("12 months from completion of installation subject to Wohr standard terms and conditions.", 60, currentY + 34, { maxWidth: 135 });
+                // doc.text("Parking solution, supply, transportation, one time material unloading at site, Parking System Installation, commissioning and hand-over of equipment.", 60, currentY + 44, { maxWidth: 135 });
+
+                // // Adjust Wohr/Supplier and Purchase/Customer sections dynamically
+                // currentY += 50;
+                // doc.text("Wohr/Supplier:", 15, currentY+10);
+                // doc.rect(15, currentY + 20, 50, 0);
+                // doc.text("Name:", 15, currentY + 25);
+                // doc.text("Designation:", 15, currentY + 30);
+                // doc.text("Date:", 15, currentY + 36);
+
+                // doc.text("Purchase/Customer", 150, currentY+10);
+                // doc.rect(150, currentY + 20, 50, 0);
+                // doc.text("Name:", 150, currentY + 25);
+                // doc.text("Designation:", 150, currentY + 30);
+                // doc.text("Date:", 150, currentY + 36);
+                //------------------------------------
+
                 doc.addPage();
-                if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
+                doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                doc.setFontSize(10).setFont('Times', 'normal');
+                doc.text(`Date: ${formattedDate}`, 175, 40);
 
-                doc.setFontSize(12);
-                doc.setFont('Times New Roman', 'bold');
-                doc.text("Supplier:", 18, 60);
-                doc.text("Purchaser:", 110, 60);
-                doc.setFont('Times New Roman', 'normal');
+                let pstartY = 55;
+                doc.setFontSize(12).setFont("Times", "bold");
+                doc.text("Payment Term", 10, pstartY);
 
-                doc.text("Wohr Parking Systems Pvt. Ltd.", 18, 68);
-                const PurchaserName = `${AccountData?.Account_Name || ''}`;
-                const SplitPurchaser = doc.splitTextToSize(PurchaserName, 55);
-                doc.text(SplitPurchaser, 110, 65);
+                let paymentBoxStartY = pstartY+5; // Starting Y position of the payment term box
+                let paymentBoxHeight = 7;
 
-                doc.text("Sign:", 18, 75); // Adjusted Y position for Sign
-                doc.text("Sign:", 110, 80);
+                doc.setLineWidth(0.5);
+                doc.rect(10, paymentBoxStartY, 195, paymentBoxHeight); // Draw the header box
+                doc.setFontSize(10).setFont("Times", "bold");
+                doc.text("Payment Terms Milestone", 12, paymentBoxStartY + 5);
+                doc.text("Payment Percentage (%)", 100, paymentBoxStartY + 5);
+                doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
+                doc.line(95, paymentBoxStartY, 95, paymentBoxStartY + paymentBoxHeight);
+                doc.line(155, paymentBoxStartY, 155, paymentBoxStartY + paymentBoxHeight);
 
-                doc.text("Name: Milind Deshpande", 18, 85);
-                doc.text(`Name: ${ContactData?.Full_Name || ''}`, 110, 90);
+                let paymentStartY = paymentBoxStartY + paymentBoxHeight;
 
-                doc.text("Designation: Deputy General Manager", 18, 93);
-                doc.text("Designation:", 110, 100);
+                doc.setFont("Times", "normal");
+                const InsatallationPaymentTerms = quoteData.Payment_Terms || [];
+                InsatallationPaymentTerms.forEach((term) => {
+                    const descriptionLines = doc.splitTextToSize(term.Payment_Terms_Description || "", 75); 
+                    const rowHeight = descriptionLines.length * 4 + 5; 
 
-                doc.text("Date: ", 18, 105);
-                doc.text("Date: ", 110, 110);
+                    if (paymentStartY + rowHeight > 280) { 
+                        doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY); // Draw enclosing box
+                        doc.addPage();
+                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                        doc.setFontSize(10).setFont("Times", "normal");
+                        doc.text(`Date: ${formattedDate}`, 175, 40);
 
-                doc.rect(15, 55, 170, 60);
-                doc.line(100, 55, 100, 115);
+                        // Re-add table headers
+                        paymentBoxStartY = 50;
+                        paymentStartY = paymentBoxStartY + 7;
+                        doc.rect(10, paymentBoxStartY, 195, 7);
+                        doc.setFontSize(10).setFont("Times", "bold");
+                        doc.text("Description", 12, paymentBoxStartY + 5);
+                        doc.text("Split Contract Value (%)", 100, paymentBoxStartY + 5);
+                        doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
+                        doc.setFont("Times", "normal");
 
+                        doc.line(95, paymentBoxStartY, 95, paymentBoxStartY + paymentBoxHeight);
+                        doc.line(155, paymentBoxStartY, 155, paymentBoxStartY + paymentBoxHeight);
+                        paymentStartY = paymentBoxStartY + paymentBoxHeight; 
+                    }
 
+                    // Add row data
+                    doc.rect(10, paymentStartY, 195, rowHeight); // Draw a box for each row
+                    doc.text(descriptionLines, 12, paymentStartY + 5); // Render wrapped description text
+                    doc.text(`${(term.Payment_Percentage || "")}`, 100, paymentStartY + 5);
+                    doc.text(`INR ${(term.Amount || 0).toFixed(2)}`, 160, paymentStartY + 5);
+
+                    // Add vertical lines for columns in each row
+                    doc.line(95, paymentStartY, 95, paymentStartY + rowHeight); // After "Description"
+                    doc.line(155, paymentStartY, 155, paymentStartY + rowHeight); // After "Split Contract Value (%)"
+
+                    paymentStartY += rowHeight; // Increment Y position for the next row
+                });
+
+                                // Add Supplier and Purchaser Information Section
+                                function addNewPageWithHeader(doc, logoData, formattedDate) {
+                    doc.addPage();
+                    doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                    doc.setFontSize(10).setFont("Times", "normal");
+                    doc.text(`Date: ${formattedDate}`, 175, 40);
+                }
+
+                let supplierPurchaserStartY = Math.max(paymentStartY + 20, 50); 
+                let boxHeight2 = 65; // Height of the enclosing box
+
+                // Check if the section exceeds the page height
+                if (supplierPurchaserStartY + boxHeight2 > 280) { 
+                    addNewPageWithHeader(doc, logoData, formattedDate); 
+                    supplierPurchaserStartY = 50; 
+                }
+
+                // Draw the enclosing box for the full section
+                doc.setLineWidth(0.5);
+                doc.rect(10, supplierPurchaserStartY-5 , 195, boxHeight2); // Draw the box
+
+                // Supplier Information
+                doc.setFontSize(12).setFont("Times", "bold");
+                doc.text("Supplier Information", 15, supplierPurchaserStartY);
+
+                doc.setFont("Times", "normal");
+                doc.text("Wohr Parking Systems Pvt Ltd.", 15, supplierPurchaserStartY + 10);
+                doc.text("Sign", 15, supplierPurchaserStartY + 20);
+                doc.text("Name: Milind Deshpande", 15, supplierPurchaserStartY + 30);
+                doc.text("Designation: Deputy General Manager", 15, supplierPurchaserStartY + 40);
+                doc.text("Date:", 15, supplierPurchaserStartY + 50);
+
+                // Purchaser/Customer Information
+                doc.setFont("Times", "bold");
+                doc.text("Purchaser/Customer Information", 115, supplierPurchaserStartY);
+
+                doc.setFont("Times", "normal");
+                let accountName = AccountData?.Account_Name || "";
+                let accountNameLines = doc.splitTextToSize(accountName, 70);
+
+                doc.text(accountNameLines, 115, supplierPurchaserStartY + 10); // Render wrapped text
+                doc.text("Sign:", 115, supplierPurchaserStartY + 15 + accountNameLines.length * 5);
+                doc.text("Name:", 115, supplierPurchaserStartY + 25 + accountNameLines.length * 5);
+                doc.text("Designation:", 115, supplierPurchaserStartY + 35 + accountNameLines.length * 5);
+                doc.text("Date:", 115, supplierPurchaserStartY + 45 + accountNameLines.length * 5); 
+
+                
                 doc.addPage();
-                if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
-
-                // Payment Terms Section
+                doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                doc.setFontSize(10).setFont('Times', 'normal');
+                doc.text(`Date: ${formattedDate}`, 175, 40);
 
                 doc.setLineWidth(0.5);
                 doc.setDrawColor(0, 0, 0);
                 let startY = 55;
-                let boxHeight1 = 10; // Initial padding height
+                let boxHeight1 = 10;
                 const textStartX = 55;
                 const textMaxWidth = 145;
 
-                // Extract payment terms dynamically from quoteData
-                console.log(quoteData.Payment_Terms);
-                const paymentTerms = quoteData.Payment_Terms || [];
                 let textHeights = [];
                 let currentY = startY + 7;
 
-                // Calculate required height dynamically
-                paymentTerms.forEach(term => {
-                    let paymentPercentage = term.Payment_Percentage || "";
-                    let paymentDescription = term.Payment_Terms_Description || "";
-                    let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
-                    let splitText = doc.splitTextToSize(combinedText, textMaxWidth);
-                    textHeights.push(splitText.length * 5 + 2);
-                    boxHeight1 += splitText.length * 5 + 2;
-                });
-
-                // Draw the payment terms box
-                doc.rect(15, startY, 190, boxHeight1);
-                doc.line(50, startY, 50, startY + boxHeight1);
-
-                // Render payment terms
-                doc.setFontSize(10).setFont('Times', 'bold');
-                const titleY = startY + (boxHeight1 / 2); // Middle of the box height
-                doc.text("PAYMENT TERMS", 16, titleY);
-
                 doc.setFontSize(10).setFont('Times', 'normal')
-                paymentTerms.forEach((term, index) => {
-                    let paymentPercentage = term.Payment_Percentage || "";
-                    let paymentDescription = term.Payment_Terms_Description || "";
-                    let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
-                    doc.text(doc.splitTextToSize(combinedText, textMaxWidth), textStartX, currentY);
-                    currentY += textHeights[index];
-                });
 
-                // Adjust milestone section based on payment terms height
-                currentY += 10;
+                currentY -= 15;
                 doc.setFontSize(12).setFont('Times', 'bold');
                 doc.text("Milestone:", 15, currentY);
                 currentY += 5;
@@ -611,6 +779,8 @@ justify-content: center;
                 doc.text("Name:", 150, currentY + 25);
                 doc.text("Designation:", 150, currentY + 30);
                 doc.text("Date:", 150, currentY + 36);
+
+                //------------------------------------
 
 
 
