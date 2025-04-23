@@ -715,7 +715,7 @@ justify-content: center;
 
                 let pstartY = 55;
                 doc.setFontSize(12).setFont("Times", "bold");
-                doc.text("Installation Payment Term", 10, pstartY);
+                doc.text("Payment Term", 10, pstartY);
 
                 let paymentBoxStartY = pstartY+5; // Starting Y position of the payment term box
                 let paymentBoxHeight = 7;
@@ -723,8 +723,8 @@ justify-content: center;
                 doc.setLineWidth(0.5);
                 doc.rect(10, paymentBoxStartY, 195, paymentBoxHeight); // Draw the header box
                 doc.setFontSize(10).setFont("Times", "bold");
-                doc.text("Description", 12, paymentBoxStartY + 5);
-                doc.text("Split Contract Value (%)", 100, paymentBoxStartY + 5);
+                doc.text("Payment Terms Milestone", 12, paymentBoxStartY + 5);
+                doc.text("Payment Percentage (%)", 100, paymentBoxStartY + 5);
                 doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
                 doc.line(95, paymentBoxStartY, 95, paymentBoxStartY + paymentBoxHeight);
                 doc.line(155, paymentBoxStartY, 155, paymentBoxStartY + paymentBoxHeight);

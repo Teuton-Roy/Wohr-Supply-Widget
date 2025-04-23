@@ -603,7 +603,7 @@ justify-content: center;
 
                     columns.forEach((col) => {
                         const textX = currentX + 2; // Add padding for text
-                        let value = "N/A"; // Default value
+                        let value = ""; // Default value
                         switch (col.header) {
                             case "Installation Service Name":
                                 value = info.Installation_Service_Name?.name || "";
@@ -807,9 +807,9 @@ justify-content: center;
 
                 //---------------------------------------------------------
                 doc.setFontSize(12).setFont("Times", "bold");
-                doc.text("Installation Payment Term", 10, startY1 - 60);
+                doc.text("Installation Payment Term", 10, startY1 - 40);
 
-                let paymentBoxStartY = startY1 - 55; // Starting Y position of the payment term box
+                let paymentBoxStartY = startY1 - 35; // Starting Y position of the payment term box
                 let paymentBoxHeight = 7; // Initial height for the header row
 
                 // Table headers for Installation Payment Term
@@ -907,7 +907,7 @@ justify-content: center;
                 doc.text("Purchaser/Customer Information", 115, supplierPurchaserStartY);
 
                 doc.setFont("Times", "normal");
-                let accountName = AccountData?.Account_Name || "N/A";
+                let accountName = AccountData?.Account_Name || "";
                 let accountNameLines = doc.splitTextToSize(accountName, 70);
 
                 doc.text(accountNameLines, 115, supplierPurchaserStartY + 10); // Render wrapped text
