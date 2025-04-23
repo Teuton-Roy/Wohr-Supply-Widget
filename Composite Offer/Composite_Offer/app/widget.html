@@ -704,6 +704,10 @@ justify-content: center;
                 }
 
                 // Draw the enclosing box for the full section
+                doc.setLineWidth(0.5);
+                doc.rect(10, supplierPurchaserStartY-5 , 195, boxHeight2);
+
+                // Draw the enclosing box for the full section
                 doc.setFontSize(12).setFont("Times", "bold");
                 doc.text("Supplier Information", 15, supplierPurchaserStartY);
 
