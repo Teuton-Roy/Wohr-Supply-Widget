@@ -646,9 +646,9 @@ justify-content: center;
                 doc.rect(10, startY1, 195, 10 + (Object.keys(taxDetails).length - 1) * 5);
                 doc.text("", 12, startY1 + 7);
                 doc.text("", 100, startY1 + 7); 
-                const tax = doc.splitTextToSize(taxSummary, 25);
-                doc.text(tax, 142, startY1 + 5);
-                doc.text(`INR ${totalTaxAmount.toFixed(2)}`, 167, startY1 + 7);
+                const tax = doc.splitTextToSize(taxSummary || "No Tax", 25);
+                doc.text(tax, 142, startY1 + 4);
+                doc.text(`INR ${totalTaxAmount.toFixed(2)}`, 167, startY1 + 4);
 
                 startY1 += 10 + (Object.keys(taxDetails).length - 1) * 5;
 
@@ -807,9 +807,9 @@ justify-content: center;
 
                 //---------------------------------------------------------
                 doc.setFontSize(12).setFont("Times", "bold");
-                doc.text("Installation Payment Term", 10, startY1 - 40);
+                doc.text("Installation Payment Term", 10, startY1 - 35);
 
-                let paymentBoxStartY = startY1 - 35; // Starting Y position of the payment term box
+                let paymentBoxStartY = startY1 - 30; // Starting Y position of the payment term box
                 let paymentBoxHeight = 7; // Initial height for the header row
 
                 // Table headers for Installation Payment Term
