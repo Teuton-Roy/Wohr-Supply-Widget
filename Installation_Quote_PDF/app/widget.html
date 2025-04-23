@@ -159,15 +159,24 @@ justify-content: center;
 
                 // --- Customer Details ---
                 doc.setFont('Times', 'bold');
-                doc.text("Customer Details", 10, 160);
+                doc.text("Customer Details", 10, 155);
                 doc.setFont('Times', 'normal');
-                doc.text(`Customer Name: ${AccountData?.Account_Name || ""}`, 10, 166);
-                doc.text(`GST No.: ${AccountData?.GSTIN_Number || ""}`, 10, 172);
-                doc.text(`PAN: ${AccountData?.PAN_Number || ""}`, 10, 178);
-                doc.text(`TAN No.: ${AccountData?.TAN_Number || ""}`, 10, 184);
-                doc.text(`Contact person’s name: ${ContactData?.Full_Name || ""}`, 10, 190);
+                let cusCurrentY = 160;
+                let name = AccountData?.Account_Name || "";
+                let nameLines = doc.splitTextToSize(name, 70);
+                doc.text(`Customer Name: `, 10, 160);
+                doc.text(nameLines, 35, 160);
+                cusCurrentY += nameLines.length * 5;
+                doc.text(`GST No.: ${AccountData?.GSTIN_Number || ""}`, 10, cusCurrentY);
+                cusCurrentY += 5;
+                doc.text(`PAN: ${AccountData?.PAN_Number || ""}`, 10, cusCurrentY);
+                cusCurrentY += 5;
+                doc.text(`TAN No.: ${AccountData?.TAN_Number || ""}`, 10, cusCurrentY);
+                cusCurrentY += 5;
+                doc.text(`Contact person’s name: ${ContactData?.Full_Name || ""}`, 10, cusCurrentY);
+                cusCurrentY += 5;
 
-                doc.line(10, 195, 200, 195);
+                doc.line(10, cusCurrentY, 200, cusCurrentY);
 
                 // --- Site Address ---
                 doc.setFont('Times', 'bold');
@@ -918,10 +927,10 @@ justify-content: center;
                 doc.text("Supplier Information", 15, supplierPurchaserStartY);
 
                 doc.setFont("Times", "normal");
-                doc.text("Wohr Parking Systems Pvt Ltd.", 15, supplierPurchaserStartY + 10);
-                doc.text("Sign", 15, supplierPurchaserStartY + 20);
-                doc.text("Name: Milind Deshpande", 15, supplierPurchaserStartY + 30);
-                doc.text("Designation: Deputy General Manager", 15, supplierPurchaserStartY + 40);
+                doc.text("Wohr Parking Systems Pvt Ltd.", 15, supplierPurchaserStartY + 7);
+                doc.text("Sign:", 15, supplierPurchaserStartY + 15);
+                doc.text("Name: Milind Deshpande", 15, supplierPurchaserStartY + 25);
+                doc.text("Designation: Deputy General Manager", 15, supplierPurchaserStartY + 35);
                 doc.text("Date:", 15, supplierPurchaserStartY + 50);
 
                 // Purchaser/Customer Information
@@ -932,11 +941,11 @@ justify-content: center;
                 let accountName = AccountData?.Account_Name || "";
                 let accountNameLines = doc.splitTextToSize(accountName, 70);
 
-                doc.text(accountNameLines, 115, supplierPurchaserStartY + 10); // Render wrapped text
-                doc.text("Sign:", 115, supplierPurchaserStartY + 15 + accountNameLines.length * 5);
-                doc.text("Name:", 115, supplierPurchaserStartY + 25 + accountNameLines.length * 5);
-                doc.text("Designation:", 115, supplierPurchaserStartY + 35 + accountNameLines.length * 5);
-                doc.text("Date:", 115, supplierPurchaserStartY + 45 + accountNameLines.length * 5);     
+                doc.text(accountNameLines, 115, supplierPurchaserStartY + 7); // Render wrapped text
+                doc.text("Sign:", 115, supplierPurchaserStartY + 10 + accountNameLines.length * 5);
+                doc.text("Name:", 115, supplierPurchaserStartY + 20 + accountNameLines.length * 5);
+                doc.text("Designation:", 115, supplierPurchaserStartY + 30 + accountNameLines.length * 5);
+                doc.text("Date:", 115, supplierPurchaserStartY + 40 + accountNameLines.length * 5); 
                 //---------------------------------------------------------------------------------------------------------    
 
 
