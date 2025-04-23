@@ -135,7 +135,10 @@ justify-content: center;
                 doc.text(`Valid Spaces: ${totalQuantity}`, 125, 125);
                 doc.text(`Sales Representative: ${quoteData?.Owner?.name || ""}`, 125, 130);
                 doc.text(`Phone No.: ${ContactData?.Mobile || ""}`, 125, 135);
-                doc.text(`Email: ${ContactData?.Email || ""}`, 125, 140);
+                let email = ContactData?.Email || "";
+                let emailLines = doc.splitTextToSize(email, 55);
+                doc.text(`Email: `, 125, 140);
+                doc.text(emailLines, 135, 140);
 
                 doc.line(10, 150, 200, 150);
 
@@ -282,8 +285,8 @@ justify-content: center;
                             productImages[ProductID] ? "" : "",
                             description,
                             item.quantity ?? 0,
-                            `INR ${item.list_price ?? 0}`,
-                            `INR ${item.total ?? 0}`
+                            `INR ${(item.list_price ?? 0).toFixed(2)}`,
+                            `INR ${(item.total ?? 0).toFixed(2)}`,
                         ]);
                     }
                 }
@@ -309,8 +312,8 @@ justify-content: center;
 
                 tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${totalSum ?? 0}`]);
                 // tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
-                tableData.push(["", "", "", taxDetailsString, `INR ${TotalTax}`]); 
-                tableData.push(["", "", "", "Gross Contract Value", `INR ${totalSum + TotalTax}`]);
+                tableData.push(["", "", "", taxDetailsString, `INR ${TotalTax.toFixed(2)}`]); 
+                tableData.push(["", "", "", "Gross Contract Value", `INR ${(totalSum + TotalTax).toFixed(2)}`]);
 
 
                 // const MAX_IMAGE_HEIGHT = 40;
@@ -686,8 +689,8 @@ justify-content: center;
                     paymentStartY += rowHeight; // Increment Y position for the next row
                 });
 
-                                // Add Supplier and Purchaser Information Section
-                                function addNewPageWithHeader(doc, logoData, formattedDate) {
+                // Add Supplier and Purchaser Information Section
+                function addNewPageWithHeader(doc, logoData, formattedDate) {
                     doc.addPage();
                     doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                     doc.setFontSize(10).setFont("Times", "normal");
