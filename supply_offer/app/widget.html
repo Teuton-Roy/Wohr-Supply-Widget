@@ -153,15 +153,24 @@ justify-content: center;
 
                 // ---Customer Details---
                 doc.setFont('Times', 'bold');
-                doc.text("Customer Details", 10, 160);
+                doc.text("Customer Details", 10, 155);
                 doc.setFont('Times', 'normal');
-                doc.text(`Customer Name: ${AccountData?.Account_Name || ""}`, 10, 166);
-                doc.text(`GST No.: ${AccountData?.GSTIN_Number || ""}`, 10, 172);
-                doc.text(`PAN: ${AccountData?.PAN_Number || ""}`, 10, 178);
-                doc.text(`TAN No.: ${AccountData?.TAN_Number || ""}`, 10, 184);
-                doc.text(`Contact person’s name: ${ContactData?.Full_Name || ""}`, 10, 190);
+                let cusCurrentY = 160;
+                let name = AccountData?.Account_Name || "";
+                let nameLines = doc.splitTextToSize(name, 70);
+                doc.text(`Customer Name: `, 10, 160);
+                doc.text(nameLines, 35, 160);
+                cusCurrentY += nameLines.length * 5;
+                doc.text(`GST No.: ${AccountData?.GSTIN_Number || ""}`, 10, cusCurrentY);
+                cusCurrentY += 5;
+                doc.text(`PAN: ${AccountData?.PAN_Number || ""}`, 10, cusCurrentY);
+                cusCurrentY += 5;
+                doc.text(`TAN No.: ${AccountData?.TAN_Number || ""}`, 10, cusCurrentY);
+                cusCurrentY += 5;
+                doc.text(`Contact person’s name: ${ContactData?.Full_Name || ""}`, 10, cusCurrentY);
+                cusCurrentY += 5;
 
-                doc.line(10, 195, 200, 195);
+                doc.line(10, cusCurrentY, 200, cusCurrentY);
 
 
                 // --- Site Address ---
@@ -772,8 +781,8 @@ justify-content: center;
                     paymentStartY += rowHeight; // Increment Y position for the next row
                 });
 
-                                // Add Supplier and Purchaser Information Section
-                                function addNewPageWithHeader(doc, logoData, formattedDate) {
+                // Add Supplier and Purchaser Information Section
+                function addNewPageWithHeader(doc, logoData, formattedDate) {
                     doc.addPage();
                     doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                     doc.setFontSize(10).setFont("Times", "normal");
@@ -798,10 +807,10 @@ justify-content: center;
                 doc.text("Supplier Information", 15, supplierPurchaserStartY);
 
                 doc.setFont("Times", "normal");
-                doc.text("Wohr Parking Systems Pvt Ltd.", 15, supplierPurchaserStartY + 10);
-                doc.text("Sign", 15, supplierPurchaserStartY + 20);
-                doc.text("Name: Milind Deshpande", 15, supplierPurchaserStartY + 30);
-                doc.text("Designation: Deputy General Manager", 15, supplierPurchaserStartY + 40);
+                doc.text("Wohr Parking Systems Pvt Ltd.", 15, supplierPurchaserStartY + 7);
+                doc.text("Sign:", 15, supplierPurchaserStartY + 15);
+                doc.text("Name: Milind Deshpande", 15, supplierPurchaserStartY + 25);
+                doc.text("Designation: Deputy General Manager", 15, supplierPurchaserStartY + 35);
                 doc.text("Date:", 15, supplierPurchaserStartY + 50);
 
                 // Purchaser/Customer Information
@@ -812,11 +821,11 @@ justify-content: center;
                 let accountName = AccountData?.Account_Name || "";
                 let accountNameLines = doc.splitTextToSize(accountName, 70);
 
-                doc.text(accountNameLines, 115, supplierPurchaserStartY + 10); // Render wrapped text
-                doc.text("Sign:", 115, supplierPurchaserStartY + 15 + accountNameLines.length * 5);
-                doc.text("Name:", 115, supplierPurchaserStartY + 25 + accountNameLines.length * 5);
-                doc.text("Designation:", 115, supplierPurchaserStartY + 35 + accountNameLines.length * 5);
-                doc.text("Date:", 115, supplierPurchaserStartY + 45 + accountNameLines.length * 5); 
+                doc.text(accountNameLines, 115, supplierPurchaserStartY + 7); // Render wrapped text
+                doc.text("Sign:", 115, supplierPurchaserStartY + 10 + accountNameLines.length * 5);
+                doc.text("Name:", 115, supplierPurchaserStartY + 20 + accountNameLines.length * 5);
+                doc.text("Designation:", 115, supplierPurchaserStartY + 30 + accountNameLines.length * 5);
+                doc.text("Date:", 115, supplierPurchaserStartY + 40 + accountNameLines.length * 5); 
 
                 
                 doc.addPage();
@@ -850,15 +859,13 @@ justify-content: center;
 
                 // Milestone content
                 doc.setFontSize(10).setFont('Times', 'bold');
-                doc.text("Completion Period", 16, currentY + 10);
-                const Maintenance = "Free Maintenance Period";
-                const SplitMaintenance = doc.splitTextToSize(Maintenance, 30);
-                doc.text(SplitMaintenance, 16, currentY + 20);
+                doc.text("Delivery Schedule", 16, currentY + 10);
+                doc.text("Warranty ('DLP')", 16, currentY + 22);
                 doc.text("Wohr’s scope of work", 16, currentY + 34);
                 doc.setFont('Times', 'normal');
-                doc.text("4 - 6 Weeks from receipt of material at Site and subject to uninterrupted availability of site area along with uninterrupted power supply and storage facility. The total period depends on total quantity of Equipment.", 55, currentY + 6, { maxWidth: 135 });
-                doc.text("12 months from completion of installation subject to Wohr standard terms and conditions.", 55, currentY + 23, { maxWidth: 135 });
-                doc.text("Material Unloading at site, Parking System Installation and Commissioning and Hand-over of Equipment", 55, currentY + 34, { maxWidth: 135 });
+                doc.text("14 to 24 weeks from the date of manufacturing advance and shop drawing approvals receipt whichever is later subject to site readiness.", 55, currentY + 8, { maxWidth: 135 });
+                doc.text("15 Months from the date of delivery on manufactured equipment only.", 55, currentY + 23, { maxWidth: 135 });
+                doc.text("Parking Solution, Supply, Transportation till site only.", 55, currentY + 34, { maxWidth: 135 });
 
                 // Adjust Wohr/Supplier and Purchase/Customer sections dynamically
                 currentY += 50;
