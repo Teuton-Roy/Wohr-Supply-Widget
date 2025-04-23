@@ -153,19 +153,22 @@ justify-content: center;
                 doc.text(`Valid Spaces: ${totalQuantity}`, 118, 125);
                 doc.text(`Sales Representative: ${quoteData?.Owner?.name || ""}`, 118, 132);
                 doc.text(`Phone No.: ${ContactData?.Mobile || ""}`, 118, 139);
-                doc.text(`Email: ${ContactData?.Email || ""}`, 118, 146);
+                let email = ContactData?.Email || "";
+                let emailLines = doc.splitTextToSize(email, 55);
+                doc.text(`Email: `, 118, 146);
+                doc.text(emailLines, 129, 146);
 
                 doc.line(10, 155, 200, 155);
 
                 // --- Customer Details ---
                 doc.setFont('Times', 'bold');
-                doc.text("Customer Details", 10, 155);
+                doc.text("Customer Details", 10, 160);
                 doc.setFont('Times', 'normal');
-                let cusCurrentY = 160;
+                let cusCurrentY = 165;
                 let name = AccountData?.Account_Name || "";
                 let nameLines = doc.splitTextToSize(name, 70);
-                doc.text(`Customer Name: `, 10, 160);
-                doc.text(nameLines, 35, 160);
+                doc.text(`Customer Name: `, 10, 165);
+                doc.text(nameLines, 37, 165);
                 cusCurrentY += nameLines.length * 5;
                 doc.text(`GST No.: ${AccountData?.GSTIN_Number || ""}`, 10, cusCurrentY);
                 cusCurrentY += 5;
