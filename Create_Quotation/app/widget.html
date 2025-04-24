@@ -110,15 +110,20 @@ justify-content: center;
       try {
         const doc = new jsPDF();
         const logoPath = "logo.jpeg";
+        const image = "no_image.png";
         const logoData = await loadImage(logoPath);
+        const defaultImage = await loadImage(image);
 
         if (logoData) {
           doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
         }
 
-        console.log(AccountData);
-        // console.log(quoteData);
-        console.log(OppData);
+        // console.log("Accounts Data: ",AccountData);
+        // console.log("Quotation Data: "+quoteData);
+        // console.log("Opportunity Data: "+OppData);
+        console.log("Product Images: ",productImages);
+        console.log("Product Data Map: ",ProductDataMap);
+        
         
         
 
@@ -141,124 +146,158 @@ justify-content: center;
         const content = `We, Wohr Parking Systems Private Limited (Wohr/We), express our thanks, for giving us an opportunity to provide a proposal, for “Multi-level Car Parking Systems”, at your prestigious project. Wohr is a worldwide leader in mechanized and automated car parking systems with more than 60 years of industry experience, with a total worldwide installation base of more than 700,000 spaces and a presence in across 100 countries. We assure you the highest quality, reliability, and support, to solve all parking concerns.`;
         doc.text(doc.splitTextToSize(content, 180), 10, 65);
 
-        // --- Company Details ---
-        doc.setFontSize(11).setFont('Times', 'bold');
-        doc.text("Company Details", 10, 100);
-        doc.setFont('Times', 'normal');
-        doc.text("1206/41A, Vyas Vertex", 10, 107);
-        doc.text("J M Road", 10, 114);
-        doc.text("Pune 411004", 10, 121);
-        doc.text("India", 10, 128);
-        doc.text("Tel: 020 66748848", 10, 135);
-        doc.text("Email: info@wohrparking.in", 10, 142);
-        doc.text("GST No.: 27AAACW6100A1ZZ", 10, 149);
+        // ---Company Details---
+                doc.setFontSize(10).setFont('Times', 'bold');
+                doc.text("Company Details", 11, 95);
+                doc.setFont('Times', 'normal');
+                doc.text("1206/41A, Vyas Vertex", 11, 105);
+                doc.text("J M Road", 11, 110);
+                doc.text("Pune 411004", 11, 115);
+                doc.text("India", 11, 120);
+                doc.text("Tel: 020 66748848", 11, 125);
+                doc.text("Email: info@wohrparking.in", 11, 130);
+                doc.text("GST No.: 27AAACW6100A1ZZ", 11, 135);
 
-        // --- Quotation Details ---
-        doc.setFont('Times', 'bold');
-        doc.text("Quotation Details", 118, 100);
-        doc.setFont('Times', 'normal');
-        let totalQuantity = (quoteData?.Product_Details?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0).toFixed(2);
-        const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || "N/A";
-        doc.text(`Quote Number: ${quoteData?.Quotation_Number || "N/A"}`, 118, 107);
-        doc.text(`Order No.: ${orderNumber}`, 118, 113);
-        doc.text(`Customer Name: ${ContactData?.Full_Name || "N/A"}`, 118, 119);
-        doc.text(`Valid Spaces: ${totalQuantity}`, 118, 125);
-        doc.text(`Sales Representative: ${quoteData?.Owner?.name || "N/A"}`, 118, 132);
-        doc.text(`Phone No.: ${ContactData?.Mobile || "N/A"}`, 118, 139);
-        doc.text(`Email: ${ContactData?.Email || "N/A"}`, 118, 146);
+                // ---Quotation Details---
+                doc.setFont('Times', 'bold');
+                doc.text("Quotation Details", 118, 95);
+                doc.setFont('Times', 'normal');
+                let currentQ = 100;
+                let totalQuantity = (quoteData?.Product_Details?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0).toFixed(2);
+                doc.text(`Quote Number: ${quoteData?.Quotation_Number || ""}`, 118, currentQ);
+                currentQ += 5;
+                const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || "";
+                doc.text(`Order No.: ${orderNumber}`, 118, currentQ);
+                currentQ += 5;
 
-        doc.line(10, 155, 200, 155);
+                let qcustomerName = ContactData?.Full_Name || "N/A";
+                let qcustomerNameLines = doc.splitTextToSize(qcustomerName, 55);
+                doc.text(`Customer Name:`, 118, currentQ);
+                doc.text(qcustomerNameLines, 143, currentQ);
+                currentQ += qcustomerNameLines.length * 5;
 
-        // --- Customer Details ---
-        doc.setFont('Times', 'bold');
-        doc.text("Customer Details", 10, 160);
-        doc.setFont('Times', 'normal');
-        doc.text(`Customer Name: ${AccountData?.Account_Name || "N/A"}`, 10, 166);
-        doc.text(`GST No.: ${AccountData?.GSTIN_Number || "N/A"}`, 10, 172);
-        doc.text(`PAN: ${AccountData?.PAN_Number || "N/A"}`, 10, 178);
-        doc.text(`TAN No.: ${AccountData?.TAN_Number || "N/A"}`, 10, 184);
-        doc.text(`Contact person’s name: ${ContactData?.Full_Name || "N/A"}`, 10, 190);
+                doc.text(`Valid Spaces: ${totalQuantity}`, 118, currentQ);
+                currentQ += 5;
+                doc.text(`Sales Representative: ${quoteData?.Owner?.name || ""}`, 118, currentQ);
+                currentQ += 5;
+                doc.text(`Phone No.: ${ContactData?.Mobile || ""}`, 118, currentQ);
+                currentQ += 5;
 
-        doc.line(10, 195, 200, 195);
+                let email = ContactData?.Email || "N/A";
+                let emailLines = doc.splitTextToSize(email, 55);
+                doc.text(`Email:`, 118, currentQ);
+                doc.text(emailLines, 128, currentQ);
+                currentQ += emailLines.length * 5;
 
-        // --- Site Address ---
-        doc.setFont('Times', 'bold');
-        doc.text("Site Address", 10, 200);
-        doc.setFont('Times', 'normal');
-        // Dynamically calculate positions
-        let siteCurrentY = 205;
-        let projectName = OppData?.Deal_Name || "N/A";
-        let projectNameLines = doc.splitTextToSize(projectName, 60);
-        doc.text("Project Name:", 10, siteCurrentY);
-        doc.text(projectNameLines, 35, siteCurrentY);
-        siteCurrentY += projectNameLines.length * 5;
+                doc.line(10, currentQ, 200, currentQ);
 
-        let siteStreet = OppData?.Project_Street || "N/A";
-        let siteStreetLines = doc.splitTextToSize(siteStreet, 65);
-        doc.text("Street 1:", 10, siteCurrentY);
-        doc.text(siteStreetLines, 23.5, siteCurrentY);
-        siteCurrentY += siteStreetLines.length * 5;
+                // ---Customer Details---
+                doc.setFont('Times', 'bold');
+                doc.text("Customer Details", 10, 155);
+                doc.setFont('Times', 'normal');
+                let cusCurrentY = 160;
+                let name = AccountData?.Account_Name || "";
+                let nameLines = doc.splitTextToSize(name, 70);
+                doc.text(`Customer Name: `, 10, 160);
+                doc.text(nameLines, 35, 160);
+                cusCurrentY += nameLines.length * 5;
+                doc.text(`GST No.: ${AccountData?.GSTIN_Number || ""}`, 10, cusCurrentY);
+                cusCurrentY += 5;
+                doc.text(`PAN: ${AccountData?.PAN_Number || ""}`, 10, cusCurrentY);
+                cusCurrentY += 5;
+                doc.text(`TAN No.: ${AccountData?.TAN_Number || ""}`, 10, cusCurrentY);
+                cusCurrentY += 5;
+                doc.text(`Contact person’s name: ${ContactData?.Full_Name || ""}`, 10, cusCurrentY);
+                cusCurrentY += 5;
 
-        let siteStreet2 = OppData?.Project_Street2 || "N/A";
-        let siteStreet2Lines = doc.splitTextToSize(siteStreet2, 65); // Updated width from 70 to 65
-        doc.text("Street 2:", 10, siteCurrentY);
-        doc.text(siteStreet2Lines, 23.5, siteCurrentY);
-        siteCurrentY += siteStreet2Lines.length * 5;
-
-        let siteStreet3 = OppData?.Project_Street_3 || "N/A";
-        let siteStreet3Lines = doc.splitTextToSize(siteStreet3, 65);
-        doc.text("Street 3:", 10, siteCurrentY);
-        doc.text(siteStreet3Lines, 23.5, siteCurrentY);
-        siteCurrentY += siteStreet3Lines.length * 5;
-
-        doc.text(`City: ${OppData?.Project_City || "N/A"}`, 10, siteCurrentY);
-        siteCurrentY += 5;
-        doc.text(`State: ${OppData?.Project_State || "N/A"}`, 10, siteCurrentY);
-        siteCurrentY += 5;
-        doc.text(`Country: ${OppData?.Project_Country || "N/A"}`, 10, siteCurrentY);
-        siteCurrentY += 5;
-        doc.text(`Postal Code: ${OppData?.Project_Zip_Code || "N/A"}`, 10, siteCurrentY);
-
-        // console.log(accountData);
+                doc.line(10, cusCurrentY, 200, cusCurrentY);
 
 
-        // --- Billing Address ---
-        doc.setFont('Times', 'bold');
-        doc.text("Billing Address", 118, 200);
-        doc.setFont('Times', 'normal');
-        // Dynamically calculate positions
-        let BcurrentY = 205;
-        let customerName = AccountData?.Account_Name || "N/A";
-        let customerNameLines = doc.splitTextToSize(customerName, 60);
-        doc.text("Customer Name:", 118, BcurrentY);
-        doc.text(customerNameLines, 145, BcurrentY);
-        BcurrentY += customerNameLines.length * 5;
+                // --- Site Address ---
+                doc.setFont('Times', 'bold');
+                doc.text("Site Address", 10, 200);
+                doc.setFont('Times', 'normal');
+                // Dynamically calculate positions
+                let siteCurrentY = 205;
+                let projectName = OppData?.Deal_Name || "";
+                let projectNameLines = doc.splitTextToSize(projectName, 60);
+                doc.text("Project Name:", 10, siteCurrentY);
+                doc.text(projectNameLines, 31.5, siteCurrentY);
+                siteCurrentY += projectNameLines.length * 5;
 
-        let billingStreet = AccountData?.Billing_Street || "N/A";
-        let billingStreetLines = doc.splitTextToSize(billingStreet, 60);
-        doc.text("Street 1:", 118, BcurrentY);
-        doc.text(billingStreetLines, 131.5, BcurrentY);
-        BcurrentY += billingStreetLines.length * 5;
+                let siteStreet = OppData?.Project_Street || "";
+                let siteStreetLines = doc.splitTextToSize(siteStreet, 65);
+                doc.text("Street 1:", 10, siteCurrentY);
+                doc.text(siteStreetLines, 23.5, siteCurrentY);
+                siteCurrentY += siteStreetLines.length * 5;
 
-        let billingStreet2 = AccountData?.Billing_Street_2 || "N/A";
-        let billingStreet2Lines = doc.splitTextToSize(billingStreet2, 60);
-        doc.text("Street 2:", 118, BcurrentY);
-        doc.text(billingStreet2Lines, 131.5, BcurrentY);
-        BcurrentY += billingStreet2Lines.length * 5;
+                let siteStreet2 = OppData?.Project_Street2 || "N/A";
+                if(siteStreet2 !== "N/A"){
+                    let siteStreet2Lines = doc.splitTextToSize(siteStreet2, 65);
+                    doc.text("Street 2:", 10, siteCurrentY);
+                    doc.text(siteStreet2Lines, 23.5, siteCurrentY);
+                    siteCurrentY += siteStreet2Lines.length * 5;
+                }
 
-        let billingStreet3 = AccountData?.Billing_Street_3 || "N/A";
-        let billingStreet3Lines = doc.splitTextToSize(billingStreet3, 60);
-        doc.text("Street 3:", 118, BcurrentY);
-        doc.text(billingStreet3Lines, 131.5, BcurrentY);
-        BcurrentY += billingStreet3Lines.length * 5;
+                let siteStreet3 = OppData?.Project_Street_3 || "N/A";
+                if(siteStreet3 !== "N/A"){
+                    let siteStreet3Lines = doc.splitTextToSize(siteStreet3, 65);
+                    doc.text("Street 3:", 10, siteCurrentY);
+                    doc.text(siteStreet3Lines, 23.5, siteCurrentY);
+                    siteCurrentY += siteStreet3Lines.length * 5;
+                }
 
-        doc.text(`City: ${AccountData?.Billing_City || "N/A"}`, 118, BcurrentY);
-        BcurrentY += 5;
-        doc.text(`State: ${AccountData?.Domestic_Billing_State || "N/A"}`, 118, BcurrentY);
-        BcurrentY += 5;
-        doc.text(`Country: ${AccountData?.Billing_Country || "N/A"}`, 118, BcurrentY);
-        BcurrentY += 5;
-        doc.text(`Postal Code: ${AccountData?.Billing_Code || "N/A"}`, 118, BcurrentY);
+                doc.text(`City: ${OppData?.Project_City || ""}`, 10, siteCurrentY);
+                siteCurrentY += 5;
+                doc.text(`State: ${OppData?.Project_State || ""}`, 10, siteCurrentY);
+                siteCurrentY += 5;
+                doc.text(`Country: ${OppData?.Project_Country || ""}`, 10, siteCurrentY);
+                siteCurrentY += 5;
+                doc.text(`Postal Code: ${OppData?.Project_Zip_Code || ""}`, 10, siteCurrentY);
+
+
+                // --- Billing Address ---
+                doc.setFont('Times', 'bold');
+                doc.text("Billing Address", 118, 200);
+                doc.setFont('Times', 'normal');
+                // Dynamically calculate positions
+                let BcurrentY = 205;
+                let customerName = AccountData?.Account_Name || "";
+                let customerNameLines = doc.splitTextToSize(customerName, 60);
+                doc.text("Customer Name:", 118, BcurrentY);
+                doc.text(customerNameLines, 143, BcurrentY);
+                BcurrentY += customerNameLines.length * 5;
+
+                let billingStreet = AccountData?.Billing_Street || "";
+                let billingStreetLines = doc.splitTextToSize(billingStreet, 60);
+                doc.text("Street 1:", 118, BcurrentY);
+                doc.text(billingStreetLines, 131.5, BcurrentY);
+                BcurrentY += billingStreetLines.length * 5;
+
+                let billingStreet2 = AccountData?.Billing_Street_2 || "N/A";
+                if(billingStreet2 !== "N/A"){
+                    let billingStreet2Lines = doc.splitTextToSize(billingStreet2, 60);
+                    doc.text("Street 2:", 118, BcurrentY);
+                    doc.text(billingStreet2Lines, 131.5, BcurrentY);
+                    BcurrentY += billingStreet2Lines.length * 5;                    
+                }
+
+                let billingStreet3 = AccountData?.Billing_Street_3 || "N/A";
+                if(billingStreet3 !== "N/A"){
+                    let billingStreet3Lines = doc.splitTextToSize(billingStreet3, 60);
+                    doc.text("Street 3:", 118, BcurrentY);
+                    doc.text(billingStreet3Lines, 131.5, BcurrentY);
+                    BcurrentY += billingStreet3Lines.length * 5;                   
+                }
+
+                doc.text(`City: ${AccountData?.Billing_City || ""}`, 118, BcurrentY);
+                BcurrentY += 5;
+                doc.text(`State: ${AccountData?.Domestic_Billing_State || ""}`, 118, BcurrentY);
+                BcurrentY += 5;
+                doc.text(`Country: ${AccountData?.Billing_Country || ""}`, 118, BcurrentY);
+                BcurrentY += 5;
+                doc.text(`Postal Code: ${AccountData?.Billing_Code || ""}`, 118, BcurrentY);
+
 
         //----------------------------------------------------------------------------
 
@@ -286,9 +325,10 @@ justify-content: center;
             const ProductTax = product?.Tax || "N/A";
 
             const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating: ${coating}\n`;
+            const defaultImage = 
 
             tableData.push([
-              productImages[ProductID] ? "" : "",
+              productImages[ProductID] ? "" : "defaultImage",
               description,
               item.quantity ?? 0,
               `INR ${item.list_price ?? 0}`,
@@ -533,28 +573,30 @@ justify-content: center;
         if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
         doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
 
-        doc.setFontSize(12);
+        doc.setFontSize(10);
         doc.setFont('Times New Roman', 'bold');
         doc.text("Supplier:", 18, 60);
-        doc.text("Purchaser:", 110, 60);
+        doc.text("Purchaser:", 105, 60);
         doc.setFont('Times New Roman', 'normal');
 
         doc.text("Wohr Parking Systems Pvt. Ltd.", 18, 68);
         const PurchaserName = `${AccountData?.Account_Name || ''}`;
-        const SplitPurchaser = doc.splitTextToSize(PurchaserName, 55);
-        doc.text(SplitPurchaser, 110, 65);
+        const SplitPurchaser = doc.splitTextToSize(PurchaserName, 50);
+        doc.text(SplitPurchaser, 105, 65);
 
         doc.text("Sign:", 18, 75); // Adjusted Y position for Sign
-        doc.text("Sign:", 110, 80);
+        doc.text("Sign:", 105, 75);
 
         doc.text("Name: Milind Deshpande", 18, 85);
-        doc.text(`Name: ${ContactData?.Full_Name || ''}`, 110, 90);
-
+        let pname = ContactData?.Full_Name || "N/A";
+        let pnameLines = doc.splitTextToSize(name, 50); // Adjust the width as needed
+        doc.text("Name:", 105, 85);
+        doc.text(nameLines, 115, 85);
         doc.text("Designation: Deputy General Manager", 18, 93);
-        doc.text("Designation:", 110, 100);
+        doc.text("Designation:", 105, 100);
 
         doc.text("Date: ", 18, 105);
-        doc.text("Date: ", 110, 110);
+        doc.text("Date: ", 105, 105);
 
         doc.rect(15, 55, 170, 60);
         doc.line(100, 55, 100, 115);
