@@ -98,60 +98,73 @@ justify-content: center;
                 });
 
                 doc.setFontSize(13).setFont('Times', 'bold');
-                doc.text("WOHR Parking Systems Private Limited Supply + Installation Offer:", 40, 50);
+                doc.text("WOHR Parking Systems Private Limited Supply + Installation Offer:", 40, 45);
 
                 doc.setFontSize(10).setFont('Times', 'normal');
                 doc.text(`Date: ${formattedDate}`, 175, 40);
 
                 doc.setFontSize(12).setFont('Times', 'bold');
-                doc.text("Offer for Supply of Parking System:", 10, 60);
+                doc.text("Offer for Supply of Parking System:", 10, 55);
                 doc.setFont('Times', 'normal');
 
                 const content = `We, Wohr Parking Systems Private Limited (Wohr/We), express our thanks, for giving us an opportunity to provide a proposal, for “Multi-level Car Parking Systems”, at your prestigious project. Wohr is a worldwide leader in mechanized and automated car parking systems with more than 60 years of industry experience, with a total worldwide installation base of more than 700,000 spaces and a presence in across 100 countries. We assure you the highest quality, reliability, and support, to solve all parking concerns.`;
-                doc.text(doc.splitTextToSize(content, 180), 10, 70);
+                doc.text(doc.splitTextToSize(content, 180), 10, 63);
 
-                // --- Company Details
+                // ---Company Details---
                 doc.setFontSize(10).setFont('Times', 'bold');
-                doc.text("Company Details", 11, 100);
+                doc.text("Company Details", 11, 90);
                 doc.setFont('Times', 'normal');
-                doc.text("1206/41A, Vyas Vertex", 11, 115);
-                doc.text("J M Road", 11, 110);
-                doc.text("Pune 411004", 11, 120);
-                doc.text("India", 11, 125);
-                doc.text("Tel: 020 66748848", 11, 130);
-                doc.text("Email: info@wohrparking.in", 11, 135);
-                doc.text("GST No.: 27AAACW6100A1ZZ", 11, 140);
+                doc.text("1206/41A, Vyas Vertex", 11, 95);
+                doc.text("J M Road", 11, 100);
+                doc.text("Pune 411004", 11, 105);
+                doc.text("India", 11, 110);
+                doc.text("Tel: 020 66748848", 11, 115);
+                doc.text("Email: info@wohrparking.in", 11, 120);
+                doc.text("GST No.: 27AAACW6100A1ZZ", 11, 125);
 
-                // --- Quotation Details
+                // ---Quotation Details---
                 doc.setFont('Times', 'bold');
-                doc.text("Quotation Details", 125, 100);
+                doc.text("Quotation Details", 118, 90);
                 doc.setFont('Times', 'normal');
+                let currentQ = 95;
                 let totalQuantity = (quoteData?.Product_Details?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0).toFixed(2);
-                doc.text(`Quote Number: ${quoteData?.Quotation_Number || ""}`, 125, 110);
-                const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || ""; // Display Order No. with the first available value
-                // doc.text(`Order No.: ${quoteData?.Order_Number || "N/A"}`, 125, 115);
-                doc.text(`Order No.: ${orderNumber}`, 125, 115);
-                doc.text(`Customer Name: ${ContactData?.Full_Name || ""}`, 125, 120);
-                doc.text(`Valid Spaces: ${totalQuantity}`, 125, 125);
-                doc.text(`Sales Representative: ${quoteData?.Owner?.name || ""}`, 125, 130);
-                doc.text(`Phone No.: ${ContactData?.Mobile || ""}`, 125, 135);
-                let email = ContactData?.Email || "";
+                doc.text(`Quote Number: ${quoteData?.Quotation_Number || ""}`, 118, currentQ);
+                currentQ += 5;
+                const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || "";
+                doc.text(`Order No.: ${orderNumber}`, 118, currentQ);
+                currentQ += 5;
+
+                let qcustomerName = ContactData?.Full_Name || "N/A";
+                let qcustomerNameLines = doc.splitTextToSize(qcustomerName, 55);
+                doc.text(`Customer Name:`, 118, currentQ);
+                doc.text(qcustomerNameLines, 143, currentQ);
+                currentQ += qcustomerNameLines.length * 5;
+
+                doc.text(`Valid Spaces: ${totalQuantity}`, 118, currentQ);
+                currentQ += 5;
+                doc.text(`Sales Representative: ${quoteData?.Owner?.name || ""}`, 118, currentQ);
+                currentQ += 5;
+                doc.text(`Phone No.: ${ContactData?.Mobile || ""}`, 118, currentQ);
+                currentQ += 5;
+
+                let email = ContactData?.Email || "N/A";
                 let emailLines = doc.splitTextToSize(email, 55);
-                doc.text(`Email: `, 125, 140);
-                doc.text(emailLines, 135, 140);
+                doc.text(`Email:`, 118, currentQ);
+                doc.text(emailLines, 128, currentQ);
+                currentQ += emailLines.length * 5;
 
-                doc.line(10, 150, 200, 150);
+                doc.line(10, currentQ-3.5, 200, currentQ-3.5);
 
 
-                // --- Customer Details
+                // ---Customer Details---
                 doc.setFont('Times', 'bold');
-                doc.text("Customer Details", 10, 155);
+                doc.text("Customer Details", 10, 150);
                 doc.setFont('Times', 'normal');
-                let cusCurrentY = 160;
+                let cusCurrentY = 155;
                 let name = AccountData?.Account_Name || "";
                 let nameLines = doc.splitTextToSize(name, 70);
-                doc.text(`Customer Name: `, 10, 160);
-                doc.text(nameLines, 35, 160);
+                doc.text(`Customer Name: `, 10, 155);
+                doc.text(nameLines, 35, 155);
                 cusCurrentY += nameLines.length * 5;
                 doc.text(`GST No.: ${AccountData?.GSTIN_Number || ""}`, 10, cusCurrentY);
                 cusCurrentY += 5;
@@ -162,7 +175,7 @@ justify-content: center;
                 doc.text(`Contact person’s name: ${ContactData?.Full_Name || ""}`, 10, cusCurrentY);
                 cusCurrentY += 5;
 
-                doc.line(10, cusCurrentY, 200, cusCurrentY);
+                doc.line(10, cusCurrentY+5, 200, cusCurrentY+5);
 
 
                 // --- Site Address ---
@@ -217,7 +230,7 @@ justify-content: center;
                 let customerName = AccountData?.Account_Name || "";
                 let customerNameLines = doc.splitTextToSize(customerName, 60);
                 doc.text("Customer Name:", 118, BcurrentY);
-                doc.text(customerNameLines, 142.5, BcurrentY);
+                doc.text(customerNameLines, 143, BcurrentY);
                 BcurrentY += customerNameLines.length * 5;
 
                 let billingStreet = AccountData?.Billing_Street || "";
@@ -249,6 +262,7 @@ justify-content: center;
                 doc.text(`Country: ${AccountData?.Billing_Country || ""}`, 118, BcurrentY);
                 BcurrentY += 5;
                 doc.text(`Postal Code: ${AccountData?.Billing_Code || ""}`, 118, BcurrentY);
+               
 
                 //-----------------------------------------------------------------------------------------------------------------
                 // Product Table
@@ -780,7 +794,7 @@ justify-content: center;
 
                 // Adjust Wohr/Supplier and Purchase/Customer sections dynamically
                 currentY += 50;
-                doc.text("Wohr/Supplier:", 15, currentY+10);
+                doc.text("Wohr Parking System Pvt Ltd.:", 15, currentY+10);
                 doc.rect(15, currentY + 20, 50, 0);
                 doc.text("Name:", 15, currentY + 25);
                 doc.text("Designation:", 15, currentY + 30);
