@@ -122,6 +122,18 @@ justify-content: center;
                 doc.text("Email: info@wohrparking.in", 11, 120);
                 doc.text("GST No.: 27AAACW6100A1ZZ", 11, 125);
 
+                // ---Company Details---
+                doc.setFontSize(10).setFont('Times', 'bold');
+                doc.text("Company Details", 11, 90);
+                doc.setFont('Times', 'normal');
+                doc.text("1206/41A, Vyas Vertex", 11, 95);
+                doc.text("J M Road", 11, 100);
+                doc.text("Pune 411004", 11, 105);
+                doc.text("India", 11, 110);
+                doc.text("Tel: 020 66748848", 11, 115);
+                doc.text("Email: info@wohrparking.in", 11, 120);
+                doc.text("GST No.: 27AAACW6100A1ZZ", 11, 125);
+
                 // ---Quotation Details---
                 doc.setFont('Times', 'bold');
                 doc.text("Quotation Details", 118, 90);
@@ -153,18 +165,18 @@ justify-content: center;
                 doc.text(emailLines, 128, currentQ);
                 currentQ += emailLines.length * 5;
 
-                doc.line(10, currentQ-3.5, 200, currentQ-3.5);
+                doc.line(10, 145, 200, 145);
 
 
                 // ---Customer Details---
                 doc.setFont('Times', 'bold');
-                doc.text("Customer Details", 10, 150);
+                doc.text("Customer Details", 10, 155);
                 doc.setFont('Times', 'normal');
-                let cusCurrentY = 155;
+                let cusCurrentY = 160;
                 let name = AccountData?.Account_Name || "";
-                let nameLines = doc.splitTextToSize(name, 70);
-                doc.text(`Customer Name: `, 10, 155);
-                doc.text(nameLines, 35, 155);
+                let nameLines = doc.splitTextToSize(name, 130);
+                doc.text(`Customer Name: `, 10, 160);
+                doc.text(nameLines, 35, 160);
                 cusCurrentY += nameLines.length * 5;
                 doc.text(`GST No.: ${AccountData?.GSTIN_Number || ""}`, 10, cusCurrentY);
                 cusCurrentY += 5;
@@ -175,7 +187,7 @@ justify-content: center;
                 doc.text(`Contact person’s name: ${ContactData?.Full_Name || ""}`, 10, cusCurrentY);
                 cusCurrentY += 5;
 
-                doc.line(10, cusCurrentY+5, 200, cusCurrentY+5);
+                doc.line(10, 190, 200, 190);
 
 
                 // --- Site Address ---
