@@ -250,8 +250,6 @@ justify-content: center;
                 BcurrentY += 5;
                 doc.text(`Postal Code: ${AccountData?.Billing_Code || ""}`, 118, BcurrentY);
 
-
-
                 //-----------------------------------------------------------------------------------------------------------------
                 // Product Table
                 //-----------------------------------------------------------------------------------------------------------------
@@ -310,7 +308,7 @@ justify-content: center;
                 });
                 const taxDetailsString = taxDetails.length > 0 ? taxDetails.join(", ") : "No Tax";
 
-                tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${totalSum ?? 0}`]);
+                tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${(totalSum ?? 0).toFixed(2)}`]);
                 // tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
                 tableData.push(["", "", "", taxDetailsString, `INR ${TotalTax.toFixed(2)}`]); 
                 tableData.push(["", "", "", "Gross Contract Value", `INR ${(totalSum + TotalTax).toFixed(2)}`]);
