@@ -129,46 +129,48 @@ justify-content: center;
                 const content = `We, Wohr Parking Systems Private Limited (Wohr/We), express our thanks, for giving us an opportunity to provide a proposal, for “Multi-level Car Parking Systems”, at your prestigious project. Wohr is a worldwide leader in mechanized and automated car parking systems with more than 60 years of industry experience, with a total worldwide installation base of more than 700,000 spaces and a presence in across 100 countries. We assure you the highest quality, reliability, and support, to solve all parking concerns.`;
                 doc.text(doc.splitTextToSize(content, 180), 10, 65);
 
-                // --- Company Details ---
-                doc.setFontSize(11).setFont('Times', 'bold');
-                doc.text("Company Details", 10, 100);
+                // --- Company Details
+                doc.setFontSize(10).setFont('Times', 'bold');
+                doc.text("Company Details", 11, 100);
                 doc.setFont('Times', 'normal');
-                doc.text("1206/41A, Vyas Vertex", 10, 107);
-                doc.text("J M Road", 10, 114);
-                doc.text("Pune 411004", 10, 121);
-                doc.text("India", 10, 128);
-                doc.text("Tel: 020 66748848", 10, 135);
-                doc.text("Email: info@wohrparking.in", 10, 142);
-                doc.text("GST No.: 27AAACW6100A1ZZ", 10, 149);
+                doc.text("1206/41A, Vyas Vertex", 11, 115);
+                doc.text("J M Road", 11, 110);
+                doc.text("Pune 411004", 11, 120);
+                doc.text("India", 11, 125);
+                doc.text("Tel: 020 66748848", 11, 130);
+                doc.text("Email: info@wohrparking.in", 11, 135);
+                doc.text("GST No.: 27AAACW6100A1ZZ", 11, 140);
 
-                // --- Quotation Details ---
+                // --- Quotation Details
                 doc.setFont('Times', 'bold');
-                doc.text("Quotation Details", 118, 100);
+                doc.text("Quotation Details", 125, 100);
                 doc.setFont('Times', 'normal');
                 let totalQuantity = (quoteData?.Product_Details?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0).toFixed(2);
-                const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || "";
-                doc.text(`Quote Number: ${quoteData?.Quotation_Number || ""}`, 118, 107);
-                doc.text(`Order No.: ${orderNumber}`, 118, 113);
-                doc.text(`Customer Name: ${ContactData?.Full_Name || ""}`, 118, 119);
-                doc.text(`Valid Spaces: ${totalQuantity}`, 118, 125);
-                doc.text(`Sales Representative: ${quoteData?.Owner?.name || ""}`, 118, 132);
-                doc.text(`Phone No.: ${ContactData?.Mobile || ""}`, 118, 139);
+                doc.text(`Quote Number: ${quoteData?.Quotation_Number || ""}`, 125, 110);
+                const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || ""; // Display Order No. with the first available value
+                // doc.text(`Order No.: ${quoteData?.Order_Number || "N/A"}`, 125, 115);
+                doc.text(`Order No.: ${orderNumber}`, 125, 115);
+                doc.text(`Customer Name: ${ContactData?.Full_Name || ""}`, 125, 120);
+                doc.text(`Valid Spaces: ${totalQuantity}`, 125, 125);
+                doc.text(`Sales Representative: ${quoteData?.Owner?.name || ""}`, 125, 130);
+                doc.text(`Phone No.: ${ContactData?.Mobile || ""}`, 125, 135);
                 let email = ContactData?.Email || "";
                 let emailLines = doc.splitTextToSize(email, 55);
-                doc.text(`Email: `, 118, 146);
-                doc.text(emailLines, 129, 146);
+                doc.text(`Email: `, 125, 140);
+                doc.text(emailLines, 135, 140);
 
-                doc.line(10, 155, 200, 155);
+                doc.line(10, 150, 200, 150);
 
-                // --- Customer Details ---
+
+                // --- Customer Details
                 doc.setFont('Times', 'bold');
-                doc.text("Customer Details", 10, 160);
+                doc.text("Customer Details", 10, 155);
                 doc.setFont('Times', 'normal');
-                let cusCurrentY = 165;
+                let cusCurrentY = 160;
                 let name = AccountData?.Account_Name || "";
                 let nameLines = doc.splitTextToSize(name, 70);
-                doc.text(`Customer Name: `, 10, 165);
-                doc.text(nameLines, 37, 165);
+                doc.text(`Customer Name: `, 10, 160);
+                doc.text(nameLines, 35, 160);
                 cusCurrentY += nameLines.length * 5;
                 doc.text(`GST No.: ${AccountData?.GSTIN_Number || ""}`, 10, cusCurrentY);
                 cusCurrentY += 5;
@@ -181,6 +183,7 @@ justify-content: center;
 
                 doc.line(10, cusCurrentY, 200, cusCurrentY);
 
+
                 // --- Site Address ---
                 doc.setFont('Times', 'bold');
                 doc.text("Site Address", 10, 200);
@@ -190,7 +193,7 @@ justify-content: center;
                 let projectName = OppData?.Deal_Name || "";
                 let projectNameLines = doc.splitTextToSize(projectName, 60);
                 doc.text("Project Name:", 10, siteCurrentY);
-                doc.text(projectNameLines, 32.5, siteCurrentY);
+                doc.text(projectNameLines, 31.5, siteCurrentY);
                 siteCurrentY += projectNameLines.length * 5;
 
                 let siteStreet = OppData?.Project_Street || "";
@@ -233,7 +236,7 @@ justify-content: center;
                 let customerName = AccountData?.Account_Name || "";
                 let customerNameLines = doc.splitTextToSize(customerName, 60);
                 doc.text("Customer Name:", 118, BcurrentY);
-                doc.text(customerNameLines, 145, BcurrentY);
+                doc.text(customerNameLines, 142.5, BcurrentY);
                 BcurrentY += customerNameLines.length * 5;
 
                 let billingStreet = AccountData?.Billing_Street || "";
@@ -265,6 +268,7 @@ justify-content: center;
                 doc.text(`Country: ${AccountData?.Billing_Country || ""}`, 118, BcurrentY);
                 BcurrentY += 5;
                 doc.text(`Postal Code: ${AccountData?.Billing_Code || ""}`, 118, BcurrentY);
+
 
                 //------------------------------------------------------------------------------------------------
                 // Product Details Table
