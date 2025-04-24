@@ -153,18 +153,18 @@ justify-content: center;
                 doc.text(emailLines, 128, currentQ);
                 currentQ += emailLines.length * 5;
 
-                doc.line(10, currentQ-3.5, 200, currentQ-3.5);
+                doc.line(10, 145, 200, 145);
 
 
                 // ---Customer Details---
                 doc.setFont('Times', 'bold');
-                doc.text("Customer Details", 10, 150);
+                doc.text("Customer Details", 10, 155);
                 doc.setFont('Times', 'normal');
-                let cusCurrentY = 155;
+                let cusCurrentY = 160;
                 let name = AccountData?.Account_Name || "";
-                let nameLines = doc.splitTextToSize(name, 70);
-                doc.text(`Customer Name: `, 10, 155);
-                doc.text(nameLines, 35, 155);
+                let nameLines = doc.splitTextToSize(name, 130);
+                doc.text(`Customer Name: `, 10, 160);
+                doc.text(nameLines, 35, 160);
                 cusCurrentY += nameLines.length * 5;
                 doc.text(`GST No.: ${AccountData?.GSTIN_Number || ""}`, 10, cusCurrentY);
                 cusCurrentY += 5;
@@ -175,7 +175,7 @@ justify-content: center;
                 doc.text(`Contact person’s name: ${ContactData?.Full_Name || ""}`, 10, cusCurrentY);
                 cusCurrentY += 5;
 
-                doc.line(10, cusCurrentY+5, 200, cusCurrentY+5);
+                doc.line(10, 190, 200, 190);
 
 
                 // --- Site Address ---
@@ -514,7 +514,7 @@ justify-content: center;
 
 
                 const totalSumInWords = numberToWords(totalSum + TotalTax);
-                doc.text(`Rupees ${totalSumInWords}`, 15, doc.lastAutoTable.finalY + 20);
+                doc.text(`${totalSumInWords}`, 15, doc.lastAutoTable.finalY + 17);
 
                 //-----------------------------------------------------------------------------------------------------------------
 
@@ -704,8 +704,8 @@ justify-content: center;
                     paymentStartY += rowHeight; // Increment Y position for the next row
                 });
 
-                                // Add Supplier and Purchaser Information Section
-                                function addNewPageWithHeader(doc, logoData, formattedDate) {
+                // Add Supplier and Purchaser Information Section
+                function addNewPageWithHeader(doc, logoData, formattedDate) {
                     doc.addPage();
                     doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                     doc.setFontSize(10).setFont("Times", "normal");
@@ -746,7 +746,7 @@ justify-content: center;
 
                 doc.setFont("Times", "normal");
                 let accountName = AccountData?.Account_Name || "";
-                let accountNameLines = doc.splitTextToSize(accountName, 70);
+                let accountNameLines = doc.splitTextToSize(accountName, 85);
 
                 doc.text(accountNameLines, 115, supplierPurchaserStartY + 7); // Render wrapped text
                 doc.text("Sign:", 115, supplierPurchaserStartY + 10 + accountNameLines.length * 5);
