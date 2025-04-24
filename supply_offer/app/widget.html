@@ -119,37 +119,50 @@ justify-content: center;
                 doc.text(doc.splitTextToSize(content, 180), 10, 70);
 
 
-                // ---Company Details---
-                doc.setFontSize(10).setFont('Times', 'bold');
-                doc.text("Company Details", 11, 100);
+// ---Company Details---
+doc.setFontSize(10).setFont('Times', 'bold');
+                doc.text("Company Details", 11, 95);
                 doc.setFont('Times', 'normal');
-                doc.text("1206/41A, Vyas Vertex", 11, 115);
+                doc.text("1206/41A, Vyas Vertex", 11, 105);
                 doc.text("J M Road", 11, 110);
-                doc.text("Pune 411004", 11, 120);
-                doc.text("India", 11, 125);
-                doc.text("Tel: 020 66748848", 11, 130);
-                doc.text("Email: info@wohrparking.in", 11, 135);
-                doc.text("GST No.: 27AAACW6100A1ZZ", 11, 140);
+                doc.text("Pune 411004", 11, 115);
+                doc.text("India", 11, 120);
+                doc.text("Tel: 020 66748848", 11, 125);
+                doc.text("Email: info@wohrparking.in", 11, 130);
+                doc.text("GST No.: 27AAACW6100A1ZZ", 11, 135);
 
                 // ---Quotation Details---
                 doc.setFont('Times', 'bold');
-                doc.text("Quotation Details", 125, 100);
+                doc.text("Quotation Details", 118, 95);
                 doc.setFont('Times', 'normal');
-                // Sum all quantities in Product_Details array
+                let currentQ = 100;
                 let totalQuantity = (quoteData?.Product_Details?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0).toFixed(2);
-                doc.text(`Quote Number: ${quoteData?.Quotation_Number || ""}`, 125, 110);
-                const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || ""; // Display Order No. with the first available value
-                // doc.text(`Order No.: ${quoteData?.Order_Number || "N/A"}`, 125, 115);
-                doc.text(`Order No.: ${orderNumber}`, 125, 115);
-                doc.text(`Customer Name: ${ContactData?.Full_Name || ""}`, 125, 120);
-                // doc.text(`Valid Spaces: ${quoteData?.Product_Details.quantity || "N/A"}`, 125, 125);
-                doc.text(`Valid Spaces: ${totalQuantity}`, 125, 125);
-                doc.text(`Sales Representative: ${quoteData?.Owner?.name || ""}`, 125, 130);
-                doc.text(`Phone No.: ${ContactData?.Mobile || ""}`, 125, 135);
-                doc.text(`Email: ${ContactData?.Email || ""}`, 125, 140);
+                doc.text(`Quote Number: ${quoteData?.Quotation_Number || ""}`, 118, currentQ);
+                currentQ += 5;
+                const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || "";
+                doc.text(`Order No.: ${orderNumber}`, 118, currentQ);
+                currentQ += 5;
 
-                doc.line(10, 150, 200, 150);
+                let qcustomerName = ContactData?.Full_Name || "N/A";
+                let qcustomerNameLines = doc.splitTextToSize(qcustomerName, 55);
+                doc.text(`Customer Name:`, 118, currentQ);
+                doc.text(qcustomerNameLines, 143, currentQ);
+                currentQ += qcustomerNameLines.length * 5;
 
+                doc.text(`Valid Spaces: ${totalQuantity}`, 118, currentQ);
+                currentQ += 5;
+                doc.text(`Sales Representative: ${quoteData?.Owner?.name || ""}`, 118, currentQ);
+                currentQ += 5;
+                doc.text(`Phone No.: ${ContactData?.Mobile || ""}`, 118, currentQ);
+                currentQ += 5;
+
+                let email = ContactData?.Email || "N/A";
+                let emailLines = doc.splitTextToSize(email, 55);
+                doc.text(`Email:`, 118, currentQ);
+                doc.text(emailLines, 128, currentQ);
+                currentQ += emailLines.length * 5;
+
+                doc.line(10, currentQ, 200, currentQ);
 
                 // ---Customer Details---
                 doc.setFont('Times', 'bold');
@@ -257,8 +270,6 @@ justify-content: center;
                 doc.text(`Country: ${AccountData?.Billing_Country || ""}`, 118, BcurrentY);
                 BcurrentY += 5;
                 doc.text(`Postal Code: ${AccountData?.Billing_Code || ""}`, 118, BcurrentY);
-
-
                 
                 
                 //-----------------------------------------------------------------------------------------------------------------
