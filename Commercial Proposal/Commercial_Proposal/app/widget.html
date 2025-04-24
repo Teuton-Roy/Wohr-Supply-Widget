@@ -283,8 +283,8 @@ justify-content: center;
                             productImages[ProductID] ? "" : "",
                             description,
                             item.quantity ?? 0,
-                            `INR ${item.list_price ?? 0}`,
-                            `INR ${item.total ?? 0}`
+                            `INR ${(item.list_price ?? 0).toFixed(2)}`,
+                            `INR ${(item.total ?? 0).toFixed(2)}`,
                         ]);
                     }
                 }
@@ -308,10 +308,10 @@ justify-content: center;
                 });
                 const taxDetailsString = taxDetails.length > 0 ? taxDetails.join(", ") : "No Tax";
 
-                tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${totalSum ?? 0}`]);
+                tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${(totalSum ?? 0).toFixed(2)}`]);
                 // tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
-                tableData.push(["", "", "", taxDetailsString, `INR ${TotalTax}`]); 
-                tableData.push(["", "", "", "Gross Contract Value", `INR ${totalSum + TotalTax}`]);
+                tableData.push(["", "", "", taxDetailsString, `INR ${TotalTax.toFixed(2)}`]); 
+                tableData.push(["", "", "", "Gross Contract Value", `INR ${(totalSum + TotalTax).toFixed(2)}`]);
 
 
                 // const MAX_IMAGE_HEIGHT = 40;
