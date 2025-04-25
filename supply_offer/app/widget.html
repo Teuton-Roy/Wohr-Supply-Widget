@@ -1279,22 +1279,26 @@ justify-content: center;
                     }
                 });
 
-                doc.setFontSize(10).setFont("Times", "bold");
+                //Wohr Supplier
+                doc.setFont("Times", "bold");
+                doc.setFontSize(11);
                 doc.text("Wohr/Supplier:", 15, 145);
-                doc.text("Date:", 15, 150);
-                doc.setFontSize(10).setFont("Times", "normal");
-                doc.text("Wohr Parking Systems Pvt. Ltd.", 15, 158);
+                doc.text("Wohr Parking System Pvt. Ltd", 15, 150);
                 doc.rect(15, 175, 50, 0);
-                doc.text("Signatory Name:", 15, 185);
+                doc.setFont("Times", "normal");
+                doc.text("Name:", 15, 185);
                 doc.text("Designation:", 15, 192);
+                doc.text("Date: ", 15, 200);
 
-                doc.setFontSize(10).setFont("Times", "bold");
-                doc.text("Purchase/Customer:", 150, 150);
-                doc.text("Date:", 150, 155);
-                doc.setFontSize(10).setFont("Times", "normal");
-                doc.rect(150, 175, 50, 0);
-                doc.text("Name:", 150, 185);
-                doc.text("Designation:", 150, 192);
+                //Purchase Supplier
+                doc.setFont("Times", "bold");
+                doc.setFontSize(11);
+                doc.text("Purchase/Customer", 135, 145);
+                doc.rect(135, 175, 50, 0);
+                doc.setFont("Times", "normal");
+                doc.text("Name:", 135, 185);
+                doc.text("Designation:", 135, 192);
+                doc.text("Date: ", 135, 200);
 
 
                 const pdfBlob = doc.output("blob");
