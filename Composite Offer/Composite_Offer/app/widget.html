@@ -122,18 +122,6 @@ justify-content: center;
                 doc.text("Email: info@wohrparking.in", 11, 120);
                 doc.text("GST No.: 27AAACW6100A1ZZ", 11, 125);
 
-                // ---Company Details---
-                doc.setFontSize(10).setFont('Times', 'bold');
-                doc.text("Company Details", 11, 90);
-                doc.setFont('Times', 'normal');
-                doc.text("1206/41A, Vyas Vertex", 11, 95);
-                doc.text("J M Road", 11, 100);
-                doc.text("Pune 411004", 11, 105);
-                doc.text("India", 11, 110);
-                doc.text("Tel: 020 66748848", 11, 115);
-                doc.text("Email: info@wohrparking.in", 11, 120);
-                doc.text("GST No.: 27AAACW6100A1ZZ", 11, 125);
-
                 // ---Quotation Details---
                 doc.setFont('Times', 'bold');
                 doc.text("Quotation Details", 118, 90);
@@ -526,7 +514,7 @@ justify-content: center;
 
 
                 const totalSumInWords = numberToWords(totalSum + TotalTax);
-                doc.text(`Rupees ${totalSumInWords}`, 15, doc.lastAutoTable.finalY + 20);
+                doc.text(`${totalSumInWords}`, 15, doc.lastAutoTable.finalY + 17);
 
                 //-----------------------------------------------------------------------------------------------------------------
 
