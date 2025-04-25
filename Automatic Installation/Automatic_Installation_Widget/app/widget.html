@@ -61,7 +61,7 @@ align-items: center;
 justify-content: center;
 ">
         <div class="spinner"></div>
-        <p style="margin-top: 20px; font-family: sans-serif; color: #555;">Loading Quotation PDF...</p>
+        <p style="margin-top: 20px; font-family: sans-serif; color: #555;">Loading Automatic Installation PDF...</p>
     </div>
     <script>
         const { jsPDF } = window.jspdf;
@@ -1363,8 +1363,8 @@ justify-content: center;
                 //Wohr Supplier
                 doc.setFont("Times", "bold");
                 doc.setFontSize(11);
-                doc.text("Wohr/Supplier:", 10, 230);
-                doc.text("Wohr Parking System Pvt. Ltd", 10, 236);
+                // doc.text("Wohr/Supplier:", 10, 230);
+                doc.text("Wohr Parking System Pvt. Ltd", 10, 230);
                 doc.rect(10, 250, 50, 0);
                 doc.setFont("Times", "normal");
                 doc.text("Name:", 10, 255);
