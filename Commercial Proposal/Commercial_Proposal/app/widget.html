@@ -1211,18 +1211,22 @@ justify-content: center;
                     }
                 });
 
-                doc.text("Wohr/Supplier:", 15, 195);
-                doc.text("Wohr Parking Systems Pvt. Ltd.", 15, 200);
-                doc.rect(15, 210, 50, 0);
-                doc.text("Name:", 15, 215);
-                doc.text("Designation:", 15, 220);
-                doc.text("Date:", 15, 230);
+                doc.setFontSize(10).setFont("Times", "bold");
+                doc.text("Wohr/Supplier:", 15, 145);
+                doc.text("Date:", 15, 150);
+                doc.setFontSize(10).setFont("Times", "normal");
+                doc.text("Wohr Parking Systems Pvt. Ltd.", 15, 158);
+                doc.rect(15, 175, 50, 0);
+                doc.text("Signatory Name:", 15, 185);
+                doc.text("Designation:", 15, 192);
 
-                doc.text("Purchase/Customer:", 150, 195);
-                doc.rect(150, 210, 50, 0);
-                doc.text("Name:", 150, 215);
-                doc.text("Designation:", 150, 220);
-                doc.text("Date:", 150, 230);
+                doc.setFontSize(10).setFont("Times", "bold");
+                doc.text("Purchase/Customer:", 150, 150);
+                doc.text("Date:", 150, 155);
+                doc.setFontSize(10).setFont("Times", "normal");
+                doc.rect(150, 175, 50, 0);
+                doc.text("Name:", 150, 185);
+                doc.text("Designation:", 150, 192);
 
 
                 const pdfBlob = doc.output("blob");
