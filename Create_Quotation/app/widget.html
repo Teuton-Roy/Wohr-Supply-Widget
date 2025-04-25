@@ -506,8 +506,6 @@ justify-content: center;
           });
         });
 
-
-
         doc.setFont('Times New Roman', 'bold');
         doc.text("Rounded-off Amount in Words:", 15, doc.lastAutoTable.finalY + 10);
         doc.setFont('Times New Roman', 'normal');
@@ -566,7 +564,7 @@ justify-content: center;
         }
 
         const totalSumInWords = numberToWords(totalSum + TotalTax);
-        doc.text(`Rupees ${totalSumInWords}`, 15, doc.lastAutoTable.finalY + 15);
+        doc.text(`${totalSumInWords}`, 15, doc.lastAutoTable.finalY + 15);
         //-------------------------------------------------
 
         doc.addPage();
@@ -588,7 +586,7 @@ justify-content: center;
         doc.text("Sign:", 105, 75);
 
         doc.text("Name: Milind Deshpande", 18, 85);
-        let pname = ContactData?.Full_Name || "N/A";
+        let pname = ContactData?.Full_Name || "";
         let pnameLines = doc.splitTextToSize(name, 50); // Adjust the width as needed
         doc.text("Name:", 105, 85);
         doc.text(nameLines, 115, 85);
