@@ -56,6 +56,32 @@
 <body>
   <iframe id="pdfViewer" width="100%" height="100%" style="border: none; position: absolute; top: 0; left: 0;"></iframe>
 
+  <div id="accessMessageBar" style="
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #f44336;
+  color: white;
+  font-family: sans-serif;
+  text-align: center;
+  padding: 15px;
+  z-index: 99999;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+">
+  <span id="accessMessageText">Access denied</span>
+  <button onclick="hideAccessMessage()" style="
+      margin-left: 20px;
+      background-color: transparent;
+      border: 1px solid white;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+  ">Dismiss</button>
+</div>
+
   <div id="loader" style="
 position: fixed;
 top: 0;
@@ -104,6 +130,20 @@ justify-content: center;
       doc.setFontSize(10).setFont('Times', 'normal');
       doc.text(`Date: ${formattedDate}`, 175, 40);
     }
+
+    // new code by Kamal
+    function showAccessMessage(message) {
+            const bar = document.getElementById("accessMessageBar");
+            const text = document.getElementById("accessMessageText");
+            text.textContent = message;
+            bar.style.display = "block";
+            document.getElementById("loader").style.display = "none"; // Hide loader if still visible
+        }
+
+        function hideAccessMessage() {
+            document.getElementById("accessMessageBar").style.display = "none";
+        }
+        //--------------------
 
 
     async function createPDF(quoteData, AccountData, ContactData, OppData, productImages, ProductDataMap) {
@@ -1022,75 +1062,123 @@ other deliverables or inputs regarding, design approval, space availability, app
     ZOHO.embeddedApp.on("PageLoad", function (data) {
       ZOHO.CRM.UI.Resize({ height: "100%", width: "100%" });
 
-      if (data && data.EntityId && data.EntityId.length > 0) {
-        const EntityID = data.EntityId[0];
+            if (data && data.EntityId && data.EntityId.length > 0) {
+                const EntityID = data.EntityId[0];
 
-        ZOHO.CRM.API.getRecord({ Entity: "Quotes", RecordID: EntityID }).then(function (response) {
-          if (response?.data?.length > 0) {
-            const quoteData = response.data[0];
-            const AccountID = quoteData.Account_Name?.id;
-            const ContactID = quoteData.Contact_Name?.id;
-            const OpportunityID = quoteData.Deal_Name?.id;
+                ZOHO.CRM.API.getRecord({ Entity: "Quotes", RecordID: EntityID }).then(function (response) {
+                    if (response?.data?.length > 0) {
+                        const quoteData = response.data[0];
+                        console.log("quoteData", quoteData)
+                        Quote_BusinessType = quoteData.Type_of_Business;
+                        console.log("Quote_BusinessType", Quote_BusinessType);
 
-            let AccountData = null;
-            let ContactData = null;
-            let OpportunityData = null;
-            let productImages = {};
-            let ProductDataMap = {};
-            let productPromises = [];
+                        Quote_TypeOfSys = quoteData.Type_of_System;
+                        console.log("Quote_TypeOfSys", Quote_TypeOfSys)
+                        const OwnerID = quoteData.Owner?.id;
+                        // console.log("OwnerID",OwnerID)
+                        const AccountID = quoteData.Account_Name?.id;
+                        const ContactID = quoteData.Contact_Name?.id;
+                        const OpportunityID = quoteData.Deal_Name?.id;
 
-            if (quoteData.Product_Details?.length > 0) {
-              quoteData.Product_Details.forEach(item => {
-                const ProductID = item.product?.id;
-                if (!ProductID) return;
+                        let AccountData = null;
+                        let ContactData = null;
+                        let OpportunityData = null;
+                        let OwnerData = null;
+                        let productImages = {};
+                        let ProductDataMap = {};
+                        let productPromises = [];
 
-                productPromises.push(
-                  ZOHO.CRM.API.getRecord({ Entity: "Products", RecordID: ProductID }).then(res => {
-                    if (res?.data?.length > 0) {
-                      ProductDataMap[ProductID] = res.data[0];
+                        //->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                        const ownerPromise = OwnerID
+                            ? ZOHO.CRM.API.getUser({ ID: OwnerID }).then(function (res) {
+                                OwnerData = res?.users?.[0] || null;
+                                console.log("OwnerData", OwnerData);
+                                User_BusinessType = OwnerData.Type_Of_Business;
+                                console.log("User_BusinessType", User_BusinessType)
+                                User_TypeOfSys = OwnerData.Type_of_System;
+                                console.log("User_TypeOfSys", User_TypeOfSys)
+                                UserProfile = OwnerData.profile.name;
+                                console.log("UserProfile", UserProfile)
+
+                                //     if(UserProfile != 'Administrator'){
+                                //     if(User_TypeOfSys != Quote_TypeOfSys && User_BusinessType != Quote_BusinessType){
+                                //         alert("User Business Type and System does not match with this quotation bussiness type and system so you are not eligible to view this quote");
+                                //     }
+                                // }
+                            })
+
+                            : Promise.resolve();
+
+
+
+                        if (quoteData.Product_Details?.length > 0) {
+                            quoteData.Product_Details.forEach(item => {
+                                const ProductID = item.product?.id;
+                                if (!ProductID) return;
+
+                                productPromises.push(
+                                    ZOHO.CRM.API.getRecord({ Entity: "Products", RecordID: ProductID }).then(res => {
+                                        if (res?.data?.length > 0) {
+                                            ProductDataMap[ProductID] = res.data[0];
+
+                                        }
+                                    }),
+                                    ZOHO.CRM.FUNCTIONS.execute("product_image", {
+                                        arguments: JSON.stringify({ ProductID }),
+                                    }).then(res => {
+                                        if (res?.details?.output) {
+                                            productImages[ProductID] = res.details.output;
+                                        }
+                                    })
+                                );
+                            });
+                        }
+
+                        const accountPromise = AccountID
+                            ? ZOHO.CRM.API.getRecord({ Entity: "Accounts", approved: "both", RecordID: AccountID }).then(res => {
+                                AccountData = res?.data?.[0] || null;
+                            })
+                            : Promise.resolve();
+
+                        const contactPromise = ContactID
+                            ? ZOHO.CRM.API.getRecord({ Entity: "Contacts", RecordID: ContactID }).then(res => {
+                                ContactData = res?.data?.[0] || null;
+                            })
+                            : Promise.resolve();
+
+                        const opportunityPromise = OpportunityID
+                            ? ZOHO.CRM.API.getRecord({ Entity: "Deals", RecordID: OpportunityID }).then(res => {
+                                OpportunityData = res?.data?.[0] || null;
+                            })
+                            : Promise.resolve();
+
+                        //->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                        Promise.all([
+                            ownerPromise,
+                            accountPromise,
+                            contactPromise,
+                            opportunityPromise,
+                            ...productPromises
+                        ]).then(() => {
+                            // Check before proceeding
+                            if (UserProfile !== 'Administrator') {
+                                const typeMismatch = User_TypeOfSys !== Quote_TypeOfSys;
+                                const businessMismatch = User_BusinessType !== Quote_BusinessType;
+
+                                if (typeMismatch || businessMismatch) {
+                                    showAccessMessage("Access Denied: Your business type or system does not match this quotation.You Cannot View this quotation");
+                                    return;
+                                }
+                            }
+
+
+                            // If validation passes
+                            createPDF(quoteData, AccountData, ContactData, OpportunityData, productImages, ProductDataMap);
+                        });
 
                     }
-                  }),
-                  ZOHO.CRM.FUNCTIONS.execute("product_image", {
-                    arguments: JSON.stringify({ ProductID }),
-                  }).then(res => {
-                    if (res?.details?.output) {
-                      productImages[ProductID] = res.details.output;
-                    }
-                  })
-                );
-              });
+                });
             }
-
-            const accountPromise = AccountID
-              ? ZOHO.CRM.API.getRecord({ Entity: "Accounts", approved: "both", RecordID: AccountID }).then(res => {
-                AccountData = res?.data?.[0] || null;
-              })
-              : Promise.resolve();
-
-            const contactPromise = ContactID
-              ? ZOHO.CRM.API.getRecord({ Entity: "Contacts", RecordID: ContactID }).then(res => {
-                ContactData = res?.data?.[0] || null;
-              })
-              : Promise.resolve();
-
-            const opportunityPromise = OpportunityID
-              ? ZOHO.CRM.API.getRecord({ Entity: "Deals", RecordID: OpportunityID }).then(res => {
-                OpportunityData = res?.data?.[0] || null;
-              })
-              : Promise.resolve();
-
-            Promise.all([
-              accountPromise,
-              contactPromise,
-              opportunityPromise,
-              ...productPromises
-            ]).then(() => {
-              createPDF(quoteData, AccountData, ContactData, OpportunityData, productImages, ProductDataMap);
-            });
-          }
-        });
-      }
     });
 
 
