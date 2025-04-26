@@ -947,7 +947,7 @@ justify-content: center;
 
                     // Add row data
                     doc.rect(10, paymentStartY, 195, rowHeight); // Draw a box for each row
-                    doc.text(descriptionLines, 12, paymentStartY + 5); // Render wrapped description text
+                    doc.text(descriptionLines, 12, paymentStartY + 5, { maxWidth: 80, align: 'justify' }); // Render wrapped description text
                     doc.text(`${(term.of_Split_Contract_Value || "")}`, 100, paymentStartY + 5);
                     doc.text(`INR ${(term.Amount || 0).toFixed(2)}`, 160, paymentStartY + 5);
 
@@ -1387,7 +1387,6 @@ const partPerformanceParagraph = [
 writeParagraphs(partPerformanceParagraph);
 
 // Add Section (9) Intellectual Property Rights
-// startNewPage(); // Start a new page for Section (9)
 doc.setFont("Times", "bold");
 doc.setFontSize(12);
 doc.text("(9) Intellectual Property Rights", 14, y3+7);
@@ -1403,7 +1402,6 @@ const intellectualPropertyParagraphs = [
 writeParagraphs(intellectualPropertyParagraphs);
 
 // Add Section (10) Other General Terms
-// startNewPage(); // Start a new page for Section (10)
 doc.setFont("Times", "bold");
 doc.setFontSize(12);
 doc.text("(10) Other General Terms", 14, y3+7);
@@ -1421,6 +1419,8 @@ const otherGeneralTermsParagraphs = [
     "g) Entire Agreement: In the event the PO issued by the Customer or any subsequent document/communication of the Customer contains terms and conditions contrary to the terms and conditions in this Offer, the terms and conditions in this Offer/Agreement shall supersede such PO/communication terms and conditions. It is expressly agreed that such conflicting PO or communication terms and conditions shall be null and void. This Agreement shall supersede all prior discussions and writings with respect to is agreement and constitutes the entire agreement between the Customer and Wohr with respect to the subject matter hereof and no modifications of these terms and conditions or waiver of the terms and conditions hereof shall be binding upon either of the Parties hereto, unless approved in writing by an authorized representative of each Party."
 ];
 writeParagraphs(otherGeneralTermsParagraphs);
+
+
 
 // // Section (6) Representatives And Warranties
 // doc.addPage();
