@@ -1337,7 +1337,7 @@ writeParagraphs(otherTerms);
 // Add Section (6) Representatives And Warranties
 doc.setFont("Times", "bold");
 doc.setFontSize(12);
-doc.text("(6) Representatives And Warranties", 14, y3+7);
+doc.text("(6) Representatives And Warranties", 14, y3+8);
 y3 += 10; 
 doc.setFont("Times", "normal");
 doc.setFontSize(10);
@@ -1347,7 +1347,7 @@ const paragraphs = [
     "b) It has obtained the requisite licenses, authorization, permits required for carrying on its business/install and use the Equipment the same are in full force and effect;",
     "c) It has the right and authority to disclose the information, instruction and the required data/details, as per the offer and its acceptance and such disclosure does not infringe any rights of a third-party.",
     "d) If the Customer is procuring the services on behalf of another, the Customer represents and warrants that the Customer is the duly authorized agent of said party for the purpose of ordering and otherwise accepting and complying with these terms and conditions, jointly and severally with such another party.",
-    "e) Any change in any of the term and condition of this Offer made by the Purchaser shall not be binding on Wohr unless such change or modification is specifically accepted in advance in writing by Wohr."
+    "e) Any change in any of the term and condition of this Offer made by the Purchaser shall not be binding on Wohr unless such change or modification is specifically accepted in advance in writing by Wohr.",
 ];
 writeParagraphs(paragraphs);
 
@@ -1363,7 +1363,17 @@ const amendmentParagraph = [
 
 writeParagraphs(amendmentParagraph);
 
-// Add Section (8) Part Performanced
+// Utility function to start a new page with a header
+function startNewPage() {
+    doc.addPage();
+    doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+    doc.setFontSize(10).setFont("Times", "normal");
+    doc.text(`Date: ${formattedDate}`, 175, 40);
+    y3 = 50; // Reset Y position for the new page
+}
+
+// Add Section (8) Part Performance
+startNewPage(); // Start a new page for Section (8)
 doc.setFont("Times", "bold");
 doc.setFontSize(12);
 doc.text("(8) Part Performance", 14, y3+7);
@@ -1377,6 +1387,7 @@ const partPerformanceParagraph = [
 writeParagraphs(partPerformanceParagraph);
 
 // Add Section (9) Intellectual Property Rights
+// startNewPage(); // Start a new page for Section (9)
 doc.setFont("Times", "bold");
 doc.setFontSize(12);
 doc.text("(9) Intellectual Property Rights", 14, y3+7);
@@ -1392,6 +1403,7 @@ const intellectualPropertyParagraphs = [
 writeParagraphs(intellectualPropertyParagraphs);
 
 // Add Section (10) Other General Terms
+// startNewPage(); // Start a new page for Section (10)
 doc.setFont("Times", "bold");
 doc.setFontSize(12);
 doc.text("(10) Other General Terms", 14, y3+7);
@@ -1409,7 +1421,6 @@ const otherGeneralTermsParagraphs = [
     "g) Entire Agreement: In the event the PO issued by the Customer or any subsequent document/communication of the Customer contains terms and conditions contrary to the terms and conditions in this Offer, the terms and conditions in this Offer/Agreement shall supersede such PO/communication terms and conditions. It is expressly agreed that such conflicting PO or communication terms and conditions shall be null and void. This Agreement shall supersede all prior discussions and writings with respect to is agreement and constitutes the entire agreement between the Customer and Wohr with respect to the subject matter hereof and no modifications of these terms and conditions or waiver of the terms and conditions hereof shall be binding upon either of the Parties hereto, unless approved in writing by an authorized representative of each Party."
 ];
 writeParagraphs(otherGeneralTermsParagraphs);
-
 
 // // Section (6) Representatives And Warranties
 // doc.addPage();
