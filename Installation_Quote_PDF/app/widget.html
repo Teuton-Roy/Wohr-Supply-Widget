@@ -1084,13 +1084,17 @@ justify-content: center;
 
                 // Adjust Wohr/Supplier and Purchase/Customer sections dynamically
                 currentY += 50;
+                doc.setFontSize(12).setFont('Times', 'bold');
                 doc.text("Wohr Parking System Pvt Ltd.", 15, currentY);
+                doc.setFontSize(10).setFont('Times', 'normal');
                 doc.rect(15, currentY + 12, 50, 0);
                 doc.text("Name:", 15, currentY + 17);
                 doc.text("Designation:", 15, currentY + 22);
                 doc.text("Date:", 15, currentY + 32);
 
+                doc.setFont("Times", "bold").setFontSize(12);
                 doc.text("Purchase/Customer", 150, currentY);
+                doc.setFont("Times", "normal").setFontSize(10);
                 doc.rect(150, currentY + 12, 50, 0);
                 doc.text("Name:", 150, currentY + 17);
                 doc.text("Designation:", 150, currentY + 22);
