@@ -895,10 +895,12 @@ justify-content: center;
                 //---------------------------------------------------------------------------------
                 // Add Installation Payment Terms Section
 
-                doc.setFontSize(12).setFont("Times", "bold");
-                doc.text("Installation Payment Term", 10, startY1 - 35);
+                let pstartY = 55; 
 
-                let paymentBoxStartY = startY1 - 30; // Starting Y position of the payment term box
+                doc.setFontSize(12).setFont("Times", "bold");
+                doc.text("Installation Payment Term", 10, pstartY);
+
+                let paymentBoxStartY = pstartY + 5; // Starting Y position of the payment term box
                 let paymentBoxHeight = 7; // Initial height for the header row
 
                 // Table headers for Installation Payment Term
