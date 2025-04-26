@@ -1560,6 +1560,16 @@ writeParagraphs(otherGeneralTermsParagraphs);
                         let productPromises = [];
 
                         //->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                        // new add
+                        let CurrentUser = null;
+ 
+                        const currentUserPromise = ZOHO.CRM.CONFIG.getCurrentUser().then(function(UserData) {
+                            CurrentUser = UserData.users[0];
+                            console.log("CurrentUser", CurrentUser);
+                            UserProfile = CurrentUser.profile.name;
+                            console.log("UserProfile", UserProfile)
+                        });
+
                         const ownerPromise = OwnerID
                             ? ZOHO.CRM.API.getUser({ ID: OwnerID }).then(function (res) {
                                 OwnerData = res?.users?.[0] || null;
@@ -1568,8 +1578,8 @@ writeParagraphs(otherGeneralTermsParagraphs);
                                 console.log("User_BusinessType", User_BusinessType)
                                 User_TypeOfSys = OwnerData.Type_of_System;
                                 console.log("User_TypeOfSys", User_TypeOfSys)
-                                UserProfile = OwnerData.profile.name;
-                                console.log("UserProfile", UserProfile)
+                                // UserProfile = OwnerData.profile.name;
+                                // console.log("UserProfile", UserProfile)
 
                                 //     if(UserProfile != 'Administrator'){
                                 //     if(User_TypeOfSys != Quote_TypeOfSys && User_BusinessType != Quote_BusinessType){
@@ -1629,7 +1639,8 @@ writeParagraphs(otherGeneralTermsParagraphs);
                             accountPromise,
                             contactPromise,
                             opportunityPromise,
-                            ...productPromises
+                            ...productPromises,
+                            currentUserPromise  // new add//
                         ]).then(() => {
                             // Check before proceeding
                             if (UserProfile !== 'Administrator') {
