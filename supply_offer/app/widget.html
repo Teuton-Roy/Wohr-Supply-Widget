@@ -41,7 +41,7 @@
     <iframe id="pdfViewer" width="100%" height="100%"
         style="border: none; position: absolute; top: 0; left: 0;"></iframe>
 
-        <div id="accessMessageBar" style="
+    <div id="accessMessageBar" style="
         display: none;
         position: fixed;
         top: 0;
@@ -130,14 +130,14 @@ justify-content: center;
                 if (logoData) {
                     doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                 }
-                
-                
+
+
                 console.log(quoteData);
                 // console.log(AccountData);
-                
-                
 
-                
+
+
+
                 doc.setFontSize(10);
                 const quoteDate = new Date(quoteData.Quote_Date);
                 // console.log(quoteData)
@@ -151,12 +151,12 @@ justify-content: center;
                 doc.setFontSize(10).setFont('Times', 'normal');
                 doc.text(`Date: ${formattedDate}`, 175, 40);
 
-                doc.setFontSize(12).setFont('Times', 'bold');
+                doc.setFontSize(10).setFont('Times', 'bold');
                 doc.text("Offer for Supply of Parking System:", 10, 55);
                 doc.setFont('Times', 'normal');
 
                 const content = `We, Wohr Parking Systems Private Limited (Wohr/We), express our thanks, for giving us an opportunity to provide a proposal, for “Multi-level Car Parking Systems”, at your prestigious project. Wohr is a worldwide leader in mechanized and automated car parking systems with more than 60 years of industry experience, with a total worldwide installation base of more than 700,000 spaces and a presence in across 100 countries. We assure you the highest quality, reliability, and support, to solve all parking concerns.`;
-                doc.text(doc.splitTextToSize(content, 180), 10, 63);
+                doc.text(doc.splitTextToSize(content, 180), 10, 63, { maxWidth: 180, align: 'justify' });
 
 
                 // ---Company Details---
@@ -246,7 +246,7 @@ justify-content: center;
                 siteCurrentY += siteStreetLines.length * 5;
 
                 let siteStreet2 = OppData?.Project_Street2 || "N/A";
-                if(siteStreet2 !== "N/A"){
+                if (siteStreet2 !== "N/A") {
                     let siteStreet2Lines = doc.splitTextToSize(siteStreet2, 65);
                     doc.text("Street 2:", 10, siteCurrentY);
                     doc.text(siteStreet2Lines, 23.5, siteCurrentY);
@@ -254,7 +254,7 @@ justify-content: center;
                 }
 
                 let siteStreet3 = OppData?.Project_Street_3 || "N/A";
-                if(siteStreet3 !== "N/A"){
+                if (siteStreet3 !== "N/A") {
                     let siteStreet3Lines = doc.splitTextToSize(siteStreet3, 65);
                     doc.text("Street 3:", 10, siteCurrentY);
                     doc.text(siteStreet3Lines, 23.5, siteCurrentY);
@@ -289,19 +289,19 @@ justify-content: center;
                 BcurrentY += billingStreetLines.length * 5;
 
                 let billingStreet2 = AccountData?.Billing_Street_2 || "N/A";
-                if(billingStreet2 !== "N/A"){
+                if (billingStreet2 !== "N/A") {
                     let billingStreet2Lines = doc.splitTextToSize(billingStreet2, 60);
                     doc.text("Street 2:", 118, BcurrentY);
                     doc.text(billingStreet2Lines, 131.5, BcurrentY);
-                    BcurrentY += billingStreet2Lines.length * 5;                    
+                    BcurrentY += billingStreet2Lines.length * 5;
                 }
 
                 let billingStreet3 = AccountData?.Billing_Street_3 || "N/A";
-                if(billingStreet3 !== "N/A"){
+                if (billingStreet3 !== "N/A") {
                     let billingStreet3Lines = doc.splitTextToSize(billingStreet3, 60);
                     doc.text("Street 3:", 118, BcurrentY);
                     doc.text(billingStreet3Lines, 131.5, BcurrentY);
-                    BcurrentY += billingStreet3Lines.length * 5;                   
+                    BcurrentY += billingStreet3Lines.length * 5;
                 }
 
                 doc.text(`City: ${AccountData?.Billing_City || ""}`, 118, BcurrentY);
@@ -312,8 +312,8 @@ justify-content: center;
                 BcurrentY += 5;
                 doc.text(`Postal Code: ${AccountData?.Billing_Code || ""}`, 118, BcurrentY);
 
-                
-                
+
+
                 //-----------------------------------------------------------------------------------------------------------------
                 // Product Table
                 //-----------------------------------------------------------------------------------------------------------------
@@ -366,7 +366,7 @@ justify-content: center;
                 const TotalTax = quoteData.Product_Details.reduce((acc, item) => acc + (item.Tax ?? 0), 0);
                 const NetTotal = quoteData.Product_Details.reduce((acc, item) => acc + (item.net_total ?? 0), 0);
 
-            
+
                 // Extract unique tax names and percentages
                 const taxDetails = [];
                 quoteData.Product_Details.forEach((item) => {
@@ -383,7 +383,7 @@ justify-content: center;
 
                 tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${(totalSum ?? 0).toFixed(2)}`]);
                 // tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
-                tableData.push(["", "", "", taxDetailsString, `INR ${(TotalTax).toFixed(2)}`]); 
+                tableData.push(["", "", "", taxDetailsString, `INR ${(TotalTax).toFixed(2)}`]);
                 tableData.push(["", "", "", "Gross Contract Value", `INR ${(totalSum + TotalTax).toFixed(2)}`]);
 
 
@@ -779,7 +779,7 @@ justify-content: center;
                 doc.setFontSize(12).setFont("Times", "bold");
                 doc.text("Payment Term", 10, pstartY);
 
-                let paymentBoxStartY = pstartY+5; // Starting Y position of the payment term box
+                let paymentBoxStartY = pstartY + 5; // Starting Y position of the payment term box
                 let paymentBoxHeight = 7;
 
                 doc.setLineWidth(0.5);
@@ -796,10 +796,10 @@ justify-content: center;
                 doc.setFont("Times", "normal");
                 const InsatallationPaymentTerms = quoteData.Payment_Terms || [];
                 InsatallationPaymentTerms.forEach((term) => {
-                    const descriptionLines = doc.splitTextToSize(term.Payment_Terms_Description || "", 75); 
-                    const rowHeight = descriptionLines.length * 4 + 5; 
+                    const descriptionLines = doc.splitTextToSize(term.Payment_Terms_Description || "", 75);
+                    const rowHeight = descriptionLines.length * 4 + 5;
 
-                    if (paymentStartY + rowHeight > 280) { 
+                    if (paymentStartY + rowHeight > 280) {
                         doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY); // Draw enclosing box
                         doc.addPage();
                         doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
@@ -818,7 +818,7 @@ justify-content: center;
 
                         doc.line(95, paymentBoxStartY, 95, paymentBoxStartY + paymentBoxHeight);
                         doc.line(155, paymentBoxStartY, 155, paymentBoxStartY + paymentBoxHeight);
-                        paymentStartY = paymentBoxStartY + paymentBoxHeight; 
+                        paymentStartY = paymentBoxStartY + paymentBoxHeight;
                     }
 
                     // Add row data
@@ -842,18 +842,18 @@ justify-content: center;
                     doc.text(`Date: ${formattedDate}`, 175, 40);
                 }
 
-                let supplierPurchaserStartY = Math.max(paymentStartY + 20, 50); 
+                let supplierPurchaserStartY = Math.max(paymentStartY + 20, 50);
                 let boxHeight2 = 65; // Height of the enclosing box
 
                 // Check if the section exceeds the page height
-                if (supplierPurchaserStartY + boxHeight2 > 280) { 
-                    addNewPageWithHeader(doc, logoData, formattedDate); 
-                    supplierPurchaserStartY = 50; 
+                if (supplierPurchaserStartY + boxHeight2 > 280) {
+                    addNewPageWithHeader(doc, logoData, formattedDate);
+                    supplierPurchaserStartY = 50;
                 }
 
                 // Draw the enclosing box for the full section
                 doc.setLineWidth(0.5);
-                doc.rect(10, supplierPurchaserStartY-5 , 195, boxHeight2); // Draw the box
+                doc.rect(10, supplierPurchaserStartY - 5, 195, boxHeight2); // Draw the box
 
                 // Supplier Information
                 doc.setFontSize(12).setFont("Times", "bold");
@@ -878,9 +878,9 @@ justify-content: center;
                 doc.text("Sign:", 115, supplierPurchaserStartY + 10 + accountNameLines.length * 5);
                 doc.text("Name:", 115, supplierPurchaserStartY + 20 + accountNameLines.length * 5);
                 doc.text("Designation:", 115, supplierPurchaserStartY + 30 + accountNameLines.length * 5);
-                doc.text("Date:", 115, supplierPurchaserStartY + 40 + accountNameLines.length * 5); 
+                doc.text("Date:", 115, supplierPurchaserStartY + 40 + accountNameLines.length * 5);
 
-                
+
                 doc.addPage();
                 doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                 doc.setFontSize(10).setFont('Times', 'normal');
@@ -922,13 +922,17 @@ justify-content: center;
 
                 // Adjust Wohr/Supplier and Purchase/Customer sections dynamically
                 currentY += 50;
+                doc.setFontSize(10).setFont('Times', 'bold');
                 doc.text("Wohr Parking System Pvt Ltd.:", 15, currentY);
+                doc.setFontSize(10).setFont('Times', 'normal');
                 doc.rect(15, currentY + 12, 50, 0);
                 doc.text("Name:", 15, currentY + 17);
                 doc.text("Designation:", 15, currentY + 22);
                 doc.text("Date:", 15, currentY + 32);
 
+                doc.setFontSize(10).setFont('Times', 'bold');
                 doc.text("Purchase/Customer", 150, currentY);
+                doc.setFontSize(10).setFont('Times', 'normal');
                 doc.rect(150, currentY + 12, 50, 0);
                 doc.text("Name:", 150, currentY + 17);
                 doc.text("Designation:", 150, currentY + 22);
@@ -940,81 +944,89 @@ justify-content: center;
                 doc.addPage();
                 if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                 doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
-
                 doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
 
-                doc.setFontSize(10).setFont('Times', 'normal');
-                doc.text(`Date: ${formattedDate}`, 175, 40);
+                const lineHeight = 5; // Adjusted line height for tighter spacing
+                const paragraphSpacing = 2; // Spacing between paragraphs
+                let y = 45; // Starting Y position
 
                 doc.setFont("Times", "bold");
-                doc.setFontSize(14);
-                doc.text("General Terms and Conditions Forming Part of this Document:", 15, 50);
+                doc.setFontSize(13);
+                doc.text("General Terms and Conditions Forming Part of this Document:", 14, y);
 
+                y += 7; // Add spacing after the title
                 doc.setFontSize(12);
-                doc.text("Validity – 30 days from date of quotation", 15, 60);
+                doc.text("Validity – 30 days from date of quotation", 14, y);
 
-                doc.setFont("Times", "normal");
-                doc.text("(1) Definitions:", 15, 70);
+                y += 7; // Add spacing after the validity text
+                doc.setFont("Times", "bold");
+                doc.text("(1) Definitions:", 14, y);
+
+                doc.setFontSize(10).setFont("Times", "normal");
+                y += 7; // Add spacing before definitions
 
                 const definitions = [
-                    "a) Car Parking Layout/CPL means the detailed layout of the Car Parking System, finalized and approved by the Customer, containing the specifications of the Car which can be parked in the Car Parking System.",
-                    "b) “Car Parking Layout/CPL” mean the detailed layout of the Car Parking System, finalized and approved by the Customer, containing the specifications of the Car which can be parked in the Car Parking System",
-                    "c) “IP Rights” means rights in and to any intellectual property whether registerable or not including names, trademarks, trade names, service marks, insignias, designs, patents, domain names, bill of material, specifications, design of parts/members of the Equipment, software, inventions, whether or not copyrightable or patentable, trade secret or confidential information, and any other intellectual and/or industrial property.",
-                    "d) Wohr means Wohr Parking Systems Private Limited including its affiliates and subsidiaries.",
-                    "e) Person shall mean natural persons, legal entities and persons who, in conducting their business or profession, are the other party in this Offer, quotations, representations and agreements or a Government.",
-                    "f) PO shall mean Purchase Order signed and agreed by both the parties to this Offer.",
-                    "g) Vehicle(s) shall mean the specified Car as detailed in the Car Parking Layout.",
-                    "h) Order shall mean contractual relationship(s), whereby Wohr installs Car Parking System as per the requirement of the Customer i.e., this Offer if accepted.",
-                    "i) The Purchaser/Employer/Customer and Wohr shall individually be referred to as Party and collectively referred to as Parties.",
-                    "j) Purchaser/Employer/Customer shall mean the person to whom this offer is made and who has accepted this document, as it is without any change, additional, deletion in any of the details."
+                    `a) “Car Parking Layout/CPL” mean the detailed layout of the Car Parking System, finalized and approved by the Customer, containing the specifications of the Car which can be parked in the Car Parking System.`,
+                    `b) “Handover of Car Parking System” shall mean and include the physical handing over of the Car Parking System after Installation completion and issue of handover documents along with the keys to the Employer and shall include unilateral handover of the Car Parking System.`,
+                    `c) “Installation” shall mean all the services performed for the purposes of installation and commissioning of the materials at the Customer site.`,
+                    `d) “Installation completion” shall mean when Wohr has successfully completed mechanical and electrical installation & commissioning of the Car Parking System and intimation of the same to Customer by the representative(s) of Wohr.`,
+                    `e) “Wohr” means Wohr Parking Systems Private Limited including its affiliates and subsidiaries.`,
+                    `f) “Person” shall mean natural persons, legal entities and persons who, in conducting their business or profession, are the other party in this Offer, quotations, representations and agreements or a Government.`,
+                    `g) “PO” shall mean Purchase Order signed and agreed by both the parties to this Offer.`,
+                    `h) “Third Party Supplier Equipment” means and include any equipment supplier by a third-party supplier which is procured by Wohr for the purposes of Installation.`,
+                    `i) “Vehicle(s)” shall mean the specified Car as detailed in the Car Parking Layout.`,
+                    `j) “Order” shall mean contractual relationship(s), whereby Wohr installs Car Parking System as per the requirement of the Customer i.e., this Offer if accepted.`,
+                    `k) The Purchaser/Employer/Customer and Wohr shall individually be referred to as “Party” and collectively referred to as “Parties.”`,
+                    `l) “Purchaser/Employer/Customer” shall mean the person to whom this offer is made and who has accepted this document, as it is i.e., without any change, additional, deletion in any of the details.`
                 ];
 
-                let y = 80;
-                const lineHeight = 5.5;
-                doc.setFontSize(11);
                 definitions.forEach((text) => {
-                    const splitText = doc.splitTextToSize(text, 190);
-                    doc.text(splitText, 15, y);
-                    y += splitText.length * lineHeight + 3;
+                    const splitText = doc.splitTextToSize(text, 180);
+                    doc.text(splitText, 14, y, { maxWidth: 180, align: 'justify' });
+                    y += splitText.length * lineHeight + paragraphSpacing;
+                });
+
+                y += 5; // Add spacing before exclusions
+                doc.setFont("Times", "bold");
+                doc.setFontSize(12);
+                doc.text("(2) Exclusions And Dependencies", 14, y);
+
+                y += 7; // Add spacing before exclusions content
+                doc.setFont("Times", "normal");
+                doc.setFontSize(10);
+
+                const exclusionsText = [
+                    `a) Any scope of work which is not explicitly set out under this Offer is excluded from Wohr’s scope of work. The technical and commercial terms submitted in this Offer are based and relied upon the technical requirement and information provided by the Customer while seeking this quote.`,
+                    `b) Customer shall provide timely inputs to Wohr regarding space availability, approval of CPL, site readiness and other required inputs to enable Wohr to perform its part. Notwithstanding the agreed Installation dates, the Installation start and completion shall be subjected to readiness of the site as specified by Wohr projects team and the payment release as per the Agreement.`,
+                    `c) Customer agrees that Wohr shall not be liable for any delay caused in installation, due to failure of the Customer to provide any component, access or any other deliverables or inputs regarding installation, space availability, utilities, approval of CPL, site readiness or other.`,
+                    "d) Customer agrees that Wohr shall not be liable for any delay caused in supply, due to failure of the Customer, to provide any component, access or any other deliverables or inputs regarding, parking solution/design approval, space availability, utilities, approval of CPL, site readiness or other.",
+                    `e) Customer shall provide the adequate and suitable storage space for the delivery and proper storage of the Equipment at the Site`
+                ];
+
+                exclusionsText.forEach((paragraph) => {
+                    const wrappedText = doc.splitTextToSize(paragraph, 180);
+                    doc.text(wrappedText, 14, y, { maxWidth: 180, align: 'justify' });
+                    y += wrappedText.length * lineHeight + paragraphSpacing;
                 });
 
                 doc.addPage();
                 doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-
-                doc.setFontSize(10).setFont('Times', 'normal');
+                doc.setFontSize(10).setFont("Times", "normal");
                 doc.text(`Date: ${formattedDate}`, 175, 40);
 
-                doc.setFont("Times", "bold");
-                doc.setFontSize(12);
-                doc.text("(2) Exclusions And Dependencies", 15, 50);
-
-                const exclusionsText = [
-                    "a) Any scope of work which is not explicitly set out under this Offer is excluded from Wohr’s scope of work. The technical and commercial terms submitted in this Offer are based and relied upon the technical requirement and information provided by the Customer while seeking this quote.",
-                    "b) Customer shall provide timely inputs to Wohr regarding space availability, approval of CPL, site readiness and other required inputs to enable Wohr to perform its part. Notwithstanding the agreed Installation dates, the Installation start and completion shall be subjected to readiness of the site as specified by Wohr projects team and the payment release as per the Agreement.",
-                    "c) Customer agrees that Wohr shall not be liable for any delay caused in installation, due to failure of the Customer to provide any component, access or any other deliverables or inputs regarding installation, space availability, utilities, approval of CPL, site readiness or other.",
-                    "d) Customer agrees that Wohr shall not be liable for any delay caused in supply, due to failure of the Customer, to provide any component, access or any other deliverables or inputs regarding, parking solution/design approval, space availability, utilities, approval of CPL, site readiness or other.",
-                    "e) Customer shall provide the adequate and suitable storage space for the delivery and proper storage of the Equipment at the Site"
-                ];
-
-                let yExclusions = 60;
-                doc.setFont("Times", "normal");
-                doc.setFontSize(11);
-                exclusionsText.forEach(paragraph => {
-                    const wrappedText = doc.splitTextToSize(paragraph, 190);
-                    doc.text(wrappedText, 15, yExclusions);
-                    yExclusions += wrappedText.length * lineHeight + 2;
-                });
+                const lineHeight1 = 5; // Adjusted line height for tighter spacing
+                const paragraphSpacing1 = 2; // Spacing between paragraphs
+                let y1 = 45; // Starting Y position
 
                 doc.setFont("Times", "bold");
-                doc.setFontSize(12);
-                doc.text("(3) Preparation at the site by Customer:", 15, yExclusions + 10); // Add some spacing after Exclusions
+                doc.setFontSize(13);
+                doc.text("(3) Preparation at the site by Customer:", 14, y1);
 
-                // Set normal font for content
-                doc.setFontSize(11).setFont("Times", "normal");
+                y1 += 7; // Add spacing after the title
+                doc.setFontSize(10).setFont("Times", "normal");
 
                 const preparationText = [
                     "Purchaser shall be bound to provide:",
-                    "",
                     "a) Safe, dry, clean, weatherproof, and lockable space to keep the materials or part thereof during the pendency of supply, as per this Offer.",
                     "b) Site ready for supply.",
                     "c) Assistance and co-operation in material movement at the site.",
@@ -1026,71 +1038,59 @@ justify-content: center;
                     "iv) Customer shall be liable for all damages suffered by Wohr and/or other persons and damages to the Equipment supplied by Wohr, due to unsafe condition at the Site or arising from delay or defect or deficiency in the performance of the obligations of the Purchaser."
                 ];
 
-                // Adjust the starting position for this section
-                let yPreparation = yExclusions + 15; // Provide some space after the last Exclusions text
-                const lineHeight2 = 6; // Line spacing
-
-                preparationText.forEach(paragraph => {
-                    const wrappedText = doc.splitTextToSize(paragraph, 190);
-                    doc.text(wrappedText, 15, yPreparation);
-                    yPreparation += wrappedText.length * lineHeight2;
+                preparationText.forEach((paragraph) => {
+                    const wrappedText = doc.splitTextToSize(paragraph, 180);
+                    if (y1 + wrappedText.length * lineHeight1 > 280) { // Check if content exceeds page height
+                        doc.addPage();
+                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                        doc.setFontSize(10).setFont("Times", "normal");
+                        doc.text(`Date: ${formattedDate}`, 175, 40);
+                        y1 = 45; // Reset Y position for the new page
+                    }
+                    doc.text(wrappedText, 14, y1, { maxWidth: 180, align: 'justify' });
+                    y1 += wrappedText.length * lineHeight1 + paragraphSpacing1;
                 });
 
-                doc.addPage();
-                doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                y1 += 7; // Add spacing before the next section
 
-                doc.setFontSize(10).setFont("Times", "normal");
-                doc.text(`Date: ${formattedDate}`, 175, 40);
-
-                // Section Title
                 doc.setFont("Times", "bold");
-                doc.setFontSize(12);
-                doc.text("(4) Payment Terms and Taxes", 15, 50);
+                doc.setFontSize(13);
+                doc.text("(4) Payment Terms and Taxes", 14, y1);
 
-                // Set normal font for content
-                doc.setFontSize(11).setFont("Times", "normal");
+                y1 += 7; // Add spacing after the title
+                doc.setFontSize(10).setFont("Times", "normal");
 
                 const paymentTermsText = [
                     "a) Payment: Customer shall make the payment against each milestone within 7 days from the receipt of Invoice/Proforma from Wohr after deduction of appropriate TDS on whole value.",
                     "b) Other taxes/charges: Any other charges/taxes such as Mathadi, Varahi, Octroi, Entry tax as may be applicable currently or in future shall be borne by the Customer only.",
-
                     "c) Interest: In event of failure to make payments within the stipulated period, the interest at the rate of 1.5% per month is payable by the Customer to Wohr on all accounts. Wohr shall also be entitled to additional charges for storage, rent, insurance etc. while calculating interest for late payment, a part of a month is considered a full month. Notwithstanding anything contained in this Offer, Wohr shall have absolute lien on all the Equipment supplied under this Offer and no ownership, right, title or interest shall be passed on to the Customer until Wohr has received all its dues under this Offer.",
-
                     "d) No refund: Any payment made as per this Offer by the Customer to Wohr shall not be refundable under any circumstances.",
-
                     "e) Price fluctuation: Wohr may pass on any price changes that occur in excess of what has been stipulated in this Offer, if: (i) there is a change in composition of the Car Parking Systems due to government orders (ii) after 12 weeks of the execution of this Offer, the prices of raw materials have increased or labour costs or other operating costs.",
-
                     "f) Failure to make payment: If Wohr does not receive the payment within/on the due date, Wohr reserves the right to (i) impose storage charges for the material and/or (ii) divert the materials to any other Customer, and subsequent delivery to Customer shall be at discretion of Wohr.",
-
                     "g) Customer shall, regardless of their nature of industry or business operations, have to mention HSN Code of the Equipment i.e. — 84289090 on the Purchase Order. Customer shall provide the TAN details on the Workorder and other documents.",
-
                     "h) The pricing schedule shall be valid till the agreed delivery time periods or 12 months from the Date of this offer whichever is earlier. Wohr reserves the rights to revise the same if there is an unreasonable delay from the Customer's side.",
-
                     "i) EPCG/SEZ: If the Customer wishes and is eligible to avail any benefit, in respect of supply of Equipment such as EPCG benefits or SEZ benefits, the Parties shall, in good faith, support each other in abiding by the compliances required to be organized to avail of such benefits and to ensure that neither Parties failure or delay in compliance create additional tax liability or liabilities like interest or reversal of credits to the other Party.",
-
                     "j) Order cancellation: If Purchaser cancels the Offer after acceptance and/or commits breach of any terms and conditions, Wohr shall be entitled to recover: damages/for losses arising out of this arrangement or cancellation of any PO or termination of the arrangement made by or on behalf of the Customer. Parties agree that the following scale/amount represents fair estimation of such losses/damages likely to be suffered by Wohr due to such termination/cancellation by the Customer."
                 ];
 
-                // Adjust the starting position for this section
-                let yPaymentTerms = 60; // Start at a new position on the next page
-                const lineHeight3 = 6; // Line spacing
-
-                paymentTermsText.forEach(paragraph => {
-                    const wrappedText = doc.splitTextToSize(paragraph, 190);
-                    doc.text(wrappedText, 15, yPaymentTerms);
-                    yPaymentTerms += wrappedText.length * lineHeight3;
+                paymentTermsText.forEach((paragraph) => {
+                    const wrappedText = doc.splitTextToSize(paragraph, 180);
+                    if (y1 + wrappedText.length * lineHeight1 > 300) { // Check if content exceeds page height
+                        doc.addPage();
+                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                        doc.setFontSize(10).setFont("Times", "normal");
+                        doc.text(`Date: ${formattedDate}`, 175, 40);
+                        y1 = 47; // Reset Y position for the new page
+                    }
+                    doc.text(wrappedText, 14, y1, { maxWidth: 180, align: 'justify' });
+                    y1 += wrappedText.length * lineHeight1 + paragraphSpacing1;
                 });
 
-                doc.addPage();
-                doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                doc.setFontSize(9).setFont("Times", "normal");
-                doc.text(`Date: ${formattedDate}`, 175, 40);
-
-                // Draw outer table border
+                // Add the new section for the outer table border
                 const boxWidth = 170;
                 const boxHeight = 15; // Reduced from 20
                 const startX = 15;
-                const startY1 = 50;
+                const startY1 = y1; // Start below the previous content
                 const startY2 = startY1 + boxHeight;
                 const endY = startY2 + boxHeight;
 
@@ -1103,7 +1103,7 @@ justify-content: center;
                 doc.line(separatorX, startY1, separatorX, endY);
 
                 // ** Reduce text size **
-                doc.setFont("Times", "bold").setFontSize(12);
+                doc.setFont("Times", "bold").setFontSize(10);
 
                 // ** Adjust left column headers **
                 doc.text("30 days from signing of PO", startX + 1, startY1 + 10);
@@ -1125,10 +1125,10 @@ justify-content: center;
 
                 doc.setFont("Times", "bold");
                 doc.setFontSize(12);
-                doc.text("(5) Delivery of Car Parking System:", 15, yExclusions - 40); // Add some spacing after Exclusions
+                doc.text("(5) Delivery of Car Parking System", 14, startY2 + 27); // Add some spacing after the table
 
                 // Set normal font for content
-                doc.setFontSize(11).setFont("Times", "normal");
+                doc.setFontSize(10).setFont("Times", "normal");
 
                 const DeliveryText = [
                     "a) Delivery of materials shall be subjected to Car Parking System drawing approval, the readiness of the site as specified by Wohr projects team and the payment received by Wohr, as per this Offer.",
@@ -1137,134 +1137,120 @@ justify-content: center;
                     "d) Wohr reserves the rights to make the changes in the specification in due course of time for the betterment of its Product line and no claims shall be entertained on any such accounts from the Customer."
                 ];
 
-                // Adjust the starting position for this section
-                let yDelivery = yExclusions-25; // Ensure proper spacing
-                const lineHeight6 = 6; // Line spacing
+                let yDelivery = startY2 + 34; // Ensure proper spacing
+                const lineHeightDelivery = 6; // Line spacing
 
                 // Iterate over each paragraph and wrap text properly
                 DeliveryText.forEach(paragraph => {
-                    const wrappedText = doc.splitTextToSize(paragraph, 190); // Wrap text to fit the width
-                    doc.text(wrappedText, 15, yDelivery);
-                    yDelivery += wrappedText.length * lineHeight6; // Adjust spacing dynamically
+                    const wrappedText = doc.splitTextToSize(paragraph, 180); // Wrap text to fit the width
+                    if (yDelivery + wrappedText.length * lineHeightDelivery > 280) { // Check if content exceeds page height
+                        doc.addPage();
+                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                        doc.setFontSize(10).setFont("Times", "normal");
+                        doc.text(`Date: ${formattedDate}`, 175, 40);
+                        yDelivery = 50; // Reset Y position for the new page
+                    }
+                    doc.text(wrappedText, 14, yDelivery, { maxWidth: 180, align: 'justify' });
+                    yDelivery += wrappedText.length * lineHeightDelivery; // Adjust spacing dynamically
                 });
-
 
                 doc.setFont("Times", "bold");
                 doc.setFontSize(12);
-                doc.text("(6) Transfer of Title:", 15, yDelivery + 10); // Add some spacing after Delivery section
+                doc.text("(6) Transfer of Title:", 14, yDelivery + 5); // Add some spacing after Delivery section
 
-                doc.setFontSize(11).setFont("Times", "normal");
+                doc.setFontSize(10).setFont("Times", "normal");
 
                 const transferOfTitleText = [
                     "The title of the Car Parking Systems shall be transferred to Customer only once the total payment is complete as per payment terms indicated herein."
                 ];
 
-                // Adjust position for Transfer of Title section
-                let yTransferTitle = yDelivery + 20; // Provide some space after the Delivery section
+                let yTransferTitle = yDelivery + 13; // Provide some space after the Delivery section
 
                 // Iterate over text and wrap properly
                 transferOfTitleText.forEach(paragraph => {
-                    const wrappedText = doc.splitTextToSize(paragraph, 190);
-                    doc.text(wrappedText, 15, yTransferTitle);
-                    yTransferTitle += wrappedText.length * lineHeight6;
+                    const wrappedText = doc.splitTextToSize(paragraph, 180);
+                    doc.text(wrappedText, 15, yTransferTitle, { maxWidth: 180, align: 'justify' });
+                    yTransferTitle += wrappedText.length * 6; // Adjust spacing dynamically
                 });
 
                 doc.setFont("Times", "bold");
                 doc.setFontSize(12);
-                doc.text("(7) Representations and Warranties:", 15, yTransferTitle + 10); // Add some spacing after Transfer of Title
+                doc.text("(7) Representations and Warranties:", 15, yTransferTitle + 5); // Add some spacing after Transfer of Title
 
-                doc.setFontSize(11).setFont("Times", "normal");
+                doc.setFontSize(10).setFont("Times", "normal");
 
                 const representationsText = [
                     "The Purchaser represents and warrants that:",
                     "1. It is a validly existing entity under the applicable laws of India and has the right and authority to enter into and perform all obligations and responsibilities, as per this Offer on its acceptance;",
                     "2. It has obtained the requisite licenses, authorization, permits required for carrying on its business/install and use the Equipment the same are in full force and effect;",
                     "3. It has the right and authority to disclose the information, instruction and the required data/details, as per the offer and its acceptance and such disclosure does not infringe any rights of a third-party.",
-                ];
-
-                // Adjust position for Representations and Warranties section
-                let yRepresentations = yTransferTitle + 20; // Provide some space after Transfer of Title
-
-                // Iterate over text and wrap properly
-                representationsText.forEach(paragraph => {
-                    const wrappedText = doc.splitTextToSize(paragraph, 190);
-                    doc.text(wrappedText, 15, yRepresentations);
-                    yRepresentations += wrappedText.length * lineHeight6;
-                });
-
-                doc.addPage();
-                doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                doc.setFontSize(9).setFont("Times", "normal");
-                doc.text(`Date: ${formattedDate}`, 175, 40);
-
-                doc.setFont("Times", "bold");
-                doc.setFontSize(12);
-
-                doc.setFontSize(11).setFont("Times", "normal");
-
-                const lineHeight7 = 6;
-
-                const lastPoint = [
                     "4. If the Customer is procuring the services on behalf of another, the Customer represents and warrants that the Customer is the duly authorized agent of said party for the purpose of ordering and otherwise accepting and complying with these terms and conditions, jointly and severally with such another party.",
                     "5. Any change in any of the terms and conditions of this Offer made by the Purchaser shall not be binding on Wohr unless such change or modification is specifically accepted in advance in writing by Wohr."
                 ];
 
-                let yLastPoint = 50;
+                let yRepresentations = yTransferTitle + 13; // Provide some space after Transfer of Title
+                const lineHeightRepresentations = 6; // Line height for the text
 
-                lastPoint.forEach(paragraph => {
-                    const wrappedText = doc.splitTextToSize(paragraph, 190);
-                    doc.text(wrappedText, 15, yLastPoint);
-                    yLastPoint += wrappedText.length * lineHeight7;
+                // Iterate over each paragraph and wrap text properly
+                representationsText.forEach(paragraph => {
+                    const wrappedText = doc.splitTextToSize(paragraph, 180); // Wrap text to fit the width
+                    if (yRepresentations + wrappedText.length * lineHeightRepresentations > 300) { // Check if content exceeds page height
+                        // doc.addPage(); // Add a new page
+                        // doc.addImage(logoData, "JPEG", 175, 5, 30, 30); // Add logo to the new page
+                        // doc.setFontSize(10).setFont("Times", "normal");
+                        // doc.text(`Date: ${formattedDate}`, 175, 40);
+                        yRepresentations = 50; // Reset Y position for the new page
+                    }
+                    doc.text(wrappedText, 14, yRepresentations, { maxWidth: 180, align: 'justify' }); // Add justification
+                    yRepresentations += wrappedText.length * lineHeightRepresentations; // Adjust spacing dynamically
                 });
+
+                doc.addPage();
+                doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                doc.setFontSize(10).setFont("Times", "normal");
+                doc.text(`Date: ${formattedDate}`, 175, 40);
 
                 doc.setFont("Times", "bold");
                 doc.setFontSize(12);
-                doc.text("(8) Amendment:", 15, yLastPoint);
+                doc.text("(8) Amendment:", 14, 50); // Start Amendment section at the top of the new page
 
-                doc.setFontSize(11).setFont("Times", "normal");
-                yLastPoint += 10;
+                doc.setFontSize(10).setFont("Times", "normal");
+                let yLastPoint = 58; // Starting Y position for Amendment content
 
                 const amendmentText = [
                     "Any change/ amendment in any of the terms of this Offer shall be mutually discussed and decided by the Parties, in writing and shall be binding only on a Party when specifically accepted with specific reference to this Offer/accepted offer."
                 ];
 
+                // Iterate over text and wrap properly
                 amendmentText.forEach(paragraph => {
-                    const wrappedText = doc.splitTextToSize(paragraph, 190);
-                    doc.text(wrappedText, 15, yLastPoint);
-                    yLastPoint += wrappedText.length * lineHeight7;
+                    const wrappedText = doc.splitTextToSize(paragraph, 180); // Wrap text to fit the width
+                    doc.text(wrappedText, 15, yLastPoint, { maxWidth: 180, align: 'justify' }); // Add justification
+                    yLastPoint += wrappedText.length * 6; // Adjust spacing dynamically
                 });
 
-                // Add spacing before next section
-                yLastPoint += 10;
-
-                // Section 9: Part Performance
                 doc.setFont("Times", "bold");
                 doc.setFontSize(12);
-                doc.text("(9) Part Performance:", 15, yLastPoint);
+                doc.text("(9) Part Performance:", 14, yLastPoint + 7); // Add some spacing after Amendment section
 
-                doc.setFontSize(11).setFont("Times", "normal");
-                yLastPoint += 10;
+                doc.setFontSize(10).setFont("Times", "normal");
+                yLastPoint += 15; // Provide some space after the Part Performance title
 
                 const partPerformanceText = [
                     "No deliveries/handover shall be made in parts, i.e., at the differed time periods and at the differed locations, unless otherwise specifically agreed between the Parties in writing."
                 ];
 
                 partPerformanceText.forEach(paragraph => {
-                    const wrappedText = doc.splitTextToSize(paragraph, 190);
-                    doc.text(wrappedText, 15, yLastPoint);
-                    yLastPoint += wrappedText.length * lineHeight7;
+                    const wrappedText = doc.splitTextToSize(paragraph, 180); // Wrap text to fit the width
+                    doc.text(wrappedText, 15, yLastPoint, { maxWidth: 180, align: 'justify' }); // Add justification
+                    yLastPoint += wrappedText.length * 6; // Adjust spacing dynamically
                 });
 
-                // Add spacing before next section
-                yLastPoint += 10;
-
-                // Section 10: Intellectual Property Rights
                 doc.setFont("Times", "bold");
                 doc.setFontSize(12);
-                doc.text("(10) Intellectual Property Rights:", 15, yLastPoint);
+                doc.text("(10) Intellectual Property Rights:", 14, yLastPoint + 5); // Add section title
 
-                doc.setFontSize(11).setFont("Times", "normal");
-                yLastPoint += 10;
+                doc.setFontSize(10).setFont("Times", "normal");
+                yLastPoint += 13; // Add spacing after the title
 
                 const ipRightsText = [
                     "a) The Customer acknowledges that all trademarks, logos, service marks or trade names, technology or know-how of Wohr and its affiliates, whether or not registered, are valuable assets/rights of Wohr or of its affiliates and have attained a high degree of goodwill throughout the world. Customer undertakes that it shall not use such trademarks, logos, service marks or trade names under any circumstances and the Customer shall not be entitled to copy reverse engineer, decompose, deviate, modify any software or system, for any purpose except use of the Equipment, as the buyer/owner, as per the applicable laws.",
@@ -1272,26 +1258,23 @@ justify-content: center;
                     "c) Purchaser shall not use IP Right of Wohr anywhere else than the agreed purpose under this Offer. The Purchaser shall not use such parking solutions/designs, specifications, erection manuals, and technical drawings for any other site where Wohr products may be installed or not."
                 ];
 
+                const lineHeightIP = 6; // Line height for the text
+
+                // Iterate over each paragraph and wrap text properly
                 ipRightsText.forEach(paragraph => {
-                    const wrappedText = doc.splitTextToSize(paragraph, 190);
-                    doc.text(wrappedText, 15, yLastPoint);
-                    yLastPoint += wrappedText.length * lineHeight7;
+                    const wrappedText = doc.splitTextToSize(paragraph, 180); // Wrap text to fit the width
+                    doc.text(wrappedText, 14, yLastPoint, { maxWidth: 180, align: 'justify' }); // Add justification
+                    yLastPoint += wrappedText.length * lineHeightIP; // Adjust spacing dynamically
                 });
-
-
-                doc.addPage();
-                doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                doc.setFontSize(9).setFont("Times", "normal");
-                doc.text(`Date: ${formattedDate}`, 175, 40);
 
                 doc.setFont("Times", "bold");
                 doc.setFontSize(12);
-                doc.text("(11) Other General Terms:", 15, 50);
+                doc.text("(11) Other General Terms:", 14, yLastPoint + 5); // Add section title
 
-                doc.setFontSize(11).setFont("Times", "normal");
+                doc.setFontSize(10).setFont("Times", "normal");
 
-                const lineHeight8 = 5;
-                let yPosition = 60;
+                const lineHeight8 = 5; // Line height for the text
+                yLastPoint += 13; // Starting Y position for General Terms
 
                 const generalTerms = [
                     "a) Subcontracting: Wohr shall be entitled to subcontract the work to be performed by the skilled and unskilled contract laborers and shall ensure sufficient manpower to complete the work.",
@@ -1304,41 +1287,40 @@ justify-content: center;
                     "h) Entire Agreement: In the event the PO issued by the Customer or any subsequent document/communication of the Customer contains terms and conditions contrary to the terms and conditions in this Offer, the terms and conditions in this Offer/Agreement shall supersede such PO/communication terms and conditions. It is expressly agreed that such conflicting PO or communication terms and conditions shall be null and void. This Agreement shall supersede all prior discussions and writings with respect to its agreement and constitutes the entire agreement between the Customer and Wohr with respect to the subject matter hereof, and no modifications of these terms and conditions or waiver of the terms and conditions hereof shall be binding upon either of the Parties hereto, unless approved in writing by an authorized representative of each Party."
                 ];
 
+                // Iterate over each paragraph and wrap text properly
                 generalTerms.forEach(paragraph => {
-                    const wrappedText = doc.splitTextToSize(paragraph, 185);
-                    doc.text(wrappedText, 15, yPosition);
-                    yPosition += wrappedText.length * lineHeight8 + 5;
-
-                    if (yPosition > 270) {
-                        doc.addPage();
-                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-                        doc.setFontSize(9).setFont("Times", "normal");
+                    const wrappedText = doc.splitTextToSize(paragraph, 180); // Wrap text to fit the width
+                    if (yLastPoint + wrappedText.length * lineHeight8 > 300) { // Check if content exceeds page height
+                        doc.addPage(); // Add a new page
+                        doc.addImage(logoData, "JPEG", 175, 5, 30, 30); // Add logo to the new page
+                        doc.setFontSize(10).setFont("Times", "normal");
                         doc.text(`Date: ${formattedDate}`, 175, 40);
-                        doc.setFontSize(11).setFont("Times", "normal");
-                        yPosition = 50;
+                        yLastPoint = 50; // Reset Y position for the new page
                     }
+                    doc.text(wrappedText, 15, yLastPoint, { maxWidth: 180, align: 'justify' }); // Add justification
+                    yLastPoint += wrappedText.length * lineHeight8 + 5; // Adjust spacing dynamically
                 });
+
 
                 //Wohr Supplier
                 doc.setFont("Times", "bold");
                 doc.setFontSize(11);
-                doc.text("Wohr Parking System Pvt. Ltd", 15, 145);
-                doc.rect(15, 165, 50, 0);
+                doc.text("Wohr Parking System Pvt. Ltd", 15, 250);
+                doc.rect(14, 265, 50, 0);
                 doc.setFont("Times", "normal");
-                doc.text("Name:", 15, 175);
-                doc.text("Designation:", 15, 182);
-                doc.text("Date: ", 15, 190);
+                doc.text("Name:", 14, 270);
+                doc.text("Designation:", 14, 275);
+                doc.text("Date: ", 14, 280);
 
                 //Purchase Supplier
                 doc.setFont("Times", "bold");
                 doc.setFontSize(11);
-                doc.text("Purchase/Customer", 135, 145);
-                doc.rect(135, 165, 50, 0);
+                doc.text("Purchase/Customer", 135, 250);
+                doc.rect(135, 265, 50, 0);
                 doc.setFont("Times", "normal");
-                doc.text("Name:", 135, 175);
-                doc.text("Designation:", 135, 182);
-                doc.text("Date: ", 135, 190);
-
+                doc.text("Name:", 135, 270);
+                doc.text("Designation:", 135, 275);
+                doc.text("Date: ", 135, 280);
 
                 const pdfBlob = doc.output("blob");
                 const blobURL = URL.createObjectURL(pdfBlob);
@@ -1381,6 +1363,15 @@ justify-content: center;
                         let productPromises = [];
 
                         //->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                        let CurrentUser = null;
+
+                        const currentUserPromise = ZOHO.CRM.CONFIG.getCurrentUser().then(function (UserData) {
+                            CurrentUser = UserData.users[0];
+                            console.log("CurrentUser", CurrentUser);
+                            UserProfile = CurrentUser.profile.name;
+                            console.log("UserProfile", UserProfile)
+                        });
+
                         const ownerPromise = OwnerID
                             ? ZOHO.CRM.API.getUser({ ID: OwnerID }).then(function (res) {
                                 OwnerData = res?.users?.[0] || null;
@@ -1389,8 +1380,8 @@ justify-content: center;
                                 console.log("User_BusinessType", User_BusinessType)
                                 User_TypeOfSys = OwnerData.Type_of_System;
                                 console.log("User_TypeOfSys", User_TypeOfSys)
-                                UserProfile = OwnerData.profile.name;
-                                console.log("UserProfile", UserProfile)
+                                // UserProfile = OwnerData.profile.name;
+                                // console.log("UserProfile", UserProfile)
 
                                 //     if(UserProfile != 'Administrator'){
                                 //     if(User_TypeOfSys != Quote_TypeOfSys && User_BusinessType != Quote_BusinessType){
@@ -1450,7 +1441,8 @@ justify-content: center;
                             accountPromise,
                             contactPromise,
                             opportunityPromise,
-                            ...productPromises
+                            ...productPromises,
+                            currentUserPromise
                         ]).then(() => {
                             // Check before proceeding
                             if (UserProfile !== 'Administrator') {
