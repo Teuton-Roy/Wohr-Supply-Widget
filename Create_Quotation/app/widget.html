@@ -57,30 +57,31 @@
   <iframe id="pdfViewer" width="100%" height="100%" style="border: none; position: absolute; top: 0; left: 0;"></iframe>
 
   <div id="accessMessageBar" style="
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: #f44336;
-  color: white;
-  font-family: sans-serif;
-  text-align: center;
-  padding: 15px;
-  z-index: 99999;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-">
-  <span id="accessMessageText">Access denied</span>
-  <button onclick="hideAccessMessage()" style="
-      margin-left: 20px;
-      background-color: transparent;
-      border: 1px solid white;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-  ">Dismiss</button>
-</div>
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f44336;
+        color: white;
+        font-family: Times;
+        text-align: center;
+        padding: 15px;
+        z-index: 99999;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    ">
+    <span id="accessMessageText">Access denied</span>
+    <button onclick="hideAccessMessage()" style="
+            margin-left: 20px;
+            background-color: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        ">Dismiss</button>
+  </div>
+
 
   <div id="loader" style="
 position: fixed;
@@ -96,7 +97,7 @@ align-items: center;
 justify-content: center;
 ">
     <div class="spinner"></div>
-    <p style="margin-top: 20px; font-family: sans-serif; color: #555;">Loading Quotation PDF...</p>
+    <p style="margin-top: 20px; font-family: Times; color: #555;">Loading Quotation PDF...</p>
   </div>
   <script>
     const { jsPDF } = window.jspdf;
@@ -121,51 +122,35 @@ justify-content: center;
         img.src = url;
       });
     }
-
-    function addPageWithHeader(doc, logoData, formattedDate) {
-      doc.addPage();
-      if (logoData) {
-        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-      }
-      doc.setFontSize(10).setFont('Times', 'normal');
-      doc.text(`Date: ${formattedDate}`, 175, 40);
-    }
-
     // new code by Kamal
     function showAccessMessage(message) {
-            const bar = document.getElementById("accessMessageBar");
-            const text = document.getElementById("accessMessageText");
-            text.textContent = message;
-            bar.style.display = "block";
-            document.getElementById("loader").style.display = "none"; // Hide loader if still visible
-        }
+      const bar = document.getElementById("accessMessageBar");
+      const text = document.getElementById("accessMessageText");
+      text.textContent = message;
+      bar.style.display = "block";
+      document.getElementById("loader").style.display = "none"; // Hide loader if still visible
+    }
 
-        function hideAccessMessage() {
-            document.getElementById("accessMessageBar").style.display = "none";
-        }
-        //--------------------
+    function hideAccessMessage() {
+      document.getElementById("accessMessageBar").style.display = "none";
+    }
+
+
+    //--------------------
+
 
 
     async function createPDF(quoteData, AccountData, ContactData, OppData, productImages, ProductDataMap) {
       try {
         const doc = new jsPDF();
         const logoPath = "logo.jpeg";
-        const image = "no_image.png";
         const logoData = await loadImage(logoPath);
-        const defaultImage = await loadImage(image);
+
+        // console.log(quoteData);
 
         if (logoData) {
           doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
         }
-
-        // console.log("Accounts Data: ",AccountData);
-        // console.log("Quotation Data: "+quoteData);
-        // console.log("Opportunity Data: "+OppData);
-        console.log("Product Images: ",productImages);
-        console.log("Product Data Map: ",ProductDataMap);
-        
-        
-        
 
         doc.setFontSize(10);
         const quoteDate = new Date(quoteData.Quote_Date);
@@ -174,180 +159,198 @@ justify-content: center;
         });
 
         doc.setFontSize(13).setFont('Times', 'bold');
-        doc.text("WOHR Parking Systems Private Limited Supply + Installation offer", 30, 45);
+        doc.text("WOHR Parking Systems Private Limited Installation Offer:", 40, 45);
 
         doc.setFontSize(10).setFont('Times', 'normal');
         doc.text(`Date: ${formattedDate}`, 175, 40);
 
-        doc.setFontSize(12).setFont('Times', 'bold');
+        doc.setFontSize(11).setFont('Times', 'bold');
         doc.text("Offer for Supply of Parking System:", 10, 55);
-        doc.setFont('Cambria', 'normal');
+        doc.setFont('Times', 'normal');
 
         const content = `We, Wohr Parking Systems Private Limited (Wohr/We), express our thanks, for giving us an opportunity to provide a proposal, for “Multi-level Car Parking Systems”, at your prestigious project. Wohr is a worldwide leader in mechanized and automated car parking systems with more than 60 years of industry experience, with a total worldwide installation base of more than 700,000 spaces and a presence in across 100 countries. We assure you the highest quality, reliability, and support, to solve all parking concerns.`;
-        doc.text(doc.splitTextToSize(content, 180), 10, 65);
+        doc.text(doc.splitTextToSize(content, 180), 10, 63, { maxWidth: 180, align: 'justify' });
 
         // ---Company Details---
-                doc.setFontSize(10).setFont('Times', 'bold');
-                doc.text("Company Details", 11, 95);
-                doc.setFont('Times', 'normal');
-                doc.text("1206/41A, Vyas Vertex", 11, 105);
-                doc.text("J M Road", 11, 110);
-                doc.text("Pune 411004", 11, 115);
-                doc.text("India", 11, 120);
-                doc.text("Tel: 020 66748848", 11, 125);
-                doc.text("Email: info@wohrparking.in", 11, 130);
-                doc.text("GST No.: 27AAACW6100A1ZZ", 11, 135);
+        doc.setFontSize(10).setFont('Times', 'bold');
+        doc.text("Company Details", 11, 90);
+        doc.setFont('Times', 'normal');
+        doc.text("1206/41A, Vyas Vertex", 11, 95);
+        doc.text("J M Road", 11, 100);
+        doc.text("Pune 411004", 11, 105);
+        doc.text("India", 11, 110);
+        doc.text("Tel: 020 66748848", 11, 115);
+        doc.text("Email: info@wohrparking.in", 11, 120);
+        doc.text("GST No.: 27AAACW6100A1ZZ", 11, 125);
 
-                // ---Quotation Details---
-                doc.setFont('Times', 'bold');
-                doc.text("Quotation Details", 118, 95);
-                doc.setFont('Times', 'normal');
-                let currentQ = 100;
-                let totalQuantity = (quoteData?.Product_Details?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0).toFixed(2);
-                doc.text(`Quote Number: ${quoteData?.Quotation_Number || ""}`, 118, currentQ);
-                currentQ += 5;
-                const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || "";
-                doc.text(`Order No.: ${orderNumber}`, 118, currentQ);
-                currentQ += 5;
+        // ---Quotation Details---
+        doc.setFont('Times', 'bold');
+        doc.text("Quotation Details", 118, 90);
+        doc.setFont('Times', 'normal');
+        let currentQ = 95;
+        let totalQuantity = (quoteData?.Product_Details?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0).toFixed(2);
+        doc.text(`Quote Number: ${quoteData?.Quotation_Number || ""}`, 118, currentQ);
+        currentQ += 5;
+        const orderNumber = quoteData?.PS_Number || quoteData?.APS_Number || "";
+        doc.text(`Order No.: ${orderNumber}`, 118, currentQ);
+        currentQ += 5;
 
-                let qcustomerName = ContactData?.Full_Name || "N/A";
-                let qcustomerNameLines = doc.splitTextToSize(qcustomerName, 55);
-                doc.text(`Customer Name:`, 118, currentQ);
-                doc.text(qcustomerNameLines, 143, currentQ);
-                currentQ += qcustomerNameLines.length * 5;
+        let qcustomerName = ContactData?.Full_Name || "N/A";
+        let qcustomerNameLines = doc.splitTextToSize(qcustomerName, 55);
+        doc.text(`Customer Name:`, 118, currentQ);
+        doc.text(qcustomerNameLines, 143, currentQ);
+        currentQ += qcustomerNameLines.length * 5;
 
-                doc.text(`Valid Spaces: ${totalQuantity}`, 118, currentQ);
-                currentQ += 5;
-                doc.text(`Sales Representative: ${quoteData?.Owner?.name || ""}`, 118, currentQ);
-                currentQ += 5;
-                doc.text(`Phone No.: ${ContactData?.Mobile || ""}`, 118, currentQ);
-                currentQ += 5;
+        doc.text(`Valid Spaces: ${totalQuantity}`, 118, currentQ);
+        currentQ += 5;
+        doc.text(`Sales Representative: ${quoteData?.Owner?.name || ""}`, 118, currentQ);
+        currentQ += 5;
+        doc.text(`Phone No.: ${ContactData?.Mobile || ""}`, 118, currentQ);
+        currentQ += 5;
 
-                let email = ContactData?.Email || "N/A";
-                let emailLines = doc.splitTextToSize(email, 55);
-                doc.text(`Email:`, 118, currentQ);
-                doc.text(emailLines, 128, currentQ);
-                currentQ += emailLines.length * 5;
+        let email = ContactData?.Email || "N/A";
+        let emailLines = doc.splitTextToSize(email, 55);
+        doc.text(`Email:`, 118, currentQ);
+        doc.text(emailLines, 128, currentQ);
+        currentQ += emailLines.length * 5;
 
-                doc.line(10, currentQ, 200, currentQ);
-
-                // ---Customer Details---
-                doc.setFont('Times', 'bold');
-                doc.text("Customer Details", 10, 155);
-                doc.setFont('Times', 'normal');
-                let cusCurrentY = 160;
-                let name = AccountData?.Account_Name || "";
-                let nameLines = doc.splitTextToSize(name, 70);
-                doc.text(`Customer Name: `, 10, 160);
-                doc.text(nameLines, 35, 160);
-                cusCurrentY += nameLines.length * 5;
-                doc.text(`GST No.: ${AccountData?.GSTIN_Number || ""}`, 10, cusCurrentY);
-                cusCurrentY += 5;
-                doc.text(`PAN: ${AccountData?.PAN_Number || ""}`, 10, cusCurrentY);
-                cusCurrentY += 5;
-                doc.text(`TAN No.: ${AccountData?.TAN_Number || ""}`, 10, cusCurrentY);
-                cusCurrentY += 5;
-                doc.text(`Contact person’s name: ${ContactData?.Full_Name || ""}`, 10, cusCurrentY);
-                cusCurrentY += 5;
-
-                doc.line(10, cusCurrentY, 200, cusCurrentY);
+        doc.line(10, 145, 200, 145);
 
 
-                // --- Site Address ---
-                doc.setFont('Times', 'bold');
-                doc.text("Site Address", 10, 200);
-                doc.setFont('Times', 'normal');
-                // Dynamically calculate positions
-                let siteCurrentY = 205;
-                let projectName = OppData?.Deal_Name || "";
-                let projectNameLines = doc.splitTextToSize(projectName, 60);
-                doc.text("Project Name:", 10, siteCurrentY);
-                doc.text(projectNameLines, 31.5, siteCurrentY);
-                siteCurrentY += projectNameLines.length * 5;
+        // ---Customer Details---
+        doc.setFont('Times', 'bold');
+        doc.text("Customer Details", 10, 155);
+        doc.setFont('Times', 'normal');
+        let cusCurrentY = 160;
+        let name = AccountData?.Account_Name || "";
+        let nameLines = doc.splitTextToSize(name, 130);
+        doc.text(`Customer Name: `, 10, 160);
+        doc.text(nameLines, 35, 160);
+        cusCurrentY += nameLines.length * 5;
+        doc.text(`GST No.: ${AccountData?.GSTIN_Number || ""}`, 10, cusCurrentY);
+        cusCurrentY += 5;
+        doc.text(`PAN: ${AccountData?.PAN_Number || ""}`, 10, cusCurrentY);
+        cusCurrentY += 5;
+        doc.text(`TAN No.: ${AccountData?.TAN_Number || ""}`, 10, cusCurrentY);
+        cusCurrentY += 5;
+        doc.text(`Contact person’s name: ${ContactData?.Full_Name || ""}`, 10, cusCurrentY);
+        cusCurrentY += 5;
 
-                let siteStreet = OppData?.Project_Street || "";
-                let siteStreetLines = doc.splitTextToSize(siteStreet, 65);
-                doc.text("Street 1:", 10, siteCurrentY);
-                doc.text(siteStreetLines, 23.5, siteCurrentY);
-                siteCurrentY += siteStreetLines.length * 5;
-
-                let siteStreet2 = OppData?.Project_Street2 || "N/A";
-                if(siteStreet2 !== "N/A"){
-                    let siteStreet2Lines = doc.splitTextToSize(siteStreet2, 65);
-                    doc.text("Street 2:", 10, siteCurrentY);
-                    doc.text(siteStreet2Lines, 23.5, siteCurrentY);
-                    siteCurrentY += siteStreet2Lines.length * 5;
-                }
-
-                let siteStreet3 = OppData?.Project_Street_3 || "N/A";
-                if(siteStreet3 !== "N/A"){
-                    let siteStreet3Lines = doc.splitTextToSize(siteStreet3, 65);
-                    doc.text("Street 3:", 10, siteCurrentY);
-                    doc.text(siteStreet3Lines, 23.5, siteCurrentY);
-                    siteCurrentY += siteStreet3Lines.length * 5;
-                }
-
-                doc.text(`City: ${OppData?.Project_City || ""}`, 10, siteCurrentY);
-                siteCurrentY += 5;
-                doc.text(`State: ${OppData?.Project_State || ""}`, 10, siteCurrentY);
-                siteCurrentY += 5;
-                doc.text(`Country: ${OppData?.Project_Country || ""}`, 10, siteCurrentY);
-                siteCurrentY += 5;
-                doc.text(`Postal Code: ${OppData?.Project_Zip_Code || ""}`, 10, siteCurrentY);
+        doc.line(10, 190, 200, 190);
 
 
-                // --- Billing Address ---
-                doc.setFont('Times', 'bold');
-                doc.text("Billing Address", 118, 200);
-                doc.setFont('Times', 'normal');
-                // Dynamically calculate positions
-                let BcurrentY = 205;
-                let customerName = AccountData?.Account_Name || "";
-                let customerNameLines = doc.splitTextToSize(customerName, 60);
-                doc.text("Customer Name:", 118, BcurrentY);
-                doc.text(customerNameLines, 143, BcurrentY);
-                BcurrentY += customerNameLines.length * 5;
+        // --- Site Address ---
+        doc.setFont('Times', 'bold');
+        doc.text("Site Address", 10, 200);
+        doc.setFont('Times', 'normal');
+        // Dynamically calculate positions
+        let siteCurrentY = 205;
+        let projectName = OppData?.Deal_Name || "";
+        let projectNameLines = doc.splitTextToSize(projectName, 60);
+        doc.text("Project Name:", 10, siteCurrentY);
+        doc.text(projectNameLines, 31.5, siteCurrentY);
+        siteCurrentY += projectNameLines.length * 5;
 
-                let billingStreet = AccountData?.Billing_Street || "";
-                let billingStreetLines = doc.splitTextToSize(billingStreet, 60);
-                doc.text("Street 1:", 118, BcurrentY);
-                doc.text(billingStreetLines, 131.5, BcurrentY);
-                BcurrentY += billingStreetLines.length * 5;
+        let siteStreet = OppData?.Project_Street || "";
+        let siteStreetLines = doc.splitTextToSize(siteStreet, 65);
+        doc.text("Street 1:", 10, siteCurrentY);
+        doc.text(siteStreetLines, 23.5, siteCurrentY);
+        siteCurrentY += siteStreetLines.length * 5;
 
-                let billingStreet2 = AccountData?.Billing_Street_2 || "N/A";
-                if(billingStreet2 !== "N/A"){
-                    let billingStreet2Lines = doc.splitTextToSize(billingStreet2, 60);
-                    doc.text("Street 2:", 118, BcurrentY);
-                    doc.text(billingStreet2Lines, 131.5, BcurrentY);
-                    BcurrentY += billingStreet2Lines.length * 5;                    
-                }
+        let siteStreet2 = OppData?.Project_Street2 || "N/A";
+        if (siteStreet2 !== "N/A") {
+          let siteStreet2Lines = doc.splitTextToSize(siteStreet2, 65);
+          doc.text("Street 2:", 10, siteCurrentY);
+          doc.text(siteStreet2Lines, 23.5, siteCurrentY);
+          siteCurrentY += siteStreet2Lines.length * 5;
+        }
 
-                let billingStreet3 = AccountData?.Billing_Street_3 || "N/A";
-                if(billingStreet3 !== "N/A"){
-                    let billingStreet3Lines = doc.splitTextToSize(billingStreet3, 60);
-                    doc.text("Street 3:", 118, BcurrentY);
-                    doc.text(billingStreet3Lines, 131.5, BcurrentY);
-                    BcurrentY += billingStreet3Lines.length * 5;                   
-                }
+        let siteStreet3 = OppData?.Project_Street_3 || "N/A";
+        if (siteStreet3 !== "N/A") {
+          let siteStreet3Lines = doc.splitTextToSize(siteStreet3, 65);
+          doc.text("Street 3:", 10, siteCurrentY);
+          doc.text(siteStreet3Lines, 23.5, siteCurrentY);
+          siteCurrentY += siteStreet3Lines.length * 5;
+        }
 
-                doc.text(`City: ${AccountData?.Billing_City || ""}`, 118, BcurrentY);
-                BcurrentY += 5;
-                doc.text(`State: ${AccountData?.Domestic_Billing_State || ""}`, 118, BcurrentY);
-                BcurrentY += 5;
-                doc.text(`Country: ${AccountData?.Billing_Country || ""}`, 118, BcurrentY);
-                BcurrentY += 5;
-                doc.text(`Postal Code: ${AccountData?.Billing_Code || ""}`, 118, BcurrentY);
+        doc.text(`City: ${OppData?.Project_City || ""}`, 10, siteCurrentY);
+        siteCurrentY += 5;
+        doc.text(`State: ${OppData?.Project_State || ""}`, 10, siteCurrentY);
+        siteCurrentY += 5;
+        doc.text(`Country: ${OppData?.Project_Country || ""}`, 10, siteCurrentY);
+        siteCurrentY += 5;
+        doc.text(`Postal Code: ${OppData?.Project_Zip_Code || ""}`, 10, siteCurrentY);
 
 
-        //----------------------------------------------------------------------------
+        // --- Billing Address ---
+        doc.setFont('Times', 'bold');
+        doc.text("Billing Address", 118, 200);
+        doc.setFont('Times', 'normal');
+        // Dynamically calculate positions
+        let BcurrentY = 205;
+        let customerName = AccountData?.Account_Name || "";
+        let customerNameLines = doc.splitTextToSize(customerName, 60);
+        doc.text("Customer Name:", 118, BcurrentY);
+        doc.text(customerNameLines, 143, BcurrentY);
+        BcurrentY += customerNameLines.length * 5;
+
+        let billingStreet = AccountData?.Billing_Street || "";
+        let billingStreetLines = doc.splitTextToSize(billingStreet, 60);
+        doc.text("Street 1:", 118, BcurrentY);
+        doc.text(billingStreetLines, 131.5, BcurrentY);
+        BcurrentY += billingStreetLines.length * 5;
+
+        let billingStreet2 = AccountData?.Billing_Street_2 || "N/A";
+        if (billingStreet2 !== "N/A") {
+          let billingStreet2Lines = doc.splitTextToSize(billingStreet2, 60);
+          doc.text("Street 2:", 118, BcurrentY);
+          doc.text(billingStreet2Lines, 131.5, BcurrentY);
+          BcurrentY += billingStreet2Lines.length * 5;
+        }
+
+        let billingStreet3 = AccountData?.Billing_Street_3 || "N/A";
+        if (billingStreet3 !== "N/A") {
+          let billingStreet3Lines = doc.splitTextToSize(billingStreet3, 60);
+          doc.text("Street 3:", 118, BcurrentY);
+          doc.text(billingStreet3Lines, 131.5, BcurrentY);
+          BcurrentY += billingStreet3Lines.length * 5;
+        }
+
+        doc.text(`City: ${AccountData?.Billing_City || ""}`, 118, BcurrentY);
+        BcurrentY += 5;
+        doc.text(`State: ${AccountData?.Domestic_Billing_State || ""}`, 118, BcurrentY);
+        BcurrentY += 5;
+        doc.text(`Country: ${AccountData?.Billing_Country || ""}`, 118, BcurrentY);
+        BcurrentY += 5;
+        doc.text(`Postal Code: ${AccountData?.Billing_Code || ""}`, 118, BcurrentY);
+
+
+        //------------------------------------------------------------------------------------------------
+        // Product Details Table
+        //------------------------------------------------------------------------------------------------
 
         doc.addPage();
         if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-        doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
 
-        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+        let boxStartY = 55; // Starting Y position of the box
+        let boxHeight = 10; // Initial height for the header row
 
-        const MAX_IMAGE_HEIGHT = 40;
+
+
+        let startY1 = boxStartY + boxHeight; // Start Y position for the rows
+
+
+        startY1 += 10; // Increment Y position for the next row
+        // });
+
+
+        startY1 += 10;
+
+
+        //-----------------------------------------------------------------------------------
+
+
+
         let tableData = [];
 
         if (quoteData.Product_Details && quoteData.Product_Details.length > 0) {
@@ -355,67 +358,61 @@ justify-content: center;
             const item = quoteData.Product_Details[i];
             const ProductID = item.product?.id || null;
             const product = ProductID ? ProductDataMap[ProductID] : null;
-
             const productName = product?.Product_Name || "Product";
-            const platformWidth = product?.Platform_Width || "N/A";
-            const platformLength = product?.Platform_Length || "N/A";
-            const carWeight = product?.Car_Weight_In_Kg || "N/A";
-            const clearHeight = product?.Clear_Height || "N/A";
-            const coating = product?.System_Coating || "N/A";
-            const ProductTax = product?.Tax || "N/A";
+            const platformWidth = product?.Platform_Width || "";
+            const platformLength = product?.Platform_Length || "";
+            const carWeight = product?.Car_Weight_In_Kg || "";
+            const clearHeight = product?.Clear_Height || "";
+            const coating = product?.System_Coating || "";
 
             const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating: ${coating}\n`;
-            const defaultImage = 
 
             tableData.push([
-              productImages[ProductID] ? "" : "defaultImage",
+              productImages[ProductID] ? "" : "",
               description,
               item.quantity ?? 0,
-              `INR ${item.list_price ?? 0}`,
-              `INR ${item.total ?? 0}`
+              `INR ${item.list_price != null ? item.list_price.toFixed(1) : "0.0"}`,
+              `INR ${item.total != null ? item.total.toFixed(1) : "0.0"}`
             ]);
           }
         }
+
 
         const totalSum = quoteData.Product_Details.reduce((acc, item) => acc + (item.total ?? 0), 0);
         const TotalQuantity = quoteData.Product_Details.reduce((acc, item) => acc + (item.quantity ?? 0), 0);
         const TotalTax = quoteData.Product_Details.reduce((acc, item) => acc + (item.Tax ?? 0), 0);
         const NetTotal = quoteData.Product_Details.reduce((acc, item) => acc + (item.net_total ?? 0), 0);
-        // console.log(TotalTax + NetTotal);
-        // console.log(totalSum+TotalTax);
-        
-        
 
-        // Extract unique tax names and percentages
-        const taxDetails = [];
+        // // Extract unique tax names and percentages
+        const taxDetails1 = [];
         quoteData.Product_Details.forEach((item) => {
           if (item.line_tax && item.line_tax.length > 0) {
             item.line_tax.forEach((tax) => {
               const taxEntry = `${tax.name}@ ${tax.percentage}%`;
-              if (!taxDetails.includes(taxEntry)) {
-                taxDetails.push(taxEntry);
+              if (!taxDetails1.includes(taxEntry)) {
+                taxDetails1.push(taxEntry);
               }
             });
           }
         });
-        // console.log("Tax Details:", taxDetails);
-        // const taxDetailsString = taxDetails.length > 0 ? taxDetails.join(", ") : "No Tax";
-        const taxDetailsString = taxDetails.join(", ");
+        // // console.log("Tax Details:", taxDetails1);
+        const taxDetailsString = taxDetails1.length > 0 ? taxDetails1.join(", ") : "No Tax";
+        // const taxDetailsString = taxDetails1.join(", ");
 
         tableData.push(["", "Total Quantity in Spaces/Unit", TotalQuantity ?? 0, "Net Contract Value", `INR ${totalSum ?? 0}`]);
-        // tableData.push(["", "", "", "Total Tax", `${TotalTax}`]);
+        // tableData.push(["", "", "", "Total Tax", `INR ${TotalTax}`]); 
         tableData.push(["", "", "", taxDetailsString, `INR ${TotalTax}`]);
         tableData.push(["", "", "", "Gross Contract Value", `INR ${totalSum + TotalTax}`]);
 
 
-        // const MAX_IMAGE_HEIGHT = 40;
+        const MAX_IMAGE_HEIGHT = 40;
         const PAGE_HEIGHT = doc.internal.pageSize.height;
         const TOP_MARGIN = 55;
         const BOTTOM_MARGIN = 10;
         const SAFE_AREA = PAGE_HEIGHT - BOTTOM_MARGIN;
 
         const processedChunks = [];
-        const MAX_PRODUCTS_PER_PAGE = 3; // new added line
+        const MAX_PRODUCTS_PER_PAGE = 3;
         let currentChunk = [];
         let estimatedY = TOP_MARGIN;
 
@@ -423,7 +420,7 @@ justify-content: center;
           const row = tableData[rowIndex];
           const isTotalRow = row[1]?.includes("Total Quantity in Spaces") ||
             row[1]?.includes("Net Contract Value") ||
-            row[1]?.includes("Total Tax") ||
+            // row[1]?.includes("Total Tax") ||
             row[1]?.includes("Gross Contract Value");
 
           if (isTotalRow) return 10;
@@ -439,21 +436,22 @@ justify-content: center;
         };
 
         for (let i = 0; i < tableData.length - 3; i++) {
-          // const rowHeight = estimateRowHeight(i);
+          const rowHeight = estimateRowHeight(i);
 
-          // if (estimatedY + rowHeight > SAFE_AREA) {
-          //     processedChunks.push(currentChunk);
-          //     currentChunk = [];
-          //     estimatedY = TOP_MARGIN;
-          // }
+          if (estimatedY + rowHeight > SAFE_AREA) {
+            processedChunks.push(currentChunk);
+            currentChunk = [];
+            estimatedY = TOP_MARGIN;
+          }
+          currentChunk.push(tableData[i]);
+          estimatedY += rowHeight;
 
-          // currentChunk.push(tableData[i]);
-          // estimatedY += rowHeight;
           if (currentChunk.length === MAX_PRODUCTS_PER_PAGE) {
             processedChunks.push(currentChunk);
             currentChunk = [];
+            estimatedY = TOP_MARGIN;
           }
-          currentChunk.push(tableData[i]);
+
         }
 
         if (currentChunk.length > 0) {
@@ -463,15 +461,21 @@ justify-content: center;
         const totalRows = tableData.slice(-3);
         const lastChunkIndex = processedChunks.length - 1;
 
-        if (processedChunks.length > 0 && processedChunks[lastChunkIndex].length < MAX_PRODUCTS_PER_PAGE) {
-          // If last product page has space, add totals on the same page
-          processedChunks[lastChunkIndex] = [...processedChunks[lastChunkIndex], ...totalRows];
+        let lastChunk = processedChunks[lastChunkIndex] || [];
+
+        const estimatedTotalsHeight = totalRows.length * 10; // 10 height per total row
+        let estimatedCurrentY = TOP_MARGIN + lastChunk.length * (MAX_IMAGE_HEIGHT + 6); // Rough estimate for products already added
+
+        // Check if totals fit on last page
+        if (estimatedCurrentY + estimatedTotalsHeight <= SAFE_AREA) {
+          processedChunks[lastChunkIndex] = [...lastChunk, ...totalRows];
         } else {
-          // Otherwise, push totals to a new page
           processedChunks.push(totalRows);
         }
 
-        // Render chunks page by page
+
+
+        // // Render chunks page by page
         processedChunks.forEach((chunk, index) => {
           if (index > 0) doc.addPage();
 
@@ -481,7 +485,7 @@ justify-content: center;
             body: chunk,
             theme: "grid",
             styles: { font: "Times", fontSize: 10, cellPadding: 3, lineWidth: 0.2, lineColor: [0, 0, 0] },
-            headStyles: { fillColor: [255, 255, 255], halign: 'center', fontSize: 12, textColor: [0, 0, 0], fontStyle: 'bold' },
+            headStyles: { fillColor: [255, 255, 255], halign: 'center', fontSize: 10, textColor: [0, 0, 0], fontStyle: 'bold' },
             columnStyles: {
               0: { cellWidth: 50, halign: "center" },
               1: { cellWidth: 50, halign: "left" },
@@ -547,7 +551,7 @@ justify-content: center;
         });
 
         doc.setFont('Times New Roman', 'bold');
-        doc.text("Rounded-off Amount in Words:", 15, doc.lastAutoTable.finalY + 10);
+        doc.text("Rounded-off Amount in Words:", 14, doc.lastAutoTable.finalY + 8);
         doc.setFont('Times New Roman', 'normal');
 
         function numberToWords(num) {
@@ -588,7 +592,7 @@ justify-content: center;
 
           const [rupeesPart, paisePart] = num.toString().split(".");
           const rupees = parseInt(rupeesPart);
-          const paise = parseInt((paisePart || "0").substring(0, 2));
+          const paise = parseInt((paisePart || "0").substring(0, 2)); // get only 2 digits
 
           let words = "";
 
@@ -604,47 +608,518 @@ justify-content: center;
         }
 
         const totalSumInWords = numberToWords(totalSum + TotalTax);
-        doc.text(`${totalSumInWords}`, 15, doc.lastAutoTable.finalY + 15);
-        //-------------------------------------------------
+        doc.text(`${totalSumInWords}`, 14, doc.lastAutoTable.finalY + 15);
 
+        //---------------------------------------------------------------------------------
         doc.addPage();
-        if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-        doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
+        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+        doc.setFontSize(10).setFont('Times', 'normal');
+        doc.text(`Date: ${formattedDate}`, 175, 40);
 
-        doc.setFontSize(10);
-        doc.setFont('Times New Roman', 'bold');
-        doc.text("Supplier:", 18, 60);
-        doc.text("Purchaser:", 105, 60);
-        doc.setFont('Times New Roman', 'normal');
+        // // Add Installation Information Section
+        // ========== PRODUCTS PAYMENT TERMS SECTION (First) ==========
+        const paymentTerms = quoteData.Payment_Terms || [];
 
-        doc.text("Wohr Parking Systems Pvt. Ltd.", 18, 68);
-        const PurchaserName = `${AccountData?.Account_Name || ''}`;
-        const SplitPurchaser = doc.splitTextToSize(PurchaserName, 50);
-        doc.text(SplitPurchaser, 105, 65);
+let paymentHeadingY = 45;
+let paymentTermsStartY = paymentHeadingY + 7;
+let paymentTermsBoxStartY = paymentTermsStartY;
+let paymentTermsRowHeights = [];
 
-        doc.text("Sign:", 18, 75); // Adjusted Y position for Sign
-        doc.text("Sign:", 105, 75);
+// 1. Pre-calculate height
+let totalPaymentTermsHeight = 7;
+paymentTerms.forEach(term => {
+  let paymentPercentage = term.Payment_Percentage || "";
+  let paymentDescription = term.Payment_Terms_Description || "";
+  let remarks = `INR ${(term.Amount || 0).toFixed(2)}`;
 
-        doc.text("Name: Milind Deshpande", 18, 85);
-        let pname = ContactData?.Full_Name || "";
-        let pnameLines = doc.splitTextToSize(name, 50); // Adjust the width as needed
-        doc.text("Name:", 105, 85);
-        doc.text(nameLines, 115, 85);
-        doc.text("Designation: Deputy General Manager", 18, 93);
-        doc.text("Designation:", 105, 100);
+  let descLines = doc.splitTextToSize(paymentDescription, 100);
+  let remarksLines = doc.splitTextToSize(remarks, 40);
 
-        doc.text("Date: ", 18, 105);
-        doc.text("Date: ", 105, 105);
+  const rowHeight = Math.max(descLines.length, remarksLines.length) * 5 + 2;
+  paymentTermsRowHeights.push({ rowHeight, descLines, paymentPercentage, remarks });
 
-        doc.rect(15, 55, 170, 60);
-        doc.line(100, 55, 100, 115);
+  totalPaymentTermsHeight += rowHeight;
+});
 
-        //-------------------------------------------------        
+// 2. Check if it fits
+const pageHeight = 297;
+const marginBottom = 10;
+const availableSpace = pageHeight - paymentHeadingY - marginBottom;
+
+// Function to check if heading, header, and at least one row fit on the current page
+function canFitHeadingHeaderAndRow(currentY, rowHeight) {
+  const HEADING_HEIGHT = 10; // Height of the heading
+  const HEADER_HEIGHT = 7; // Height of the header
+  const PAGE_HEIGHT = 280; // Usable page height
+  return currentY + HEADING_HEIGHT + HEADER_HEIGHT + rowHeight <= PAGE_HEIGHT;
+}
+
+// Check if the heading, header, and at least one row fit on the current page
+if (!canFitHeadingHeaderAndRow(paymentHeadingY, paymentTermsRowHeights[0]?.rowHeight || 0)) {
+  doc.addPage();
+  doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+  doc.setFontSize(10).setFont('Times', 'normal');
+  doc.text(`Date: ${formattedDate}`, 175, 40);
+
+  paymentHeadingY = 50;
+  paymentTermsStartY = paymentHeadingY + 7;
+  paymentTermsBoxStartY = paymentTermsStartY;
+}
+
+// 3. Render heading
+doc.setFontSize(12).setFont('Times', 'bold');
+doc.text("Products Payment Terms", 10, paymentHeadingY);
+
+// 4. Draw header
+drawPaymentTermsHeader(doc, paymentTermsStartY);
+paymentTermsStartY += 7;
+
+// 5. Draw rows
+doc.setFont('Times', 'normal');
+let isHeaderDrawnOnPage = true; // Flag to track if the header is drawn on the current page
+paymentTermsRowHeights.forEach((row, index) => {
+  if (paymentTermsStartY + row.rowHeight > 280) {
+    // Close the current box before moving to the next page
+    doc.rect(10, paymentTermsBoxStartY, 195, paymentTermsStartY - paymentTermsBoxStartY);
+
+    // Add a new page
+    doc.addPage();
+    if (logoData) {
+      doc.addImage(logoData, "JPEG", 175, 5, 30, 30); // Add logo
+    }
+    doc.setFontSize(10).setFont('Times', 'normal');
+    doc.text(`Date: ${formattedDate}`, 175, 40); // Add date
+
+    // Re-render heading and header
+    paymentHeadingY = 50;
+    // doc.setFontSize(12).setFont('Times', 'bold');
+    // doc.text("Products Payment Terms", 10, paymentHeadingY);
+
+    paymentTermsStartY = paymentHeadingY + 7;
+    paymentTermsBoxStartY = paymentTermsStartY;
+
+    drawPaymentTermsHeader(doc, paymentTermsStartY);
+    paymentTermsStartY += 7;
+  }
+
+  // Draw the row
+  doc.rect(10, paymentTermsStartY, 195, row.rowHeight);
+  doc.line(115, paymentTermsStartY, 115, paymentTermsStartY + row.rowHeight);
+  doc.line(155, paymentTermsStartY, 155, paymentTermsStartY + row.rowHeight);
+
+  // Render the text inside the row
+  doc.setFont('Times', 'normal'); // Ensure text is not bold
+  const wrappedDesc = doc.splitTextToSize(row.descLines, 100); // Wrap text within 100px
+  doc.text(wrappedDesc, 12, paymentTermsStartY + 5); // Render wrapped text
+  doc.text(`${row.paymentPercentage}%`, 120, paymentTermsStartY + 5);
+  doc.text(row.remarks, 160, paymentTermsStartY + 5);
+
+  paymentTermsStartY += row.rowHeight;
+});
+
+// Final enclosing box for the entire section
+doc.rect(10, paymentTermsBoxStartY, 195, paymentTermsStartY - paymentTermsBoxStartY);
+
+// --- Helper function to draw header ---
+function drawPaymentTermsHeader(doc, y) {
+  doc.setLineWidth(0.1);
+  doc.setFontSize(10).setFont('Times', 'bold');
+  doc.rect(10, y, 195, 7); // Draw header box
+  doc.text("Payment Terms Milestone", 12, y + 5);
+  doc.text("Payment Percentage %", 117, y + 5);
+  doc.text("Amount (INR)", 160, y + 5);
+  doc.line(115, y, 115, y + 7); // Vertical line after "Payment Terms Milestone"
+  doc.line(155, y, 155, y + 7); // Vertical line after "Payment Percentage %"
+}
+
+        // ========== INSTALLATION INFORMATION SECTION (After) ==========
+
+        // Define new variables
+        // Define new variables
+        // Define new variables
+        let installationBoxStartY = paymentTermsStartY + 20;
+        let installationBoxHeight = 7;
+        let installationStartYHeader = installationBoxStartY + 7;
+        let installationStartYRow = installationBoxStartY + 7;
+
+        // Function to check if the heading, header, and at least one row fit on the current page
+        function canFitHeadingHeaderAndRow(currentY) {
+          const HEADING_HEIGHT = 10; // Height of the heading
+          const HEADER_HEIGHT = 10; // Height of the header
+          const ROW_HEIGHT = 10; // Approximate height of a single row
+          const PAGE_HEIGHT = 280; // Usable page height
+          return currentY + HEADING_HEIGHT + HEADER_HEIGHT + ROW_HEIGHT <= PAGE_HEIGHT;
+        }
+
+        // Check if the heading, header, and at least one row fit on the current page
+        if (!canFitHeadingHeaderAndRow(installationBoxStartY)) {
+          doc.addPage();
+          installationBoxStartY = 50;
+          installationStartYHeader = installationBoxStartY + 7;
+          installationStartYRow = installationBoxStartY + 7;
+        }
+
+        // Installation Information Heading
+        doc.setFontSize(12).setFont("Times", "bold");
+        doc.text("Installation Information", 10, installationBoxStartY - 10);
+
+        // Define columns
+        const columns = [
+          { header: "Installation Service Name", width: 50 },
+          { header: "Product Code", width: 35 },
+          { header: "Quantity", width: 25 },
+          { header: "UoM", width: 20 },
+          { header: "Capacity", width: 25 },
+          { header: "Price", width: 40 }
+        ];
+
+        // Calculate column positions
+        let currentX = 10;
+        const columnPositions = [];
+        columns.forEach((col) => {
+          columnPositions.push(currentX);
+          currentX += col.width;
+        });
+        columnPositions.push(currentX);
+
+        // Draw Table Header
+        doc.setLineWidth(0.1);
+        doc.rect(10, installationBoxStartY, 195, installationBoxHeight);
+        doc.setFontSize(10).setFont("Times", "bold");
+        columns.forEach((col, index) => {
+          const textX = columnPositions[index] + 2;
+          doc.text(col.header, textX, installationBoxStartY + 5);
+        });
+        columnPositions.forEach((xPosition) => {
+          doc.line(xPosition, installationBoxStartY, xPosition, installationBoxStartY + installationBoxHeight);
+        });
+
+        // Now Rows
+        doc.setFont("Times", "normal");
+        const installationInfo = quoteData.Installation_Information || [];
+
+        let totalQuantity1 = 0;
+        let netContractValue = 0;
+        let taxDetails = {};
+        let totalTaxAmount = 0;
+        let grossTotal = 0;
+
+        installationInfo.forEach((info) => {
+          totalQuantity1 += info.Quantity || 0;
+          netContractValue += (info.Quantity || 0) * (info.Installation_Products_Price || 0);
+
+          if (info.Tax && Array.isArray(info.Tax) && info.Tax.length > 0) {
+            const taxNames = info.Tax.map((tax) => {
+              const [taxName, taxPercentage] = tax.split(" - ");
+              return `${taxName || ""}@${taxPercentage.trim() || ""}`;
+            }).join(", ");
+            if (!taxDetails[taxNames]) {
+              taxDetails[taxNames] = info.Tax_Amount || 0;
+            } else {
+              taxDetails[taxNames] += info.Tax_Amount || 0;
+            }
+            totalTaxAmount += info.Tax_Amount || 0;
+          } else {
+            const taxNames = "";
+            if (!taxDetails[taxNames]) {
+              taxDetails[taxNames] = 0;
+            }
+          }
+
+          grossTotal = netContractValue + totalTaxAmount;
+
+          if (installationStartYRow + 10 > 280) {
+            columnPositions.forEach((xPosition) => {
+              doc.line(xPosition, installationBoxStartY, xPosition, installationStartYRow);
+            });
+            doc.rect(10, installationBoxStartY, 195, installationStartYRow - installationBoxStartY);
+
+            doc.addPage();
+            doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+            doc.setFontSize(10).setFont('Times', 'normal');
+            doc.text(`Date: ${formattedDate}`, 175, 40);
+
+            installationBoxStartY = 50;
+            installationStartYRow = installationBoxStartY + 10;
+
+            // Redraw the heading and header on the new page
+            // doc.setFontSize(12).setFont("Times", "bold");
+            // doc.text("Installation Information", 10, installationBoxStartY - 10);
+
+            // doc.rect(10, installationBoxStartY, 195, installationBoxHeight);
+            doc.setFontSize(10).setFont("Times", "bold");
+            columns.forEach((col, index) => {
+            const textX = columnPositions[index] + 2;
+            doc.text(col.header, textX, installationBoxStartY + 7);
+          });
+          columnPositions.forEach((xPosition) => {
+            doc.line(xPosition, installationBoxStartY, xPosition, installationBoxStartY + 10);
+          });
+            installationStartYRow = installationBoxStartY + 10; 
+        }
+
+          doc.rect(10, installationStartYRow, 195, 10);
+          doc.setFontSize(10).setFont("Times", "normal");
+          let currentX = 10;
+          columns.forEach((col) => {
+            const textX = currentX + 2;
+            let value = "";
+            switch (col.header) {
+              case "Installation Service Name":
+                value = info.Installation_Service_Name?.name || "";
+                break;
+              case "Product Code":
+                value = info.Product_Code || "";
+                break;
+              case "Quantity":
+                value = `${info.Quantity || ""}`;
+                break;
+              case "UoM":
+                value = info.UoM || "";
+                break;
+              case "Capacity":
+                value = info.Installation_Product_Capacity_kg_1 || "";
+                break;
+              case "Price":
+                value = `INR ${(info.Installation_Products_Price).toFixed(2) || ""}`;
+                break;
+            }
+            doc.text(value, textX, installationStartYRow + 7);
+            currentX += col.width;
+          });
+
+          columnPositions.forEach((xPosition) => {
+    doc.line(xPosition, installationStartYRow, xPosition, installationStartYRow + 10);
+  });
+          installationStartYRow += 10;
+        });
+
+        columnPositions.forEach((xPosition) => {
+  doc.line(xPosition, installationBoxStartY, xPosition, installationStartYRow);
+});
+doc.rect(10, installationBoxStartY, 195, installationStartYRow - installationBoxStartY);        
+
+// Draw the enclosing box for the totals section
+doc.rect(10, installationStartYRow, 195, 10);
+doc.text("Total Quantity", 62, installationStartYRow + 7);
+doc.text(`${totalQuantity1}`, 97, installationStartYRow + 7);
+const netText = "Net Contract Value";
+const netValue = doc.splitTextToSize(netText, 25);
+doc.text(netValue, 142, installationStartYRow + 5);
+doc.text(`INR ${netContractValue.toFixed(2)}`, 167, installationStartYRow + 7);
+
+installationStartYRow += 10;
+
+// Tax Details
+const taxSummary = Object.keys(taxDetails).join("\n");
+const taxBoxHeight = 10 + (Object.keys(taxDetails).length - 1) * 5;
+
+// Check if the tax details fit on the current page
+if (installationStartYRow + taxBoxHeight > 280) {
+  // Close the current box before moving to the next page
+  columnPositions.forEach((xPosition) => {
+      doc.line(xPosition, installationBoxStartY, xPosition, installationStartYRow);
+    });
+  doc.rect(10, installationBoxStartY, 195, installationStartYRow - installationBoxStartY);
+  // Add a new page
+  doc.addPage();
+  doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+  doc.setFontSize(10).setFont('Times', 'normal');
+  doc.text(`Date: ${formattedDate}`, 175, 40);
+
+  // Reset positions for the new page
+  installationBoxStartY = 50;
+  installationStartYRow = installationBoxStartY;
+}
+
+// Draw the tax details box
+doc.rect(10, installationStartYRow, 195, taxBoxHeight);
+const tax = doc.splitTextToSize(taxSummary || "No Tax", 25);
+doc.text(tax, 142, installationStartYRow + 4);
+doc.text(`INR ${totalTaxAmount.toFixed(2)}`, 167, installationStartYRow + 4);
+
+installationStartYRow += taxBoxHeight;
+
+// Gross Contract Value
+const grossBoxHeight = 10;
+
+// Check if the gross total fits on the current page
+if (installationStartYRow + grossBoxHeight > 280) {
+  // Close the current box before moving to the next page
+  columnPositions.forEach((xPosition) => {
+  doc.line(xPosition, installationBoxStartY, xPosition, installationStartYRow);
+});
+doc.rect(10, installationBoxStartY, 195, installationStartYRow - installationBoxStartY);
+  
+  // Add a new page
+  doc.addPage();
+  doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+  doc.setFontSize(10).setFont('Times', 'normal');
+  doc.text(`Date: ${formattedDate}`, 175, 40);
+
+  // Reset positions for the new page
+  installationBoxStartY = 50;
+  installationStartYRow = installationBoxStartY;
+}
+
+// Draw the gross total box
+doc.rect(10, installationStartYRow, 195, grossBoxHeight);
+const grossText = "Gross Contract Value";
+const grossValue = doc.splitTextToSize(grossText, 25);
+doc.text(grossValue, 142, installationStartYRow + 5);
+doc.text(`INR ${grossTotal.toFixed(2)}`, 167, installationStartYRow + 7);
+
+// Draw vertical lines and enclosing box
+columnPositions.forEach((xPosition) => {
+  doc.line(xPosition, installationBoxStartY, xPosition, installationStartYRow + grossBoxHeight);
+});
+doc.rect(10, installationBoxStartY, 195, installationStartYRow - installationBoxStartY);
+
+
+//---------------------------------------------------------------------------------
+        // Add Installation Payment Terms Section
+        
+const paymentBoxHeightEstimate = 30; 
+if (installationStartYRow + paymentBoxHeightEstimate > 280) {
+  // Close the current box before moving to the next page
+  columnPositions.forEach((xPosition) => {
+    doc.line(xPosition, installationBoxStartY, xPosition, installationStartYRow);
+  });
+  doc.rect(10, installationBoxStartY, 195, installationStartYRow - installationBoxStartY);
+
+  // Add a new page
+  doc.addPage();
+  doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+  doc.setFontSize(10).setFont("Times", "normal");
+  doc.text(`Date: ${formattedDate}`, 175, 40);
+
+  // Reset positions for the new page
+  installationBoxStartY = 30;
+  installationStartYRow = installationBoxStartY;
+}
+
+// Start the "Installation Payment Term" section
+doc.setFontSize(12).setFont("Times", "bold");
+doc.text("Installation Payment Term", 10, installationStartYRow + 20);
+
+let paymentBoxStartY = installationStartYRow + 25; // Starting Y position of the payment term box
+let paymentBoxHeight = 7; // Initial height for the header row
+
+// Table headers for Installation Payment Term
+doc.setLineWidth(0.1);
+doc.rect(10, paymentBoxStartY, 195, paymentBoxHeight); // Draw the header box
+doc.setFontSize(10).setFont("Times", "bold");
+doc.text("Description", 12, paymentBoxStartY + 5);
+doc.text("Split Contract Value (%)", 100, paymentBoxStartY + 5);
+doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
+
+// Add vertical lines for columns in the header
+doc.line(95, paymentBoxStartY, 95, paymentBoxStartY + paymentBoxHeight);
+doc.line(155, paymentBoxStartY, 155, paymentBoxStartY + paymentBoxHeight);
+
+let paymentStartY = paymentBoxStartY + paymentBoxHeight; // Start Y position for the rows
+
+doc.setFont("Times", "normal");
+const InsatallationPaymentTerms = quoteData.Installation_Payment_Term || [];
+InsatallationPaymentTerms.forEach((term) => {
+  const descriptionLines = doc.splitTextToSize(term.Description_Milestone || "", 75);
+  const rowHeight = descriptionLines.length * 4 + 5;
+
+  if (paymentStartY + rowHeight > 280) {
+    // Close the current box before moving to the next page
+    doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY);
+
+    // Add a new page
+    doc.addPage();
+    doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+    doc.setFontSize(10).setFont("Times", "normal");
+    doc.text(`Date: ${formattedDate}`, 175, 40);
+
+    // Re-add table headers
+    paymentBoxStartY = 50;
+    paymentStartY = paymentBoxStartY + 7;
+    doc.rect(10, paymentBoxStartY, 195, 7);
+    doc.setFontSize(10).setFont("Times", "bold");
+    doc.text("Description", 12, paymentBoxStartY + 5);
+    doc.text("Split Contract Value (%)", 100, paymentBoxStartY + 5);
+    doc.text("Amount (INR)", 160, paymentBoxStartY + 5);
+    doc.setFontSize(10).setFont("Times", "normal");
+    doc.line(95, paymentBoxStartY, 95, paymentBoxStartY + paymentBoxHeight);
+    doc.line(155, paymentBoxStartY, 155, paymentBoxStartY + paymentBoxHeight);
+    paymentStartY = paymentBoxStartY + paymentBoxHeight;
+  }
+
+  // Add row data
+  doc.rect(10, paymentStartY, 195, rowHeight); // Draw a box for each row
+  doc.text(descriptionLines, 12, paymentStartY + 5); // Render wrapped description text
+  doc.text(`${(term.of_Split_Contract_Value || "")}`, 100, paymentStartY + 5);
+  doc.text(`INR ${(term.Amount || 0).toFixed(2)}`, 160, paymentStartY + 5);
+
+  // Add vertical lines for columns in each row
+  doc.line(95, paymentStartY, 95, paymentStartY + rowHeight); // After "Description"
+  doc.line(155, paymentStartY, 155, paymentStartY + rowHeight); // After "Split Contract Value (%)"
+
+  paymentStartY += rowHeight;
+});
+
+// Draw enclosing box for the entire section
+doc.rect(10, paymentBoxStartY, 195, paymentStartY - paymentBoxStartY);
+
+        //------------------------------------------------------------------------------------
+        // Add Supplier and Purchaser Information Section
+        function addNewPageWithHeader(doc, logoData, formattedDate) {
+          doc.addPage();
+          doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+          doc.setFontSize(10).setFont("Times", "normal");
+          doc.text(`Date: ${formattedDate}`, 175, 40);
+        }
+
+        let supplierPurchaserStartY = Math.max(paymentStartY + 20, 50);
+        let boxHeight2 = 65; // Height of the enclosing box
+
+        // Check if the section exceeds the page height
+        if (supplierPurchaserStartY + boxHeight2 > 280) {
+          addNewPageWithHeader(doc, logoData, formattedDate);
+          supplierPurchaserStartY = 50;
+        }
+
+        // Draw the enclosing box for the full section
+        doc.setLineWidth(0.1);
+        doc.rect(10, supplierPurchaserStartY - 5, 195, boxHeight2); // Draw the box
+
+        // Supplier Information
+        doc.setFontSize(12).setFont("Times", "bold");
+        doc.text("Supplier Information", 15, supplierPurchaserStartY);
+
+        doc.setFont("Times", "normal").setFontSize(10);
+        doc.text("Wohr Parking Systems Pvt Ltd.", 15, supplierPurchaserStartY + 7);
+        doc.text("Sign:", 15, supplierPurchaserStartY + 15);
+        doc.text("Name: Milind Deshpande", 15, supplierPurchaserStartY + 25);
+        doc.text("Designation: Deputy General Manager", 15, supplierPurchaserStartY + 35);
+        doc.text("Date:", 15, supplierPurchaserStartY + 50);
+
+        // Purchaser/Customer Information
+        doc.setFont("Times", "bold").setFontSize(12);
+        doc.text("Purchaser/Customer Information", 115, supplierPurchaserStartY);
+
+        doc.setFont("Times", "normal").setFontSize(10);
+        let accountName = AccountData?.Account_Name || "";
+        let accountNameLines = doc.splitTextToSize(accountName, 70);
+        doc.text(accountNameLines, 115, supplierPurchaserStartY + 7); // Render wrapped text
+        doc.text("Sign:", 115, supplierPurchaserStartY + 10 + accountNameLines.length * 5);
+        doc.text("Name:", 115, supplierPurchaserStartY + 20 + accountNameLines.length * 5);
+        doc.text("Designation:", 115, supplierPurchaserStartY + 30 + accountNameLines.length * 5);
+        doc.text("Date:", 115, supplierPurchaserStartY + 40 + accountNameLines.length * 5);
+        //---------------------------------------------------------------------------------------------------------    
+
+
 
         doc.addPage();
         doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-        //Supplier Information
-        doc.setLineWidth(0.5);
+        doc.setFontSize(10).setFont('Times', 'normal');
+        doc.text(`Date: ${formattedDate}`, 175, 40);
+
+        doc.setLineWidth(0.1);
         doc.setDrawColor(0, 0, 0);
         let startY = 55;
         let boxHeight1 = 10;
@@ -652,47 +1127,46 @@ justify-content: center;
         const textMaxWidth = 145;
 
         // Extract payment terms dynamically from quoteData
-        // console.log(quoteData.Payment_Terms);
-        const paymentTerms1 = quoteData.Payment_Terms || [];
+        // const paymentTerms = quoteData.Payment_Terms || [];
         let textHeights = [];
         let currentY = startY + 7;
 
         // Calculate required height dynamically
-        paymentTerms1.forEach(term => {
-          let paymentPercentage = term.Payment_Percentage || "";
-          let paymentDescription = term.Payment_Terms_Description || "";
-          let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
-          let splitText = doc.splitTextToSize(combinedText, textMaxWidth);
-          textHeights.push(splitText.length * 5 + 2);
-          boxHeight1 += splitText.length * 5 + 2;
-        });
+        // paymentTerms.forEach(term => {
+        //     let paymentPercentage = term.Payment_Percentage || "";
+        //     let paymentDescription = term.Payment_Terms_Description || "";
+        //     let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
+        //     let splitText = doc.splitTextToSize(combinedText, textMaxWidth);
+        //     textHeights.push(splitText.length * 5 + 2);
+        //     boxHeight1 += splitText.length * 5 + 2;
+        // });
 
-        // Draw the payment terms box
-        doc.rect(15, startY, 190, boxHeight1);
-        doc.line(50, startY, 50, startY + boxHeight1);
+        // // Draw the payment terms box
+        // doc.rect(15, startY, 190, boxHeight1);
+        // doc.line(50, startY, 50, startY + boxHeight1);
 
-        // Render payment terms
-        doc.setFontSize(10).setFont('Times', 'bold');
-        const titleY = startY + (boxHeight1 / 2);
-        doc.text("PAYMENT TERMS", 16, titleY);
+        // // Render payment terms
+        // doc.setFontSize(10).setFont('Times', 'bold');
+        // const titleY = startY + (boxHeight1 / 2); // Middle of the box height
+        // doc.text("PAYMENT TERMS", 16, titleY);
 
         doc.setFontSize(10).setFont('Times', 'normal')
-        paymentTerms1.forEach((term, index) => {
-          let paymentPercentage = term.Payment_Percentage || "";
-          let paymentDescription = term.Payment_Terms_Description || "";
-          let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
-          doc.text(doc.splitTextToSize(combinedText, textMaxWidth), textStartX, currentY);
-          currentY += textHeights[index];
-        });
+        // paymentTerms.forEach((term, index) => {
+        //     let paymentPercentage = term.Payment_Percentage || "";
+        //     let paymentDescription = term.Payment_Terms_Description || "";
+        //     let combinedText = `${paymentPercentage}% - ${paymentDescription}`;
+        //     doc.text(doc.splitTextToSize(combinedText, textMaxWidth), textStartX, currentY);
+        //     currentY += textHeights[index];
+        // });
 
         // Adjust milestone section based on payment terms height
-        currentY += 10;
+        currentY -= 15;
         doc.setFontSize(12).setFont('Times', 'bold');
         doc.text("Milestone:", 15, currentY);
         currentY += 5;
 
         // Draw milestone box
-        doc.setLineWidth(0.5);
+        doc.setLineWidth(0.1);
         doc.rect(15, currentY, 190, 40);
         doc.line(15, currentY + 16, 205, currentY + 16);
         doc.line(15, currentY + 28, 205, currentY + 28);
@@ -700,128 +1174,120 @@ justify-content: center;
 
         // Milestone content
         doc.setFontSize(10).setFont('Times', 'bold');
-        doc.text("Delivery Schedule", 16, currentY + 10);
-        doc.text("Warranty ('DLP')", 16, currentY + 22);
+        doc.text("Completion Period", 16, currentY + 10);
+        const Maintenance = "Free Maintenance Period";
+        const SplitMaintenance = doc.splitTextToSize(Maintenance, 30);
+        doc.text(SplitMaintenance, 16, currentY + 20);
         doc.text("Wohr’s scope of work", 16, currentY + 34);
         doc.setFont('Times', 'normal');
-        doc.text("14 to 24 weeks from the date of manufacturing advance and shop drawing approvals receipt whichever is later subject to site readiness.", 55, currentY + 8, { maxWidth: 135 });
-        doc.text("12 months from the date of handing over or 15 months from the date of delivery, whichever is earlier.", 55, currentY + 21, { maxWidth: 135 });
-        doc.text("Design, Supply, Transport, Material unloading at site, Installation, Testing and Commissioning and Hand-over of Equipment.", 55, currentY + 33, { maxWidth: 135 });
+        doc.text("4 - 6 Weeks from receipt of material at Site and subject to uninterrupted availability of site area along with uninterrupted power supply and storage facility. The total period depends on total quantity of Equipment.", 55, currentY + 6, { maxWidth: 135 });
+        doc.text("12 months from completion of installation subject to Wohr standard terms and conditions.", 55, currentY + 23, { maxWidth: 135 });
+        doc.text("Material Unloading at site, Parking System Installation and Commissioning and Hand-over of Equipment", 55, currentY + 34, { maxWidth: 135 });
 
         // Adjust Wohr/Supplier and Purchase/Customer sections dynamically
         currentY += 50;
-        doc.text("Wohr/Supplier:", 15, currentY);
+        doc.setFontSize(10).setFont('Times', 'bold');
+        doc.text("Wohr Parking System Pvt Ltd.", 15, currentY);
+        doc.setFont('Times', 'normal');
         doc.rect(15, currentY + 12, 50, 0);
         doc.text("Name:", 15, currentY + 17);
         doc.text("Designation:", 15, currentY + 22);
-        doc.text("Date:", 15, currentY + 32);
+        doc.text("Date:", 15, currentY + 28);
 
+        doc.setFont('Times', 'bold').setFontSize(10);
         doc.text("Purchase/Customer", 150, currentY);
+        doc.setFont('Times', 'normal');
         doc.rect(150, currentY + 12, 50, 0);
         doc.text("Name:", 150, currentY + 17);
         doc.text("Designation:", 150, currentY + 22);
-        doc.text("Date:", 150, currentY + 32);
+        doc.text("Date:", 150, currentY + 28);
+        //---------------------------------------------------------------------------------
 
         doc.addPage();
-        const lineHeight = 7;
-        let y = 75;
-
         doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-
         doc.setFontSize(10).setFont('Times', 'normal');
         doc.text(`Date: ${formattedDate}`, 175, 40);
 
+
+        const lineHeight = 5; // Adjusted line height for tighter spacing
+        const paragraphSpacing = 2; // Spacing between paragraphs
+        let y = 50; // Starting Y position
+
         doc.setFont("Times", "bold");
-        doc.setFontSize(14);
-        doc.text("General Terms and Conditions Forming Part of this Document:", 10, 50);
+        doc.setFontSize(13);
+        doc.text("General Terms and Conditions Forming Part of this Document:", 14, y);
 
+        y += 10; // Add spacing after the title
         doc.setFontSize(12);
-        doc.text("Validity – 30 days from date of quotation", 10, 60);
+        doc.text("Validity – 30 days from date of quotation", 14, y);
 
-        doc.setFont("Times", "normal");
-        doc.text("(1) Definitions:", 10, 70);
+        y += 10; // Add spacing after the validity text
+        doc.setFont("Times", "bold");
+        doc.text("(1) Definitions:", 14, y);
+
+        doc.setFontSize(10).setFont("Times", "normal");
+        y += 7; // Add spacing before definitions
 
         const definitions = [
-          `a) “Car Parking System/Equipment” shall mean a mechanical or an automated structure comprising of assembled parkers and equipment used to park
-specified car.
-b) “Car Parking Layout/CPL” mean the detailed layout of the Car Parking System, finalized and approved by the Customer, containing the
-specifications of the Car which can be parked in the Car Parking System.
-c) “Handover of Car Parking System” shall mean and include the physical handing over of the Car Parking System after Installation completion and
-issue of handover documents along with the keys to the Employer and shall include unilateral handover of the Car Parking System.
-d) “Installation” shall mean all the services performed for the purposes of installation and commissioning of the materials at the Customer site.
-e) “Installation completion” shall mean when Wohr has successfully completed mechanical and electrical installation & commissioning of the Car
-Parking System and intimation of the same to Customer by the representative(s) of Wohr.
-f) “IP Rights” means rights in and to any intellectual property whether registerable or not including names, trademarks, trade names, service marks,
-insignias, designs, patents, domain names, bill of material, specifications, design of parts/members of the Equipment, software, inventions, whether or
-not copyrightable or patentable, trade secret or confidential information, and any other intellectual and/or industrial property.
-g) “Wohr” means Wohr Parking Systems Private Limited including its affiliates and subsidiaries.
-h) “Person ” shall mean natural persons, legal entities and persons who, in conducting their business or profession, are the other party in this Offer,
-quotations, representations and agreements or a Government.
-i) “PO” shall mean Purchase Order signed and agreed by both the parties to this Offer
-j) “Third Party Supplier Equipment” means and include any equipment supplier by a third-party supplier which is procured by Wohr for the purposes
-of Installation.
-k) “Vehicle(s)” shall mean the specified Car as detailed in the Car Parking Layout.
-l) “Order” shall mean contractual relationship(s), whereby Wohr supplies of Car Parking System as per the requirement of the Customer i.e., this
-Offer if accepted.
-m) The Purchaser/Employer/Customer and Wohr shall individually be referred to as “Party” and collectively referred to as “Parties.”
-n) “Purchaser/Employer/Customer” shall mean the person to whom this offer is made and who has accepted this document, as it is i.e., without any
-change, additional, deletion in any of the details.`
+          `a) “Car Parking Layout/CPL” mean the detailed layout of the Car Parking System, finalized and approved by the Customer, containing the specifications of the Car which can be parked in the Car Parking System.`,
+          `b) “Handover of Car Parking System” shall mean and include the physical handing over of the Car Parking System after Installation completion and issue of handover documents along with the keys to the Employer and shall include unilateral handover of the Car Parking System.`,
+          `c) “Installation” shall mean all the services performed for the purposes of installation and commissioning of the materials at the Customer site.`,
+          `d) “Installation completion” shall mean when Wohr has successfully completed mechanical and electrical installation & commissioning of the Car Parking System and intimation of the same to Customer by the representative(s) of Wohr.`,
+          `e) “Wohr” means Wohr Parking Systems Private Limited including its affiliates and subsidiaries.`,
+          `f) “Person” shall mean natural persons, legal entities and persons who, in conducting their business or profession, are the other party in this Offer, quotations, representations and agreements or a Government.`,
+          `g) “PO” shall mean Purchase Order signed and agreed by both the parties to this Offer.`,
+          `h) “Third Party Supplier Equipment” means and include any equipment supplier by a third-party supplier which is procured by Wohr for the purposes of Installation.`,
+          `i) “Vehicle(s)” shall mean the specified Car as detailed in the Car Parking Layout.`,
+          `j) “Order” shall mean contractual relationship(s), whereby Wohr installs Car Parking System as per the requirement of the Customer i.e., this Offer if accepted.`,
+          `k) The Purchaser/Employer/Customer and Wohr shall individually be referred to as “Party” and collectively referred to as “Parties.”`,
+          `l) “Purchaser/Employer/Customer” shall mean the person to whom this offer is made and who has accepted this document, as it is i.e., without any change, additional, deletion in any of the details.`
         ];
 
-        const lineHeight2 = 8;
-        definitions.forEach((text, index) => {
-          const splitText = doc.splitTextToSize(text, 190);
-          doc.text(splitText, 10, y);
-          y += splitText.length * lineHeight2 + 8;
+        definitions.forEach((text) => {
+          const splitText = doc.splitTextToSize(text, 180);
+          doc.text(splitText, 14, y, { maxWidth: 180, align: 'justify' });
+          y += splitText.length * lineHeight + paragraphSpacing;
         });
 
+        y += 5; // Add spacing before exclusions
+        doc.setFont("Times", "bold");
+        doc.setFontSize(12);
+        doc.text("(2) Exclusions And Dependencies", 14, y);
+
+        y += 7; // Add spacing before exclusions content
+        doc.setFont("Times", "normal");
+        doc.setFontSize(10);
+
+        const exclusionsText = [
+          `a) Any scope of work which is not explicitly set out under this Offer is excluded from Wohr’s scope of work. The technical and commercial terms submitted in this Offer are based and relied upon the technical requirement and information provided by the Customer while seeking this quote.`,
+          `b) Customer shall provide timely inputs to Wohr regarding space availability, approval of CPL, site readiness and other required inputs to enable Wohr to perform its part. Notwithstanding the agreed Installation dates, the Installation start and completion shall be subjected to readiness of the site as specified by Wohr projects team and the payment release as per the Agreement.`,
+          `c) Customer agrees that Wohr shall not be liable for any delay caused in installation, due to failure of the Customer to provide any component, access or any other deliverables or inputs regarding installation, space availability, utilities, approval of CPL, site readiness or other.`
+        ];
+
+        exclusionsText.forEach((paragraph) => {
+          const wrappedText = doc.splitTextToSize(paragraph, 180);
+          doc.text(wrappedText, 14, y, { maxWidth: 180, align: 'justify' });
+          y += wrappedText.length * lineHeight + paragraphSpacing;
+        });
 
         doc.addPage();
         doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
-
         doc.setFontSize(10).setFont('Times', 'normal');
         doc.text(`Date: ${formattedDate}`, 175, 40);
 
+        const lineHeight1 = 5; // Adjusted line height for tighter spacing
+        const paragraphSpacing1 = 1.5; // Spacing between paragraphs
+        let y2 = 50; // Starting Y position
+
+        // Section (3) Preparation At The Site By Customer
         doc.setFont("Times", "bold");
         doc.setFontSize(12);
-        doc.text("(2) Exclusions And Dependencies", 10, 50);
+        doc.text("(3) Preparation At The Site By Customer", 14, y2);
 
-        const exclusionsText = [
-          `A)Any scope of work which is not explicitly set out under this Offer is excluded from Wohr’s scope of work. The technical and commercial terms
-submitted in this Offer are based and relied upon the technical requirement and information provided by the Customer while seeking this quote`,
-          `B) Customer shall provide timely inputs to Wohr regarding design approval, space availability, approval of CPL , site readiness and other required inputs
-to enable Wohr to perform its part`,
-          `C) Customer shall appoint one dedicated point of contact to address issues, questions Wohr may have with respect to supply of the Equipment.`,
-          `D) Customer agrees that Wohr shall not be liable for any delay caused in supply, due to failure of the Customer, to provide any component, access or any
-other deliverables or inputs regarding, design approval, space availability, approval of CPL, site readiness or other.`
-        ];
+        y2 += 10; // Add spacing after the title
+        doc.setFontSize(10).setFont("Times", "normal");
 
-        let yExclusions = 60;
-        const lineHeight1 = 5.5;
-        const paragraphSpacing = 2;
-
-        doc.setFont("Times", "normal");
-        doc.setFontSize(11);
-
-        exclusionsText.forEach(paragraph => {
-          const wrappedText = doc.splitTextToSize(paragraph, 190);
-          doc.text(wrappedText, 10, yExclusions);
-          yExclusions += wrappedText.length * lineHeight1 + paragraphSpacing;
-        });
-
-        doc.setFont("Times", "bold");
-        doc.setFontSize(12);
-        doc.text("(3) Preparation At The Site By Customer: ", 10, 135);
-
-        doc.setFont("Times", "normal");
-        doc.setFontSize(11);
-
-        let y1 = 140;
-        const lineSpacing = 6;
-        const wrapWidth = 200;
-        const bottomMargin = 280;
-
-        const points = [
+        const preparationPoints = [
           "Purchaser Shall Be Bound to Provide,",
           "a) Safe, dry, clean, weatherproof, and lockable space to keep the materials or part thereof during the pendency of supply, as per this Offer.",
           "b) Site ready for installation.",
@@ -835,203 +1301,251 @@ other deliverables or inputs regarding, design approval, space availability, app
           "j) Shed, walling, canopy etc. for the rainwater protection and weather protection of the Equipment or material at the Site.",
           "k) All civil work including foundations, concrete pedestal, core cuttings etc. with tolerances must be as specified by Wohr. Third Party Supplier Equipment or for shifting materials in case if the location of Installation is other than on ground floor to any upper or lower floor shall be the responsibility of the Customer.",
           "l) If the site is not ready for any reason for taking up installation, Wohr shall deploy installation team upon receipt of Customer’s written confirmation of site readiness as required by Wohr. Wohr needs minimum three weeks advance information to depute its personnel. Wohr may have to reschedule the erection program if the readiness of the site is inordinately delayed.",
-          `m) If the Equipment is not being delivered to Purchaser on account of the Purchaser's failure to pay the outstanding amount for the Equipment as on due date or before the Equipment is ready for delivery; or for any other reason whatsoever attributable to the default of the Purchaser, Wohr shall be entitled to:`,
-          `i) Store and insure, the Equipment’s Purchaser shall bear the cost of such storage and insurance of Equipment at actuals`,
-          `ii) Wohr shall entitle to add such cost to the balance of the supply amount payable by the Purchaser against delivery of the Equipment.`,
-          `iii) Wohr shall be entitled to recover such cost as part of the outstanding payment, if decided by Wohr`,
-          `iv) Customer shall be liable for all damages suffered by Wohr and/or other persons, due to unsafe condition at the Site or arising from delay or defect or deficiency in the performance of the obligations of the Purchaser.`
         ];
 
-        points.forEach(point => {
-          const lines = doc.splitTextToSize(point, wrapWidth);
+        preparationPoints.forEach((point) => {
+          const wrappedText = doc.splitTextToSize(point, 180);
+          doc.text(wrappedText, 14, y2, { maxWidth: 180, align: 'justify' });
+          y2 += wrappedText.length * lineHeight1 + paragraphSpacing1;
 
-          // If this paragraph will exceed the page height, create a new page
-          if (y1 + (lines.length * lineSpacing) > bottomMargin) {
-            addPageWithHeader(doc, logoData, formattedDate);
-            y1 = 60;
+          if (y2 > 280) { // Add a new page if content exceeds the page height
+            doc.addPage();
+            doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+            doc.setFontSize(10).setFont('Times', 'normal');
+            doc.text(`Date: ${formattedDate}`, 175, 40);
+            y2 = 50; // Reset Y position for the new page
           }
-
-          doc.text(lines, 10, y1);
-          y1 += lines.length * lineSpacing;
         });
 
-        // ========== (4) Payment Terms and Taxes ==========
+        // Section (4) Payment Terms And Taxes
+        y2 += 5; // Add spacing before the next section
         doc.setFont("Times", "bold");
         doc.setFontSize(12);
-        doc.text("(4) Payment Terms and Taxes", 10, y1 + 10);
+        doc.text("(4) Payment Terms And Taxes", 14, y2 - 2);
 
-        let yPayment = y1 + 18;
-        const paymentSpacing = 6;
-        const paymentWrap = 195;
-        const paymentBottom = 280;
+        y2 += 5; // Add spacing after the title
+        doc.setFontSize(10).setFont("Times", "normal");
 
-        const paymentTerms = [
+        const paymentPoints = [
           "a) Payment: Customer shall make the payment against each milestone within 7 days from the receipt of Invoice/Proforma from Wohr after deduction of appropriate TDS on whole value.",
-          "b) Other taxes/charges: Any other charges/taxes such as Mathadi, Varahi, Octroi, Entry tax as may be applicable currently or in future shall be borne by the Customer.",
-          "c) Interest: In event of failure to make payments within the stipulated period, the interest at the rate of 2% per month is payable by the Customer to Wohr on all accounts. Wohr shall also be entitled to additional charges for storage, rent, insurance etc. while calculating interest for late payment, a part of a month is considered a full month.",
-          "d) No refund: Any payment made as per this Offer by the Customer to Wohr shall not be refundable nor shall be refunded back by Wohr for any reason whatsoever.",
-          "e) Price fluctuation: Wohr may pass on any price changes that occur in excess of what has been stipulated in this Offer, if: (i) there is a change in composition of the Car Parking Systems due to government orders (ii) after 12 weeks of the execution of this Offer, the prices of raw materials have increased or labour costs or other operating costs.",
-          "f) Failure to make payment: If Wohr does not receive the payment within/on the due date, Wohr reserves the right to (i) impose storage charges for the material and/or (ii) divert the materials to any other Customer, and subsequent delivery to Customer shall be at discretion of Wohr.",
-          "g) Customer to mention HSN Code — 84289090 on the Purchase Order.",
-          "h) The pricing schedule shall be valid till the agreed delivery time periods or 12 months from the Date of this offer whichever is earlier. Wohr reserves the rights to renegotiate the same if there is an unreasonable delay from the Customer's side.",
-          "i) EPCG/SEZ: If the Customer wishes and is eligible to avail any benefit, in respect of supply of Equipment such as EPCG benefits or SEZ benefits, the Parties shall support each other in abiding by the compliances required to be organized to avail of such benefits and to ensure that neither Parties failure or delay in compliance create additional tax liability or liabilities like interest or reversal of credits.",
-          "j) Order cancellation: If Purchaser cancels the Offer after acceptance and / or commits a breach any special or general terms and conditions, Wohr shall be entitled to recover: damages/for losses arising out of this arrangement or cancellation of any PO or termination of the arrangement made by or on behalf of the Customer. Parties agree that the following scale/amount represents fair estimation of such losses/damages likely to be suffered by Wohr due to the such termination/cancellation by the Customer."
+          "b) Other taxes/charges: Any other charges/taxes such as Mathadi and Varahi, Octroi, Entry Tax etc as may be applicable currently or in future shall be borne by the Customer only.",
+          "c) Interest: In event of failure to make payments within the stipulated period, the interest at the rate of 1.5% per month is payable by the Customer to Wohr on all accounts. Wohr shall also be entitled to additional charges for storage, rent, insurance etc. While calculating interest for late payment, a part of a month is considered a full month. Notwithstanding anything contained in this Offer, Wohr shall have absolute lien on all the Equipment supplied under this Offer and no ownership, right, title or interest shall be passed on to the Customer until Wohr has received all its dues under this Offer.",
+          "d) No refund: Any payment made as per this Offer by the Customer to Wohr shall not be refundable under any circumstances.",
+          "e) Failure to make payment: If Wohr does not receive the payment within/on the due date, Wohr reserves the right to (i) impose storage charges for the material and/or (ii) divert the materials to any other Customer, and subsequent delivery to Customer shall be at discretion of Wohr.",
+          "f) Customer to mention SAC 995442 on the Purchase Order.",
         ];
 
-        // Set body font for the section
-        doc.setFont("Times", "normal");
-        doc.setFontSize(11);
+        paymentPoints.forEach((point) => {
+          const wrappedText = doc.splitTextToSize(point, 180);
+          doc.text(wrappedText, 14, y2, { maxWidth: 180, align: 'justify' });
+          y2 += wrappedText.length * lineHeight1 + paragraphSpacing1;
 
-        // Loop through and print each payment term
-        paymentTerms.forEach(term => {
-          const wrappedLines = doc.splitTextToSize(term, paymentWrap);
-
-          if (yPayment + (wrappedLines.length * paymentSpacing) > paymentBottom) {
-            addPageWithHeader(doc, logoData, formattedDate);
-            yPayment = 60;
+          if (y2 > 280) { // Add a new page if content exceeds the page height
+            doc.addPage();
+            doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+            doc.setFontSize(10).setFont('Times', 'normal');
+            doc.text(`Date: ${formattedDate}`, 175, 40);
+            y2 = 50; // Reset Y position for the new page
           }
-
-          doc.text(wrappedLines, 10, yPayment);
-          yPayment += wrappedLines.length * paymentSpacing;
         });
 
-        // ===== Cancellation Policy Boxes (Rectangles) =====
-        doc.rect(10, 100, 75, 15);
+
+        doc.addPage();
+        doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+        doc.setFontSize(10).setFont('Times', 'normal');
+        doc.text(`Date: ${formattedDate}`, 175, 40);
+
+        //(5) Installation And Handover Of Car Parking System
         doc.setFont("Times", "bold");
-        doc.setFontSize(11);
-        doc.text("30 days from the signing of PO", 12, 109);
-
-        doc.rect(10, 115, 75, 15);
-        doc.text("Beyond 30 days from the signing of PO", 12, 123);
-
-        doc.rect(85, 100, 115, 15);
+        doc.setFontSize(12);
+        doc.text("(5) Installation And Handover Of Car Parking System", 14, 50);
         doc.setFont("Times", "normal");
-        const Contract = "30% of the Contract value or 100% of the advance received whichever is higher";
-        const SplitContract = doc.splitTextToSize(Contract, 110);
-        doc.text(SplitContract, 86, 106);
+        doc.setFontSize(10);
 
-        doc.rect(85, 115, 115, 15);
-        doc.text("90% of the value including all statutory duties, taxes/ levies", 86, 123);
+        let y3 = 54;
+        const LineSpacing1 = 6;
+        const WrapWidth1 = 180;
+        const BottomMargin = 275;
 
-        let yTerms = 140;
-        const sectionSpacing = 6;
-        const sectionWrapWidth = 190;
-        const pageLimit = 280;
-
-        // ===== Terms & Conditions Sections (5) to (11) =====
-        const quotationSections = [
-          {
-            title: "(5) Delivery, Installation and Handover of Car Parking System",
-            content: [
-              "a. Delivery of materials and Installation shall be subjected to Car Parking System drawing approval, the readiness of the site as specified by Wohr projects team and the payment received by Wohr, as per this Offer.",
-              "b. On Installation completion, Wohr representative shall issue an installation completion certificate i.e., “Installation Completion Certificate (ICC)” to the Customer. The customer shall acknowledge the ICC within 7 days from receipt of ICC on pro-rata basis. If customer delays the acknowledgement of Installation completion certificate beyond 7 days, it will be treated as deemed acceptance of Installation completion certificate by customer.",
-              "c. The Warranty Period shall commence from the date of Installation completion certificate or supply of the Equipment, as per the terms mentioned herein whichever is earlier.",
-              "After the receipt of full and final Payments from the Customer, Wohr shall handover the Car Parking System and its title to the Customer along with the operator box/ control panel keys/RFID.",
-              "d. Wohr shall organize to carry out the housekeeping activities of its own, and the Customer shall assist Wohr to remove debris and leftovers after the installation completion.",
-              "e. Wohr reserves the rights to make the changes in the specification in due course of time for the betterment of its Product line and no claims shall be entertained on any such accounts from the Customer."
-            ]
-          },
-          {
-            title: "(6) Transfer of Title",
-            content: [
-              "The title of the Car Parking Systems shall be transferred to Customer only once the payment is complete as per payment terms indicated herein."
-            ]
-          },
-          {
-            title: "(7) Representations and Warranties",
-            content: [
-              "The Purchaser represents and warrants that:",
-              "1. It is a validly existing entity under the applicable laws of India and has the right and authority to enter into and perform all obligations and responsibilities, as per this Offer on its acceptance;",
-              "2. It has obtained the requisite licenses, authorization, permits required for carrying on its business/install and use the Equipment the same are in full force and effect;",
-              "3. It has the right and authority to disclose the information, instruction and the required data/details, as per the offer and its acceptance and such disclosure does not infringe any rights of a third-party.",
-              "4. If the Customer is procuring the services on behalf of another, the Customer represents and warrants that the Customer is the duly authorized agent of said party for the purpose of ordering and otherwise accepting and complying with these terms and conditions, jointly and severally with such another party.",
-              "5. Any change in any of the term and condition of this Offer made by the Purchaser shall not be binding on Wohr unless such change or modification is specifically accepted in writing by Wohr."
-            ]
-          },
-          {
-            title: "(8) Amendment",
-            content: [
-              "Any change/ amendment in any of the terms of this Offer shall be mutually discussed and decided by the Parties, in writing and shall be binding only on a Party when specifically accepted with specific reference to this Offer/accepted offer."
-            ]
-          },
-          {
-            title: "(9) Part Performance",
-            content: [
-              "No deliveries/installation/handover shall be made in parts, i.e., at the differed time periods and at the differed locations, unless otherwise specifically agreed between the Parties and reduced in writing."
-            ]
-          },
-          {
-            title: "(10) Intellectual Property Rights",
-            content: [
-              "a) The Customer acknowledges that all trademarks, logos, service marks or trade names of Wohr and its affiliates, whether or not registered, are valuable rights of Wohr or of its affiliates and have attained a high degree of goodwill throughout the world. Customer undertakes that it shall not use such trademarks, logos, service marks or trade names under any circumstances and the Customer shall not be entitled to copy reverse engineer, decompose, deviate, modify any software or system, for any purpose except use of the Equipment, as the buyer/owner, as per the applicable laws.",
-              "b) Nothing contained in this Offer grants Customer any express or implied rights or licenses with respect to Wohr IP Rights or IP Rights of its affiliates. The IP Rights shall be the sole proprietary of Wohr and/or its affiliates.",
-              "c) Purchaser shall not use IP Right of Wohr anywhere else than the agreed purpose under this Offer. The Purchaser shall not use of such designs, specifications, erection manuals, and technical drawings for any other site where Wohr products may be installed or not."
-            ]
-          },
-          {
-            title: "(11) Other General Terms",
-            content: [
-              "a) Subcontracting: Wohr shall be entitled to subcontract the work to be performed by the skilled and unskilled contract laborer’s and shall ensure sufficient manpower to complete the work.",
-              "b) Force Majeure: Wohr shall not be liable for any loss, damage or delay due to any cause beyond its control, including but not limited to acts of God, orders/decisions of any Statutory Authority or of Government, strikes, lockout, fire, explosion, theft, flood, earthquake, riots, civil commotion, war, warlike situation, war restrictions, malicious or mischievous acts of third party, or illegal act of third parties.",
-              "c) Warranty: Warranty shall be in accordance with the Warranty disclaimer Document of Wohr as shared with the customer along with Agreement.",
-              "d)  Indemnity: The Customer, for itself and its successors and assigns, hereby jointly and severally indemnify and agree to defend and hold Wohr, its successors, assigns, affiliates, managers, members, directors, officers, agents, servants and employees harmless from and against any and all losses, damage, claim resulting from or in connection with, any act, failure or default by/of the Customer in the performance of obligations under this offer and/or for any negligence, willful, or fraudulent acts or omissions of Customer or its agents, personnel's and subcontractors deployed to perform the Customer’s Scope of work under this offer, and/or any of the obligation under this offer found not complied with intentionally or unintentionally or any of such provisions being found to be falsely represented by the Customer and/or Non-compliance of terms of this Offer and/or failure on part of Customer to comply with applicable law, rule or regulation including for reason of any serious misconduct, harassment, fraud or criminal or civil offence, intoxication and/or any negligence, willful, or fraudulent acts or omissions of Customer or its agents, personnel's and subcontractors deployed to the site.",
-              "e) Limitation of liability: In no event Wohr shall have any liability hereunder towards the Customer or any third party for any indirect, special, incidental, or punitive, or consequential damages, or damages based on lost profits, data or use, however caused and, whether in contract, tort or under any other theory of liability, whether or not Customer has been advised of the possibility of such damages. In any case Wohr’s liability for any loss or damage arising out of this Offer/accepted offer shall in no event exceed the price of Equipment or part of it received by Wohr, as on date on which is the subject matter/cause of such dispute/claim..",
-              "f) This Offer shall be construed and enforced in accordance with and under the laws of India. Both parties agree that in case of any difference or dispute arising between Wohr and the Customer will be resolved by mutual discussions and agreement. All disputes arising from or related to this Offer, if not so settled, then shall be resolved by arbitration. The arbitration will be conducted in Pune in English language, in accordance with the rules, including Rules of Procedure prescribed by the (Indian) Arbitration and Conciliation Act, 1996 or any subsequent amendments. Parties agree that the dispute shall be settled by a sole arbitrator mutually appointed by both the Parties, and the sole arbitrator so appointed shall be referred to herein as an “Arbitrator.” Nothing in this Section shall prevent, or be construed as preventing, a Party from seeking injunctive or other equitable relief in the courts at Pune.",
-              "g) Independent Contractor: Purchaser understands/acknowledges that Wohr shall supply the Equipment on principal-to-principal basis/as the seller of goods. As such, Wohr is an independent entity and not an agent, partner, employee or representative of the Purchaser. The Purchaser shall not be entitled to represent Wohr or Wohr’s employees or Wohr’s contractors, in any manner, on any account being independent entities. Wohr and Purchaser shall be individually responsible for the compliance of laws, rules, regulations, bye laws and notification respectively applicable to them, respectively.",
-              "h) )Entire Agreement: In the event the PO issued by the Customer or any communication of the Customer contains terms and conditions contrary to the terms and conditions in this Offer, the terms and conditions in this Agreement shall supersede such PO/communication terms and conditions. It is expressly agreed that such conflicting PO or communcation terms and conditions shall be null and void. This Agreement shall supersede all prior discussions and writings with respect to is agreement and constitutes the entire agreement between the Customer and Wohr with respect to the subject matter hereof and no modifications of these terms and conditions or waiver of the terms and conditions hereof shall be binding upon either of the Parties hereto, unless approved in writing by an authorized representative of each Party."
-            ]
-          }
+        const installationContent = [
+          "a) Installation shall be subjected to the readiness of the site as specified by Wohr projects team and the payment received by Wohr, as per this Offer.",
+          "b) On Installation completion, Wohr representative shall issue an installation completion certificate i.e., “Installation Completion Certificate (‘’ICC’’)” to the Customer. The Customer shall acknowledge the ICC within 7 days from receipt of ICC on pro-rata basis. If customer fails to acknowledge ICC beyond 7 days, it will be treated as deemed acceptance of ICC by Customer.",
+          "c) After the receipt of full and final Payments from the Customer, Wohr shall handover the Car Parking System to the Customer along with the operator box/ control panel keys/RFID.",
+          "d) Wohr shall organize to carry out the housekeeping activities of its own, and the Customer shall assist Wohr to remove debris and leftovers after the installation completion.",
+          "e) Customer agrees at its own cost at site:",
         ];
 
+        const installationPoints = [
+          " 1. To construct and complete the civil work including Flooring as per the general arrangement drawing. You will be providing drains and water proofing.",
+          " 2. All the walls should be painted to minimize the accumulation and circulation of dust.",
+          " 3. To Provide Clean and hygienic environment for WOHR Employees during Installation.",
+          " 4. To furnish required power terminating in suitable main switches for power and light circuits with circuit breakers, lighting arrester, suitable earthling leads and other electrical protective devices as specified in the Electrical Data Installation Diagram provided in the Data Sheet and any further devices necessary to meet the legal code requirements.",
+          " 5. To provide adequate lighting and ventilation in the area of parking.",
+          " 6. To provide safe, easily accessible, covered, weather proof and lockable storage room. The storage should be made available to our erection crew until the parking systems are handed over.",
+          " 7. To provide adequate safety and security measures to prevent any damages, theft or pilferage of material during storage, installation period and until all the parking systems are handed over.",
+          " 8. To indemnify and save us harmless against all liability growing out of your failure to carry out any of the foregoing.",
+          " 9. Provide steel ladder in pit wherever necessary.",
+          " 10. To provide all statutory approvals / permissions from Government pertaining to Installation / Inspection / Certification of Parking Equipment.",
+          " 11. To Provide, free of cost, a 3 phase and single-phase power supply for illumination, Installation, Operations, Testing & Commissioning.",
+          " 12. To Provide adequate safety for Installed equipment by providing railing / pit covers wherever necessary.",
+          " 13. To Provide suitable vehicle for testing of the Equipment.",
+          " 14. To Provide Generator backup during installation & testing if power supply is not available.",
+          " 15. No Services should interfere within parking area. The sprinklers should be located such a way that it will not affect clear height available.",
+          " 16. All Electrical and Civil Work including foundations, should be made available as per data sheets within acceptable tolerances.",
+          " 17. To provide adequate housekeeping during installation.",
+          " 18. To complete all work in such time as not to delay our work.",
+          " 19. To provide shed, walling, canopy etc for the rainwater protection and weather protection for the products which are out door installation.",
+        ];
 
-        quotationSections.forEach(section => {
-          const titleLines = doc.splitTextToSize(section.title, sectionWrapWidth);
+        const otherTerms = [
+          "f. Other terms and conditions:",
+          " - Customer to provide means of shifting material incase if the location of parker installation is other than ground floor. Also store shifting shall be in Customer's scope.",
+          " - The Customer will have to provide means of shifting materials from storage to installation site. Shifting of store also to be arranged by the Customer if necessary.",
+          " - The installation shall be carried out as per the approved drawing only. Any changes in the location other than approved drawing, shall attract additional charges and shall be entertained only after settlement of such additional charges.",
+          " - All tools and tackles and any other equipment used for installation, erection, testing etc. shall remain the property of Wohr and shall be removed by Wohr alone without any objection from the Customer.",
+          " - In case there are more than one module to be installed, the installation shall be handed over on prorate basis as and when ready.",
+          " - The Customer shall take over the systems within 5 calendar days after our declaration of completion & testing.",
+          " - The Parking Systems are strictly used for Parking Cars of specified weight and dimension. No human being is allowed to travel in the car nor allowed to stand on platform or to be in the parking system during operation. Wohr is not responsible for any damages or mishaps resulting from non-compliance of this condition.",
+          " - Training of Personnel: Wohr will train 2 members from Customer maintenance staff for handling of the system."
+        ];
 
-          if (yTerms + titleLines.length * sectionSpacing > pageLimit) {
-            addPageWithHeader(doc, logoData, formattedDate);
-            yTerms = 60;
-          }
+        // Utility function to write paragraphs with justification
+        function writeParagraphs(contentArray) {
+          contentArray.forEach(text => {
+            const lines = doc.splitTextToSize(text, WrapWidth1);
+            const requiredHeight = lines.length * LineSpacing1;
 
-          doc.setFont("Times", "bold").setFontSize(12);
-          doc.text(titleLines, 10, yTerms);
-          yTerms += titleLines.length * sectionSpacing + 4;
-
-          doc.setFont("Times", "normal").setFontSize(11);
-          section.content.forEach(para => {
-            const lines = doc.splitTextToSize(para, sectionWrapWidth);
-            if (yTerms + lines.length * sectionSpacing > pageLimit) {
-              addPageWithHeader(doc, logoData, formattedDate);
-              yTerms = 60;
+            if (y3 + requiredHeight > BottomMargin) {
+              addNewPageWithLogoAndDate();
             }
-            doc.text(lines, 10, yTerms);
-            yTerms += lines.length * sectionSpacing + 2;
+
+            doc.text(lines, 14, y3 + 3, { maxWidth: WrapWidth1, align: 'justify' });
+            y3 += requiredHeight;
           });
+        }
 
-          yTerms += 4;
-        });
+        function addNewPageWithLogoAndDate() {
+          doc.addPage();
+          doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+          doc.setFontSize(10).setFont("Times", "normal");
+          doc.text(`Date: ${formattedDate}`, 175, 40);
+          y3 = 46;
+        }
+
+        writeParagraphs(installationContent);
+        writeParagraphs(installationPoints);
+        writeParagraphs(otherTerms);
+
+        // Add Section (6) Representatives And Warranties
+        doc.setFont("Times", "bold");
+        doc.setFontSize(12);
+        doc.text("(6) Representatives And Warranties", 14, y3 + 8);
+        y3 += 10;
+        doc.setFont("Times", "normal");
+        doc.setFontSize(10);
+        const paragraphs = [
+          "The Purchaser represents and warrants that:",
+          "a) It is a validly existing entity under the applicable laws of India and has the right and authority to enter into and perform all obligations and responsibilities, as per this Offer on its acceptance;",
+          "b) It has obtained the requisite licenses, authorization, permits required for carrying on its business/install and use the Equipment the same are in full force and effect;",
+          "c) It has the right and authority to disclose the information, instruction and the required data/details, as per the offer and its acceptance and such disclosure does not infringe any rights of a third-party.",
+          "d) If the Customer is procuring the services on behalf of another, the Customer represents and warrants that the Customer is the duly authorized agent of said party for the purpose of ordering and otherwise accepting and complying with these terms and conditions, jointly and severally with such another party.",
+          "e) Any change in any of the term and condition of this Offer made by the Purchaser shall not be binding on Wohr unless such change or modification is specifically accepted in advance in writing by Wohr.",
+        ];
+        writeParagraphs(paragraphs);
+
+        doc.setFont("Times", "bold");
+        doc.setFontSize(12);
+        doc.text("(7) Amendment", 14, y3 + 7);
+        y3 += 10;
+        doc.setFont("Times", "normal");
+        doc.setFontSize(10);
+        const amendmentParagraph = [
+          "Any change/ amendment in any of the terms of this Offer shall be mutually discussed and decided by the Parties, in writing and shall be binding only on a Party when specifically accepted with specific reference to this Offer/accepted offer."
+        ];
+
+        writeParagraphs(amendmentParagraph);
+
+        // Utility function to start a new page with a header
+        function startNewPage() {
+          doc.addPage();
+          doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+          doc.setFontSize(10).setFont("Times", "normal");
+          doc.text(`Date: ${formattedDate}`, 175, 40);
+          y3 = 50; // Reset Y position for the new page
+        }
+
+        // Add Section (8) Part Performance
+        startNewPage(); // Start a new page for Section (8)
+        doc.setFont("Times", "bold");
+        doc.setFontSize(12);
+        doc.text("(8) Part Performance", 14, y3 + 7);
+        y3 += 10; // Add spacing after the title
+
+        doc.setFont("Times", "normal");
+        doc.setFontSize(10);
+        const partPerformanceParagraph = [
+          "No installation/handover shall be made in parts, i.e., at the differed time periods and at the differed locations, unless otherwise specifically agreed between the Parties in writing."
+        ];
+        writeParagraphs(partPerformanceParagraph);
+
+        // Add Section (9) Intellectual Property Rights
+        doc.setFont("Times", "bold");
+        doc.setFontSize(12);
+        doc.text("(9) Intellectual Property Rights", 14, y3 + 7);
+        y3 += 10; // Add spacing after the title
+
+        doc.setFont("Times", "normal");
+        doc.setFontSize(10);
+        const intellectualPropertyParagraphs = [
+          "a) The Customer acknowledges that all trademarks, logos, service marks or trade names, technology or know-how of Wohr and its affiliates, whether or not registered, are valuable assets/rights of Wohr or of its affiliates and have attained a high degree of goodwill throughout the world. Customer undertakes that it shall not use such trademarks, logos, service marks or trade names under any circumstances and the Customer shall not be entitled to copy reverse engineer, decompose, deviate, modify any software or system, for any purpose except use of the Equipment, as the buyer/owner, as per the applicable laws.",
+          "b) Nothing contained in this Offer grants Customer any express or implied rights or licenses with respect to Wohr IP Rights or IP Rights of its affiliates. The IP Rights shall be the sole proprietary of Wohr and/or its affiliates.",
+          "c) Purchaser shall not use IP Right of Wohr anywhere else than the agreed purpose under this Offer. The Purchaser shall not use of such parking solutions/designs, specifications, erection manuals, and technical drawings for any other site where Wohr products may be installed or not."
+        ];
+        writeParagraphs(intellectualPropertyParagraphs);
+
+        // Add Section (10) Other General Terms
+        doc.setFont("Times", "bold");
+        doc.setFontSize(12);
+        doc.text("(10) Other General Terms", 14, y3 + 7);
+        y3 += 10; // Add spacing after the title
+
+        doc.setFont("Times", "normal");
+        doc.setFontSize(10);
+        const otherGeneralTermsParagraphs = [
+          "a) Subcontracting: Wohr shall be entitled to subcontract the work to be performed by the skilled and unskilled contract laborer’s and shall ensure sufficient manpower to complete the work.",
+          "b) Force Majeure: Wohr shall not be liable for any loss, damage or delay due to any cause beyond its control, including but not limited to acts of God, orders/decisions of any Statutory Authority/embargoes or of any government, strikes, lockout, fire, explosion, theft, flood, earthquake, riots, civil commotion, war, warlike situation, war restrictions, pandemic, malicious or mischievous acts of third party, or illegal act of third parties.",
+          "c) Indemnity: The Customer, for itself and its successors and assigns, its directors and officers hereby jointly and severally indemnify and agree to defend and hold Wohr, its successors, assigns, affiliates, managers, members, directors, officers, agents, servants and employees harmless from and against any and all losses, damage, claim resulting from or in connection with, any act, failure or default by/of the Customer in the performance of obligations under this offer and/or for any negligence, willful, or fraudulent acts or omissions of Customer or its agents, personnel's and subcontractors deployed to perform the Customer’s Scope of work under this offer.",
+          "d) Limitation of liability: In no event Wohr shall have any liability hereunder towards the Customer or any third party for any indirect, special, incidental, or punitive, or consequential damages, or damages based on lost profits, loss of reputation, data or use, however caused and, whether in contract, tort or under any other theory of liability, whether or not Customer has been advised of the possibility of such damages.",
+          "e) This Offer shall be construed and enforced in accordance with and under the laws of India. Both parties agree that in case of any difference or dispute arising between Wohr and the Customer will be resolved by mutual discussions and agreement. All disputes arising from or related to this Offer, if not so settled, then shall be resolved by arbitration.",
+          "f) Independent Contractor: Purchaser understands/acknowledges that Wohr shall supply the Equipment on principal-to-principal basis/as the seller of goods. As such, Wohr is an independent entity and not an agent, partner, employee or representative of the Purchaser. The Purchaser shall not be entitled to represent Wohr or Wohr’s employees or Wohr’s contractors, in any manner, on any account being independent entities. Wohr and Purchaser shall be individually responsible for the compliance of laws, rules, regulations, bye laws and notification respectively applicable to them, respectively.",
+          "g) Entire Agreement: In the event the PO issued by the Customer or any subsequent document/communication of the Customer contains terms and conditions contrary to the terms and conditions in this Offer, the terms and conditions in this Offer/Agreement shall supersede such PO/communication terms and conditions. It is expressly agreed that such conflicting PO or communication terms and conditions shall be null and void. This Agreement shall supersede all prior discussions and writings with respect to is agreement and constitutes the entire agreement between the Customer and Wohr with respect to the subject matter hereof and no modifications of these terms and conditions or waiver of the terms and conditions hereof shall be binding upon either of the Parties hereto, unless approved in writing by an authorized representative of each Party."
+        ];
+        writeParagraphs(otherGeneralTermsParagraphs);
 
 
+
+
+        //Wohr Supplier
+        doc.setFont("Times", "bold");
         doc.setFontSize(11);
-        doc.setFont("Times", "bold");
-        doc.text("Wohr/Supplier:", 10, 180);
+        doc.text("Wohr Parking System Pvt. Ltd", 14, 130);
+        doc.rect(14, 145, 50, 0);
         doc.setFont("Times", "normal");
-        doc.text("Date: June 30,2023", 10, 185);
-        doc.text("Wohr Parking Systems Pvt Ltd", 10, 190);
-        doc.text("Signatory", 10, 200);
-        doc.text("Name:", 10, 205);
-        doc.text("Designation:", 10, 210);
+        doc.text("Name:", 14, 150);
+        doc.text("Designation:", 14, 155);
+        doc.text("Date: ", 14, 160);
 
+        //Purchase Supplier
         doc.setFont("Times", "bold");
-        doc.text("Purchaser", 140, 180);
+        doc.setFontSize(11);
+        doc.text("Purchase/Customer", 135, 130);
+        doc.rect(135, 145, 50, 0);
         doc.setFont("Times", "normal");
-        doc.text("Date: June 30,2023", 140, 185);
-        doc.text("Purchaser/Customer: M Y Gowtham", 140, 190);
-        doc.text("Signatory", 140, 200);
-        doc.text("Name:", 140, 205);
-        doc.text("Designation:", 140, 210);
+        doc.text("Name:", 135, 150);
+        doc.text("Designation:", 135, 155);
+        doc.text("Date: ", 135, 160);
 
-
-
+        //---------------------------------------------------------------------------------
         const pdfBlob = doc.output("blob");
         const blobURL = URL.createObjectURL(pdfBlob);
         document.getElementById("pdfViewer").src = blobURL;
@@ -1047,7 +1561,7 @@ other deliverables or inputs regarding, design approval, space availability, app
           a.style.left = "50%";
           a.style.transform = "translate(-50%, -50%)";
           a.style.fontSize = "18px";
-          a.style.fontFamily = "sans-serif";
+          a.style.fontFamily = "Times";
           document.body.appendChild(a);
           document.getElementById("pdfViewer").style.display = "none";
         }
@@ -1062,123 +1576,125 @@ other deliverables or inputs regarding, design approval, space availability, app
     ZOHO.embeddedApp.on("PageLoad", function (data) {
       ZOHO.CRM.UI.Resize({ height: "100%", width: "100%" });
 
-            if (data && data.EntityId && data.EntityId.length > 0) {
-                const EntityID = data.EntityId[0];
+      if (data && data.EntityId && data.EntityId.length > 0) {
+        const EntityID = data.EntityId[0];
 
-                ZOHO.CRM.API.getRecord({ Entity: "Quotes", RecordID: EntityID }).then(function (response) {
-                    if (response?.data?.length > 0) {
-                        const quoteData = response.data[0];
-                        console.log("quoteData", quoteData)
-                        Quote_BusinessType = quoteData.Type_of_Business;
-                        console.log("Quote_BusinessType", Quote_BusinessType);
+        ZOHO.CRM.API.getRecord({ Entity: "Quotes", RecordID: EntityID }).then(function (response) {
+          if (response?.data?.length > 0) {
+            const quoteData = response.data[0];
+            console.log("quoteData", quoteData)
+            Quote_BusinessType = quoteData.Type_of_Business;
+            console.log("Quote_BusinessType", Quote_BusinessType);
 
-                        Quote_TypeOfSys = quoteData.Type_of_System;
-                        console.log("Quote_TypeOfSys", Quote_TypeOfSys)
-                        const OwnerID = quoteData.Owner?.id;
-                        // console.log("OwnerID",OwnerID)
-                        const AccountID = quoteData.Account_Name?.id;
-                        const ContactID = quoteData.Contact_Name?.id;
-                        const OpportunityID = quoteData.Deal_Name?.id;
+            Quote_TypeOfSys = quoteData.Type_of_System;
+            console.log("Quote_TypeOfSys", Quote_TypeOfSys)
+            const OwnerID = quoteData.Owner?.id;
+            // console.log("OwnerID",OwnerID)
+            const AccountID = quoteData.Account_Name?.id;
+            const ContactID = quoteData.Contact_Name?.id;
+            const OpportunityID = quoteData.Deal_Name?.id;
 
-                        let AccountData = null;
-                        let ContactData = null;
-                        let OpportunityData = null;
-                        let OwnerData = null;
-                        let productImages = {};
-                        let ProductDataMap = {};
-                        let productPromises = [];
+            let AccountData = null;
+            let ContactData = null;
+            let OpportunityData = null;
+            let OwnerData = null;
+            let productImages = {};
+            let ProductDataMap = {};
+            let productPromises = [];
 
-                        //->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                        const ownerPromise = OwnerID
-                            ? ZOHO.CRM.API.getUser({ ID: OwnerID }).then(function (res) {
-                                OwnerData = res?.users?.[0] || null;
-                                console.log("OwnerData", OwnerData);
-                                User_BusinessType = OwnerData.Type_Of_Business;
-                                console.log("User_BusinessType", User_BusinessType)
-                                User_TypeOfSys = OwnerData.Type_of_System;
-                                console.log("User_TypeOfSys", User_TypeOfSys)
-                                UserProfile = OwnerData.profile.name;
-                                console.log("UserProfile", UserProfile)
+            let CurrentUser = null;
 
-                                //     if(UserProfile != 'Administrator'){
-                                //     if(User_TypeOfSys != Quote_TypeOfSys && User_BusinessType != Quote_BusinessType){
-                                //         alert("User Business Type and System does not match with this quotation bussiness type and system so you are not eligible to view this quote");
-                                //     }
-                                // }
-                            })
+            const currentUserPromise = ZOHO.CRM.CONFIG.getCurrentUser().then(function (UserData) {
+              CurrentUser = UserData.users[0];
+              console.log("CurrentUser", CurrentUser);
+              UserProfile = CurrentUser.profile.name;
+              console.log("UserProfile", UserProfile)
+            });
+            //->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            const ownerPromise = OwnerID
+              ? ZOHO.CRM.API.getUser({ ID: OwnerID }).then(function (res) {
+                OwnerData = res?.users?.[0] || null;
+                console.log("OwnerData", OwnerData);
+                User_BusinessType = OwnerData.Type_Of_Business;
+                console.log("User_BusinessType", User_BusinessType)
+                User_TypeOfSys = OwnerData.Type_of_System;
+                console.log("User_TypeOfSys", User_TypeOfSys)
 
-                            : Promise.resolve();
+              })
 
-
-
-                        if (quoteData.Product_Details?.length > 0) {
-                            quoteData.Product_Details.forEach(item => {
-                                const ProductID = item.product?.id;
-                                if (!ProductID) return;
-
-                                productPromises.push(
-                                    ZOHO.CRM.API.getRecord({ Entity: "Products", RecordID: ProductID }).then(res => {
-                                        if (res?.data?.length > 0) {
-                                            ProductDataMap[ProductID] = res.data[0];
-
-                                        }
-                                    }),
-                                    ZOHO.CRM.FUNCTIONS.execute("product_image", {
-                                        arguments: JSON.stringify({ ProductID }),
-                                    }).then(res => {
-                                        if (res?.details?.output) {
-                                            productImages[ProductID] = res.details.output;
-                                        }
-                                    })
-                                );
-                            });
-                        }
-
-                        const accountPromise = AccountID
-                            ? ZOHO.CRM.API.getRecord({ Entity: "Accounts", approved: "both", RecordID: AccountID }).then(res => {
-                                AccountData = res?.data?.[0] || null;
-                            })
-                            : Promise.resolve();
-
-                        const contactPromise = ContactID
-                            ? ZOHO.CRM.API.getRecord({ Entity: "Contacts", RecordID: ContactID }).then(res => {
-                                ContactData = res?.data?.[0] || null;
-                            })
-                            : Promise.resolve();
-
-                        const opportunityPromise = OpportunityID
-                            ? ZOHO.CRM.API.getRecord({ Entity: "Deals", RecordID: OpportunityID }).then(res => {
-                                OpportunityData = res?.data?.[0] || null;
-                            })
-                            : Promise.resolve();
-
-                        //->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                        Promise.all([
-                            ownerPromise,
-                            accountPromise,
-                            contactPromise,
-                            opportunityPromise,
-                            ...productPromises
-                        ]).then(() => {
-                            // Check before proceeding
-                            if (UserProfile !== 'Administrator') {
-                                const typeMismatch = User_TypeOfSys !== Quote_TypeOfSys;
-                                const businessMismatch = User_BusinessType !== Quote_BusinessType;
-
-                                if (typeMismatch || businessMismatch) {
-                                    showAccessMessage("Access Denied: Your business type or system does not match this quotation.You Cannot View this quotation");
-                                    return;
-                                }
-                            }
+              : Promise.resolve();
 
 
-                            // If validation passes
-                            createPDF(quoteData, AccountData, ContactData, OpportunityData, productImages, ProductDataMap);
-                        });
+
+            if (quoteData.Product_Details?.length > 0) {
+              quoteData.Product_Details.forEach(item => {
+                const ProductID = item.product?.id;
+                if (!ProductID) return;
+
+                productPromises.push(
+                  ZOHO.CRM.API.getRecord({ Entity: "Products", RecordID: ProductID }).then(res => {
+                    if (res?.data?.length > 0) {
+                      ProductDataMap[ProductID] = res.data[0];
 
                     }
-                });
+                  }),
+                  ZOHO.CRM.FUNCTIONS.execute("product_image", {
+                    arguments: JSON.stringify({ ProductID }),
+                  }).then(res => {
+                    if (res?.details?.output) {
+                      productImages[ProductID] = res.details.output;
+                    }
+                  })
+                );
+              });
             }
+
+            const accountPromise = AccountID
+              ? ZOHO.CRM.API.getRecord({ Entity: "Accounts", approved: "both", RecordID: AccountID }).then(res => {
+                AccountData = res?.data?.[0] || null;
+              })
+              : Promise.resolve();
+
+            const contactPromise = ContactID
+              ? ZOHO.CRM.API.getRecord({ Entity: "Contacts", RecordID: ContactID }).then(res => {
+                ContactData = res?.data?.[0] || null;
+              })
+              : Promise.resolve();
+
+            const opportunityPromise = OpportunityID
+              ? ZOHO.CRM.API.getRecord({ Entity: "Deals", RecordID: OpportunityID }).then(res => {
+                OpportunityData = res?.data?.[0] || null;
+              })
+              : Promise.resolve();
+
+            //->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            Promise.all([
+              ownerPromise,
+              accountPromise,
+              contactPromise,
+              opportunityPromise,
+              ...productPromises,
+              currentUserPromise
+            ]).then(() => {
+              // Check before proceeding
+              if (UserProfile !== 'Administrator') {
+                const typeMismatch = User_TypeOfSys !== Quote_TypeOfSys;
+                const businessMismatch = User_BusinessType !== Quote_BusinessType;
+
+                if (typeMismatch || businessMismatch) {
+                  showAccessMessage("Access Denied: Your business type or system does not match this quotation.You Cannot View this quotation");
+                  return;
+                }
+              }
+
+
+              // If validation passes
+              createPDF(quoteData, AccountData, ContactData, OpportunityData, productImages, ProductDataMap);
+            });
+
+          }
+        });
+      }
     });
 
 
