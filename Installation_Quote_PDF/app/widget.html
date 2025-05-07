@@ -381,9 +381,8 @@ justify-content: center;
                 let totalTaxAmount = 0;
                 let grossTotal = 0;
 
-                console.log(quoteData.Installation_Information);
-                
 
+                
                 installationInfo.forEach((info) => {
                     totalQuantity1 += info.Quantity || 0;
                     netContractValue += (info.Quantity || 0) * (info.Installation_Products_Price || 0); // Calculate Net Contract Value
