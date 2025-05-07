@@ -329,6 +329,7 @@ justify-content: center;
 
                 doc.addPage();
                 if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
+                doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
                 doc.setFontSize(12).setFont("Times", "bold");
                 doc.text("Installation Information", 10, 50);
 
@@ -337,12 +338,14 @@ justify-content: center;
 
                 // Define column headers and their widths
                 const columns = [
-                    { header: "Installation Service Name", width: 50 },
-                    { header: "Product Code", width: 35 },
-                    { header: "Quantity", width: 25 },
-                    { header: "UoM", width: 20 },
-                    { header: "Capacity", width: 25 },
-                    { header: "Price", width: 40 }
+                    { header: "Installation\nService Name", width: 35 },
+                    { header: "Product\nCode", width: 29 },
+                    { header: "Quantity", width: 16 },
+                    { header: "UoM", width: 13 },
+                    { header: "Capacity", width: 16 },
+                    { header: "Price", width: 27 },
+                    { header: "Total Amount", width: 28 },
+                    { header: "Tax", width: 31 },
                 ];
 
                 // Calculate column positions dynamically
@@ -368,8 +371,7 @@ justify-content: center;
                     doc.line(xPosition, boxStartY, xPosition, boxStartY + boxHeight);
                 });
 
-                let startY1 = boxStartY + boxHeight; // Start Y position for the rows
-
+                let startY1 = boxStartY + boxHeight; 
                 doc.setFont("Times", "normal");
                 const installationInfo = quoteData.Installation_Information || [];
 
@@ -379,36 +381,36 @@ justify-content: center;
                 let totalTaxAmount = 0;
                 let grossTotal = 0;
 
+                console.log(quoteData.Installation_Information);
+                
+
                 installationInfo.forEach((info) => {
                     totalQuantity1 += info.Quantity || 0;
                     netContractValue += (info.Quantity || 0) * (info.Installation_Products_Price || 0); // Calculate Net Contract Value
 
                     if (info.Tax && Array.isArray(info.Tax) && info.Tax.length > 0) {
                         const taxNames = info.Tax.map((tax) => {
-                            const [taxName, taxPercentage] = tax.split(" - "); // Split tax name and percentage
-                            return `${taxName || ""}@${taxPercentage.trim() || ""}`; // Format tax name
-                        }).join(", "); // Combine tax names into a single string
+                            const [taxName, taxPercentage] = tax.split(" - "); 
+                            return `${taxName || ""}@${taxPercentage.trim() || ""}`; 
+                        }).join(", ");
 
                         if (!taxDetails[taxNames]) {
-                            taxDetails[taxNames] = info.Tax_Amount || 0; // Store the tax amount for the combined tax names
+                            taxDetails[taxNames] = info.Tax_Amount || 0; 
                         } else {
-                            taxDetails[taxNames] += info.Tax_Amount || 0; // Accumulate tax amount if the same tax combination exists
+                            taxDetails[taxNames] += info.Tax_Amount || 0; 
                         }
-
-                        totalTaxAmount += info.Tax_Amount || 0; // Accumulate total tax amount
+                        totalTaxAmount += info.Tax_Amount || 0;
                     } else {
-                        // const taxText = "No Tax Available";
-                        // const taxNames = doc.splitTextToSize(taxText, 13);
                         const taxNames = ""
                         if (!taxDetails[taxNames]) {
                             taxDetails[taxNames] = 0
                         }
                     }
 
-                    grossTotal = netContractValue + totalTaxAmount; // Calculate gross total
+                    grossTotal = netContractValue + totalTaxAmount;
 
-                    if (startY1 + 10 > 280) { // Add a new page if content exceeds the page height
-                        doc.rect(10, boxStartY, 195, startY1 - boxStartY); // Draw enclosing box
+                    if (startY1 + 10 > 280) { 
+                        doc.rect(10, boxStartY, 195, startY1 - boxStartY); 
                         doc.addPage();
                         doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                         doc.setFontSize(10).setFont("Times", "normal");
@@ -420,7 +422,7 @@ justify-content: center;
                         doc.rect(10, boxStartY, 195, 7);
                         doc.setFontSize(10).setFont("Times", "bold");
                         columns.forEach((col, index) => {
-                            const textX = columnPositions[index] + 2; // Add padding for text
+                            const textX = columnPositions[index] + 2; 
                             doc.text(col.header, textX, boxStartY + 5);
                         });
 
@@ -431,17 +433,19 @@ justify-content: center;
                     }
 
                     // Add row data
-                    doc.rect(10, startY1, 195, 10); // Draw a box for each row
-                    let currentX = 10; // Reset X position for each row
+                    doc.rect(10, startY1, 195, 10); 
+                    let currentX = 10; 
 
                     columns.forEach((col) => {
                         const textX = currentX + 2; // Add padding for text
-                        let value = ""; // Default value
+                        let value = "";
                         switch (col.header) {
-                            case "Installation Service Name":
-                                value = info.Installation_Service_Name?.name || "";
+                            case "Installation\nService Name":
+                                const name = info.Installation_Service_Name?.name || "";
+                                const wrappedServiceName = doc.splitTextToSize(name, 25); 
+                                value = wrappedServiceName;
                                 break;
-                            case "Product Code":
+                            case "Product\nCode":
                                 value = info.Product_Code || "";
                                 break;
                             case "Quantity":
@@ -456,46 +460,70 @@ justify-content: center;
                             case "Price":
                                 value = `INR ${(info.Installation_Products_Price).toFixed(2) || ""}`;
                                 break;
+                            case "Total Amount":
+                                value = `INR ${((info.Quantity || 0) * (info.Installation_Products_Price || 0)).toFixed(2) || ""}`; 
+                                break;
+                            case "Tax":
+                                const taxDetails = info.Tax.map((tax) => {
+                                const [taxName, taxPercentage] = tax.split(" - ");
+                                let taxAmount = info.Tax_Amount || 0;
+
+                                // Divide Tax_Amount by 2 for CGST and SGST
+                                if (taxName === "CGST") {
+                                    taxAmount = taxAmount / 2;
+                                } else if (taxName === "SGST") {
+                                    taxAmount = taxAmount / 2;
+                                }
+                                return `${taxName}-INR ${taxAmount.toFixed(2)}`;
+                                }).join(", ");
+                                doc.setFontSize(9);
+                                doc.text(taxDetails || "INR 0.00", textX, startY1 + 4, { maxWidth: col.width - 2 }); 
+                                doc.setFontSize(10);
+                                break;
                         }
-                        doc.text(value, textX, startY1 + 7);
+                        doc.text(value, textX, startY1 + 4);
                         currentX += col.width; // Move to the next column
                     });
 
-                    startY1 += 10; // Increment Y position for the next row
+                    startY1 += 10;
                 });
 
                 doc.rect(10, startY1, 195, 10);
-                doc.text("Total Quantity", 62, startY1 + 7);
-                doc.text(`${totalQuantity1}`, 97, startY1 + 7);
+                doc.text("Total Quantity", 46, startY1 + 7);
+                doc.text(`${totalQuantity1}`, 76, startY1 + 7);
                 const text = "Net Contract Value";
                 const value = doc.splitTextToSize(text, 25);
-                doc.text(value, 142, startY1 + 5);
-                doc.text(`INR ${netContractValue.toFixed(2)}`, 167, startY1 + 7);
+                doc.text(value, 147, startY1 + 5);
+                doc.text(`INR ${netContractValue.toFixed(2)}`, 175, startY1 + 7);
 
                 startY1 += 10;
 
                 // Render tax details in a single row
-                const taxSummary = Object.keys(taxDetails).join("\n");
-                doc.rect(10, startY1, 195, 10 + (Object.keys(taxDetails).length - 1) * 5);
-                doc.text("", 12, startY1 + 7);
-                doc.text("", 100, startY1 + 7);
-                const tax = doc.splitTextToSize(taxSummary || "No Tax", 25);
-                doc.text(tax, 142, startY1 + 4);
-                doc.text(`INR ${totalTaxAmount.toFixed(2)}`, 167, startY1 + 4);
-                startY1 += 10 + (Object.keys(taxDetails).length - 1) * 5;
+                // const taxSummary = Object.keys(taxDetails).join("\n");
+                // doc.rect(10, startY1, 195, 10 + (Object.keys(taxDetails).length - 1) * 5);
+                // doc.text("", 12, startY1 + 7);
+                // doc.text("", 100, startY1 + 7);
+                // const tax = doc.splitTextToSize(taxSummary || "No Tax", 25);
+                // doc.text(tax, 147, startY1 + 4);
+                // doc.text(`INR ${totalTaxAmount.toFixed(2)}`, 177, startY1 + 4);
+                // startY1 += 10 + (Object.keys(taxDetails).length - 1) * 5;
 
-                // Add gross total row
+                doc.rect(10, startY1, 195, 10);
+                doc.text("Total Tax Amount", 147, startY1 + 7);
+                doc.text(`INR ${totalTaxAmount.toFixed(2)}`, 175, startY1 + 7);
+                startY1 += 10;
+
+
                 doc.rect(10, startY1, 195, 10);
                 doc.text("", 12, startY1 + 7);
                 doc.text("", 100, startY1 + 7);
                 const text2 = "Gross Contract Value";
                 const value2 = doc.splitTextToSize(text2, 25);
-                doc.text(value2, 142, startY1 + 5);
-                doc.text(`INR ${grossTotal.toFixed(2)}`, 167, startY1 + 7);
+                doc.text(value2, 147, startY1 + 5);
+                doc.text(`INR ${grossTotal.toFixed(2)}`, 175, startY1 + 7);
 
-                // Draw vertical lines dynamically for the entire table (header + rows)
                 columnPositions.forEach((xPosition) => {
-                    doc.line(xPosition, boxStartY, xPosition, startY1 + 10); // Adjust height dynamically
+                    doc.line(xPosition, boxStartY, xPosition, startY1 + 10);
                 });
 
                 // Draw enclosing box for the entire section
