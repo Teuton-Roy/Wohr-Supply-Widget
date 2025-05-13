@@ -712,9 +712,9 @@ justify-content: center;
                                 }
                                 return `${taxName}-INR ${taxAmount.toFixed(2)}`;
                                 }).join(", ");
-                                doc.setFontSize(9);
+                                doc.setFontSize(8);
                                 doc.text(taxDetails || "INR 0.00", textX, startY1 + 4, { maxWidth: col.width - 2 }); 
-                                doc.setFontSize(10);
+                                doc.setFontSize(9);
                                 break;
                         }
                         doc.text(value, textX, startY1 + 4);
