@@ -332,17 +332,80 @@ justify-content: center;
                         const item = quoteData.Product_Details[i];
                         const ProductID = item.product?.id || null;
                         const product = ProductID ? ProductDataMap[ProductID] : null;
-
                         const productName = product?.Product_Name || "Product";
-                        const platformWidth = product?.Platform_Width || "";
-                        const platformLength = product?.Platform_Length || "";
-                        const carWeight = product?.Car_Weight_In_Kg || "";
-                        const clearHeight = product?.Clear_Height || "";
+                        const platformWidth = product?.Platform_Width != null ? `${product.Platform_Width}mm` : "";
+                        const platformLength = product?.Platform_Length != null ? `${product.Platform_Length}mm` : "";
+                        const carWeight = product?.Car_Weight_In_Kg != null ? `${product.Car_Weight_In_Kg}Kg` : "";
+                        const clearHeight = product?.Clear_Height != null ? `${product.Clear_Height}mm` : "";
                         const coating = product?.System_Coating || "";
-                        // const ProductTax = product?.Tax || "N/A";
+                        const Location = product?.Location_of_Parking || "";
+                        const ProductFamily = product?.Sub_Family || "";
+                        const Upper_Platofrm_Width = product?.Upper_Platform_Width_in_mm != null ? `${product.Upper_Platform_Width_in_mm}mm` : "";
+                        const Lower_Platform_Width = product?.Lower_Platform_Width_in_mm != null ? `${product.Lower_Platform_Width_in_mm}mm` : "";
+                        const Upper_Platform_Length = product?.Upper_Platform_Length_in_mm != null ? `${product.Upper_Platform_Length_in_mm}mm` : "";
+                        const Lower_Platform_Length = product?.Lower_Platform_Length_In_mm != null ? `${product.Lower_Platform_Length_In_mm}mm` : "";
+                        const Pit_Depth = product?.Pit_Depth != null ? `${product.Pit_Depth}mm` : "";
+                        const Clear_Height_Above_Ground = product?.Clear_Height_above_Ground != null ? `${product.Clear_Height_above_Ground}mm` : "";
 
-                        const description = `Type: ${productName}\nPlatform Width: ${platformWidth}\nPlatform Length: ${platformLength}\nCar Weight: ${carWeight}\nClear Height: ${clearHeight}\nSystem Coating: ${coating}`;
-
+if (ProductFamily.startsWith("PL 421")) {
+  description = `Type: ${productName}
+Upper Platform Width: ${Upper_Platofrm_Width} 
+Lower Platform Width: ${Lower_Platform_Width} 
+Upper Platform Length: ${Upper_Platform_Length} 
+Lower Platform Length: ${Lower_Platform_Length} 
+Clear Height: ${clearHeight} 
+Car Weight: ${carWeight} 
+System Coating: ${coating}
+Location Of Parking: ${Location}`;
+} else if (
+  ProductFamily.startsWith("PL 440") ||
+  ProductFamily.startsWith("PL 413") ||
+  ProductFamily.startsWith("CL 543") ||
+  ProductFamily.startsWith("CL 542")
+) {
+  description = `Type: ${productName}
+Platform Width: ${platformWidth} 
+Platform Length: ${platformLength} 
+Pit Depth: ${Pit_Depth} 
+Clear Height Above Ground: ${Clear_Height_Above_Ground} 
+Car Weight: ${carWeight} 
+System Coating: ${coating}
+Location Of Parking: ${Location}`;
+} else if (
+  ProductFamily.startsWith("CL 551") ||
+  ProductFamily.startsWith("CL 552")
+) {
+  description = `Type: ${productName}
+Platform Width: ${platformWidth} 
+Platform Length: ${platformLength} 
+Clear Height Above Ground: ${Clear_Height_Above_Ground} 
+Car Weight: ${carWeight} 
+System Coating: ${coating}
+Location Of Parking: ${Location}`;
+} else if (ProductFamily.startsWith("PP 501")) {
+  description = `Type: ${productName}
+Platform Width: ${platformWidth} 
+Platform Length: ${platformLength} 
+Car Weight: ${carWeight} 
+System Coating: ${coating}
+Location Of Parking: ${Location}`;
+} else if (ProductFamily.startsWith("PL 411")) {
+  description = `Type: ${productName}
+Platform Width: ${platformWidth} 
+Platform Length: ${platformLength} 
+Car Weight: ${carWeight} 
+Clear Height: ${clearHeight} 
+System Coating: ${coating}
+Location Of Parking: ${Location}`;
+} else {
+  description = `Type: ${productName}
+Platform Width: ${platformWidth} 
+Platform Length: ${platformLength} 
+Car Weight: ${carWeight} 
+Clear Height: ${clearHeight} 
+System Coating: ${coating}
+Location Of Parking: ${Location}`;
+}
                         // const description = 
                         // `\u2022  ${"\u0001Type:\u0001"} ${productName}\n` +
                         // `\u2022  ${"\u0001Platform Width:\u0001"} ${platformWidth}\n` +
