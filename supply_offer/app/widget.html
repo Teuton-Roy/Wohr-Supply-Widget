@@ -132,7 +132,7 @@ justify-content: center;
                 }
 
 
-                console.log(quoteData);
+                console.log("Opportunity Data: ",OppData);
                 // console.log(AccountData);
 
 
@@ -189,7 +189,7 @@ justify-content: center;
                 doc.text(qcustomerNameLines, 143, currentQ);
                 currentQ += qcustomerNameLines.length * 5;
 
-                doc.text(`Valid Spaces: ${totalQuantity}`, 118, currentQ);
+                doc.text(`Valid Spaces/Unit: ${totalQuantity}`, 118, currentQ);
                 currentQ += 5;
                 doc.text(`Sales Representative: ${quoteData?.Owner?.name || ""}`, 118, currentQ);
                 currentQ += 5;
@@ -349,6 +349,9 @@ justify-content: center;
                         const Lower_Platform_Length = product?.Lower_Platform_Length_In_mm != null ? `${product.Lower_Platform_Length_In_mm}mm` : "";
                         const Pit_Depth = product?.Pit_Depth != null ? `${product.Pit_Depth}mm` : "";
                         const Clear_Height_Above_Ground = product?.Clear_Height_above_Ground != null ? `${product.Clear_Height_above_Ground}mm` : "";
+                        const UoM = product?.UoM || "";
+                        console.log("Uom",UoM)
+
 
 if (ProductFamily.startsWith("PL 421")) {
   description = `Type: ${productName}
@@ -393,7 +396,7 @@ Car Weight: ${carWeight}
 System Coating: ${coating}
 Location Of Parking: ${Location}`;
 } else if (ProductFamily.startsWith("PL 411")) {
-  description = `Type: ${productName}
+  description = `Type: ${productName}qu
 Platform Width: ${platformWidth} 
 Platform Length: ${platformLength} 
 Car Weight: ${carWeight} 
@@ -416,6 +419,9 @@ Location Of Parking: ${Location}`;
                         // `\u2022  ${"\u0001Car Weight:\u0001"} ${carWeight}\n` +
                         // `\u2022  ${"\u0001Clear Height:\u0001"} ${clearHeight}\n` +
                         // `\u2022  ${"\u0001System Coating:\u0001"} ${coating}`;
+
+                        // const quantityWithUoM = `${item.quantity ?? 0} ${UoM || ""}`;
+                        // console.log("Quantity with UoM: ",quantityWithUoM);
 
                         tableData.push([
                             productImages[ProductID] ? "" : "",
