@@ -120,7 +120,7 @@ justify-content: center;
         }
         //--------------------
 
-        async function createPDF(quoteData, AccountData, ContactData, OppData, productImages, ProductDataMap) {
+        async function createPDF(quoteData, AccountData, ContactData, OppData, productImages, ProductDataMap, OwnerData) {
             try {
                 const doc = new jsPDF();
                 const logoPath = "logo.jpeg";
@@ -174,7 +174,7 @@ justify-content: center;
                 doc.text(`Order No.: ${orderNumber}`, 118, currentQ);
                 currentQ += 5;
 
-                let qcustomerName = ContactData?.Full_Name || "N/A";
+                let qcustomerName = AccountData?.Account_Name || "";
                 let qcustomerNameLines = doc.splitTextToSize(qcustomerName, 55);
                 doc.text(`Customer Name:`, 118, currentQ);
                 doc.text(qcustomerNameLines, 143, currentQ);
@@ -184,27 +184,27 @@ justify-content: center;
                 currentQ += 5;
                 doc.text(`Sales Representative: ${quoteData?.Owner?.name || ""}`, 118, currentQ);
                 currentQ += 5;
-                doc.text(`Phone No.: ${ContactData?.Mobile || ""}`, 118, currentQ);
+                doc.text(`Phone No.: ${OwnerData?.mobile || ""}`, 118, currentQ);
                 currentQ += 5;
 
-                let email = ContactData?.Email || "N/A";
+                let email = quoteData?.Owner?.email || "";
                 let emailLines = doc.splitTextToSize(email, 55);
                 doc.text(`Email:`, 118, currentQ);
                 doc.text(emailLines, 128, currentQ);
                 currentQ += emailLines.length * 5;
 
-                doc.line(10, 145, 200, 145);
+                doc.line(10, 140, 200, 140);
 
 
                 // ---Customer Details---
                 doc.setFont('Times', 'bold');
-                doc.text("Customer Details", 10, 155);
+                doc.text("Customer Details", 10, 150);
                 doc.setFont('Times', 'normal');
-                let cusCurrentY = 160;
+                let cusCurrentY = 155;
                 let name = AccountData?.Account_Name || "";
                 let nameLines = doc.splitTextToSize(name, 130);
-                doc.text(`Customer Name: `, 10, 160);
-                doc.text(nameLines, 35, 160);
+                doc.text(`Customer Name: `, 10, 155);
+                doc.text(nameLines, 35, 155);
                 cusCurrentY += nameLines.length * 5;
                 doc.text(`GST No.: ${AccountData?.GSTIN_Number || ""}`, 10, cusCurrentY);
                 cusCurrentY += 5;
@@ -214,8 +214,11 @@ justify-content: center;
                 cusCurrentY += 5;
                 doc.text(`Contact person’s name: ${ContactData?.Full_Name || ""}`, 10, cusCurrentY);
                 cusCurrentY += 5;
+                doc.text(`Phone No.: ${ContactData?.Mobile || ""}`, 10, cusCurrentY);
+                cusCurrentY += 5;
+                doc.text(`Email: ${ContactData?.Email || ""}`, 10, cusCurrentY);
 
-                doc.line(10, 190, 200, 190);
+                doc.line(10, 195, 200, 195);
 
 
                 // --- Site Address ---
@@ -1470,7 +1473,7 @@ Location Of Parking: ${Location}`;
 
 
                             // If validation passes
-                            createPDF(quoteData, AccountData, ContactData, OpportunityData, productImages, ProductDataMap);
+                            createPDF(quoteData, AccountData, ContactData, OpportunityData, productImages, ProductDataMap, OwnerData);
                         });
 
                     }
