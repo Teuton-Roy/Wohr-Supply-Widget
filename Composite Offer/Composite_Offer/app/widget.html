@@ -619,12 +619,16 @@ Location Of Parking: ${Location}`;
                     return words ? words + " Only" : "Zero Only";
                 }
 
-
                 const totalSumInWords = numberToWords(totalSum + TotalTax);
-                doc.text(`${totalSumInWords}`, 15, doc.lastAutoTable.finalY + 17);
+                doc.text(`${totalSumInWords}`, 15, doc.lastAutoTable.finalY + 16);
+
+
+                doc.setFontSize(10).setFont('Times', 'bold');
+                doc.text("Note: ", 15, doc.lastAutoTable.finalY + 25);
+                doc.setFont('Times', 'normal').setFontSize(9);
+                doc.text("Unit is for Parklift and Spaces for Combilift Products.", 24, doc.lastAutoTable.finalY + 25);
 
                 //-----------------------------------------------------------------------------------------------------------------
-
                 // doc.addPage();
                 // if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                 // doc.setFontSize(10).text(`Date: ${formattedDate}`, 175, 40);
@@ -1327,12 +1331,12 @@ Location Of Parking: ${Location}`;
                 doc.text("Designation:", 14, 185);
 
                 doc.setFontSize(10).setFont("Times", "bold");
-                doc.text("Purchase/Customer:", 150, 156);
+                doc.text("Purchase/Customer:", 145, 156);
                 doc.setFontSize(10).setFont("Times", "normal");
-                doc.text("Date:", 150, 162);
-                doc.rect(150, 175, 50, 0);
-                doc.text("Signatory Name:", 150, 180);
-                doc.text("Designation:", 150, 185);
+                doc.text("Date:", 145, 162);
+                doc.rect(145, 175, 50, 0);
+                doc.text("Signatory Name:", 145, 180);
+                doc.text("Designation:", 145, 185);
 
 
 
