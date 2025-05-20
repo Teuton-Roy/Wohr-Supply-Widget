@@ -626,8 +626,7 @@ Location Of Parking: ${Location}`;
                 doc.setFontSize(10).setFont('Times', 'bold');
                 doc.text("Note: ", 15, doc.lastAutoTable.finalY + 25);
                 doc.setFont('Times', 'normal').setFontSize(9);
-                doc.text("Unit is for Parklift and Spaces for Combilift Products.", 24, doc.lastAutoTable.finalY + 25);
-
+                doc.text(" For the Combilift series, the quantity is considered in number of spaces, whereas for the Parklift series, the quantity is considered in  number of units.",24,doc.lastAutoTable.finalY + 25,{ maxWidth: 170, align: 'justify' });
                 //-----------------------------------------------------------------------------------------------------------------
                 // doc.addPage();
                 // if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
