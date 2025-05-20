@@ -767,6 +767,10 @@ justify-content: center;
                 // Draw enclosing box for the entire section
                 doc.rect(10, boxStartY, 195, startY1 - boxStartY);
 
+                doc.setFontSize(9).setFont("Times", "bold");
+                doc.text("Note:", 10, startY1 + 15);
+                doc.setFontSize(8).setFont("Times", "normal");
+                doc.text("For the Combilift series, the quantity is considered in number of spaces, whereas for the Parklift series, the quantity is considered in  number of units.", 18, startY1 + 15, { maxWidth: 190 });
 
                 // ---------------------------------------------------------------------------------------------
 
