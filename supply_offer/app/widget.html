@@ -656,10 +656,10 @@ Location Of Parking: ${Location}`;
                 const totalSumInWords = numberToWords(totalSum + TotalTax);
                 doc.text(`${totalSumInWords}`, 15, doc.lastAutoTable.finalY + 17);
 
-                doc.setFontSize(10).setFont('Times', 'bold');
+                doc.setFontSize(9).setFont('Times', 'bold');
                 doc.text("Note: ", 15, doc.lastAutoTable.finalY + 25);
-                doc.setFont('Times', 'normal').setFontSize(9);
-                doc.text(" For the Combilift series, the quantity is considered in number of spaces, whereas for the Parklift series, the quantity is considered in  number of units.",24,doc.lastAutoTable.finalY + 25,{ maxWidth: 170, align: 'justify' });
+                doc.setFont('Times', 'normal').setFontSize(8);
+                doc.text("For the Combilift series, the quantity is considered in number of spaces, whereas for the Parklift series, the quantity is considered in  number of units.",24,doc.lastAutoTable.finalY + 25,{ maxWidth: 170, align: 'justify' });
 
                 //-----------------------------------------------------------------------------------------------------------------
                 // Supplier/Purchaser Section
