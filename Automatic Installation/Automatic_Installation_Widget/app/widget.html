@@ -997,18 +997,18 @@ justify-content: center;
                 doc.setFontSize(12).setFont("Times", "bold");
                 doc.text("Supplier Information", 15, supplierPurchaserStartY);
 
-                doc.setFont("Times", "normal");
+                doc.setFont("Times", "normal").setFontSize(10);
                 doc.text("Wohr Parking Systems Pvt Ltd.", 15, supplierPurchaserStartY + 7);
                 doc.text("Sign:", 15, supplierPurchaserStartY + 15);
                 doc.text("Name: Milind Deshpande", 15, supplierPurchaserStartY + 25);
                 doc.text("Designation: Deputy General Manager", 15, supplierPurchaserStartY + 35);
-                doc.text("Date:", 15, supplierPurchaserStartY + 50);
+                doc.text("Date:", 15, supplierPurchaserStartY + 45);
 
                 // Purchaser/Customer Information
-                doc.setFont("Times", "bold");
+                doc.setFont("Times", "bold").setFontSize(12);
                 doc.text("Purchaser/Customer Information", 115, supplierPurchaserStartY);
 
-                doc.setFont("Times", "normal");
+                doc.setFont("Times", "normal").setFontSize(10);
                 let accountName = AccountData?.Account_Name || "";
                 let accountNameLines = doc.splitTextToSize(accountName, 70);
 
