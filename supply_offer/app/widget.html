@@ -146,7 +146,7 @@ justify-content: center;
                 });
 
                 doc.setFontSize(13).setFont('Times', 'bold');
-                doc.text("WOHR Parking Systems Private Limited Supply Offer:", 40, 45);
+                doc.text("WOHR Parking Systems Private Limited Supply Offer:", 50, 45);
 
                 doc.setFontSize(10).setFont('Times', 'normal');
                 doc.text(`Date: ${formattedDate}`, 175, 40);
@@ -658,8 +658,8 @@ Location Of Parking: ${Location}`;
 
                 doc.setFontSize(9).setFont('Times', 'bold');
                 doc.text("Note: ", 15, doc.lastAutoTable.finalY + 17);
-                doc.setFont('Times', 'normal').setFontSize(8);
-                doc.text("For the Combilift series, the quantity is considered in number of spaces, whereas for the Parklift series, the quantity is considered in  number of units.",24,doc.lastAutoTable.finalY + 17, { maxWidth: 170, align: 'justify' });
+                doc.setFont('Times', 'normal').setFontSize(9);
+                doc.text("For the Combilift series, the quantity is considered in number of spaces, whereas for the Parklift series, the quantity is considered in  number of units.",24,doc.lastAutoTable.finalY + 17, { maxWidth: 175, align: 'justify' });
 
                 //-----------------------------------------------------------------------------------------------------------------
                 // Supplier/Purchaser Section
