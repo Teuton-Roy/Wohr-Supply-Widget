@@ -157,7 +157,7 @@ justify-content: center;
                 });
 
                 doc.setFontSize(12).setFont('Times', 'bold');
-                doc.text("WOHR Parking Systems Private Limited Installation Offer:", 40, 45);
+                doc.text("WOHR Parking Systems Private Limited Installation Offer:", 50, 45);
 
                 doc.setFontSize(10).setFont('Times', 'normal');
                 doc.text(`Date: ${formattedDate}`, 175, 40);
@@ -480,11 +480,11 @@ justify-content: center;
                                 }).join(", ");
                                 doc.setFontSize(8);
                                 doc.text(taxDetails || "INR 0.00", textX, startY1 + 4, { maxWidth: col.width - 2 }); 
-                                doc.setFontSize(9);
+                                doc.setFontSize(10);
                                 break;
                         }
                         doc.text(value, textX, startY1 + 4);
-                        currentX += col.width; // Move to the next column
+                        currentX += col.width;
                     });
 
                     startY1 += 10;
@@ -515,7 +515,6 @@ justify-content: center;
                 doc.text(`INR ${totalTaxAmount.toFixed(2)}`, 175, startY1 + 7);
                 startY1 += 10;
 
-
                 doc.rect(10, startY1, 195, 10);
                 doc.text("", 12, startY1 + 7);
                 doc.text("", 100, startY1 + 7);
@@ -533,8 +532,8 @@ justify-content: center;
 
                 doc.setFontSize(9).setFont("Times", "bold");
                 doc.text("Note:", 10, startY1 + 15);
-                doc.setFontSize(8).setFont("Times", "normal");
-                doc.text("For the Combilift series, the quantity is considered in number of spaces, whereas for the Parklift series, the quantity is considered in  number of units.", 18, startY1 + 15, { maxWidth: 190 });
+                doc.setFontSize(9).setFont("Times", "normal");
+                doc.text("For the Combilift series, the quantity is considered in number of spaces, whereas for the Parklift series, the quantity is considered in  number of units.", 18, startY1 + 15, { maxWidth: 180 });
 
                 //-----------------------------------------------------------------------------------
 
@@ -987,8 +986,8 @@ justify-content: center;
                     doc.text(`INR ${(term.Amount || 0).toFixed(2)}`, 160, paymentStartY + 5);
 
                     // Add vertical lines for columns in each row
-                    doc.line(95, paymentStartY, 95, paymentStartY + rowHeight); // After "Description"
-                    doc.line(155, paymentStartY, 155, paymentStartY + rowHeight); // After "Split Contract Value (%)"
+                    doc.line(95, paymentStartY, 95, paymentStartY + rowHeight);
+                    doc.line(155, paymentStartY, 155, paymentStartY + rowHeight);
 
                     paymentStartY += rowHeight; // Increment Y position for the next row
                 });
@@ -1031,10 +1030,10 @@ justify-content: center;
                 doc.text("Date:", 15, supplierPurchaserStartY + 45);
 
                 // Purchaser/Customer Information
-                doc.setFont("Times", "bold");
+                doc.setFont("Times", "bold").setFontSize(12);
                 doc.text("Purchaser/Customer Information", 115, supplierPurchaserStartY);
 
-                doc.setFont("Times", "normal");
+                doc.setFont("Times", "normal").setFontSize(10);
                 let accountName = AccountData?.Account_Name || "";
                 let accountNameLines = doc.splitTextToSize(accountName, 70);
 
