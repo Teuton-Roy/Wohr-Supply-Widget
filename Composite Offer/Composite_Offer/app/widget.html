@@ -342,63 +342,75 @@ justify-content: center;
             const Clear_Height_Above_Ground = product?.Clear_Height_above_Ground != null ? `${product.Clear_Height_above_Ground}mm` : "";
 
 if (ProductFamily.startsWith("PL 421")) {
-  description = `Type: ${productName}
-Upper Platform Width: ${Upper_Platofrm_Width} 
-Lower Platform Width: ${Lower_Platform_Width} 
-Upper Platform Length: ${Upper_Platform_Length} 
-Lower Platform Length: ${Lower_Platform_Length} 
-Clear Height: ${clearHeight} 
-Car Weight: ${carWeight} 
-System Coating: ${coating}
-Location Of Parking: ${Location}`;
+  description = [
+    `• Type: ${productName}`,
+    `• Upper Platform Width: ${Upper_Platofrm_Width}`,
+    `• Lower Platform Width: ${Lower_Platform_Width}`,
+    `• Upper Platform Length: ${Upper_Platform_Length}`,
+    `• Lower Platform Length: ${Lower_Platform_Length}`,
+    `• Clear Height: ${clearHeight}`,
+    `• Car Weight: ${carWeight}`,
+    `• System Coating: ${coating}`,
+    `• Location Of Parking: ${Location}`
+  ].join('\n')
 } else if (
   ProductFamily.startsWith("PL 440") ||
   ProductFamily.startsWith("PL 413") ||
   ProductFamily.startsWith("CL 543") ||
   ProductFamily.startsWith("CL 542")
 ) {
-  description = `Type: ${productName}
-Platform Width: ${platformWidth} 
-Platform Length: ${platformLength} 
-Pit Depth: ${Pit_Depth} 
-Clear Height Above Ground: ${Clear_Height_Above_Ground} 
-Car Weight: ${carWeight} 
-System Coating: ${coating}
-Location Of Parking: ${Location}`;
+  description = [
+    `• Type: ${productName}`,
+    `• Platform Width: ${platformWidth}`,
+    `• Platform Length: ${platformLength}`,
+    `• Pit Depth: ${Pit_Depth}`,
+    `• Clear Height Above Ground: ${Clear_Height_Above_Ground}`,
+    `• Car Weight: ${carWeight}`,
+    `• System Coating: ${coating}`,
+    `• Location Of Parking: ${Location}`
+  ].join('\n');
 } else if (
   ProductFamily.startsWith("CL 551") ||
   ProductFamily.startsWith("CL 552")
 ) {
-  description = `Type: ${productName}
-Platform Width: ${platformWidth} 
-Platform Length: ${platformLength} 
-Clear Height Above Ground: ${Clear_Height_Above_Ground} 
-Car Weight: ${carWeight} 
-System Coating: ${coating}
-Location Of Parking: ${Location}`;
+  description = [
+    `• Type: ${productName}`,
+    `• Platform Width: ${platformWidth}`,
+    `• Platform Length: ${platformLength}`,
+    `• Clear Height Above Ground: ${Clear_Height_Above_Ground}`,
+    `• Car Weight: ${carWeight}`,
+    `• System Coating: ${coating}`,
+    `• Location Of Parking: ${Location}`
+  ].join('\n');
 } else if (ProductFamily.startsWith("PP 501")) {
-  description = `Type: ${productName}
-Platform Width: ${platformWidth} 
-Platform Length: ${platformLength} 
-Car Weight: ${carWeight} 
-System Coating: ${coating}
-Location Of Parking: ${Location}`;
+  description = [
+    `• Type: ${productName}`,
+    `• Platform Width: ${platformWidth}`,
+    `• Platform Length: ${platformLength}`,
+    `• Car Weight: ${carWeight}`,
+    `• System Coating: ${coating}`,
+    `• Location Of Parking: ${Location}`
+  ].join('\n');
 } else if (ProductFamily.startsWith("PL 411")) {
-  description = `Type: ${productName}
-Platform Width: ${platformWidth} 
-Platform Length: ${platformLength} 
-Car Weight: ${carWeight} 
-Clear Height: ${clearHeight} 
-System Coating: ${coating}
-Location Of Parking: ${Location}`;
+  description = [
+    `• Type: ${productName}`,
+    `• Platform Width: ${platformWidth}`,
+    `• Platform Length: ${platformLength}`,
+    `• Car Weight: ${carWeight}`,
+    `• Clear Height: ${clearHeight}`,
+    `• System Coating: ${coating}`,
+    `• Location Of Parking: ${Location}`
+  ].join('\n');
 } else {
-  description = `Type: ${productName}
-Platform Width: ${platformWidth} 
-Platform Length: ${platformLength} 
-Car Weight: ${carWeight} 
-Clear Height: ${clearHeight} 
-System Coating: ${coating}
-Location Of Parking: ${Location}`;
+  description = [
+    `• Type: ${productName}`,
+    `• Platform Width: ${platformWidth}`,
+    `• Platform Length: ${platformLength}`,
+    `• Car Weight: ${carWeight}`,
+    `• Clear Height: ${clearHeight}`,
+    `• System Coating: ${coating}`,
+    `• Location Of Parking: ${Location}`
+  ].join('\n');
 }
                         tableData.push([
                             productImages[ProductID] ? "" : "",
@@ -497,14 +509,14 @@ Location Of Parking: ${Location}`;
                         head: [["Product Image", "Product", "Quantity in Spaces/Unit", "Unit Price (INR)", "Net Contract Value (INR)"]],
                         body: chunk,
                         theme: "grid",
-                        styles: { font: "Times", fontSize: 10, cellPadding: 3, lineWidth: 0.2, lineColor: [0, 0, 0] },
+                        styles: { font: "Times", fontSize: 9, cellPadding: 3, lineWidth: 0.2, lineColor: [0, 0, 0] },
                         headStyles: { fillColor: [255, 255, 255], halign: 'center', fontSize: 12, textColor: [0, 0, 0], fontStyle: 'bold' },
                         columnStyles: {
-                            0: { cellWidth: 50, halign: "center" },
-                            1: { cellWidth: 50, halign: "left" },
-                            2: { cellWidth: 30, halign: "center" },
-                            3: { cellWidth: 30, halign: "right" },
-                            4: { cellWidth: 30, halign: "right" }
+                            0: { cellWidth: 43, halign: "center" },
+                            1: { cellWidth: 60, halign: "left" },
+                            2: { cellWidth: 27, halign: "center", valign: "middle" },
+                            3: { cellWidth: 30, halign: "right", valign: "middle" },
+                            4: { cellWidth: 30, halign: "right", valign: "middle" },
                         },
                         showHead: index === 0 ? 'firstPage' : false,
 
@@ -620,13 +632,25 @@ Location Of Parking: ${Location}`;
                 }
 
                 const totalSumInWords = numberToWords(totalSum + TotalTax);
+                doc.setFontSize(9)
                 doc.text(`${totalSumInWords}`, 64, doc.lastAutoTable.finalY + 10);
-
 
                 doc.setFontSize(9).setFont('Times', 'bold');
                 doc.text("Note: ", 15, doc.lastAutoTable.finalY + 17);
-                doc.setFont('Times', 'normal').setFontSize(8);
+                doc.setFont('Times', 'normal').setFontSize(9);
                 doc.text("For the Combilift series, the quantity is considered in number of spaces, whereas for the Parklift series, the quantity is considered in  number of units.",24,doc.lastAutoTable.finalY + 17,{ maxWidth: 170, align: 'justify' });
+                
+                // Draw a box for Description
+                const descBoxY = doc.lastAutoTable.finalY + 26;
+                const descBoxHeight = 15;
+                const descBoxWidth = 187;
+                const descBoxX = 15;
+                // Title
+                doc.setFont('Times', 'bold').setFontSize(10);
+                doc.text("Description:", descBoxX + 1, descBoxY + 4);
+                doc.setFont('Times', 'normal').setFontSize(10);
+                doc.rect(descBoxX, descBoxY, descBoxWidth, descBoxHeight);
+                
                 //-----------------------------------------------------------------------------------------------------------------
                 // doc.addPage();
                 // if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
