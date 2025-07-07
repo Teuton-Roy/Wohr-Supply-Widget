@@ -965,7 +965,7 @@ if (ProductFamily.startsWith("PL 421")) {
                 doc.setFont("Times", "normal").setFontSize(10);
                 doc.text("Wohr Parking Systems Pvt Ltd.", 15, supplierPurchaserStartY + 7);
                 doc.text("Sign:", 15, supplierPurchaserStartY + 15);
-                doc.text("Name: Milind Deshpande", 15, supplierPurchaserStartY + 25);
+                doc.text(`Name: ${quoteData?.Owner?.name || ""}`, 15, supplierPurchaserStartY + 25);
                 doc.text("Designation: Deputy General Manager", 15, supplierPurchaserStartY + 35);
                 doc.text("Date:", 15, supplierPurchaserStartY + 45);
 
