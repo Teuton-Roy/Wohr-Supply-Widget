@@ -324,94 +324,94 @@ justify-content: center;
                 if (quoteData.Product_Details && quoteData.Product_Details.length > 0) {
                     for (let i = 0; i < quoteData.Product_Details.length; i++) {
                         const item = quoteData.Product_Details[i];
-            const ProductID = item.product?.id || null;
-            const product = ProductID ? ProductDataMap[ProductID] : null;
-            const productName = product?.Product_Name || "Product";
-            const platformWidth = product?.Platform_Width != null ? `${product.Platform_Width}mm` : "";
-            const platformLength = product?.Platform_Length != null ? `${product.Platform_Length}mm` : "";
-            const carWeight = product?.Car_Weight_In_Kg != null ? `${product.Car_Weight_In_Kg}Kg` : "";
-            const clearHeight = product?.Clear_Height != null ? `${product.Clear_Height}mm` : "";
-            const coating = product?.System_Coating || "";
-            const Location = product?.Location_of_Parking || "";
-            const ProductFamily = product?.Sub_Family || "";
-            const Upper_Platofrm_Width = product?.Upper_Platform_Width_in_mm != null ? `${product.Upper_Platform_Width_in_mm}mm` : "";
-            const Lower_Platform_Width = product?.Lower_Platform_Width_in_mm != null ? `${product.Lower_Platform_Width_in_mm}mm` : "";
-            const Upper_Platform_Length = product?.Upper_Platform_Length_in_mm != null ? `${product.Upper_Platform_Length_in_mm}mm` : "";
-            const Lower_Platform_Length = product?.Lower_Platform_Length_In_mm != null ? `${product.Lower_Platform_Length_In_mm}mm` : "";
-            const Pit_Depth = product?.Pit_Depth != null ? `${product.Pit_Depth}mm` : "";
-            const Clear_Height_Above_Ground = product?.Clear_Height_above_Ground != null ? `${product.Clear_Height_above_Ground}mm` : "";
+                        const ProductID = item.product?.id || null;
+                        const product = ProductID ? ProductDataMap[ProductID] : null;
+                        const productName = product?.Product_Name || "Product";
+                        const platformWidth = product?.Platform_Width != null ? `${product.Platform_Width}mm` : "";
+                        const platformLength = product?.Platform_Length != null ? `${product.Platform_Length}mm` : "";
+                        const carWeight = product?.Car_Weight_In_Kg != null ? `${product.Car_Weight_In_Kg}Kg` : "";
+                        const clearHeight = product?.Clear_Height != null ? `${product.Clear_Height}mm` : "";
+                        const coating = product?.System_Coating || "";
+                        const Location = product?.Location_of_Parking || "";
+                        const ProductFamily = product?.Sub_Family || "";
+                        const Upper_Platofrm_Width = product?.Upper_Platform_Width_in_mm != null ? `${product.Upper_Platform_Width_in_mm}mm` : "";
+                        const Lower_Platform_Width = product?.Lower_Platform_Width_in_mm != null ? `${product.Lower_Platform_Width_in_mm}mm` : "";
+                        const Upper_Platform_Length = product?.Upper_Platform_Length_in_mm != null ? `${product.Upper_Platform_Length_in_mm}mm` : "";
+                        const Lower_Platform_Length = product?.Lower_Platform_Length_In_mm != null ? `${product.Lower_Platform_Length_In_mm}mm` : "";
+                        const Pit_Depth = product?.Pit_Depth != null ? `${product.Pit_Depth}mm` : "";
+                        const Clear_Height_Above_Ground = product?.Clear_Height_above_Ground != null ? `${product.Clear_Height_above_Ground}mm` : "";
 
-if (ProductFamily.startsWith("PL 421")) {
-  description = [
-    `• Type: ${productName}`,
-    `• Upper Platform Width: ${Upper_Platofrm_Width}`,
-    `• Lower Platform Width: ${Lower_Platform_Width}`,
-    `• Upper Platform Length: ${Upper_Platform_Length}`,
-    `• Lower Platform Length: ${Lower_Platform_Length}`,
-    `• Clear Height: ${clearHeight}`,
-    `• Car Weight: ${carWeight}`,
-    `• System Coating: ${coating}`,
-    `• Location Of Parking: ${Location}`
-  ].join('\n')
-} else if (
-  ProductFamily.startsWith("PL 440") ||
-  ProductFamily.startsWith("PL 413") ||
-  ProductFamily.startsWith("CL 543") ||
-  ProductFamily.startsWith("CL 542")
-) {
-  description = [
-    `• Type: ${productName}`,
-    `• Platform Width: ${platformWidth}`,
-    `• Platform Length: ${platformLength}`,
-    `• Pit Depth: ${Pit_Depth}`,
-    `• Clear Height Above Ground: ${Clear_Height_Above_Ground}`,
-    `• Car Weight: ${carWeight}`,
-    `• System Coating: ${coating}`,
-    `• Location Of Parking: ${Location}`
-  ].join('\n');
-} else if (
-  ProductFamily.startsWith("CL 551") ||
-  ProductFamily.startsWith("CL 552")
-) {
-  description = [
-    `• Type: ${productName}`,
-    `• Platform Width: ${platformWidth}`,
-    `• Platform Length: ${platformLength}`,
-    `• Clear Height Above Ground: ${Clear_Height_Above_Ground}`,
-    `• Car Weight: ${carWeight}`,
-    `• System Coating: ${coating}`,
-    `• Location Of Parking: ${Location}`
-  ].join('\n');
-} else if (ProductFamily.startsWith("PP 501")) {
-  description = [
-    `• Type: ${productName}`,
-    `• Platform Width: ${platformWidth}`,
-    `• Platform Length: ${platformLength}`,
-    `• Car Weight: ${carWeight}`,
-    `• System Coating: ${coating}`,
-    `• Location Of Parking: ${Location}`
-  ].join('\n');
-} else if (ProductFamily.startsWith("PL 411")) {
-  description = [
-    `• Type: ${productName}`,
-    `• Platform Width: ${platformWidth}`,
-    `• Platform Length: ${platformLength}`,
-    `• Car Weight: ${carWeight}`,
-    `• Clear Height: ${clearHeight}`,
-    `• System Coating: ${coating}`,
-    `• Location Of Parking: ${Location}`
-  ].join('\n');
-} else {
-  description = [
-    `• Type: ${productName}`,
-    `• Platform Width: ${platformWidth}`,
-    `• Platform Length: ${platformLength}`,
-    `• Car Weight: ${carWeight}`,
-    `• Clear Height: ${clearHeight}`,
-    `• System Coating: ${coating}`,
-    `• Location Of Parking: ${Location}`
-  ].join('\n');
-}
+                        if (ProductFamily.startsWith("PL 421")) {
+                            description = [
+                                `• Type: ${productName}`,
+                                `• Upper Platform Width: ${Upper_Platofrm_Width}`,
+                                `• Lower Platform Width: ${Lower_Platform_Width}`,
+                                `• Upper Platform Length: ${Upper_Platform_Length}`,
+                                `• Lower Platform Length: ${Lower_Platform_Length}`,
+                                `• Clear Height: ${clearHeight}`,
+                                `• Car Weight: ${carWeight}`,
+                                `• System Coating: ${coating}`,
+                                `• Location Of Parking: ${Location}`
+                            ].join('\n')
+                        } else if (
+                            ProductFamily.startsWith("PL 440") ||
+                            ProductFamily.startsWith("PL 413") ||
+                            ProductFamily.startsWith("CL 543") ||
+                            ProductFamily.startsWith("CL 542")
+                        ) {
+                            description = [
+                                `• Type: ${productName}`,
+                                `• Platform Width: ${platformWidth}`,
+                                `• Platform Length: ${platformLength}`,
+                                `• Pit Depth: ${Pit_Depth}`,
+                                `• Clear Height Above Ground: ${Clear_Height_Above_Ground}`,
+                                `• Car Weight: ${carWeight}`,
+                                `• System Coating: ${coating}`,
+                                `• Location Of Parking: ${Location}`
+                            ].join('\n');
+                        } else if (
+                            ProductFamily.startsWith("CL 551") ||
+                            ProductFamily.startsWith("CL 552")
+                        ) {
+                            description = [
+                                `• Type: ${productName}`,
+                                `• Platform Width: ${platformWidth}`,
+                                `• Platform Length: ${platformLength}`,
+                                `• Clear Height Above Ground: ${Clear_Height_Above_Ground}`,
+                                `• Car Weight: ${carWeight}`,
+                                `• System Coating: ${coating}`,
+                                `• Location Of Parking: ${Location}`
+                            ].join('\n');
+                        } else if (ProductFamily.startsWith("PP 501")) {
+                            description = [
+                                `• Type: ${productName}`,
+                                `• Platform Width: ${platformWidth}`,
+                                `• Platform Length: ${platformLength}`,
+                                `• Car Weight: ${carWeight}`,
+                                `• System Coating: ${coating}`,
+                                `• Location Of Parking: ${Location}`
+                            ].join('\n');
+                        } else if (ProductFamily.startsWith("PL 411")) {
+                            description = [
+                                `• Type: ${productName}`,
+                                `• Platform Width: ${platformWidth}`,
+                                `• Platform Length: ${platformLength}`,
+                                `• Car Weight: ${carWeight}`,
+                                `• Clear Height: ${clearHeight}`,
+                                `• System Coating: ${coating}`,
+                                `• Location Of Parking: ${Location}`
+                            ].join('\n');
+                        } else {
+                            description = [
+                                `• Type: ${productName}`,
+                                `• Platform Width: ${platformWidth}`,
+                                `• Platform Length: ${platformLength}`,
+                                `• Car Weight: ${carWeight}`,
+                                `• Clear Height: ${clearHeight}`,
+                                `• System Coating: ${coating}`,
+                                `• Location Of Parking: ${Location}`
+                            ].join('\n');
+                        }
                         tableData.push([
                             productImages[ProductID] ? "" : "",
                             description,
@@ -638,8 +638,8 @@ if (ProductFamily.startsWith("PL 421")) {
                 doc.setFontSize(9).setFont('Times', 'bold');
                 doc.text("Note: ", 15, doc.lastAutoTable.finalY + 17);
                 doc.setFont('Times', 'normal').setFontSize(9);
-                doc.text("For the Combilift series, the quantity is considered in number of spaces, whereas for the Parklift series, the quantity is considered in  number of units.",24,doc.lastAutoTable.finalY + 17,{ maxWidth: 170, align: 'justify' });
-                
+                doc.text("For the Combilift series, the quantity is considered in number of spaces, whereas for the Parklift series, the quantity is considered in  number of units.", 24, doc.lastAutoTable.finalY + 17, { maxWidth: 170, align: 'justify' });
+
                 // Draw a box for Description
                 const descBoxY = doc.lastAutoTable.finalY + 26;
                 const descBoxHeight = 15;
@@ -650,7 +650,7 @@ if (ProductFamily.startsWith("PL 421")) {
                 doc.text("Description:", descBoxX + 1, descBoxY + 4);
                 doc.setFont('Times', 'normal').setFontSize(10);
                 doc.rect(descBoxX, descBoxY, descBoxWidth, descBoxHeight);
-                
+
                 //-----------------------------------------------------------------------------------------------------------------
                 // doc.addPage();
                 // if (logoData) doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
@@ -1383,14 +1383,11 @@ if (ProductFamily.startsWith("PL 421")) {
                 ZOHO.CRM.API.getRecord({ Entity: "Quotes", RecordID: EntityID }).then(function (response) {
                     if (response?.data?.length > 0) {
                         const quoteData = response.data[0];
-                        console.log("quoteData", quoteData)
-                        Quote_BusinessType = quoteData.Type_of_Business;
-                        console.log("Quote_BusinessType", Quote_BusinessType);
+                        console.log("quoteData", quoteData);
 
-                        Quote_TypeOfSys = quoteData.Type_of_System;
-                        console.log("Quote_TypeOfSys", Quote_TypeOfSys)
-                        const OwnerID = quoteData.Owner?.id;
-                        // console.log("OwnerID",OwnerID)
+                        const Quote_BusinessType = quoteData.Type_of_Business;
+                        const Quote_TypeOfSys = quoteData.Type_of_System;
+
                         const AccountID = quoteData.Account_Name?.id;
                         const ContactID = quoteData.Contact_Name?.id;
                         const OpportunityID = quoteData.Deal_Name?.id;
@@ -1401,40 +1398,35 @@ if (ProductFamily.startsWith("PL 421")) {
                         let OwnerData = null;
                         let productImages = {};
                         let ProductDataMap = {};
+
+                        let UserProfile = "";
+                        let User_BusinessType = "";
+                        let User_TypeOfSys = "";
+
                         let productPromises = [];
 
-                        //->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                        let CurrentUser = null;
-
+                        // STEP 1: Get current user first
                         const currentUserPromise = ZOHO.CRM.CONFIG.getCurrentUser().then(function (UserData) {
-                            CurrentUser = UserData.users[0];
-                            console.log("CurrentUser", CurrentUser);
+                            const CurrentUser = UserData.users[0];
+                            const CurrentUserID = CurrentUser.id;
                             UserProfile = CurrentUser.profile.name;
-                            console.log("UserProfile", UserProfile)
-                        });
 
-                        const ownerPromise = OwnerID
-                            ? ZOHO.CRM.API.getUser({ ID: OwnerID }).then(function (res) {
+                            console.log("CurrentUser", CurrentUser);
+
+                            // STEP 2: Then get full user record using CurrentUserID
+                            return ZOHO.CRM.API.getUser({ ID: CurrentUserID }).then(function (res) {
                                 OwnerData = res?.users?.[0] || null;
                                 console.log("OwnerData", OwnerData);
-                                User_BusinessType = OwnerData.Type_Of_Business;
-                                console.log("User_BusinessType", User_BusinessType)
-                                User_TypeOfSys = OwnerData.Type_of_System;
-                                console.log("User_TypeOfSys", User_TypeOfSys)
-                                // UserProfile = OwnerData.profile.name;
-                                // console.log("UserProfile", UserProfile)
+                                User_BusinessType = OwnerData?.Type_Of_Business || "";
+                                User_TypeOfSys = OwnerData?.Type_of_System || "";
 
-                                //     if(UserProfile != 'Administrator'){
-                                //     if(User_TypeOfSys != Quote_TypeOfSys && User_BusinessType != Quote_BusinessType){
-                                //         alert("User Business Type and System does not match with this quotation bussiness type and system so you are not eligible to view this quote");
-                                //     }
-                                // }
-                            })
+                                console.log("OwnerData", OwnerData);
+                                console.log("User_BusinessType", User_BusinessType);
+                                console.log("User_TypeOfSys", User_TypeOfSys);
+                            });
+                        });
 
-                            : Promise.resolve();
-
-
-
+                        // STEP 3: Product details - loop and push image + detail promises
                         if (quoteData.Product_Details?.length > 0) {
                             quoteData.Product_Details.forEach(item => {
                                 const ProductID = item.product?.id;
@@ -1444,7 +1436,6 @@ if (ProductFamily.startsWith("PL 421")) {
                                     ZOHO.CRM.API.getRecord({ Entity: "Products", RecordID: ProductID }).then(res => {
                                         if (res?.data?.length > 0) {
                                             ProductDataMap[ProductID] = res.data[0];
-
                                         }
                                     }),
                                     ZOHO.CRM.FUNCTIONS.execute("product_image", {
@@ -1458,6 +1449,7 @@ if (ProductFamily.startsWith("PL 421")) {
                             });
                         }
 
+                        // STEP 4: Fetch related records
                         const accountPromise = AccountID
                             ? ZOHO.CRM.API.getRecord({ Entity: "Accounts", approved: "both", RecordID: AccountID }).then(res => {
                                 AccountData = res?.data?.[0] || null;
@@ -1476,33 +1468,41 @@ if (ProductFamily.startsWith("PL 421")) {
                             })
                             : Promise.resolve();
 
-                        //->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                        // STEP 5: Final promise.all to handle all async ops
                         Promise.all([
-                            ownerPromise,
+                            currentUserPromise,
                             accountPromise,
                             contactPromise,
                             opportunityPromise,
-                            ...productPromises,
-                            currentUserPromise
+                            ...productPromises
                         ]).then(() => {
-                            // Check before proceeding
+                            // Access validation
                             if (UserProfile !== 'Administrator') {
                                 const typeMismatch = User_TypeOfSys !== Quote_TypeOfSys;
                                 const businessMismatch = User_BusinessType !== Quote_BusinessType;
 
                                 if (typeMismatch || businessMismatch) {
-                                    showAccessMessage("Access Denied: Your business type or system does not match this quotation.You Cannot View this quotation");
+                                    showAccessMessage("Access Denied: Your business type or system does not match this quotation. You cannot view this quotation.");
                                     return;
                                 }
                             }
 
-                            // If validation passes
-                            createPDF(quoteData, AccountData, ContactData, OpportunityData, productImages, ProductDataMap,OwnerData);
+                            // ✅ Proceed to PDF generation
+                            createPDF(
+                                quoteData,
+                                AccountData,
+                                ContactData,
+                                OpportunityData,
+                                productImages,
+                                ProductDataMap,
+                                OwnerData
+                            );
                         });
                     }
                 });
             }
         });
+
 
 
         ZOHO.embeddedApp.init();
