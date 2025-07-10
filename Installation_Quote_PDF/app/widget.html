@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <!-- New change in Installation Information Table -->
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -374,7 +375,7 @@ justify-content: center;
                     doc.line(xPosition, boxStartY, xPosition, boxStartY + boxHeight);
                 });
 
-                let startY1 = boxStartY + boxHeight; 
+                let startY1 = boxStartY + boxHeight;
                 doc.setFont("Times", "normal");
                 const installationInfo = quoteData.Installation_Information || [];
 
@@ -385,21 +386,21 @@ justify-content: center;
                 let grossTotal = 0;
 
 
-                
+
                 installationInfo.forEach((info) => {
                     totalQuantity1 += info.Quantity || 0;
                     netContractValue += (info.Quantity || 0) * (info.Installation_Products_Price || 0); // Calculate Net Contract Value
 
                     if (info.Tax && Array.isArray(info.Tax) && info.Tax.length > 0) {
                         const taxNames = info.Tax.map((tax) => {
-                            const [taxName, taxPercentage] = tax.split(" - "); 
-                            return `${taxName || ""}@${taxPercentage.trim() || ""}`; 
+                            const [taxName, taxPercentage] = tax.split(" - ");
+                            return `${taxName || ""}@${taxPercentage.trim() || ""}`;
                         }).join(", ");
 
                         if (!taxDetails[taxNames]) {
-                            taxDetails[taxNames] = info.Tax_Amount || 0; 
+                            taxDetails[taxNames] = info.Tax_Amount || 0;
                         } else {
-                            taxDetails[taxNames] += info.Tax_Amount || 0; 
+                            taxDetails[taxNames] += info.Tax_Amount || 0;
                         }
                         totalTaxAmount += info.Tax_Amount || 0;
                     } else {
@@ -411,8 +412,8 @@ justify-content: center;
 
                     grossTotal = netContractValue + totalTaxAmount;
 
-                    if (startY1 + 10 > 280) { 
-                        doc.rect(10, boxStartY, 195, startY1 - boxStartY); 
+                    if (startY1 + 10 > 280) {
+                        doc.rect(10, boxStartY, 195, startY1 - boxStartY);
                         doc.addPage();
                         doc.addImage(logoData, "JPEG", 175, 5, 30, 30);
                         doc.setFontSize(10).setFont("Times", "normal");
@@ -424,7 +425,7 @@ justify-content: center;
                         doc.rect(10, boxStartY, 195, 7);
                         doc.setFontSize(10).setFont("Times", "bold");
                         columns.forEach((col, index) => {
-                            const textX = columnPositions[index] + 2; 
+                            const textX = columnPositions[index] + 2;
                             doc.text(col.header, textX, boxStartY + 5);
                         });
 
@@ -435,8 +436,8 @@ justify-content: center;
                     }
 
                     // Add row data
-                    doc.rect(10, startY1, 195, 10); 
-                    let currentX = 10; 
+                    doc.rect(10, startY1, 195, 10);
+                    let currentX = 10;
 
                     columns.forEach((col) => {
                         const textX = currentX + 2; // Add padding for text
@@ -444,7 +445,7 @@ justify-content: center;
                         switch (col.header) {
                             case "Installation\nService Name":
                                 const name = info.Installation_Service_Name?.name || "";
-                                const wrappedServiceName = doc.splitTextToSize(name, 25); 
+                                const wrappedServiceName = doc.splitTextToSize(name, 25);
                                 value = wrappedServiceName;
                                 break;
                             case "Product\nCode":
@@ -463,23 +464,23 @@ justify-content: center;
                                 value = `INR ${(info.Installation_Products_Price).toFixed(2) || ""}`;
                                 break;
                             case "Total Amount":
-                                value = `INR ${((info.Quantity || 0) * (info.Installation_Products_Price || 0)).toFixed(2) || ""}`; 
+                                value = `INR ${((info.Quantity || 0) * (info.Installation_Products_Price || 0)).toFixed(2) || ""}`;
                                 break;
                             case "Tax":
                                 const taxDetails = info.Tax.map((tax) => {
-                                const [taxName, taxPercentage] = tax.split(" - ");
-                                let taxAmount = info.Tax_Amount || 0;
+                                    const [taxName, taxPercentage] = tax.split(" - ");
+                                    let taxAmount = info.Tax_Amount || 0;
 
-                                // Divide Tax_Amount by 2 for CGST and SGST
-                                if (taxName === "CGST") {
-                                    taxAmount = taxAmount / 2;
-                                } else if (taxName === "SGST") {
-                                    taxAmount = taxAmount / 2;
-                                }
-                                return `${taxName}-INR ${taxAmount.toFixed(2)}`;
+                                    // Divide Tax_Amount by 2 for CGST and SGST
+                                    if (taxName === "CGST") {
+                                        taxAmount = taxAmount / 2;
+                                    } else if (taxName === "SGST") {
+                                        taxAmount = taxAmount / 2;
+                                    }
+                                    return `${taxName}-INR ${taxAmount.toFixed(2)}`;
                                 }).join(", ");
                                 doc.setFontSize(8);
-                                doc.text(taxDetails || "INR 0.00", textX, startY1 + 4, { maxWidth: col.width - 2 }); 
+                                doc.text(taxDetails || "INR 0.00", textX, startY1 + 4, { maxWidth: col.width - 2 });
                                 doc.setFontSize(10);
                                 break;
                         }
@@ -1577,14 +1578,11 @@ justify-content: center;
                 ZOHO.CRM.API.getRecord({ Entity: "Quotes", RecordID: EntityID }).then(function (response) {
                     if (response?.data?.length > 0) {
                         const quoteData = response.data[0];
-                        console.log("quoteData", quoteData)
-                        Quote_BusinessType = quoteData.Type_of_Business;
-                        console.log("Quote_BusinessType", Quote_BusinessType);
+                        console.log("quoteData", quoteData);
 
-                        Quote_TypeOfSys = quoteData.Type_of_System;
-                        console.log("Quote_TypeOfSys", Quote_TypeOfSys)
-                        const OwnerID = quoteData.Owner?.id;
-                        // console.log("OwnerID",OwnerID)
+                        const Quote_BusinessType = quoteData.Type_of_Business;
+                        const Quote_TypeOfSys = quoteData.Type_of_System;
+
                         const AccountID = quoteData.Account_Name?.id;
                         const ContactID = quoteData.Contact_Name?.id;
                         const OpportunityID = quoteData.Deal_Name?.id;
@@ -1595,41 +1593,35 @@ justify-content: center;
                         let OwnerData = null;
                         let productImages = {};
                         let ProductDataMap = {};
+
+                        let UserProfile = "";
+                        let User_BusinessType = "";
+                        let User_TypeOfSys = "";
+
                         let productPromises = [];
 
-                        //->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                        // new add
-                        let CurrentUser = null;
-
+                        // STEP 1: Get current user first
                         const currentUserPromise = ZOHO.CRM.CONFIG.getCurrentUser().then(function (UserData) {
-                            CurrentUser = UserData.users[0];
-                            console.log("CurrentUser", CurrentUser);
+                            const CurrentUser = UserData.users[0];
+                            const CurrentUserID = CurrentUser.id;
                             UserProfile = CurrentUser.profile.name;
-                            console.log("UserProfile", UserProfile)
-                        });
 
-                        const ownerPromise = OwnerID
-                            ? ZOHO.CRM.API.getUser({ ID: OwnerID }).then(function (res) {
+                            console.log("CurrentUser", CurrentUser);
+
+                            // STEP 2: Then get full user record using CurrentUserID
+                            return ZOHO.CRM.API.getUser({ ID: CurrentUserID }).then(function (res) {
                                 OwnerData = res?.users?.[0] || null;
                                 console.log("OwnerData", OwnerData);
-                                User_BusinessType = OwnerData.Type_Of_Business;
-                                console.log("User_BusinessType", User_BusinessType)
-                                User_TypeOfSys = OwnerData.Type_of_System;
-                                console.log("User_TypeOfSys", User_TypeOfSys)
-                                // UserProfile = OwnerData.profile.name;
-                                // console.log("UserProfile", UserProfile)
+                                User_BusinessType = OwnerData?.Type_Of_Business || "";
+                                User_TypeOfSys = OwnerData?.Type_of_System || "";
 
-                                //     if(UserProfile != 'Administrator'){
-                                //     if(User_TypeOfSys != Quote_TypeOfSys && User_BusinessType != Quote_BusinessType){
-                                //         alert("User Business Type and System does not match with this quotation bussiness type and system so you are not eligible to view this quote");
-                                //     }
-                                // }
-                            })
+                                console.log("OwnerData", OwnerData);
+                                console.log("User_BusinessType", User_BusinessType);
+                                console.log("User_TypeOfSys", User_TypeOfSys);
+                            });
+                        });
 
-                            : Promise.resolve();
-
-
-
+                        // STEP 3: Product details - loop and push image + detail promises
                         if (quoteData.Product_Details?.length > 0) {
                             quoteData.Product_Details.forEach(item => {
                                 const ProductID = item.product?.id;
@@ -1639,7 +1631,6 @@ justify-content: center;
                                     ZOHO.CRM.API.getRecord({ Entity: "Products", RecordID: ProductID }).then(res => {
                                         if (res?.data?.length > 0) {
                                             ProductDataMap[ProductID] = res.data[0];
-
                                         }
                                     }),
                                     ZOHO.CRM.FUNCTIONS.execute("product_image", {
@@ -1653,6 +1644,7 @@ justify-content: center;
                             });
                         }
 
+                        // STEP 4: Fetch related records
                         const accountPromise = AccountID
                             ? ZOHO.CRM.API.getRecord({ Entity: "Accounts", approved: "both", RecordID: AccountID }).then(res => {
                                 AccountData = res?.data?.[0] || null;
@@ -1671,35 +1663,41 @@ justify-content: center;
                             })
                             : Promise.resolve();
 
-                        //->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                        // STEP 5: Final promise.all to handle all async ops
                         Promise.all([
-                            ownerPromise,
+                            currentUserPromise,
                             accountPromise,
                             contactPromise,
                             opportunityPromise,
-                            ...productPromises,
-                            currentUserPromise  // new add//
+                            ...productPromises
                         ]).then(() => {
-                            // Check before proceeding
+                            // Access validation
                             if (UserProfile !== 'Administrator') {
                                 const typeMismatch = User_TypeOfSys !== Quote_TypeOfSys;
                                 const businessMismatch = User_BusinessType !== Quote_BusinessType;
 
                                 if (typeMismatch || businessMismatch) {
-                                    showAccessMessage("Access Denied: Your business type or system does not match this quotation.You Cannot View this quotation");
+                                    showAccessMessage("Access Denied: Your business type or system does not match this quotation. You cannot view this quotation.");
                                     return;
                                 }
                             }
 
-
-                            // If validation passes
-                            createPDF(quoteData, AccountData, ContactData, OpportunityData, productImages, ProductDataMap, OwnerData);
+                            // ✅ Proceed to PDF generation
+                            createPDF(
+                                quoteData,
+                                AccountData,
+                                ContactData,
+                                OpportunityData,
+                                productImages,
+                                ProductDataMap,
+                                OwnerData
+                            );
                         });
-
                     }
                 });
             }
         });
+
 
 
         ZOHO.embeddedApp.init();
