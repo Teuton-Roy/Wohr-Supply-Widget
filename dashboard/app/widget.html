@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -9,170 +10,170 @@
   <script type="module" src="../app/js/data.js"></script>
   <style>
     body {
-    font-family: "Segoe UI", sans-serif;
-    background: #f4f7fa;
-    margin: 0;
-    padding: 20px;
-    text-align: center;
+      font-family: "Segoe UI", sans-serif;
+      background: #f4f7fa;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
     }
 
     h2 {
-    margin-bottom: 20px;
-    font-weight: 600;
-    color: #333;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #333;
     }
 
     .card-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    justify-items: center;
-    width: 83%;
-    margin: 0px auto;
-    padding: 10px;
-    height: calc(max-height+40px);
-    max-height: auto;
-    align-items: center;
-    border-radius: 10px;
-    box-shadow: 0 5px 30px rgba(8, 8, 8, 0.1);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      justify-items: center;
+      width: 83%;
+      margin: 0px auto;
+      padding: 10px;
+      height: calc(max-height+40px);
+      max-height: auto;
+      align-items: center;
+      border-radius: 10px;
+      box-shadow: 0 5px 30px rgba(8, 8, 8, 0.1);
     }
 
     .card {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 6px 10px rgba(18, 18, 18, 0.1);
-    width: 200px;
-    height: 60px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 15px;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 10px rgba(18, 18, 18, 0.1);
+      width: 200px;
+      height: 60px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 15px;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     }
 
     .count {
-    font-size: 22px;
-    font-weight: bold;
-    color: #0078d7;
-    margin-top: 0px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #0078d7;
+      margin-top: 0px;
     }
 
     .label {
-    font-size: 16px;
-    color: #3a3a3a;
-    margin-top: 0px;
+      font-size: 16px;
+      color: #3a3a3a;
+      margin-top: 0px;
     }
 
     .overlay {
-    display: none;
-    /* hidden initially */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+      display: none;
+      /* hidden initially */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
     }
 
     .popup {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    width: 320px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    display: none;
-    /* hidden initially */
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      width: 320px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      display: none;
+      /* hidden initially */
     }
 
     .actions {
-    margin-top: 15px;
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+      margin-top: 15px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
     }
 
     /* Modal */
     .modal {
-    display: none;
-    position: fixed;
-    z-index: 999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .modal-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    width: 320px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    animation: fadeIn 0.3s ease-in-out;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      width: 320px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      animation: fadeIn 0.3s ease-in-out;
     }
 
     @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
 
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     .modal-content h3 {
-    margin-bottom: 15px;
-    color: #333;
+      margin-bottom: 15px;
+      color: #333;
     }
 
     .modal-content ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+      list-style: none;
+      padding: 0;
+      margin: 0;
     }
 
     .modal-content ul li {
-    background: #f4f7fa;
-    margin: 10px 0;
-    padding: 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
+      background: #f4f7fa;
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
     }
 
     .modal-content ul li:hover {
-    background: #0078d7;
-    color: #fff;
+      background: #0078d7;
+      color: #fff;
     }
 
     .close {
-    float: right;
-    cursor: pointer;
-    font-size: 20px;
-    font-weight: bold;
-    color: #666;
+      float: right;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: bold;
+      color: #666;
     }
 
     .close:hover {
-    color: #000;
+      color: #000;
     }
 
     /* Add this CSS to your <style> section */
@@ -180,445 +181,445 @@
     /* Container for the cards */
     /* Main container */
     #dataContainer {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin-top: 30px;
-    padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+      padding: 20px;
     }
 
     /* Card */
     .system-card {
-    background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
-    border-radius: 16px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    gap: 8px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+      background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      gap: 8px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 
     .system-card:hover {
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     }
 
     /* Labels */
     .system-card .label {
-    font-size: 15px;
-    color: #555;
+      font-size: 15px;
+      color: #555;
     }
 
     /* Values */
     .system-card .value {
-    font-weight: 600;
-    color: #111;
+      font-weight: 600;
+      color: #111;
     }
 
     /* Status badge */
     .status {
-    margin-top: 12px;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: bold;
-    display: inline-block;
-    text-align: center;
+      margin-top: 12px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      display: inline-block;
+      text-align: center;
     }
 
     .status.active {
-    background: #dcfce7;
-    color: #15803d;
+      background: #dcfce7;
+      color: #15803d;
     }
 
     .status.closed {
-    background: #fee2e2;
-    color: #b91c1c;
+      background: #fee2e2;
+      color: #b91c1c;
     }
 
     .status.undefined {
-    background: #e5e7eb;
-    color: #374151;
+      background: #e5e7eb;
+      color: #374151;
     }
 
     .table-container {
-    width: 100%;
-    overflow-x: auto;
-    /* enables horizontal scroll on small screens */
+      width: 100%;
+      overflow-x: auto;
+      /* enables horizontal scroll on small screens */
     }
 
     table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    min-width: 600px;
-    /* force scroll if content too wide */
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 600px;
+      /* force scroll if content too wide */
     }
 
     th,
     td {
-    border: 1px solid #ccc;
-    padding: 6px;
-    text-align: left;
-    white-space: wrap;
-    /* keep columns in single line */
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: left;
+      white-space: wrap;
+      /* keep columns in single line */
     }
 
     th {
-    background: #f2f2f2;
+      background: #f2f2f2;
     }
 
     /* Button responsive */
     button {
-    padding: 8px 12px;
-    background-color: #0078d7;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 10%;
-    /* button fits to text */
-    min-width: unset;
-    display: inline-block;
+      padding: 8px 12px;
+      background-color: #0078d7;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 10%;
+      /* button fits to text */
+      min-width: unset;
+      display: inline-block;
 
     }
 
     .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: none;
-    /* hidden by default */
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      /* hidden by default */
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
     }
 
     /* Popup Box */
     .popup {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    width: 320px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    display: none;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      width: 320px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      display: none;
     }
 
     .popup h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 18px;
-    color: #333;
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 18px;
+      color: #333;
     }
 
     .popup label {
-    display: block;
-    margin-top: 8px;
-    font-size: 14px;
+      display: block;
+      margin-top: 8px;
+      font-size: 14px;
     }
 
     .popup input {
-    width: 100%;
-    padding: 6px;
-    margin-top: 4px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
 
     .popup .actions {
-    margin-top: 15px;
-    text-align: right;
+      margin-top: 15px;
+      text-align: right;
     }
 
     .popup button {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
     }
 
     .popup .cancel {
-    margin-right: 10px;
-    background: #ccc;
-    color: #000;
+      margin-right: 10px;
+      background: #ccc;
+      color: #000;
     }
 
     .popup .submit {
-    background: #0078d7;
-    color: #fff;
+      background: #0078d7;
+      color: #fff;
     }
 
     .system-card {
-    background: #f9fbff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    margin-bottom: 20px;
-    overflow-x: auto;
+      background: #f9fbff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      margin-bottom: 20px;
+      overflow-x: auto;
     }
 
     .system-card table {
-    width: 100%;
-    min-width: 800px;
-    border-collapse: collapse;
-    font-size: 14px;
-    background: white;
+      width: 100%;
+      min-width: 800px;
+      border-collapse: collapse;
+      font-size: 14px;
+      background: white;
     }
 
     .system-card th,
     .system-card td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: center;
-    white-space: nowrap;
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+      white-space: nowrap;
     }
 
     .system-card th {
-    background-color: #eaf3ff;
-    font-weight: 600;
-    color: #333;
+      background-color: #eaf3ff;
+      font-weight: 600;
+      color: #333;
     }
 
     /*  smooth horizontal scroll for mobile */
     .system-card::-webkit-scrollbar {
-    height: 6px;
+      height: 6px;
     }
 
     .system-card::-webkit-scrollbar-thumb {
-    background: #bbb;
-    border-radius: 4px;
+      background: #bbb;
+      border-radius: 4px;
     }
 
 
     /* Responsive Table */
     .table-container {
-    overflow-x: auto;
+      overflow-x: auto;
     }
 
     /* ===== Buttons ===== */
     button {
-    cursor: pointer;
-    border: none;
-    border-radius: 6px;
-    padding: 6px 12px;
-    font-size: 14px;
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 14px;
     }
 
     .viewBtn {
-    background: #007bff;
-    color: #fff;
-    transition: 0.2s;
-    width: 100%;
+      background: #007bff;
+      color: #fff;
+      transition: 0.2s;
+      width: 100%;
     }
 
     .viewBtn:hover {
-    background: #0056b3;
+      background: #0056b3;
     }
 
     button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     /* ===== Pagination ===== */
     #dataContainer>div:last-child button {
-    background: #f1f1f1;
-    margin: 0 3px;
-    padding: 5px 10px;
+      background: #f1f1f1;
+      margin: 0 3px;
+      padding: 5px 10px;
     }
 
     #dataContainer>div:last-child button:hover {
-    background: #ddd;
+      background: #ddd;
     }
 
     /* ===== Modal Styling ===== */
     #popupModal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
     }
 
     #popupModal .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    width: 95%;
-    max-width: 450px;
-    animation: fadeIn 0.3s ease-in-out;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 95%;
+      max-width: 450px;
+      animation: fadeIn 0.3s ease-in-out;
     }
 
     #popupModal h3 {
-    margin-top: 0;
-    color: #007bff;
+      margin-top: 0;
+      color: #007bff;
     }
 
     #popupModal select,
     #popupModal textarea {
-    width: 100%;
-    padding: 8px 10px;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
     }
 
     #popupModal textarea {
-    resize: vertical;
-    min-height: 60px;
+      resize: vertical;
+      min-height: 60px;
     }
 
     #popupModal .modal-actions {
-    text-align: right;
-    margin-top: 15px;
+      text-align: right;
+      margin-top: 15px;
     }
 
     #popupModal .modal-actions button {
-    margin-left: 8px;
+      margin-left: 8px;
     }
 
     #cancelBtn {
-    background: #f1f1f1;
-    color: #000;
+      background: #f1f1f1;
+      color: #000;
     }
 
     #cancelBtn:hover {
-    background: #ddd;
+      background: #ddd;
     }
 
     #saveBtn {
-    background: #28a745;
-    color: white;
+      background: #28a745;
+      color: white;
     }
 
     #saveBtn:hover {
-    background: #218838;
+      background: #218838;
     }
 
     /* Animation */
     @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
 
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     #formModal .modal-box {
-    background: #fff;
-    padding: 25px 30px;
-    border-radius: 12px;
-    width: 420px;
-    max-width: 90%;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.3s ease;
+      background: #fff;
+      padding: 25px 30px;
+      border-radius: 12px;
+      width: 420px;
+      max-width: 90%;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.3s ease;
     }
 
     .form-group {
-    display: flex;
-    flex-direction: column;
+      display: flex;
+      flex-direction: column;
     }
 
     .form-group label {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 4px;
-    font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+      font-size: 14px;
     }
 
     .form-group input {
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: 0.2s ease;
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: 0.2s ease;
     }
 
     .form-group input:focus {
-    outline: none;
-    border-color: #2e7d32;
-    box-shadow: 0 0 3px #2e7d32;
+      outline: none;
+      border-color: #2e7d32;
+      box-shadow: 0 0 3px #2e7d32;
     }
 
     .button-row {
-    display: flex;
-    justify-content: flex-end;
-    gap: 20px;
-    margin-top: 15px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 20px;
+      margin-top: 15px;
     }
 
     .btn {
-    padding: 8px 15px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.2s ease;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s ease;
     }
 
     .btn.cancel {
-    width: 100%;
-    background: #ccc;
-    color: #000;
+      width: 100%;
+      background: #ccc;
+      color: #000;
     }
 
     .btn.submit {
-    width: 100%;
-    background: #2e7d32;
-    color: #fff;
+      width: 100%;
+      background: #2e7d32;
+      color: #fff;
     }
 
     .btn:hover {
-    opacity: 0.9;
+      opacity: 0.9;
     }
 
     @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
 
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .spinner {
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #0078d7;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #0078d7;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
     }
 
     @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
+      0% {
+        transform: rotate(0deg);
+      }
 
-    100% {
-      transform: rotate(360deg);
-    }
+      100% {
+        transform: rotate(360deg);
+      }
     }
 
     @media (max-width: 768px) {
-    /*table{
+      /*table{
           width: 50%;
           overflow-x: auto !important; 
         -webkit-overflow-scrolling: touch !important; 
@@ -633,8 +634,8 @@
         border-collapse: collapse !important; 
         width: 100% !important; 
         min-width: 768px !important; /* adjust depending on number of columns */
-    background: #fff !important;
-    /*}
+      background: #fff !important;
+      /*}
       .system-card table,
       .system-card thead,
       .system-card tbody,
@@ -643,10 +644,10 @@
       .system-card tr {
       display: block !important;
       white-space: wrap !important; /* keep values in single row (no stacking) */
-    padding: 8px !important;
-    border: 1px solid #ccc !important;
+      padding: 8px !important;
+      border: 1px solid #ccc !important;
 
-    /* }
+      /* }
       .system-card thead tr {
       display: block;
 
@@ -668,31 +669,32 @@
       font-size: 13px;
       text-align: start;
     }*/
-    .system-card select,
-    .system-card input[type="text"] {
-      width: 100%;
-      margin-bottom: 10px;
-    }
+      .system-card select,
+      .system-card input[type="text"] {
+        width: 100%;
+        margin-bottom: 10px;
+      }
 
-    #popupModal .modal-content {
-      padding: 15px;
-    }
+      #popupModal .modal-content {
+        padding: 15px;
+      }
 
-    .action_btn {
-      width: auto;
-    }
+      .action_btn {
+        width: auto;
+      }
 
-    #formModal .modal-box {
-      width: 90%;
-      padding: 20px;
-    }
-    #statusFilter {
-      margin:2px;
-    }
-    }
+      #formModal .modal-box {
+        width: 90%;
+        padding: 20px;
+      }
 
-</style>
+      #statusFilter {
+        margin: 2px;
+      }
+    }
+  </style>
 </head>
+
 <body>
   <div id="loader" style="
   display:none; 
@@ -705,111 +707,115 @@
   align-items:center;
 ">
     <div class="spinner"></div>
-</div>
+  </div>
 
-<h2 style="display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 26px; font-weight: 700; color: #333;">
-  <!-- <img src="#" alt="Service Icon" style="width: 32px; height: 32px;"> -->
-  Service Technician Report
-</h2>
-<!-- Close button -->
-<span class="close-btn" onclick="closeCard(event)" style="position: absolute; top: 5px; right: 10px; font-size: 18px; font-weight: bold; cursor: pointer; color: #333;">
-        &times;
-      </span>
-<div class="card-container">
+  <h2
+    style="display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 26px; font-weight: 700; color: #333;">
+    <!-- <img src="#" alt="Service Icon" style="width: 32px; height: 32px;"> -->
+    Service Technician Report
+  </h2>
+  <!-- Close button -->
+  <span class="close-btn" onclick="closeCard(event)"
+    style="position: absolute; top: 5px; right: 10px; font-size: 18px; font-weight: bold; cursor: pointer; color: #333;">
+    &times;
+  </span>
+  <div class="card-container">
     <div class="card" style="background: #d0e6f0;" onclick="showSystemDetails()">
-        <div class="label">System Details</div>
-        <!-- <div class="count" id="Child_ESN_Form_count">0</div> -->
+      <div class="label">System Details</div>
+      <!-- <div class="count" id="Child_ESN_Form_count">0</div> -->
     </div>
     <div class="card" style="background: #f0e6d0;" onclick="showCustomerDetails()">
-        <div class="label">Customer Details</div>
-        <!-- <div class="count" id="System_Form_count">0</div> -->
+      <div class="label">Customer Details</div>
+      <!-- <div class="count" id="System_Form_count">0</div> -->
     </div>
     <div class="card" style="background: #e6d0f0;" onclick="showProductDetails()">
-        <div class="label">Product Info</div>
-        <!-- <div class="count" id="Customer_Form_count">0</div> -->
+      <div class="label">Product Info</div>
+      <!-- <div class="count" id="Customer_Form_count">0</div> -->
     </div>
     <div class="card" style="background: #d0f0e6;" onclick="AllServices()">
-        <div class="label">All Request- Monthly</div>
-        <div class="count" id="Monthly_Count">0</div>
+      <div class="label">All Request- Monthly</div>
+      <div class="count" id="Monthly_Count">0</div>
     </div>
 
-</div>
+  </div>
 
-<!-- Modal for Date Range -->
-<div id="dateModal" class="modal" style="display: none;">
+  <!-- Modal for Date Range -->
+  <div id="dateModal" class="modal" style="display: none;">
     <div class="modal-content" style="width: 350px;">
-        <span class="close" onclick="closeDateModal()">&times;</span>
-        <h3>Select Date Range</h3>
-        <input type="month" id="startMonth" style="padding:8px; width: 80%; margin:10px 0;">
-        <input type="month" id="endMonth" style="padding:8px; width: 80%; margin:10px 0;">
-        <button onclick="" style="padding:8px 15px; background:#2c3e50; color:#fff; border:none; border-radius:5px; cursor:pointer;">Apply</button>
+      <span class="close" onclick="closeDateModal()">&times;</span>
+      <h3>Select Date Range</h3>
+      <input type="month" id="startMonth" style="padding:8px; width: 80%; margin:10px 0;">
+      <input type="month" id="endMonth" style="padding:8px; width: 80%; margin:10px 0;">
+      <button onclick=""
+        style="padding:8px 15px; background:#2c3e50; color:#fff; border:none; border-radius:5px; cursor:pointer;">Apply</button>
     </div>
-</div>
+  </div>
 
-<div id="dataContainer" style="margin-top: 40px; width: 83%; margin-left: auto; margin-right: auto; background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 6px 15px rgba(0,0,0,0.1);">
+  <div id="dataContainer"
+    style="margin-top: 40px; width: 83%; margin-left: auto; margin-right: auto; background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 6px 15px rgba(0,0,0,0.1);">
 
-</div>
-<!-- Modal Container -->
-<div id="formModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+  </div>
+  <!-- Modal Container -->
+  <div id="formModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
 background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:flex-start; padding-top:40px;">
     <div class="modal-box">
-        <h3 style="text-align:center; margin-bottom:15px; color:#333;">System Details</h3>
+      <h3 style="text-align:center; margin-bottom:15px; color:#333;">System Details</h3>
 
-        <form id="systemForm" style="display:grid; gap:12px;">
-            <div class="form-group" style="display: none;">
-                <label>Child ESN Number</label>
-                <input type="text" id="child_esn" />
-            </div>
-            <div class="form-group" style="display: none;">
-                <label>ESN Number</label>
-                <input type="text" id="esn_number" />
-            </div>
-            <div class="form-group">
-                <label>Platform Number</label>
-                <input type="text" id="platform_number" />
-            </div>
-            <div class="form-group">
-                <label>Cylinder Number</label>
-                <input type="text" id="cylinder_number" />
-            </div>
-            <div class="form-group">
-                <label>Power Pack Number</label>
-                <input type="text" id="power_pack_number" />
-            </div>
-            <div class="form-group">
-                <label>Chain Length</label>
-                <input type="text" id="chain_length" />
-            </div>
-            <div class="form-group">
-                <label>WOHR Value</label>
-                <input type="text" id="wohr_value" />
-            </div>
-            <div class="form-group">
-                <label>Magnet Assembly</label>
-                <input type="text" id="magnet_assembly" />
-            </div>
-            <div class="form-group">
-                <label>PLC Version</label>
-                <input type="text" id="plc_version" />
-            </div>
+      <form id="systemForm" style="display:grid; gap:12px;">
+        <div class="form-group" style="display: none;">
+          <label>Child ESN Number</label>
+          <input type="text" id="child_esn" />
+        </div>
+        <div class="form-group" style="display: none;">
+          <label>ESN Number</label>
+          <input type="text" id="esn_number" />
+        </div>
+        <div class="form-group">
+          <label>Platform Number</label>
+          <input type="text" id="platform_number" />
+        </div>
+        <div class="form-group">
+          <label>Cylinder Number</label>
+          <input type="text" id="cylinder_number" />
+        </div>
+        <div class="form-group">
+          <label>Power Pack Number</label>
+          <input type="text" id="power_pack_number" />
+        </div>
+        <div class="form-group">
+          <label>Chain Length</label>
+          <input type="text" id="chain_length" />
+        </div>
+        <div class="form-group">
+          <label>WOHR Value</label>
+          <input type="text" id="wohr_value" />
+        </div>
+        <div class="form-group">
+          <label>Magnet Assembly</label>
+          <input type="text" id="magnet_assembly" />
+        </div>
+        <div class="form-group">
+          <label>PLC Version</label>
+          <input type="text" id="plc_version" />
+        </div>
 
-            <div class="button-row">
-                <button type="button" id="cancelForm" class="btn cancel">Cancel</button>
-                <button type="submit" class="btn submit">Submit</button>
-            </div>
-        </form>
+        <div class="button-row">
+          <button type="button" id="cancelForm" class="btn cancel">Cancel</button>
+          <button type="submit" class="btn submit">Submit</button>
+        </div>
+      </form>
     </div>
-</div>
+  </div>
 
-<!-- Table Section -->
-<!-- <table id="mainTable">
+  <!-- Table Section -->
+  <!-- <table id="mainTable">
   <thead id="Thead"></thead>
   <tbody id="Tbody"></tbody>
 </table> -->
 
 
-<!-- Modal -->
-<!-- <div id="optionsModal" class="modal">
+  <!-- Modal -->
+  <!-- <div id="optionsModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
       <h3>Select Option</h3>
@@ -822,8 +828,8 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
     </div>
   </div> -->
   <script>
-    
-   
+
+
 
     function closeCard(event) {
       event.stopPropagation(); // Prevent triggering parent onclick
@@ -831,61 +837,61 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
       card.style.display = 'none'; // Hide the card
       // const url = `https://creatorapp.zoho.in/wohr_parking/service-management/#Report:All_ESN`;
       const url = `https://creatorapp.zoho.in/wohr_parking/service-management/#Report:My_ESN`;
-        /*window.open(url, "_parent");*/
+      /*window.open(url, "_parent");*/
     }
-let creatorInitialized = false;
+    let creatorInitialized = false;
 
-ZOHO.CREATOR.init().then( async function() {
-    console.log("Creator initialized");
-    creatorInitialized = true;
-     const queryParams = ZOHO.CREATOR.UTIL.getInitParams() || {};
-     console.log("Init Params:", queryParams);
-    let username = queryParams.scope || null;
+    ZOHO.CREATOR.init().then(async function () {
+      console.log("Creator initialized");
+      creatorInitialized = true;
+      const queryParams = ZOHO.CREATOR.UTIL.getInitParams() || {};
+      console.log("Init Params:", queryParams);
+      let username = queryParams.scope || null;
 
-    if (!username) {
+      if (!username) {
         console.error("Error: Username not found!");
-    }
-    let email = queryParams.loginUser;
-        console.log("Logged in user:",username);
-   
-    const params = ZOHO.CREATOR.UTIL.getQueryParams();
-    const Child_ESN_Number = params["Child_ESN_Number"] || "";
-    const Status = params["Status"] || "";
+      }
+      let email = queryParams.loginUser;
+      console.log("Logged in user:", username);
 
-    if (!Child_ESN_Number) {
+      const params = ZOHO.CREATOR.UTIL.getQueryParams();
+      const Child_ESN_Number = params["Child_ESN_Number"] || "";
+      const Status = params["Status"] || "";
+
+      if (!Child_ESN_Number) {
         console.warn("No Child_ESN_Number found — cannot fetch related data.");
         return;
-    }
-    
-    const loader = document.getElementById("loader");
-    if (loader) loader.style.display = "flex"; // Show loader
+      }
 
-    
-    /*const userConfig= {
-      appName: "service-management",
-      reportName: "All_Users",
-       criteria: `(Email == "${email}")` // fetch only records matching this email
-    }; 
+      const loader = document.getElementById("loader");
+      if (loader) loader.style.display = "flex"; // Show loader
 
-    await ZOHO.CREATOR.API.getAllRecords(userConfig)
-    .then(function(response) {
-        console.log("UserDetails records:", response.data[0].Role);
-    })
-    .catch(function(error) {
-        console.error("Error fetching records:", error);
-    });*/
 
-    const serviceRequestConfig = {
+      /*const userConfig= {
+        appName: "service-management",
+        reportName: "All_Users",
+         criteria: `(Email == "${email}")` // fetch only records matching this email
+      }; 
+  
+      await ZOHO.CREATOR.API.getAllRecords(userConfig)
+      .then(function(response) {
+          console.log("UserDetails records:", response.data[0].Role);
+      })
+      .catch(function(error) {
+          console.error("Error fetching records:", error);
+      });*/
+
+      const serviceRequestConfig = {
         appName: "service-management",
         // reportName: "All_Service_Requests",
         reportName: "My_Service_Request",
-    };
+      };
 
-    await ZOHO.CREATOR.API.getAllRecords(serviceRequestConfig).then(function(response) {
+      await ZOHO.CREATOR.API.getAllRecords(serviceRequestConfig).then(function (response) {
 
         if (!response || !Array.isArray(response.data)) {
-            console.error("Invalid Service Request data:", response);
-            return;
+          console.error("Invalid Service Request data:", response);
+          return;
         }
 
         const records = response.data || [];
@@ -895,818 +901,818 @@ ZOHO.CREATOR.init().then( async function() {
         const currentYear = now.getFullYear(); // e.g., 2025
 
         let filtered = records.filter(record => {
-            const matchesChild = Child_ESN_Number 
-                ? record.Child_ESN_Number?.display_value === Child_ESN_Number 
-                : true;
+          const matchesChild = Child_ESN_Number
+            ? record.Child_ESN_Number?.display_value === Child_ESN_Number
+            : true;
 
-            // Extract Due_Date
-            const dueDateStr = record.Due_Date; // e.g., "July 2026"
-            let matchesMonth = true;
-            if (dueDateStr) {
-                const [monthStr, yearStr] = dueDateStr.split(" "); // ["July", "2026"]
-                matchesMonth = monthStr === currentMonth && parseInt(yearStr) === currentYear;
-            }
+          // Extract Due_Date
+          const dueDateStr = record.Due_Date; // e.g., "July 2026"
+          let matchesMonth = true;
+          if (dueDateStr) {
+            const [monthStr, yearStr] = dueDateStr.split(" "); // ["July", "2026"]
+            matchesMonth = monthStr === currentMonth && parseInt(yearStr) === currentYear;
+          }
 
-            return matchesChild && matchesMonth;
+          return matchesChild && matchesMonth;
         });
-        console.log("filtered record",filtered);
+        console.log("filtered record", filtered);
         document.getElementById("Monthly_Count").innerText = filtered.length;
       });
 
       // === Fetch ESN Details ===
-    const config = {
+      const config = {
         appName: "service-management",
         // reportName: "All_ESN",
         reportName: "My_ESN",
         criteria: '(Child_ESN_Number == "' + Child_ESN_Number + '")'
-    };
+      };
 
-    await ZOHO.CREATOR.API.getAllRecords(config)
+      await ZOHO.CREATOR.API.getAllRecords(config)
         .then(function (response) {
 
-            if (!response || !Array.isArray(response.data)) {
-                console.error("❌ Invalid All_ESN response:", response);
-                return;
-            }
-
-            const records = response.data || [];
-            console.log("Fetched records:", records);
-
-            const container = document.getElementById("dataContainer");
-            container.innerHTML = ""; // clear existing cards
-            
-
-            let count = 0;
-
-            records.forEach(record => {
-                const card = document.createElement("div");
-                card.className = "system-card";
-
-                // APS Number
-                const aps = document.createElement("div");
-                aps.className = "label";
-                aps.innerText = "APS Number: " + record.APS_PS_Parking_Number;
-
-                // Parent ESN Number
-                const parentESN = document.createElement("div");
-                parentESN.className = "label";
-                parentESN.innerText = "Parent ESN: " + record.Parent_ESN_Number;
-
-                // Child ESN Number
-                const childESN = document.createElement("div");
-                childESN.className = "label";
-                childESN.innerText = "Child ESN: " + record.Child_ESN_Number;
-
-                // IRN Number
-                const irn = document.createElement("div");
-                irn.className = "label";
-                irn.innerText = "IRN No: " + record.IRN_Number;
-
-                // Status
-                const status = document.createElement("div");
-                status.className = "label";
-                status.innerHTML = `ESN Status: <strong>${record.ESN_Status || "-"}</strong>`;
-
-                // Section title
-                const table_name = document.createElement("h3");
-                table_name.innerText = "System Details";
-                table_name.style.marginTop = "15px";
-                table_name.style.marginBottom = "10px";
-                table_name.style.color = "#333";
-
-              
-                // Table
-                const table = document.createElement("table");
-                table.className = "system-table";
-                table.style.width = "100%";
-                table.style.borderCollapse = "collapse";
-                table.border = "1";
-
-                // Table header
-                const headerRow = document.createElement("tr");
-                const headers = [
-                    "Platform Number",
-                    "Cylinder Number",
-                    "Power Pack Number",
-                    "Chain Length",
-                    "WOHR Value",
-                    "Magnet Assembly",
-                    "PLC Version"
-                ];
-                headers.forEach(text => {
-                    const th = document.createElement("th");
-                    th.innerText = text;
-                    th.style.border = "1px solid #ccc";
-                    th.style.padding = "8px";
-                    th.style.backgroundColor = "#f2f2f2";
-                    headerRow.appendChild(th);
-                });
-                table.appendChild(headerRow);
-
-
-                card.appendChild(aps);
-                card.appendChild(parentESN);
-                card.appendChild(childESN);
-                card.appendChild(irn);
-                card.appendChild(status);
-                card.appendChild(table_name);
-
-                // System Details
-               const systemDetails = Array.isArray(record.System_Details)? record.System_Details: [];
-
-                if (systemDetails.length > 0) {
-                    systemDetails.forEach(systemRowObj => {
-                        const systemRow = systemRowObj.display_value; // e.g. "System1,TypeA,100,IRN123"
-                        const fieldsArray = systemRow.split("*/*");
-
-                        const row = document.createElement("tr");
-
-                        const addCell = (val) => {
-                            const td = document.createElement("td");
-                            td.innerText = val || "-";
-                            td.style.border = "1px solid #ccc";
-                            td.style.padding = "6px";
-                            return td;
-                        };
-
-                        row.appendChild(addCell(fieldsArray[0])); // Platform Number
-                        row.appendChild(addCell(fieldsArray[1])); // Cylinder Number
-                        row.appendChild(addCell(fieldsArray[2])); // Power Pack Number
-                        row.appendChild(addCell(fieldsArray[3])); // Chain Length
-                        row.appendChild(addCell(fieldsArray[4])); // WOHR Valve
-                        row.appendChild(addCell(fieldsArray[5])); // Magnet Assembly
-                        row.appendChild(addCell(fieldsArray[6])); // PLC Version
-
-                        table.appendChild(row);
-                    });
-
-                    card.appendChild(table); 
-                } else {
-                    // Warning message (default prepared, only show if no data)
-                  const warningMsg = document.createElement("div");
-                  warningMsg.innerText = "System Details are not available you want to add new";
-                  warningMsg.style.color = "red";
-                  warningMsg.style.fontWeight = "bold";
-                  warningMsg.style.margin = "10px 0";
-                  card.appendChild(warningMsg); 
-                }
-
-                // Add New button
-                const button = document.createElement("button");
-                button.className = "action_btn"
-                button.innerText = "Add New";
-                button.style.padding = "8px 12px";
-                button.style.backgroundColor = "#0078d7";
-                button.style.color = "#fff";
-                button.style.border = "none";
-                button.style.borderRadius = "5px";
-                button.style.cursor = "pointer";
-                // Check Approval_Status before enabling
-                const approvalStatus = record.Approval_Status?.display_value || record.Approval_Status || "";
-
-                if (approvalStatus === "Pending" || approvalStatus ==="Rejected") {
-                  button.disabled = true;
-                  button.style.backgroundColor = "#ccc";
-                  button.style.cursor = "not-allowed";
-                  button.title = "Disabled: Approval is still pending";
-                } else {
-                  button.disabled = false;
-                  button.onclick = function () {
-                    document.getElementById("child_esn").value = record.Child_ESN_Number || "";
-                    document.getElementById("esn_number").value = record.ID || "";
-
-                    // Show modal
-                    document.getElementById("formModal").style.display = "flex";
-                  };
-                }
-
-                card.appendChild(button);
-                container.appendChild(card);
-            });
-
-            document.getElementById("System_Form_count").innerText = count; // update count on button
-        })
-        .catch(function (error) {
-            console.error("Error fetching records:", error);
-        })
-         .finally(function() {
-        loader.style.display = "none"; // Hide loader once done
-    });
-})
-
-
-async function showSystemDetails() {
-    if (!creatorInitialized) {
-        console.error("Creator not initialized yet!");
-        return;
-    }
-
-    const params = ZOHO.CREATOR.UTIL.getQueryParams();
-    const Child_ESN_Number = params["Child_ESN_Number"] || "";
-    const Status = params["Status"] || "";
-
-    if (!Child_ESN_Number) {
-        console.warn("No Child_ESN_Number found in URL params — skipping data fetch.");
-        return;
-    }
-
-     const loader = document.getElementById("loader");
-     if (loader) loader.style.display = "flex"; // Show loader
-
-    const serviceRequestConfig = {
-        appName: "service-management",
-        // reportName: "All_Service_Requests",
-        reportName: "My_Service_Request",
-    };
-     try {
-    await ZOHO.CREATOR.API.getAllRecords(serviceRequestConfig).then(function(response) {
-
-      if (!response || !Array.isArray(response.data)) {
-            console.error("Invalid service request data:", response);
-            return;
-        }
-        const records = response.data || [];
-        // Get current month and year
-        const now = new Date();
-        const currentMonth = now.toLocaleString("default", { month: "long" }); // e.g., "October"
-        const currentYear = now.getFullYear(); // e.g., 2025
-
-        let filtered = records.filter(record => {
-            const matchesChild = Child_ESN_Number 
-                ? record.Child_ESN_Number?.display_value === Child_ESN_Number 
-                : true;
-
-            // Extract Due_Date
-            const dueDateStr = record.Due_Date; // e.g., "July 2026"
-            let matchesMonth = true;
-            if (dueDateStr) {
-                const [monthStr, yearStr] = dueDateStr.split(" "); // ["July", "2026"]
-                matchesMonth = monthStr === currentMonth && parseInt(yearStr) === currentYear;
-            }
-
-            return matchesChild && matchesMonth;
-        });
-        console.log("filtered record",filtered);
-        const monthlyCount = document.getElementById("Monthly_Count");
-        if (monthlyCount) monthlyCount.innerText = filtered.length;
-      }); 
-    } catch (error) {
-        console.error("Error fetching service requests:", error);
-    }
-    const config = {
-        appName: "service-management",
-        // reportName: "All_ESN",
-        reportName: "My_ESN",
-        criteria: '(Child_ESN_Number == "' + Child_ESN_Number + '")'
-    };
-
-    
-    await ZOHO.CREATOR.API.getAllRecords(config)
-        .then(function (response) {
           if (!response || !Array.isArray(response.data)) {
-            console.error("Invalid All_ESN data:", response);
+            console.error("❌ Invalid All_ESN response:", response);
             return;
-        }
-            const records = response.data;
-            console.log("Fetched records:", records);
+          }
 
-            const container = document.getElementById("dataContainer");
-            container.innerHTML = ""; // clear existing cards
+          const records = response.data || [];
+          console.log("Fetched records:", records);
 
-            let count = 0;
-
-            records.forEach(record => {
-                const card = document.createElement("div");
-                card.className = "system-card";
-
-                // APS Number
-                const aps = document.createElement("div");
-                aps.className = "label";
-                aps.innerText = "APS Number: " + record.APS_PS_Parking_Number;
-
-                // Parent ESN Number
-                const parentESN = document.createElement("div");
-                parentESN.className = "label";
-                parentESN.innerText = "Parent ESN: " + record.Parent_ESN_Number;
-
-                // Child ESN Number
-                const childESN = document.createElement("div");
-                childESN.className = "label";
-                childESN.innerText = "Child ESN: " + record.Child_ESN_Number;
-
-                // IRN Number
-                const irn = document.createElement("div");
-                irn.className = "label";
-                irn.innerText = "IRN No: " + record.IRN_Number;
-
-                // Status
-                const status = document.createElement("div");
-                status.className = "label";
-                status.innerHTML = `ESN Status: <strong>${record.ESN_Status || "-"}</strong>`;
-
-                // Section title
-                const table_name = document.createElement("h3");
-                table_name.innerText = "System Details";
-                table_name.style.marginTop = "15px";
-                table_name.style.marginBottom = "10px";
-                table_name.style.color = "#333";
-
-              
-                // Table
-                const table = document.createElement("table");
-                table.className = "system-table";
-                table.style.width = "100%";
-                table.style.borderCollapse = "collapse";
-                table.border = "1";
-
-                // Table header
-                const headerRow = document.createElement("tr");
-                const headers = [
-                    "Platform Number",
-                    "Cylinder Number",
-                    "Power Pack Number",
-                    "Chain Length",
-                    "WOHR Value",
-                    "Magnet Assembly",
-                    "PLC Version"
-                ];
-                headers.forEach(text => {
-                    const th = document.createElement("th");
-                    th.innerText = text;
-                    th.style.border = "1px solid #ccc";
-                    th.style.padding = "8px";
-                    th.style.backgroundColor = "#f2f2f2";
-                    headerRow.appendChild(th);
-                });
-                table.appendChild(headerRow);
-                
-
-                card.appendChild(aps);
-                card.appendChild(parentESN);
-                card.appendChild(childESN);
-                card.appendChild(irn);
-                card.appendChild(status);
-                card.appendChild(table_name);
-
-                // System Details
-                const systemDetails = Array.isArray(record.System_Details) ? record.System_Details : [];
-
-                if (systemDetails.length > 0) {
-                    systemDetails.forEach(systemRowObj => {
-                        const systemRow = systemRowObj.display_value; // e.g. "System1,TypeA,100,IRN123"
-                        const fieldsArray = systemRow.split("*/*");
-
-                        const row = document.createElement("tr");
-
-                        const addCell = (val) => {
-                            const td = document.createElement("td");
-                            td.innerText = val || "-";
-                            td.style.border = "1px solid #ccc";
-                            td.style.padding = "6px";
-                            return td;
-                        };
-
-                        row.appendChild(addCell(fieldsArray[0])); // Platform Number
-                        row.appendChild(addCell(fieldsArray[1])); // Cylinder Number
-                        row.appendChild(addCell(fieldsArray[2])); // Power Pack Number
-                        row.appendChild(addCell(fieldsArray[3])); // Chain Length
-                        row.appendChild(addCell(fieldsArray[4])); // WOHR Valve
-                        row.appendChild(addCell(fieldsArray[5])); // Magnet Assembly
-                        row.appendChild(addCell(fieldsArray[6])); // PLC Version
-
-                        table.appendChild(row);
-                    });
-
-                    card.appendChild(table); 
-                } else {
-                    // Warning message (default prepared, only show if no data)
-                  const warningMsg = document.createElement("div");
-                  warningMsg.innerText = "System Details are not available you want to add new";
-                  warningMsg.style.color = "red";
-                  warningMsg.style.fontWeight = "bold";
-                  warningMsg.style.margin = "10px 0";
-                  card.appendChild(warningMsg); 
-                }
-
-                // Add New button
-                const button = document.createElement("button");
-                button.className = "action_btn"
-                button.innerText = "Add New";
-                button.style.padding = "8px 12px";
-                button.style.backgroundColor = "#0078d7";
-                button.style.color = "#fff";
-                button.style.border = "none";
-                button.style.borderRadius = "5px";
-                button.style.cursor = "pointer";
-                // Check Approval_Status before enabling
-                const approvalStatus = record.Approval_Status?.display_value || record.Approval_Status || "";
-
-                if (approvalStatus === "Pending" || approvalStatus ==="Rejected") {
-                  button.disabled = true;
-                  button.style.backgroundColor = "#ccc";
-                  button.style.cursor = "not-allowed";
-                  button.title = "Approval is still pending";
-                } else {
-                  button.disabled = false;
-                  button.onclick = function () {
-                    document.getElementById("child_esn").value = record.Child_ESN_Number || "";
-                    document.getElementById("esn_number").value = record.ID || "";
-
-                    // Show modal
-                    document.getElementById("formModal").style.display = "flex";
-                  };
-                }
-
-                card.appendChild(button);
-                container.appendChild(card);
-            });
-
-            document.getElementById("System_Form_count").innerText = count; // update count on button
-        }) 
-        .catch(function (error) {
-            console.error("Error fetching records:", error);
-        })
-         .finally(function() {
-        loader.style.display = "none"; // Hide loader once done
-    });
-}
+          const container = document.getElementById("dataContainer");
+          container.innerHTML = ""; // clear existing cards
 
 
+          let count = 0;
 
-//Customer Details
-async function showCustomerDetails() {
-    if (!creatorInitialized) {
-        console.error("Creator not initialized yet!");
-        return;
-    }
-
-    const params = ZOHO.CREATOR.UTIL.getQueryParams();
-    const Child_ESN_Number = params["Child_ESN_Number"] || "";
-
-    if (!Child_ESN_Number) {
-    console.warn("Child_ESN_Number not provided in query params");
-    alert("Invalid or missing ESN number — cannot fetch customer details.");
-    return;
-}
-     const loader = document.getElementById("loader");
-    loader.style.display = "flex"; // Show loader
-
-    const serviceRequestConfig = {
-        appName: "service-management",
-        // reportName: "All_Service_Requests",
-        reportName: "My_Service_Request",
-    };
-
-    await ZOHO.CREATOR.API.getAllRecords(serviceRequestConfig).then(function(response) {
-        if (!response || !response.data) {
-            console.error("Invalid response from All_Service_Requests");
-            alert("Failed to fetch service request data.");
-            loader.style.display = "none";
-            return;
-        }
-        const records = response.data || [];
-       // Get current month and year
-        const now = new Date();
-        const currentMonth = now.toLocaleString("default", { month: "long" }); // e.g., "October"
-        const currentYear = now.getFullYear(); // e.g., 2025
-
-        let filtered = records.filter(record => {
-            const matchesChild = Child_ESN_Number 
-                ? record.Child_ESN_Number?.display_value === Child_ESN_Number 
-                : true;
-
-            // Extract Due_Date
-            const dueDateStr = record.Due_Date  || ""; // e.g., "July 2026"
-            let matchesMonth = true;
-            if (dueDateStr) {
-                const [monthStr, yearStr] = dueDateStr.split(" "); // ["July", "2026"]
-                matchesMonth = monthStr === currentMonth && parseInt(yearStr) === currentYear;
-            }
-
-            return matchesChild && matchesMonth;
-        });
-        console.log("filtered record",filtered);
-        document.getElementById("Monthly_Count").innerText = filtered.length;
-      });
-
-    // First: Get ESN record to extract customer_master.id
-    const configESN = {
-        appName: "service-management",
-        // reportName: "All_ESN",
-        reportName: "My_ESN",
-        criteria: '(Child_ESN_Number == "' + Child_ESN_Number + '")'
-    };
-
-    await ZOHO.CREATOR.API.getAllRecords(configESN).then(async function(response) {
-        if (!response.data || response.data.length === 0) {
-            console.warn("No ESN record found");
-            return;
-        }
-
-        const esnRecord = response.data[0];
-        const customerId = esnRecord.Customer_Master.ID;  // 👈 your relation field
-
-        if (!customerId) {
-            console.warn("Customer ID not found in ESN record");
-            return;
-        }
-
-        // Second: Fetch Customer_Master record using ID
-        const configCustomer = {
-            appName: "service-management",
-            reportName: "All_Customers",
-            criteria: '(ID == ' + customerId + ')'
-        };
-
-       await ZOHO.CREATOR.API.getAllRecords(configCustomer).then(function(custResponse) {
-            const container = document.getElementById("dataContainer");
-            container.innerHTML = ""; // clear old cards
-
-            if (!custResponse.data || custResponse.data.length === 0) {
-                container.innerHTML = "<p>No customer details found</p>";
-                return;
-            }
-
-            const cust = custResponse.data[0];
-            console.log("Fetched customer details:", cust);
-            // Create a nice customer details card
+          records.forEach(record => {
             const card = document.createElement("div");
             card.className = "system-card";
-           
-            card.innerHTML = `
-                 <h2 style="font-size: 20px; font-weight: bold; color: #000000; margin-bottom: 10px;">Customer Details</h2>
-                <div class="label">Customer Name: <span class="value">${cust.Customer_Name || "-"}</span></div>
-                <div class="label">Email: <span class="value">${cust.Email || "-"}</span></div>
-                <div class="label">Phone: <span class="value">${cust.Phone_Number || "-"}</span></div>
-                <div class="label">Address: <span class="value">${cust.Billing_street+cust.Billing_city || "-"}</span></div>
-                <div class="label">City: <span class="value">${cust.Billing_city || "-"}</span></div>
-                <div class="label">State: <span class="value">${cust.Billing_state || "-"}</span></div>
-                <div class="label">ZIP: <span class="value">${cust.Billing_zip || "-"}</span></div>
-                <div class="label">Country: <span class="value">${cust.Billing_country || "-"}</span></div>
-            `;
-             //Add new button
+
+            // APS Number
+            const aps = document.createElement("div");
+            aps.className = "label";
+            aps.innerText = "APS Number: " + record.APS_PS_Parking_Number;
+
+            // Parent ESN Number
+            const parentESN = document.createElement("div");
+            parentESN.className = "label";
+            parentESN.innerText = "Parent ESN: " + record.Parent_ESN_Number;
+
+            // Child ESN Number
+            const childESN = document.createElement("div");
+            childESN.className = "label";
+            childESN.innerText = "Child ESN: " + record.Child_ESN_Number;
+
+            // IRN Number
+            const irn = document.createElement("div");
+            irn.className = "label";
+            irn.innerText = "IRN No: " + record.IRN_Number;
+
+            // Status
+            const status = document.createElement("div");
+            status.className = "label";
+            status.innerHTML = `ESN Status: <strong>${record.ESN_Status || "-"}</strong>`;
+
+            // Section title
+            const table_name = document.createElement("h3");
+            table_name.innerText = "System Details";
+            table_name.style.marginTop = "15px";
+            table_name.style.marginBottom = "10px";
+            table_name.style.color = "#333";
+
+
+            // Table
+            const table = document.createElement("table");
+            table.className = "system-table";
+            table.style.width = "100%";
+            table.style.borderCollapse = "collapse";
+            table.border = "1";
+
+            // Table header
+            const headerRow = document.createElement("tr");
+            const headers = [
+              "Platform Number",
+              "Cylinder Number",
+              "Power Pack Number",
+              "Chain Length",
+              "WOHR Value",
+              "Magnet Assembly",
+              "PLC Version"
+            ];
+            headers.forEach(text => {
+              const th = document.createElement("th");
+              th.innerText = text;
+              th.style.border = "1px solid #ccc";
+              th.style.padding = "8px";
+              th.style.backgroundColor = "#f2f2f2";
+              headerRow.appendChild(th);
+            });
+            table.appendChild(headerRow);
+
+
+            card.appendChild(aps);
+            card.appendChild(parentESN);
+            card.appendChild(childESN);
+            card.appendChild(irn);
+            card.appendChild(status);
+            card.appendChild(table_name);
+
+            // System Details
+            const systemDetails = Array.isArray(record.System_Details) ? record.System_Details : [];
+
+            if (systemDetails.length > 0) {
+              systemDetails.forEach(systemRowObj => {
+                const systemRow = systemRowObj.display_value; // e.g. "System1,TypeA,100,IRN123"
+                const fieldsArray = systemRow.split("*/*");
+
+                const row = document.createElement("tr");
+
+                const addCell = (val) => {
+                  const td = document.createElement("td");
+                  td.innerText = val || "-";
+                  td.style.border = "1px solid #ccc";
+                  td.style.padding = "6px";
+                  return td;
+                };
+
+                row.appendChild(addCell(fieldsArray[0])); // Platform Number
+                row.appendChild(addCell(fieldsArray[1])); // Cylinder Number
+                row.appendChild(addCell(fieldsArray[2])); // Power Pack Number
+                row.appendChild(addCell(fieldsArray[3])); // Chain Length
+                row.appendChild(addCell(fieldsArray[4])); // WOHR Valve
+                row.appendChild(addCell(fieldsArray[5])); // Magnet Assembly
+                row.appendChild(addCell(fieldsArray[6])); // PLC Version
+
+                table.appendChild(row);
+              });
+
+              card.appendChild(table);
+            } else {
+              // Warning message (default prepared, only show if no data)
+              const warningMsg = document.createElement("div");
+              warningMsg.innerText = "System Details are not available you want to add new";
+              warningMsg.style.color = "red";
+              warningMsg.style.fontWeight = "bold";
+              warningMsg.style.margin = "10px 0";
+              card.appendChild(warningMsg);
+            }
+
+            // Add New button
             const button = document.createElement("button");
             button.className = "action_btn"
-            button.innerText = "Edit";
+            button.innerText = "Add New";
             button.style.padding = "8px 12px";
             button.style.backgroundColor = "#0078d7";
             button.style.color = "#fff";
             button.style.border = "none";
             button.style.borderRadius = "5px";
             button.style.cursor = "pointer";
-            button.onclick = function() {
-      const url = `https://creatorapp.zoho.in/wohr_parking/service-management/#Form:System_Details_Form?Child_ESN_Number=${record.Child_ESN_Number}&record_ID=${record.ID}`;
-      window.open(url, '_blank');
-    };
+            // Check Approval_Status before enabling
+            const approvalStatus = record.Approval_Status?.display_value || record.Approval_Status || "";
+
+            if (approvalStatus === "Pending" || approvalStatus === "Rejected") {
+              button.disabled = true;
+              button.style.backgroundColor = "#ccc";
+              button.style.cursor = "not-allowed";
+              button.title = "Disabled: Approval is still pending";
+            } else {
+              button.disabled = false;
+              button.onclick = function () {
+                document.getElementById("child_esn").value = record.Child_ESN_Number || "";
+                document.getElementById("esn_number").value = record.ID || "";
+
+                // Show modal
+                document.getElementById("formModal").style.display = "flex";
+              };
+            }
+
             card.appendChild(button);
             container.appendChild(card);
-        }).catch(function(err) {
-            console.error("Error fetching customer details:", err);
+          });
+
+          document.getElementById("System_Form_count").innerText = count; // update count on button
+        })
+        .catch(function (error) {
+          console.error("Error fetching records:", error);
+        })
+        .finally(function () {
+          loader.style.display = "none"; // Hide loader once done
         });
+    })
 
-    }).catch(function(err) {
-        console.error("Error fetching ESN record:", err);
-    }).finally(function() {
-        loader.style.display = "none"; // Hide loader once done
-    });
-}
 
-//Product Information
-async function showProductDetails() {
-    if (!creatorInitialized) {
+    async function showSystemDetails() {
+      if (!creatorInitialized) {
         console.error("Creator not initialized yet!");
         return;
-    }
+      }
 
-    const params = ZOHO.CREATOR.UTIL.getQueryParams();
-    const Child_ESN_Number = params["Child_ESN_Number"] || "";
-    const Status = params["Status"] || "";
+      const params = ZOHO.CREATOR.UTIL.getQueryParams();
+      const Child_ESN_Number = params["Child_ESN_Number"] || "";
+      const Status = params["Status"] || "";
 
-     const loader = document.getElementById("loader");
-    loader.style.display = "flex"; // Show loader
+      if (!Child_ESN_Number) {
+        console.warn("No Child_ESN_Number found in URL params — skipping data fetch.");
+        return;
+      }
 
-    const config = {
+      const loader = document.getElementById("loader");
+      if (loader) loader.style.display = "flex"; // Show loader
+
+      const serviceRequestConfig = {
+        appName: "service-management",
+        // reportName: "All_Service_Requests",
+        reportName: "My_Service_Request",
+      };
+      try {
+        await ZOHO.CREATOR.API.getAllRecords(serviceRequestConfig).then(function (response) {
+
+          if (!response || !Array.isArray(response.data)) {
+            console.error("Invalid service request data:", response);
+            return;
+          }
+          const records = response.data || [];
+          // Get current month and year
+          const now = new Date();
+          const currentMonth = now.toLocaleString("default", { month: "long" }); // e.g., "October"
+          const currentYear = now.getFullYear(); // e.g., 2025
+
+          let filtered = records.filter(record => {
+            const matchesChild = Child_ESN_Number
+              ? record.Child_ESN_Number?.display_value === Child_ESN_Number
+              : true;
+
+            // Extract Due_Date
+            const dueDateStr = record.Due_Date; // e.g., "July 2026"
+            let matchesMonth = true;
+            if (dueDateStr) {
+              const [monthStr, yearStr] = dueDateStr.split(" "); // ["July", "2026"]
+              matchesMonth = monthStr === currentMonth && parseInt(yearStr) === currentYear;
+            }
+
+            return matchesChild && matchesMonth;
+          });
+          console.log("filtered record", filtered);
+          const monthlyCount = document.getElementById("Monthly_Count");
+          if (monthlyCount) monthlyCount.innerText = filtered.length;
+        });
+      } catch (error) {
+        console.error("Error fetching service requests:", error);
+      }
+      const config = {
         appName: "service-management",
         // reportName: "All_ESN",
         reportName: "My_ESN",
         criteria: '(Child_ESN_Number == "' + Child_ESN_Number + '")'
-    };
-
-    await ZOHO.CREATOR.API.getAllRecords(config)
-    .then(function(response) {
-        const records = response.data;
-        console.log("Fetched records:", records);
-        const id = records.ID;
-        
-        const container = document.getElementById("dataContainer");
-        container.innerHTML = ""; // clear existing cards
-
-        let count = 0;
-       records.forEach(record => {
-    const card = document.createElement("div");
-    card.className = "system-card";
-
-    
-    // Create table
-    const table_name = document.createElement("h3");
-    table_name.innerText = "Product Details";
-    table_name.style.marginTop = "15px";
-    table_name.style.marginBottom = "10px";
-    table_name.style.color = "#333";
-
-const table = document.createElement("table");
-table.className = "system-table";
-table.style.width = "100%";
-table.style.borderCollapse = "collapse";
-table.border = "1";
-
-// Create header row
-const headerRow = document.createElement("tr");
-const headers = ["Product", "Product Code", "Product Sub Family", "Quantity", "Description"];
-headers.forEach(text => {
-    const th = document.createElement("th");
-    th.innerText = text;
-    th.style.border = "1px solid #ccc";
-    th.style.padding = "8px";
-    th.style.backgroundColor = "#f2f2f2";
-    headerRow.appendChild(th);
-});
-
-table.appendChild(headerRow);
-
-// Loop through records and add rows
-records.forEach(record => {
-  const systemDetails = record.ESN_Product;
-  console.log("System Details:", systemDetails);
-  const id = systemDetails[0].ID;
-  const recordID = record.ID;
-  
-
-    const row = document.createElement("tr");
-  systemDetails.forEach(systemRowObj => {
-    const systemRow = systemRowObj.display_value; // "System1,TypeA,100,IRN123"
-    const fieldsArray = systemRow.split("*/*");
-
-    // Create a table row
-    const row = document.createElement("tr");
-
-    const productName = document.createElement("td");
-        productName.innerText = fieldsArray[0] || "-";
-        productName.style.border = "1px solid #ccc";
-        productName.style.padding = "6px";
-        productName.style.alignItems = "start";
-        row.appendChild(productName);
-
-        const productCode = document.createElement("td");
-        productCode.innerText = fieldsArray[1] || "-";
-        productCode.style.border = "1px solid #ccc";
-        productCode.style.padding = "6px";
-        productName.style.alignItems = "start";
-        row.appendChild(productCode);
-
-        const subFamily = document.createElement("td");
-        subFamily.innerText = fieldsArray[2] || "-";
-        subFamily.style.border = "1px solid #ccc";
-        subFamily.style.padding = "6px";
-        productName.style.alignItems = "start";
-        row.appendChild(subFamily);
-
-        const quantity = document.createElement("td");
-        quantity.innerText = fieldsArray[3] || "-";
-        quantity.style.border = "1px solid #ccc";
-        quantity.style.padding = "6px";
-        productName.style.alignItems = "start";
-        row.appendChild(quantity);
-
-        const description = document.createElement("td");
-        description.innerText = fieldsArray[4] || "-";
-        description.style.border = "1px solid #ccc";
-        description.style.padding = "6px";
-        productName.style.alignItems = "start";
-        row.appendChild(description);
-
-    
-
-    // Action Button
-    /*const actionCell = document.createElement("td");
-    const button = document.createElement("button");
-    button.innerText = "Add New";
-    button.style.padding = "6px 10px";
-    button.style.backgroundColor = "#0078d7";
-    button.style.color = "#fff";
-    button.style.border = "none";
-    button.style.borderRadius = "4px";
-    button.style.cursor = "pointer";
-
-    button.onclick = function() {
-        const url = `https://creator.zoho.com/premier-technologies/service-management/#Form:Service_Request_Details/Report_View:All_Service_Requests/Record_Edit?Child_ESN_Number=${record.Child_ESN_Number}`;
-        window.open(url, "_blank");
-    };
-
-    actionCell.appendChild(button);
-    actionCell.style.border = "1px solid #ccc";
-    actionCell.style.padding = "6px";
-    row.appendChild(actionCell);*/
-
-    // Append row to table
-    table.appendChild(row);
-  });
-});
-
-    // Append all fields to card
-    card.appendChild(table_name);
-    card.appendChild(table);
-    //card.appendChild(status);
-
-    container.appendChild(card);
-});
+      };
 
 
-        document.getElementById("System_Form_count").innerText = count; // update count on button
-    })
-    .catch(function(error){
-        console.error("Error fetching records:", error);
-    }) .finally(function() {
-        loader.style.display = "none"; // Hide loader once done
-    });
-}
-</script>
- <script>
-  // Search functionality
-/*function searchTable() {
-  const input = document.getElementById("tableSearch").value.toLowerCase();
-  const table = document.getElementById("dataTable");
-  const trs = table.tBodies[0].getElementsByTagName("tr");
-  for (let i = 0; i < trs.length; i++) {
-    let visible = false;
-    const tds = trs[i].getElementsByTagName("td");
-    for (let j = 0; j < tds.length; j++) {
-      if (tds[j].innerText.toLowerCase().includes(input)) {
-        visible = true;
-        break;
-      }
+      await ZOHO.CREATOR.API.getAllRecords(config)
+        .then(function (response) {
+          if (!response || !Array.isArray(response.data)) {
+            console.error("Invalid All_ESN data:", response);
+            return;
+          }
+          const records = response.data;
+          console.log("Fetched records:", records);
+
+          const container = document.getElementById("dataContainer");
+          container.innerHTML = ""; // clear existing cards
+
+          let count = 0;
+
+          records.forEach(record => {
+            const card = document.createElement("div");
+            card.className = "system-card";
+
+            // APS Number
+            const aps = document.createElement("div");
+            aps.className = "label";
+            aps.innerText = "APS Number: " + record.APS_PS_Parking_Number;
+
+            // Parent ESN Number
+            const parentESN = document.createElement("div");
+            parentESN.className = "label";
+            parentESN.innerText = "Parent ESN: " + record.Parent_ESN_Number;
+
+            // Child ESN Number
+            const childESN = document.createElement("div");
+            childESN.className = "label";
+            childESN.innerText = "Child ESN: " + record.Child_ESN_Number;
+
+            // IRN Number
+            const irn = document.createElement("div");
+            irn.className = "label";
+            irn.innerText = "IRN No: " + record.IRN_Number;
+
+            // Status
+            const status = document.createElement("div");
+            status.className = "label";
+            status.innerHTML = `ESN Status: <strong>${record.ESN_Status || "-"}</strong>`;
+
+            // Section title
+            const table_name = document.createElement("h3");
+            table_name.innerText = "System Details";
+            table_name.style.marginTop = "15px";
+            table_name.style.marginBottom = "10px";
+            table_name.style.color = "#333";
+
+
+            // Table
+            const table = document.createElement("table");
+            table.className = "system-table";
+            table.style.width = "100%";
+            table.style.borderCollapse = "collapse";
+            table.border = "1";
+
+            // Table header
+            const headerRow = document.createElement("tr");
+            const headers = [
+              "Platform Number",
+              "Cylinder Number",
+              "Power Pack Number",
+              "Chain Length",
+              "WOHR Value",
+              "Magnet Assembly",
+              "PLC Version"
+            ];
+            headers.forEach(text => {
+              const th = document.createElement("th");
+              th.innerText = text;
+              th.style.border = "1px solid #ccc";
+              th.style.padding = "8px";
+              th.style.backgroundColor = "#f2f2f2";
+              headerRow.appendChild(th);
+            });
+            table.appendChild(headerRow);
+
+
+            card.appendChild(aps);
+            card.appendChild(parentESN);
+            card.appendChild(childESN);
+            card.appendChild(irn);
+            card.appendChild(status);
+            card.appendChild(table_name);
+
+            // System Details
+            const systemDetails = Array.isArray(record.System_Details) ? record.System_Details : [];
+
+            if (systemDetails.length > 0) {
+              systemDetails.forEach(systemRowObj => {
+                const systemRow = systemRowObj.display_value; // e.g. "System1,TypeA,100,IRN123"
+                const fieldsArray = systemRow.split("*/*");
+
+                const row = document.createElement("tr");
+
+                const addCell = (val) => {
+                  const td = document.createElement("td");
+                  td.innerText = val || "-";
+                  td.style.border = "1px solid #ccc";
+                  td.style.padding = "6px";
+                  return td;
+                };
+
+                row.appendChild(addCell(fieldsArray[0])); // Platform Number
+                row.appendChild(addCell(fieldsArray[1])); // Cylinder Number
+                row.appendChild(addCell(fieldsArray[2])); // Power Pack Number
+                row.appendChild(addCell(fieldsArray[3])); // Chain Length
+                row.appendChild(addCell(fieldsArray[4])); // WOHR Valve
+                row.appendChild(addCell(fieldsArray[5])); // Magnet Assembly
+                row.appendChild(addCell(fieldsArray[6])); // PLC Version
+
+                table.appendChild(row);
+              });
+
+              card.appendChild(table);
+            } else {
+              // Warning message (default prepared, only show if no data)
+              const warningMsg = document.createElement("div");
+              warningMsg.innerText = "System Details are not available you want to add new";
+              warningMsg.style.color = "red";
+              warningMsg.style.fontWeight = "bold";
+              warningMsg.style.margin = "10px 0";
+              card.appendChild(warningMsg);
+            }
+
+            // Add New button
+            const button = document.createElement("button");
+            button.className = "action_btn"
+            button.innerText = "Add New";
+            button.style.padding = "8px 12px";
+            button.style.backgroundColor = "#0078d7";
+            button.style.color = "#fff";
+            button.style.border = "none";
+            button.style.borderRadius = "5px";
+            button.style.cursor = "pointer";
+            // Check Approval_Status before enabling
+            const approvalStatus = record.Approval_Status?.display_value || record.Approval_Status || "";
+
+            if (approvalStatus === "Pending" || approvalStatus === "Rejected") {
+              button.disabled = true;
+              button.style.backgroundColor = "#ccc";
+              button.style.cursor = "not-allowed";
+              button.title = "Approval is still pending";
+            } else {
+              button.disabled = false;
+              button.onclick = function () {
+                document.getElementById("child_esn").value = record.Child_ESN_Number || "";
+                document.getElementById("esn_number").value = record.ID || "";
+
+                // Show modal
+                document.getElementById("formModal").style.display = "flex";
+              };
+            }
+
+            card.appendChild(button);
+            container.appendChild(card);
+          });
+
+          document.getElementById("System_Form_count").innerText = count; // update count on button
+        })
+        .catch(function (error) {
+          console.error("Error fetching records:", error);
+        })
+        .finally(function () {
+          loader.style.display = "none"; // Hide loader once done
+        });
     }
-    trs[i].style.display = visible ? "" : "none";
-  }
-}*/
- function openForm() {
-    document.getElementById("formOverlay").style.display = "flex";
-    document.getElementById("popupBox").style.display = "block";
-  }
 
-  function closeForm() {
-    document.getElementById("formOverlay").style.display = "none";
-    document.getElementById("popupBox").style.display = "none";
-  }
-  
 
-function openDateRangePicker() {
-  document.getElementById('dateModal').style.display = 'flex';
-}
 
-function closeDateModal() {
-  document.getElementById('dateModal').style.display = 'none';
-}
+    //Customer Details
+    async function showCustomerDetails() {
+      if (!creatorInitialized) {
+        console.error("Creator not initialized yet!");
+        return;
+      }
 
-async function AllServices() { 
-    const params = ZOHO.CREATOR.UTIL.getQueryParams();
-    const Child_ESN_Number = params["Child_ESN_Number"] || "";
-    const Status = params["Status"] || "";
-    
-     var queryParams = ZOHO.CREATOR.UTIL.getInitParams();
-        console.log(queryParams);
-    let username = queryParams.scope;
-    const email = queryParams.loginUser;
-        console.log("Logged in user:",email);
+      const params = ZOHO.CREATOR.UTIL.getQueryParams();
+      const Child_ESN_Number = params["Child_ESN_Number"] || "";
+
+      if (!Child_ESN_Number) {
+        console.warn("Child_ESN_Number not provided in query params");
+        alert("Invalid or missing ESN number — cannot fetch customer details.");
+        return;
+      }
+      const loader = document.getElementById("loader");
+      loader.style.display = "flex"; // Show loader
+
+      const serviceRequestConfig = {
+        appName: "service-management",
+        // reportName: "All_Service_Requests",
+        reportName: "My_Service_Request",
+      };
+
+      await ZOHO.CREATOR.API.getAllRecords(serviceRequestConfig).then(function (response) {
+        if (!response || !response.data) {
+          console.error("Invalid response from All_Service_Requests");
+          alert("Failed to fetch service request data.");
+          loader.style.display = "none";
+          return;
+        }
+        const records = response.data || [];
+        // Get current month and year
+        const now = new Date();
+        const currentMonth = now.toLocaleString("default", { month: "long" }); // e.g., "October"
+        const currentYear = now.getFullYear(); // e.g., 2025
+
+        let filtered = records.filter(record => {
+          const matchesChild = Child_ESN_Number
+            ? record.Child_ESN_Number?.display_value === Child_ESN_Number
+            : true;
+
+          // Extract Due_Date
+          const dueDateStr = record.Due_Date || ""; // e.g., "July 2026"
+          let matchesMonth = true;
+          if (dueDateStr) {
+            const [monthStr, yearStr] = dueDateStr.split(" "); // ["July", "2026"]
+            matchesMonth = monthStr === currentMonth && parseInt(yearStr) === currentYear;
+          }
+
+          return matchesChild && matchesMonth;
+        });
+        console.log("filtered record", filtered);
+        document.getElementById("Monthly_Count").innerText = filtered.length;
+      });
+
+      // First: Get ESN record to extract customer_master.id
+      const configESN = {
+        appName: "service-management",
+        // reportName: "All_ESN",
+        reportName: "My_ESN",
+        criteria: '(Child_ESN_Number == "' + Child_ESN_Number + '")'
+      };
+
+      await ZOHO.CREATOR.API.getAllRecords(configESN).then(async function (response) {
+        if (!response.data || response.data.length === 0) {
+          console.warn("No ESN record found");
+          return;
+        }
+
+        const esnRecord = response.data[0];
+        const customerId = esnRecord.Customer_Master.ID;  // 👈 your relation field
+
+        if (!customerId) {
+          console.warn("Customer ID not found in ESN record");
+          return;
+        }
+
+        // Second: Fetch Customer_Master record using ID
+        const configCustomer = {
+          appName: "service-management",
+          reportName: "All_Customers",
+          criteria: '(ID == ' + customerId + ')'
+        };
+
+        await ZOHO.CREATOR.API.getAllRecords(configCustomer).then(function (custResponse) {
+          const container = document.getElementById("dataContainer");
+          container.innerHTML = ""; // clear old cards
+
+          if (!custResponse.data || custResponse.data.length === 0) {
+            container.innerHTML = "<p>No customer details found</p>";
+            return;
+          }
+
+          const cust = custResponse.data[0];
+          console.log("Fetched customer details:", cust);
+          // Create a nice customer details card
+          const card = document.createElement("div");
+          card.className = "system-card";
+
+          card.innerHTML = `
+                 <h2 style="font-size: 20px; font-weight: bold; color: #000000; margin-bottom: 10px;">Customer Details</h2>
+                <div class="label">Customer Name: <span class="value">${cust.Customer_Name || "-"}</span></div>
+                <div class="label">Email: <span class="value">${cust.Email || "-"}</span></div>
+                <div class="label">Phone: <span class="value">${cust.Phone_Number || "-"}</span></div>
+                <div class="label">Address: <span class="value">${cust.Billing_street + cust.Billing_city || "-"}</span></div>
+                <div class="label">City: <span class="value">${cust.Billing_city || "-"}</span></div>
+                <div class="label">State: <span class="value">${cust.Billing_state || "-"}</span></div>
+                <div class="label">ZIP: <span class="value">${cust.Billing_zip || "-"}</span></div>
+                <div class="label">Country: <span class="value">${cust.Billing_country || "-"}</span></div>
+            `;
+          //Add new button
+          const button = document.createElement("button");
+          button.className = "action_btn"
+          button.innerText = "Edit";
+          button.style.padding = "8px 12px";
+          button.style.backgroundColor = "#0078d7";
+          button.style.color = "#fff";
+          button.style.border = "none";
+          button.style.borderRadius = "5px";
+          button.style.cursor = "pointer";
+          button.onclick = function () {
+            const url = `https://creatorapp.zoho.in/wohr_parking/service-management/#Form:System_Details_Form?Child_ESN_Number=${record.Child_ESN_Number}&record_ID=${record.ID}`;
+            window.open(url, '_blank');
+          };
+          card.appendChild(button);
+          container.appendChild(card);
+        }).catch(function (err) {
+          console.error("Error fetching customer details:", err);
+        });
+
+      }).catch(function (err) {
+        console.error("Error fetching ESN record:", err);
+      }).finally(function () {
+        loader.style.display = "none"; // Hide loader once done
+      });
+    }
+
+    //Product Information
+    async function showProductDetails() {
+      if (!creatorInitialized) {
+        console.error("Creator not initialized yet!");
+        return;
+      }
+
+      const params = ZOHO.CREATOR.UTIL.getQueryParams();
+      const Child_ESN_Number = params["Child_ESN_Number"] || "";
+      const Status = params["Status"] || "";
+
+      const loader = document.getElementById("loader");
+      loader.style.display = "flex"; // Show loader
+
+      const config = {
+        appName: "service-management",
+        // reportName: "All_ESN",
+        reportName: "My_ESN",
+        criteria: '(Child_ESN_Number == "' + Child_ESN_Number + '")'
+      };
+
+      await ZOHO.CREATOR.API.getAllRecords(config)
+        .then(function (response) {
+          const records = response.data;
+          console.log("Fetched records:", records);
+          const id = records.ID;
+
+          const container = document.getElementById("dataContainer");
+          container.innerHTML = ""; // clear existing cards
+
+          let count = 0;
+          records.forEach(record => {
+            const card = document.createElement("div");
+            card.className = "system-card";
+
+
+            // Create table
+            const table_name = document.createElement("h3");
+            table_name.innerText = "Product Details";
+            table_name.style.marginTop = "15px";
+            table_name.style.marginBottom = "10px";
+            table_name.style.color = "#333";
+
+            const table = document.createElement("table");
+            table.className = "system-table";
+            table.style.width = "100%";
+            table.style.borderCollapse = "collapse";
+            table.border = "1";
+
+            // Create header row
+            const headerRow = document.createElement("tr");
+            const headers = ["Product", "Product Code", "Product Sub Family", "Quantity", "Description"];
+            headers.forEach(text => {
+              const th = document.createElement("th");
+              th.innerText = text;
+              th.style.border = "1px solid #ccc";
+              th.style.padding = "8px";
+              th.style.backgroundColor = "#f2f2f2";
+              headerRow.appendChild(th);
+            });
+
+            table.appendChild(headerRow);
+
+            // Loop through records and add rows
+            records.forEach(record => {
+              const systemDetails = record.ESN_Product;
+              console.log("System Details:", systemDetails);
+              const id = systemDetails[0].ID;
+              const recordID = record.ID;
+
+
+              const row = document.createElement("tr");
+              systemDetails.forEach(systemRowObj => {
+                const systemRow = systemRowObj.display_value; // "System1,TypeA,100,IRN123"
+                const fieldsArray = systemRow.split("*/*");
+
+                // Create a table row
+                const row = document.createElement("tr");
+
+                const productName = document.createElement("td");
+                productName.innerText = fieldsArray[0] || "-";
+                productName.style.border = "1px solid #ccc";
+                productName.style.padding = "6px";
+                productName.style.alignItems = "start";
+                row.appendChild(productName);
+
+                const productCode = document.createElement("td");
+                productCode.innerText = fieldsArray[1] || "-";
+                productCode.style.border = "1px solid #ccc";
+                productCode.style.padding = "6px";
+                productName.style.alignItems = "start";
+                row.appendChild(productCode);
+
+                const subFamily = document.createElement("td");
+                subFamily.innerText = fieldsArray[2] || "-";
+                subFamily.style.border = "1px solid #ccc";
+                subFamily.style.padding = "6px";
+                productName.style.alignItems = "start";
+                row.appendChild(subFamily);
+
+                const quantity = document.createElement("td");
+                quantity.innerText = fieldsArray[3] || "-";
+                quantity.style.border = "1px solid #ccc";
+                quantity.style.padding = "6px";
+                productName.style.alignItems = "start";
+                row.appendChild(quantity);
+
+                const description = document.createElement("td");
+                description.innerText = fieldsArray[4] || "-";
+                description.style.border = "1px solid #ccc";
+                description.style.padding = "6px";
+                productName.style.alignItems = "start";
+                row.appendChild(description);
+
+
+
+                // Action Button
+                /*const actionCell = document.createElement("td");
+                const button = document.createElement("button");
+                button.innerText = "Add New";
+                button.style.padding = "6px 10px";
+                button.style.backgroundColor = "#0078d7";
+                button.style.color = "#fff";
+                button.style.border = "none";
+                button.style.borderRadius = "4px";
+                button.style.cursor = "pointer";
+            
+                button.onclick = function() {
+                    const url = `https://creator.zoho.com/premier-technologies/service-management/#Form:Service_Request_Details/Report_View:All_Service_Requests/Record_Edit?Child_ESN_Number=${record.Child_ESN_Number}`;
+                    window.open(url, "_blank");
+                };
+            
+                actionCell.appendChild(button);
+                actionCell.style.border = "1px solid #ccc";
+                actionCell.style.padding = "6px";
+                row.appendChild(actionCell);*/
+
+                // Append row to table
+                table.appendChild(row);
+              });
+            });
+
+            // Append all fields to card
+            card.appendChild(table_name);
+            card.appendChild(table);
+            //card.appendChild(status);
+
+            container.appendChild(card);
+          });
+
+
+          document.getElementById("System_Form_count").innerText = count; // update count on button
+        })
+        .catch(function (error) {
+          console.error("Error fetching records:", error);
+        }).finally(function () {
+          loader.style.display = "none"; // Hide loader once done
+        });
+    }
+  </script>
+  <script>
+    // Search functionality
+    /*function searchTable() {
+      const input = document.getElementById("tableSearch").value.toLowerCase();
+      const table = document.getElementById("dataTable");
+      const trs = table.tBodies[0].getElementsByTagName("tr");
+      for (let i = 0; i < trs.length; i++) {
+        let visible = false;
+        const tds = trs[i].getElementsByTagName("td");
+        for (let j = 0; j < tds.length; j++) {
+          if (tds[j].innerText.toLowerCase().includes(input)) {
+            visible = true;
+            break;
+          }
+        }
+        trs[i].style.display = visible ? "" : "none";
+      }
+    }*/
+    function openForm() {
+      document.getElementById("formOverlay").style.display = "flex";
+      document.getElementById("popupBox").style.display = "block";
+    }
+
+    function closeForm() {
+      document.getElementById("formOverlay").style.display = "none";
+      document.getElementById("popupBox").style.display = "none";
+    }
+
+
+    function openDateRangePicker() {
+      document.getElementById('dateModal').style.display = 'flex';
+    }
+
+    function closeDateModal() {
+      document.getElementById('dateModal').style.display = 'none';
+    }
+
+    async function AllServices() {
+      const params = ZOHO.CREATOR.UTIL.getQueryParams();
+      const Child_ESN_Number = params["Child_ESN_Number"] || "";
+      const Status = params["Status"] || "";
+
+      var queryParams = ZOHO.CREATOR.UTIL.getInitParams();
+      console.log(queryParams);
+      let username = queryParams.scope;
+      const email = queryParams.loginUser;
+      console.log("Logged in user:", email);
 
       const RoleConfig = {
-          appName: "service-management",
-          reportName: "All_Users",
-          criteria: `(Email == "${email}")` // fetch only records matching this email
+        appName: "service-management",
+        reportName: "All_Users",
+        criteria: `(Email == "${email}")` // fetch only records matching this email
       };
-      let user_role = ""; 
-     ZOHO.CREATOR.API.getAllRecords(RoleConfig).then(function(response) {
+      let user_role = "";
+      ZOHO.CREATOR.API.getAllRecords(RoleConfig).then(function (response) {
         console.log("user records:", response.data[0]);
         user_role = response.data[0].Role;
-    })
-    .catch(function(error) {
-        console.error("Error fetching records:", error);
-    });
-    
-     const loader = document.getElementById("loader");
-    loader.style.display = "flex"; // Show loader
+      })
+        .catch(function (error) {
+          console.error("Error fetching records:", error);
+        });
 
-    const container = document.getElementById("dataContainer");
-    container.innerHTML = "";  
-    container.style.display = "block";   
+      const loader = document.getElementById("loader");
+      loader.style.display = "flex"; // Show loader
 
-    const card = document.createElement("div");
-    card.className = "system-card";
+      const container = document.getElementById("dataContainer");
+      container.innerHTML = "";
+      container.style.display = "block";
 
-    // Controls
-    const controlsDiv = document.createElement("div");
-    controlsDiv.style.margin = "10px 0";
-    controlsDiv.innerHTML = `
+      const card = document.createElement("div");
+      card.className = "system-card";
+
+      // Controls
+      const controlsDiv = document.createElement("div");
+      controlsDiv.style.margin = "10px 0";
+      controlsDiv.innerHTML = `
         <label>Status: </label>
         <select id="statusFilter" style="margin-right:10px;">
             <option value="ALL">All</option>
@@ -1722,17 +1728,17 @@ async function AllServices() {
             <option value="50">50 rows</option>
         </select>
     `;
-    card.appendChild(controlsDiv);
-        
-    // Table
-    const table = document.createElement("table");
-    table.className = "system-table";
-    table.style.width = "100%";
-    table.style.borderCollapse = "collapse";
+      card.appendChild(controlsDiv);
 
-    const thead = document.createElement("thead");
-  
-    thead.innerHTML = `
+      // Table
+      const table = document.createElement("table");
+      table.className = "system-table";
+      table.style.width = "100%";
+      table.style.borderCollapse = "collapse";
+
+      const thead = document.createElement("thead");
+
+      thead.innerHTML = `
         <tr>
             <th>SR.No</th>
             <th>Status</th>
@@ -1743,30 +1749,30 @@ async function AllServices() {
             <th>Action</th>
         </tr>
     `;
-    table.appendChild(thead);
+      table.appendChild(thead);
 
-    const tbody = document.createElement("tbody");
-    table.appendChild(tbody);
-    card.appendChild(table);
-    container.appendChild(card);
+      const tbody = document.createElement("tbody");
+      table.appendChild(tbody);
+      card.appendChild(table);
+      container.appendChild(card);
 
-    // Pagination container
-    const paginationDiv = document.createElement("div");
-    paginationDiv.style.marginTop = "10px";
-    container.appendChild(paginationDiv);
+      // Pagination container
+      const paginationDiv = document.createElement("div");
+      paginationDiv.style.marginTop = "10px";
+      container.appendChild(paginationDiv);
 
-    // Popup Modal
-    const modal = document.createElement("div");
-    modal.id = "popupModal";
-    modal.style.display = "none";
-    modal.style.position = "fixed";
-    modal.style.top = "0";
-    modal.style.left = "0";
-    modal.style.width = "100%";
-    modal.style.height = "100%";
-    modal.style.backgroundColor = "rgba(0,0,0,0.6)";
-    modal.style.zIndex = "1000";
-    modal.innerHTML = `
+      // Popup Modal
+      const modal = document.createElement("div");
+      modal.id = "popupModal";
+      modal.style.display = "none";
+      modal.style.position = "fixed";
+      modal.style.top = "0";
+      modal.style.left = "0";
+      modal.style.width = "100%";
+      modal.style.height = "100%";
+      modal.style.backgroundColor = "rgba(0,0,0,0.6)";
+      modal.style.zIndex = "1000";
+      modal.innerHTML = `
   <style>
     /* Responsive layout for modal */
     @media (max-width: 600px) {
@@ -1868,13 +1874,13 @@ async function AllServices() {
   </div>
 `;
 
-    document.body.appendChild(modal);
-   
+      document.body.appendChild(modal);
+
       // Get All record 
-      let paging = [1,2,3,4,5,6,7,8,9,10];
+      let paging = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
       let allRecords = [];
       let requests = [];
-      
+
       for (let i = 0; i < paging.length; i++) {
         let config1 = {
           appName: "service-management",
@@ -1884,7 +1890,7 @@ async function AllServices() {
           perPage: 200,
         }
         requests.push(
-         await ZOHO.CREATOR.API.getAllRecords(config1)
+          await ZOHO.CREATOR.API.getAllRecords(config1)
             .then(function (response) {
               if (response && response.data) {
                 return response.data;
@@ -1907,113 +1913,113 @@ async function AllServices() {
             })
         );
       }
-  Promise.all(requests).then(function (results) {
-    // Flatten all records into one array
-    results.forEach(function (records) {
-      allRecords = allRecords.concat(records);
-    });
-    console.log('All ESN Records:', allRecords);
-  });
-    // Fetch records
-    const config = {
+      Promise.all(requests).then(function (results) {
+        // Flatten all records into one array
+        results.forEach(function (records) {
+          allRecords = allRecords.concat(records);
+        });
+        console.log('All ESN Records:', allRecords);
+      });
+      // Fetch records
+      const config = {
         appName: "service-management",
         // reportName: "All_Service_Requests",
         reportName: "My_Service_Request",
-       
-    };
 
-    await ZOHO.CREATOR.API.getAllRecords(config).then(async function(response) {
+      };
+
+      await ZOHO.CREATOR.API.getAllRecords(config).then(async function (response) {
         const records = response.data || [];
-       // Get current month and year
+        // Get current month and year
         const now = new Date();
         const currentMonth = now.toLocaleString("default", { month: "long" }); // e.g., "October"
         const currentYear = now.getFullYear(); // e.g., 2025
         let filtered = allRecords.filter(record => {
-            const matchesChild = Child_ESN_Number 
-                ? record.Child_ESN_Number?.display_value === Child_ESN_Number 
-                : true;
+          const matchesChild = Child_ESN_Number
+            ? record.Child_ESN_Number?.display_value === Child_ESN_Number
+            : true;
 
-            // Extract Due_Date
-            const dueDateStr = record.Due_Date; // e.g., "July 2026"
-            let matchesMonth = true;
-            if (dueDateStr) {
-                const [monthStr, yearStr] = dueDateStr.split(" "); // ["July", "2026"]
-                matchesMonth = monthStr === currentMonth && parseInt(yearStr) === currentYear;
-            }
+          // Extract Due_Date
+          const dueDateStr = record.Due_Date; // e.g., "July 2026"
+          let matchesMonth = true;
+          if (dueDateStr) {
+            const [monthStr, yearStr] = dueDateStr.split(" "); // ["July", "2026"]
+            matchesMonth = monthStr === currentMonth && parseInt(yearStr) === currentYear;
+          }
 
-            
-            return matchesChild && matchesMonth;
+
+          return matchesChild && matchesMonth;
         });
-        console.log("all service records",records);
-        console.log("filtered record",filtered);
+        console.log("all service records", records);
+        console.log("filtered record", filtered);
         document.getElementById("Monthly_Count").innerText = filtered.length;
 
         let currentPage = 1;
         let rowsPerPage = 10;
 
         function renderTable() {
-    const searchValue = document.getElementById("tableSearch").value.toLowerCase();
-    console.log("User Role:",user_role);
-    if (user_role === "Service Technician") {
-            document.getElementById("statusFilter").value = "Open";
-        }else{
-          document.getElementById("statusFilter").value = "Closed";
-        }
+          const searchValue = document.getElementById("tableSearch").value.toLowerCase();
+          console.log("User Role:", user_role);
+          /*if (user_role === "Service Technician") {
+                  document.getElementById("statusFilter").value = "Open";
+              }else{
+                document.getElementById("statusFilter").value = "Closed";
+              }*/
 
-    const selectedStatus = document.getElementById("statusFilter").value;
+          const selectedStatus = document.getElementById("statusFilter").value;
 
-    let filteredSearch = filtered.filter(r => {
-        const recordStatus = (r.Status?.display_value || r.Status || "").toLowerCase();
-        const statusValue = (selectedStatus || "").toLowerCase();
+          let filteredSearch = filtered.filter(r => {
+            const recordStatus = (r.Status?.display_value || r.Status || "").toLowerCase();
+            const statusValue = (selectedStatus || "").toLowerCase();
 
-        //  Show all if selectedStatus = "ALL" or empty
-        const statusMatch = (statusValue === "all" || statusValue === "" || recordStatus === statusValue);
+            //  Show all if selectedStatus = "ALL" or empty
+            const statusMatch = (statusValue === "all" || statusValue === "" || recordStatus === statusValue);
 
-        //  Combine all record values for search
-        let values = Object.keys(r).map(k => {
-            if (typeof r[k] === "object" && r[k]?.display_value) {
+            //  Combine all record values for search
+            let values = Object.keys(r).map(k => {
+              if (typeof r[k] === "object" && r[k]?.display_value) {
                 return r[k].display_value;
+              }
+              return r[k];
+            });
+
+            const searchMatch = values.some(val => (val + "").toLowerCase().includes(searchValue));
+
+            return statusMatch && searchMatch;
+          });
+
+          console.log("Filtered Records:", filteredSearch);
+
+          const start = (currentPage - 1) * rowsPerPage;
+          const end = start + rowsPerPage;
+          const paginatedData = filteredSearch.slice(start, end);
+
+          tbody.innerHTML = "";
+          paginatedData.forEach((record, index) => {
+            const tr = document.createElement("tr");
+
+            // Get current record status (case-insensitive)
+            const statusValue = (record.Status?.display_value || record.Status || "");
+            console.log(statusValue);
+            // Set background color based on status
+            let bgColor = "";
+            let textColor = "#000";
+            if (statusValue === "Work in Progress") {
+              bgColor = "#107c91";
+              textColor = "#fff";
+            } else if (statusValue === "Open") {
+              bgColor = "#ffeb3b";
+              textColor = "#000";
+            } else if (statusValue === "Closed") {
+              bgColor = "#4caf50";
+              textColor = "#fff";
             }
-            return r[k];
-        });
 
-        const searchMatch = values.some(val => (val + "").toLowerCase().includes(searchValue));
+            // Calculate serial number with pagination offset
+            const serialNo = (currentPage - 1) * rowsPerPage + index + 1;
 
-        return statusMatch && searchMatch;
-    });
-
-    console.log("Filtered Records:", filteredSearch);
-
-    const start = (currentPage - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    const paginatedData = filteredSearch.slice(start, end);
-
-    tbody.innerHTML = "";
-   paginatedData.forEach((record, index) => {
-    const tr = document.createElement("tr");
-
-    // Get current record status (case-insensitive)
-    const statusValue = (record.Status?.display_value || record.Status || "");
-    console.log(statusValue);
-    // Set background color based on status
-    let bgColor = "";
-    let textColor = "#000";
-    if (statusValue === "Work in Progress") {
-        bgColor = "#107c91";  
-        textColor = "#fff";
-    } else if (statusValue === "Open") {
-        bgColor = "#ffeb3b";  
-        textColor = "#000";
-    } else if (statusValue === "Closed") {
-        bgColor = "#4caf50";  
-        textColor = "#fff";
-    }
-
-    // Calculate serial number with pagination offset
-    const serialNo = (currentPage - 1) * rowsPerPage + index + 1;
-
-    // Build table row
-    tr.innerHTML = `
+            // Build table row
+            tr.innerHTML = `
         <td>${serialNo}</td>
         <td style="background-color:${bgColor}; color:${textColor}; font-weight:600; text-align:center; border-radius:4px;">
             ${record.Status?.display_value || record.Status || ""}
@@ -2024,302 +2030,304 @@ async function AllServices() {
         <td>${record.Route_Name?.display_value || record.Route_Name || ""}</td>
         <td>
   <button class="viewBtn" 
-    ${statusValue === "Open" || statusValue === "Work in Progress" 
-      ? "" 
-      : "disabled style='background:#ccc;cursor:not-allowed;'"
-    }>
+    ${statusValue === "Open" || statusValue === "Work in Progress"
+                ? ""
+                : "disabled style='background:#ccc;cursor:not-allowed;'"
+              }>
     <i class="fa-regular ${statusValue === "Closed" ? "fa-eye-slash" : "fa-eye"}"></i>
   </button>
 </td>
     `;
 
-    tbody.appendChild(tr);
+            tbody.appendChild(tr);
 
-    // Attach click event on "View" button
-    const viewBtn = tr.querySelector(".viewBtn"); 
-    if (statusValue === "Open" || statusValue === "Work in Progress") { 
-      viewBtn.onclick = () => { 
-        
-        modal.style.display = "flex"; 
-        document.getElementById("modalStatus").value = record.Status?.display_value || record.Status || "Open";         
-        document.getElementById("System_number").value = record.ID || ""; 
-        toggleModalSections(); 
-      }; 
-    }
-});
+            // Attach click event on "View" button
+            const viewBtn = tr.querySelector(".viewBtn");
+            if (statusValue === "Open" || statusValue === "Work in Progress") {
+              viewBtn.onclick = () => {
+
+                modal.style.display = "flex";
+                document.getElementById("modalStatus").value = record.Status?.display_value || record.Status || "Open";
+                document.getElementById("System_number").value = record.ID || "";
+                toggleModalSections();
+              };
+            }
+          });
 
 
-    const totalPages = Math.ceil(filteredSearch.length / rowsPerPage);
-    paginationDiv.innerHTML = "";
-    for (let i = 1; i <= totalPages; i++) {
-        const btn = document.createElement("button");
-        btn.innerText = i;
-        btn.style.margin = "0 3px";
-        btn.disabled = (i === currentPage);
-        btn.onclick = () => {
-            currentPage = i;
-            renderTable();
-        };
-        paginationDiv.appendChild(btn);
-    }
-}
+          const totalPages = Math.ceil(filteredSearch.length / rowsPerPage);
+          paginationDiv.innerHTML = "";
+          for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement("button");
+            btn.innerText = i;
+            btn.style.margin = "0 3px";
+            btn.disabled = (i === currentPage);
+            btn.onclick = () => {
+              currentPage = i;
+              renderTable();
+            };
+            paginationDiv.appendChild(btn);
+          }
+        }
 
 
         function toggleModalSections() {
-          
-            const status = document.getElementById("modalStatus").value;
-            console.log(status);
-            document.getElementById("wipSection").style.display = (status === "Work in Progress") ? "block" : "none";
-            document.getElementById("closedSection").style.display = (status === "Closed") ? "block" : "none";
+
+          const status = document.getElementById("modalStatus").value;
+          console.log(status);
+          document.getElementById("wipSection").style.display = (status === "Work in Progress") ? "block" : "none";
+          document.getElementById("closedSection").style.display = (status === "Closed") ? "block" : "none";
         }
 
         // Modal events
         document.getElementById("modalStatus").onchange = toggleModalSections;
         document.getElementById("cancelBtn").onclick = () => { modal.style.display = "none"; };
         document.getElementById("saveBtn").onclick = () => {
-          
 
-            let status = document.getElementById("modalStatus").value;
-            let data = { 
-              data:{
-                Status: status
-              } 
-            };
-            const id = document.getElementById("System_number").value.toString();
-            console.log(id,status);
-            if (status === "Work in Progress") {
-              data.data.Reason_For_Hold = document.getElementById("wipReason").value;
-              data.data.Material_Information = document.getElementById("wipMaterialInfo")?.value || "";
+
+          let status = document.getElementById("modalStatus").value;
+          let data = {
+            data: {
+              Status: status
             }
+          };
+          const id = document.getElementById("System_number").value.toString();
+          console.log(id, status);
+          if (status === "Work in Progress") {
+            data.data.Reason_For_Hold = document.getElementById("wipReason").value;
+            data.data.Material_Information = document.getElementById("wipMaterialInfo")?.value || "";
+          }
 
-            function formatDateDDMonYYYY(d) {
-              const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-              const dt = d instanceof Date ? d : new Date(d);
-              return `${String(dt.getDate()).padStart(2,'0')}-${months[dt.getMonth()]}-${dt.getFullYear()}`;
+          function formatDateDDMonYYYY(d) {
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            const dt = d instanceof Date ? d : new Date(d);
+            return `${String(dt.getDate()).padStart(2,'0')}-${months[dt.getMonth()]}-${dt.getFullYear()}`;
+          }
+
+
+
+          if (status === "Closed") {
+            console.log(document.getElementById("wipMaterialInfo").value);
+            console.log(document.getElementById("Vertical_Parts").checked);
+            // console.log(new Date().toISOString().split("T")[0]);
+            console.log(formatDateDDMonYYYY(new Date()));
+            data.data.Closed_By = username;
+            // data.data.Closed_Date = new Date().toISOString().split("T")[0];
+            data.data.Closed_Date = formatDateDDMonYYYY(new Date());
+            data.data.Material_Information = document.getElementById("wipMaterialInfo")?.value || "";
+            data.data.Button_Indicator = document.getElementById("Button_Indicator").checked;
+            data.data.Electrical_Parts = document.getElementById("Electrical_Parts").checked;
+            data.data.Horizontal_Parts = document.getElementById("Horizontal_Parts").checked;
+            data.data.Hydraulic_Parts = document.getElementById("Hydraulic_Parts").checked;
+            data.data.Platform_Leveling = document.getElementById("Platform_Leveling").checked;
+            data.data.Vertical_Parts = document.getElementById("Vertical_Parts").checked;
+          }
+          console.log("Save data", data);
+          modal.style.display = "none";
+          console.log("Save Data Id ", id);
+          let serviceUpdateConfig = {
+            appName: "service-management",
+            // reportName: "All_Service_Requests",   
+            reportName: "My_Service_Request",
+            id: id,
+            data: data
+          };
+
+          // Update the record
+          ZOHO.CREATOR.API.updateRecord(serviceUpdateConfig).then(function (response) {
+            console.log("Update response:", response);
+
+            if (response.code === 3000) {
+              window.location.reload();
+            } else {
+              alert("Error updating record: " + (response.message || "Unknown error"));
             }
+          });
 
-            if (status === "Closed") {
-              console.log(document.getElementById("wipMaterialInfo").value);
-              console.log(document.getElementById("Vertical_Parts").checked);
-              // console.log(new Date().toISOString().split("T")[0]);
-              console.log(formatDateDDMonYYYY(new Date()));
-              data.data.Closed_By = username;
-              // data.data.Closed_Date = new Date().toISOString().split("T")[0];
-              data.data.Closed_Date = formatDateDDMonYYYY(new Date());
-              data.data.Material_Information = document.getElementById("wipMaterialInfo")?.value || "";
-              data.data.Button_Indicator = document.getElementById("Button_Indicator").checked;
-              data.data.Electrical_Parts = document.getElementById("Electrical_Parts").checked;
-              data.data.Horizontal_Parts = document.getElementById("Horizontal_Parts").checked;
-              data.data.Hydraulic_Parts = document.getElementById("Hydraulic_Parts").checked;
-              data.data.Platform_Leveling = document.getElementById("Platform_Leveling").checked;  
-              data.data.Vertical_Parts = document.getElementById("Vertical_Parts").checked;
-            }
-            console.log("Save data", data);
-            modal.style.display = "none";
-            console.log("Save Data Id ",id);
-            let serviceUpdateConfig = {
-                appName: "service-management",        
-                // reportName: "All_Service_Requests",   
-                reportName: "My_Service_Request",   
-                id: id,                          
-                data: data                        
-            };
-            
-            // Update the record
-            ZOHO.CREATOR.API.updateRecord(serviceUpdateConfig).then(function(response) {
-                console.log("Update response:", response);
-
-                if (response.code === 3000) {
-                  window.location.reload();
-                } else {
-                    alert("Error updating record: " + (response.message || "Unknown error"));
-                }
-            });
-            
         };
 
         document.getElementById("rowsPerPage").onchange = (e) => {
-            rowsPerPage = parseInt(e.target.value);
-            currentPage = 1;
-            renderTable();
+          rowsPerPage = parseInt(e.target.value);
+          currentPage = 1;
+          renderTable();
         };
 
         document.getElementById("tableSearch").onkeyup = () => {
-            currentPage = 1;
-            renderTable();
+          currentPage = 1;
+          renderTable();
         };
 
         document.getElementById("statusFilter").onchange = () => {
-            currentPage = 1;
-            renderTable();
+          currentPage = 1;
+          renderTable();
         };
 
         if (user_role === "Service Technician") {
-            document.getElementById("statusFilter").value = "Open";
-        }else{
+          document.getElementById("statusFilter").value = "Open";
+        } else {
           document.getElementById("statusFilter").value = "Closed";
         }
 
         renderTable();
-    }).catch(function(error) {
+      }).catch(function (error) {
         console.error("Error fetching records:", error);
-    })
-    .finally(function() {
-        loader.style.display = "none"; // Hide loader once done
+      })
+        .finally(function () {
+          loader.style.display = "none"; // Hide loader once done
+        });
+    }
+
+
+
+    function openFormModal() {
+      document.getElementById("formModal").style.display = "flex";
+    }
+
+    // Close modal
+    document.getElementById("cancelForm").addEventListener("click", () => {
+      document.getElementById("formModal").style.display = "none";
     });
-}
 
+    // Handle form submit
+    document.getElementById("systemForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
 
+      const loader = document.getElementById("loader");
+      if (loader) loader.style.display = "flex"; // Show loader
 
-function openFormModal() {
-    document.getElementById("formModal").style.display = "flex";
-  }
+      const recordID = document.getElementById("esn_number").value.toString();
 
-  // Close modal
-  document.getElementById("cancelForm").addEventListener("click", () => {
-    document.getElementById("formModal").style.display = "none";
-  });
+      const newEntry = {
+        Platform_Number: document.getElementById("platform_number").value,
+        Cylender_Number: document.getElementById("cylinder_number").value,
+        Power_Pack_Number: document.getElementById("power_pack_number").value,
+        Chain_Length: document.getElementById("chain_length").value,
+        WOHR_Valve: document.getElementById("wohr_value").value,
+        Magnet_Assembly: document.getElementById("magnet_assembly").value,
+        PLC_Version: document.getElementById("plc_version").value
+      };
 
-  // Handle form submit
- document.getElementById("systemForm").addEventListener("submit", async function (e) {
-  e.preventDefault();
+      console.log("New Entry:", newEntry);
+      console.log("Record ID:", recordID);
 
-  const loader = document.getElementById("loader");
-  if (loader) loader.style.display = "flex"; // Show loader
+      try {
+        const SystemUpdateDetails = {
+          appName: "service-management",
+          // reportName: "All_ESN",
+          reportName: "My_ESN",
+          id: recordID
+        };
 
-  const recordID = document.getElementById("esn_number").value.toString();
+        const response = await ZOHO.CREATOR.API.getRecordById(SystemUpdateDetails);
+        console.log("SYSTEM DETAILS Record:", response);
 
-  const newEntry = {
-    Platform_Number: document.getElementById("platform_number").value,
-    Cylender_Number: document.getElementById("cylinder_number").value,
-    Power_Pack_Number: document.getElementById("power_pack_number").value,
-    Chain_Length: document.getElementById("chain_length").value,
-    WOHR_Valve: document.getElementById("wohr_value").value,
-    Magnet_Assembly: document.getElementById("magnet_assembly").value,
-    PLC_Version: document.getElementById("plc_version").value
-  };
-
-  console.log("New Entry:", newEntry);
-  console.log("Record ID:", recordID);
-
-  try {
-    const SystemUpdateDetails = {
-      appName: "service-management",
-      // reportName: "All_ESN",
-      reportName: "My_ESN",
-      id: recordID
-    };
-
-    const response = await ZOHO.CREATOR.API.getRecordById(SystemUpdateDetails);
-    console.log("Fetched Record:", response);
-
-    if (response.code !== 3000) {
-      alert("Error fetching record: " + (response.message || "Unknown error"));
-      return;
-    }
-
-    // ✅ Extract existing data
-    let systemDetails = response.data.System_Details || [];
-    let approvalStatus = response.data.Approval_Status || "";
-    console.log("Existing System_Details:", systemDetails);
-    console.log("Existing Approval Status:", approvalStatus);
-
-    let allSystemDetails = [];
-
-    // Convert each record into key-value pairs
-    if (systemDetails.length > 0) {
-      systemDetails.forEach(record => {
-        const labels = [
-          "Platform_Number",
-          "Cylender_Number",
-          "Power_Pack_Number",
-          "Chain_Length",
-          "WOHR_Valve",
-          "Magnet_Assembly",
-          "PLC_Version"
-        ];
-
-        const values = record.display_value.split("*/*").map(v => v.trim());
-        const formatted = labels.reduce((obj, label, index) => {
-          obj[label] = values[index] || "";
-          return obj;
-        }, {});
-        allSystemDetails.push(formatted);
-      });
-
-      // ✅ Update the *first existing entry* with new values
-      allSystemDetails.push(newEntry);
-
-       // ✅ Set approvalStatus = Pending after every save
-      const formData = {
-        data: {
-          ESN_Status : "Completed",
-          Approval_Status : "Pending",
-          System_Details: allSystemDetails
+        if (response.code !== 3000) {
+          alert("Error fetching record: " + (response.message || "Unknown error"));
+          return;
         }
-      };
 
-      const updateConfig = {
-        appName: "service-management",
-        // reportName: "All_ESN",
-        reportName: "My_ESN",
-        id: recordID,
-        data: formData
-      };
+        // ✅ Extract existing data
+        let systemDetails = response.data.System_Details || [];
+        let approvalStatus = response.data.Approval_Status || "";
+        console.log("Existing System_Details:", systemDetails);
+        console.log("Existing Approval Status:", approvalStatus);
 
-      const updateResponse = await ZOHO.CREATOR.API.updateRecord(updateConfig);
-      console.log("Update response:", updateResponse);
+        let allSystemDetails = [];
 
-      if (updateResponse.code === 3000) {
-        window.location.reload();
-      } else {
-        alert("Error updating record: " + (updateResponse.message || "Unknown error"));
-      }
-    } else {
-      // ✅ If no system details exist, just add new entry
-      allSystemDetails.push(newEntry);
+        // Convert each record into key-value pairs
+        if (systemDetails.length > 0) {
+          systemDetails.forEach(record => {
+            const labels = [
+              "Platform_Number",
+              "Cylender_Number",
+              "Power_Pack_Number",
+              "Chain_Length",
+              "WOHR_Valve",
+              "Magnet_Assembly",
+              "PLC_Version"
+            ];
 
-      // ✅ Set approvalStatus = Pending after every save
-      const formData = {
-        data: {
-          ESN_Status : "Completed",
-          System_Details: allSystemDetails
+            const values = record.display_value.split("*/*").map(v => v.trim());
+            const formatted = labels.reduce((obj, label, index) => {
+              obj[label] = values[index] || "";
+              return obj;
+            }, {});
+            allSystemDetails.push(formatted);
+          });
+
+          // ✅ Update the *first existing entry* with new values
+          allSystemDetails.push(newEntry);
+
+          // ✅ Set approvalStatus = Pending after every save
+          const formData = {
+            data: {
+              ESN_Status: "Completed",
+              Approval_Status: "Pending",
+              System_Details: allSystemDetails
+            }
+          };
+
+          const updateConfig = {
+            appName: "service-management",
+            // reportName: "All_ESN",
+            reportName: "My_ESN",
+            id: recordID,
+            data: formData
+          };
+
+          const updateResponse = await ZOHO.CREATOR.API.updateRecord(updateConfig);
+          console.log("Update response:", updateResponse);
+
+          if (updateResponse.code === 3000) {
+            window.location.reload();
+          } else {
+            alert("Error updating record: " + (updateResponse.message || "Unknown error"));
+          }
+        } else {
+          // ✅ If no system details exist, just add new entry
+          allSystemDetails.push(newEntry);
+
+          // ✅ Set approvalStatus = Pending after every save
+          const formData = {
+            data: {
+              ESN_Status: "Completed",
+              System_Details: allSystemDetails
+            }
+          };
+
+          const updateConfig = {
+            appName: "service-management",
+            // reportName: "All_ESN",
+            reportName: "My_ESN",
+            id: recordID,
+            data: formData
+          };
+
+          const updateResponse = await ZOHO.CREATOR.API.updateRecord(updateConfig);
+          console.log("Update response:", updateResponse);
+
+          if (updateResponse.code === 3000) {
+            window.location.reload();
+          } else {
+            alert("Error updating record: " + (updateResponse.message || "Unknown error"));
+          }
         }
-      };
 
-      const updateConfig = {
-        appName: "service-management",
-        // reportName: "All_ESN",
-        reportName: "My_ESN",
-        id: recordID,
-        data: formData
-      };
 
-      const updateResponse = await ZOHO.CREATOR.API.updateRecord(updateConfig);
-      console.log("Update response:", updateResponse);
 
-      if (updateResponse.code === 3000) {
-        window.location.reload();
-      } else {
-        alert("Error updating record: " + (updateResponse.message || "Unknown error"));
+      } catch (err) {
+        console.error("Error updating System_Details:", err);
+        alert("Something went wrong while saving data.");
       }
-    }
-
-    
-
-  } catch (err) {
-    console.error("Error updating System_Details:", err);
-    alert("Something went wrong while saving data.");
-  }
-});
+    });
 
 
 
 
 
 
-</script>
-<!--<script>
+  </script>
+  <!--<script>
   // Search functionality
 function searchTable() {
   const input = document.getElementById("tableSearch").value.toLowerCase();
@@ -2413,4 +2421,5 @@ showPage(currentPage);
     }
   </script> -->
 </body>
+
 </html>
