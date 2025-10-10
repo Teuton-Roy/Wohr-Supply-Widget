@@ -852,7 +852,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
         console.error("Error: Username not found!");
       }
       let email = queryParams.loginUser;
-      console.log("Logged in user:", username);
+      // console.log("Logged in user:", username);
 
       const params = ZOHO.CREATOR.UTIL.getQueryParams();
       const Child_ESN_Number = params["Child_ESN_Number"] || "";
@@ -915,7 +915,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
 
           return matchesChild && matchesMonth;
         });
-        console.log("filtered record", filtered);
+        // console.log("filtered record", filtered);
         document.getElementById("Monthly_Count").innerText = filtered.length;
       });
 
@@ -936,7 +936,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
           }
 
           const records = response.data || [];
-          console.log("Fetched records:", records);
+          // console.log("Fetched records:", records);
 
           const container = document.getElementById("dataContainer");
           container.innerHTML = ""; // clear existing cards
@@ -1152,7 +1152,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
 
             return matchesChild && matchesMonth;
           });
-          console.log("filtered record", filtered);
+          // console.log("filtered record", filtered);
           const monthlyCount = document.getElementById("Monthly_Count");
           if (monthlyCount) monthlyCount.innerText = filtered.length;
         });
@@ -1174,7 +1174,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
             return;
           }
           const records = response.data;
-          console.log("Fetched records:", records);
+          // console.log("Fetched records:", records);
 
           const container = document.getElementById("dataContainer");
           container.innerHTML = ""; // clear existing cards
@@ -1391,7 +1391,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
 
           return matchesChild && matchesMonth;
         });
-        console.log("filtered record", filtered);
+        // console.log("filtered record", filtered);
         document.getElementById("Monthly_Count").innerText = filtered.length;
       });
 
@@ -1434,7 +1434,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
           }
 
           const cust = custResponse.data[0];
-          console.log("Fetched customer details:", cust);
+          // console.log("Fetched customer details:", cust);
           // Create a nice customer details card
           const card = document.createElement("div");
           card.className = "system-card";
@@ -1501,7 +1501,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
       await ZOHO.CREATOR.API.getAllRecords(config)
         .then(function (response) {
           const records = response.data;
-          console.log("Fetched records:", records);
+          // console.log("Fetched records:", records);
           const id = records.ID;
 
           const container = document.getElementById("dataContainer");
@@ -1543,7 +1543,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
             // Loop through records and add rows
             records.forEach(record => {
               const systemDetails = record.ESN_Product;
-              console.log("System Details:", systemDetails);
+              // console.log("System Details:", systemDetails);
               const id = systemDetails[0].ID;
               const recordID = record.ID;
 
@@ -1680,10 +1680,10 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
       const Status = params["Status"] || "";
 
       var queryParams = ZOHO.CREATOR.UTIL.getInitParams();
-      console.log(queryParams);
+      // console.log(queryParams);
       let username = queryParams.scope;
       const email = queryParams.loginUser;
-      console.log("Logged in user:", email);
+      // console.log("Logged in user:", email);
 
       const RoleConfig = {
         appName: "service-management",
@@ -1692,7 +1692,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
       };
       let user_role = "";
       ZOHO.CREATOR.API.getAllRecords(RoleConfig).then(function (response) {
-        console.log("user records:", response.data[0]);
+        // console.log("user records:", response.data[0]);
         user_role = response.data[0].Role;
       })
         .catch(function (error) {
@@ -1918,7 +1918,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
         results.forEach(function (records) {
           allRecords = allRecords.concat(records);
         });
-        console.log('All ESN Records:', allRecords);
+        // console.log('All ESN Records:', allRecords);
       });
       // Fetch records
       const config = {
@@ -1950,8 +1950,8 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
 
           return matchesChild && matchesMonth;
         });
-        console.log("all service records", records);
-        console.log("filtered record", filtered);
+        // console.log("all service records", records);
+        // console.log("filtered record", filtered);
         document.getElementById("Monthly_Count").innerText = filtered.length;
 
         let currentPage = 1;
@@ -1959,7 +1959,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
 
         function renderTable() {
           const searchValue = document.getElementById("tableSearch").value.toLowerCase();
-          console.log("User Role:", user_role);
+          // console.log("User Role:", user_role);
           /*if (user_role === "Service Technician") {
                   document.getElementById("statusFilter").value = "Open";
               }else{
@@ -2000,7 +2000,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
 
             // Get current record status (case-insensitive)
             const statusValue = (record.Status?.display_value || record.Status || "");
-            console.log(statusValue);
+            // console.log(statusValue);
             // Set background color based on status
             let bgColor = "";
             let textColor = "#000";
@@ -2074,7 +2074,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
         function toggleModalSections() {
 
           const status = document.getElementById("modalStatus").value;
-          console.log(status);
+          // console.log(status);
           document.getElementById("wipSection").style.display = (status === "Work in Progress") ? "block" : "none";
           document.getElementById("closedSection").style.display = (status === "Closed") ? "block" : "none";
         }
@@ -2092,7 +2092,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
             }
           };
           const id = document.getElementById("System_number").value.toString();
-          console.log(id, status);
+          // console.log(id, status);
           if (status === "Work in Progress") {
             data.data.Reason_For_Hold = document.getElementById("wipReason").value;
             data.data.Material_Information = document.getElementById("wipMaterialInfo")?.value || "";
@@ -2104,11 +2104,9 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
             return `${String(dt.getDate()).padStart(2,'0')}-${months[dt.getMonth()]}-${dt.getFullYear()}`;
           }
 
-
-
           if (status === "Closed") {
-            console.log(document.getElementById("wipMaterialInfo").value);
-            console.log(document.getElementById("Vertical_Parts").checked);
+            // console.log(document.getElementById("wipMaterialInfo").value);
+            // console.log(document.getElementById("Vertical_Parts").checked);
             // console.log(new Date().toISOString().split("T")[0]);
             console.log(formatDateDDMonYYYY(new Date()));
             data.data.Closed_By = username;
@@ -2122,9 +2120,9 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
             data.data.Platform_Leveling = document.getElementById("Platform_Leveling").checked;
             data.data.Vertical_Parts = document.getElementById("Vertical_Parts").checked;
           }
-          console.log("Save data", data);
+          // console.log("Save data", data);
           modal.style.display = "none";
-          console.log("Save Data Id ", id);
+          // console.log("Save Data Id ", id);
           let serviceUpdateConfig = {
             appName: "service-management",
             // reportName: "All_Service_Requests",   
@@ -2135,7 +2133,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
 
           // Update the record
           ZOHO.CREATOR.API.updateRecord(serviceUpdateConfig).then(function (response) {
-            console.log("Update response:", response);
+            // console.log("Update response:", response);
 
             if (response.code === 3000) {
               window.location.reload();
@@ -2207,8 +2205,8 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
         PLC_Version: document.getElementById("plc_version").value
       };
 
-      console.log("New Entry:", newEntry);
-      console.log("Record ID:", recordID);
+      // console.log("New Entry:", newEntry);
+      // console.log("Record ID:", recordID);
 
       try {
         const SystemUpdateDetails = {
@@ -2219,7 +2217,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
         };
 
         const response = await ZOHO.CREATOR.API.getRecordById(SystemUpdateDetails);
-        console.log("SYSTEM DETAILS Record:", response);
+        // console.log("SYSTEM DETAILS Record:", response);
 
         if (response.code !== 3000) {
           alert("Error fetching record: " + (response.message || "Unknown error"));
@@ -2229,8 +2227,8 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
         // ✅ Extract existing data
         let systemDetails = response.data.System_Details || [];
         let approvalStatus = response.data.Approval_Status || "";
-        console.log("Existing System_Details:", systemDetails);
-        console.log("Existing Approval Status:", approvalStatus);
+        // console.log("Existing System_Details:", systemDetails);
+        // console.log("Existing Approval Status:", approvalStatus);
 
         let allSystemDetails = [];
 
@@ -2276,7 +2274,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
           };
 
           const updateResponse = await ZOHO.CREATOR.API.updateRecord(updateConfig);
-          console.log("Update response:", updateResponse);
+          // console.log("Update response:", updateResponse);
 
           if (updateResponse.code === 3000) {
             window.location.reload();
@@ -2304,7 +2302,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
           };
 
           const updateResponse = await ZOHO.CREATOR.API.updateRecord(updateConfig);
-          console.log("Update response:", updateResponse);
+          // console.log("Update response:", updateResponse);
 
           if (updateResponse.code === 3000) {
             window.location.reload();
