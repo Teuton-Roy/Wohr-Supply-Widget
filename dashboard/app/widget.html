@@ -2092,12 +2092,20 @@ async function AllServices() {
               data.data.Material_Information = document.getElementById("wipMaterialInfo")?.value || "";
             }
 
+            function formatDateDDMonYYYY(d) {
+              const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+              const dt = d instanceof Date ? d : new Date(d);
+              return `${String(dt.getDate()).padStart(2,'0')}-${months[dt.getMonth()]}-${dt.getFullYear()}`;
+            }
+
             if (status === "Closed") {
               console.log(document.getElementById("wipMaterialInfo").value);
               console.log(document.getElementById("Vertical_Parts").checked);
-              console.log(new Date().toISOString().split("T")[0]);
+              // console.log(new Date().toISOString().split("T")[0]);
+              console.log(formatDateDDMonYYYY(new Date()));
               data.data.Closed_By = username;
-              data.data.Closed_Date = new Date().toISOString().split("T")[0];
+              // data.data.Closed_Date = new Date().toISOString().split("T")[0];
+              data.data.Closed_Date = formatDateDDMonYYYY(new Date());
               data.data.Material_Information = document.getElementById("wipMaterialInfo")?.value || "";
               data.data.Button_Indicator = document.getElementById("Button_Indicator").checked;
               data.data.Electrical_Parts = document.getElementById("Electrical_Parts").checked;
