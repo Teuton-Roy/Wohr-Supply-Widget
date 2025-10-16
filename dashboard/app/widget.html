@@ -841,6 +841,12 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
     }
     let creatorInitialized = false;
 
+    // Added by Teuton ---
+    function getESNReportName(email) {
+      const adminEmails = ["ketan.p@wohrparking.in", "kasturi@wohrparking.in"];
+      return adminEmails.includes((email || "").toLowerCase()) ? "All_ESN" : "My_ESN";
+    }
+
     ZOHO.CREATOR.init().then(async function () {
       console.log("Creator initialized");
       creatorInitialized = true;
@@ -923,7 +929,8 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
       const config = {
         appName: "service-management",
         // reportName: "All_ESN",
-        reportName: "My_ESN",
+        // reportName: "My_ESN",
+        reportName: getESNReportName(email), // added by Teuton
         criteria: '(Child_ESN_Number == "' + Child_ESN_Number + '")'
       };
 
@@ -1108,6 +1115,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
       }
 
       const params = ZOHO.CREATOR.UTIL.getQueryParams();
+      const email = params.loginUser; // added by Teuton
       const Child_ESN_Number = params["Child_ESN_Number"] || "";
       const Status = params["Status"] || "";
 
@@ -1162,7 +1170,8 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
       const config = {
         appName: "service-management",
         // reportName: "All_ESN",
-        reportName: "My_ESN",
+        // reportName: "My_ESN",
+        reportName: getESNReportName(email), // added by Teuton
         criteria: '(Child_ESN_Number == "' + Child_ESN_Number + '")'
       };
 
@@ -1347,6 +1356,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
       }
 
       const params = ZOHO.CREATOR.UTIL.getQueryParams();
+      const email = params.loginUser; // added by Teuton
       const Child_ESN_Number = params["Child_ESN_Number"] || "";
 
       if (!Child_ESN_Number) {
@@ -1399,7 +1409,8 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
       const configESN = {
         appName: "service-management",
         // reportName: "All_ESN",
-        reportName: "My_ESN",
+        // reportName: "My_ESN",
+        reportName: getESNReportName(email), // added by Teuton
         criteria: '(Child_ESN_Number == "' + Child_ESN_Number + '")'
       };
 
@@ -1485,6 +1496,7 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
       }
 
       const params = ZOHO.CREATOR.UTIL.getQueryParams();
+      const email = params.loginUser;
       const Child_ESN_Number = params["Child_ESN_Number"] || "";
       const Status = params["Status"] || "";
 
@@ -1494,8 +1506,9 @@ background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:fl
       const config = {
         appName: "service-management",
         // reportName: "All_ESN",
-        reportName: "My_ESN",
-        criteria: '(Child_ESN_Number == "' + Child_ESN_Number + '")'
+        // reportName: "My_ESN",
+        reportName: getESNReportName(email), // added by Teuton
+        criteria: '(Child_ESN_Number == "' + Child_ESN_Number + '")'  // added by teuton
       };
 
       await ZOHO.CREATOR.API.getAllRecords(config)

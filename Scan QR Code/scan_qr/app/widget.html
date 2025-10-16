@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script src="https://js.zohostatic.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #eef3f8 0%, #f9fafb 100%);
+      color: #333;
+      padding: 20px;
+    }
+
+    h4.section-title {
+      font-weight: 700;
+      color: #0d6efd;
+      border-left: 4px solid #0d6efd;
+      padding-left: 10px;
+      letter-spacing: 0.5px;
+    }
+    .card {
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      border-radius: 16px;
+      border: none;
+      background: linear-gradient(135deg, #ffffff, #f3f7ff);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .card.active,
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(13, 110, 253, 0.2);
+      background: linear-gradient(135deg, #e9f1ff, #ffffff);
+    }
+
+    .card h5 {
+      font-weight: 600;
+      color: #0d6efd;
+    }
+    .section-container {
+      display: none;
+      margin-top: 25px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06);
+      animation: fadeIn 0.4s ease;
+    }
+
+    .section-container#systemDetails {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ===================== Table Styles   ======================*/
+    .table {
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    table th {
+      background-color: #0d6efd;
+      color: #fff;
+      text-align: center;
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    table td {
+      text-align: center;
+      vertical-align: middle;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+      background-color: #f9fcff;
+    }
+
+    /* ===================== Buttons  ======================*/
+    .btn-primary {
+      background: linear-gradient(135deg, #007bff, #0056d2);
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #006ae6, #004bb5);
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #00b09b, #96c93d);
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 176, 155, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .btn-success:hover {
+      background: linear-gradient(135deg, #00a389, #82b82e);
+      transform: translateY(-2px);
+    }
+
+    /* ===================== Modal Styling ======================*/
+    .modal-content {
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      border: none;
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #0d6efd, #004bb5);
+      color: white;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+    }
+
+    .form-control,
+    .form-select {
+      border-radius: 8px;
+      border: 1px solid #d0d7de;
+      transition: all 0.2s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+      border-color: #0d6efd;
+    }
+
+    /* ===================== Info Items ======================*/
+    .info-item {
+      background: #f8faff;
+      border-radius: 10px;
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .info-item strong {
+      color: #0d6efd;
+    }
+
+    /* ===================== Responsive Design ======================*/
+    @media (max-width: 768px) {
+      .card {
+        margin-bottom: 15px;
+      }
+      .section-container {
+        padding: 15px;
+      }
+    }
+
+    /* ===================== Custom Scrollbar  ======================*/
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #0d6efd;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: #e8efff;
+    }
+
+  /* ===============Service request == */
+  #ServicerequestTable th {
+    background: linear-gradient(135deg, #0d6efd, #004bb5);
+    color: #fff;
+    font-weight: 500;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  #ServicerequestTable td {
+    text-align: center;
+    vertical-align: middle;
+    font-size: 14px;
+    color: #333;
+  }
+
+  #ServicerequestTable tr:hover {
+    background-color: #f0f6ff;
+    transition: background-color 0.2s ease;
+  }
+
+  /* Form Elements */
+  .form-control,
+  .form-select {
+    border-radius: 8px;
+    border: 1px solid #d0d7de;
+    transition: all 0.2s ease;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
+  }
+
+  /* Buttons */
+  .btn-success {
+    background: linear-gradient(135deg, #00b09b, #96c93d);
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 176, 155, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .btn-success:hover {
+    background: linear-gradient(135deg, #00a389, #82b82e);
+    transform: translateY(-2px);
+  }
+
+  /* Modal Animation */
+  .modal.fade .modal-dialog {
+    transform: translateY(-50px);
+    opacity: 0;
+    transition: all 0.3s ease-out;
+  }
+
+  .modal.show .modal-dialog {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  </style>
+  <style>
+    #systemDetails th {
+    background: linear-gradient(135deg, #0d6efd, #004bb5);
+    color: #fff;
+    font-weight: 500;
+    text-align: center;
+    vertical-align: middle;
+  }
+  #productTable th {
+    background: linear-gradient(135deg, #0d6efd, #004bb5);
+    color: #fff;
+    font-weight: 500;
+    text-align: center;
+    vertical-align: middle;
+  }
+    #systemDetails .table thead {
+      background-color: #007bff;
+      color: #fff;
+    }
+  
+    #systemDetails .table th,
+    #systemDetails .table td {
+      vertical-align: middle;
+      text-align: center;
+    }
+  
+    #systemDetails .table-hover tbody tr:hover {
+      background-color: #f1f5ff;
+    }
+  
+    #systemDetails .section-title {
+      color: #0056b3;
+      font-weight: 600;
+    }
+  
+    #systemDetails .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+  
+    #systemDetails .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #004a9e;
+    }
+  
+    #systemDetails .info-item {
+      margin-bottom: 10px;
+    }
+  </style>
+  <style>
+    #systemDetails th {
+    background: linear-gradient(135deg, #0d6efd, #004bb5);
+    color: #fff;
+    font-weight: 500;
+    text-align: center;
+    vertical-align: middle;
+  }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Top Cards -->
+    <div class="row g-3 text-center mb-3">
+      <div class="col-md-3 col-6">
+        <div id="card-system" class="card p-3 active" data-section="systemDetails">
+          <h5><i class="fas fa-cogs me-2"></i>System Details</h5>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div id="card-customer" class="card p-3" data-section="customerDetails">
+          <h5><i class="fas fa-user me-2"></i>Customer Details</h5>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div id="card-product" class="card p-3" data-section="productInfo">
+          <h5><i class="fas fa-box me-2"></i>Product Info</h5>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div id="card-requests" class="card p-3" data-section="allRequests">
+          <h5><i class="fas fa-list-alt me-2"></i>All Requests</h5>
+          <p class="text-muted mb-0">12 Requests</p>
+        </div>
+      </div>
+    </div>
+
+<!-- System Details Section -->
+<div id="systemDetails" class="section-container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="section-title mb-0">System Details</h4>
+    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSystemModal">
+      <i class="fas fa-plus me-1"></i>Add New
+    </button>
+  </div>
+
+  <div id="systemInfo" class="row mt-2">
+    <div class="col-md-3 info-item"><strong>Parking Number:</strong> <span id="parkingNumber">-</span></div>
+    <div class="col-md-3 info-item"><strong>Parent ESN Number:</strong> <span id="parentESN">-</span></div>
+    <div class="col-md-3 info-item"><strong>Child ESN Number:</strong> <span id="childESN">-</span></div>
+    <div class="col-md-3 info-item"><strong>IRN Number:</strong> <span id="irnNumber">-</span></div>
+  </div>
+
+  <div class="table-container mt-3">
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered align-middle" id="systemTable">
+        <thead class="table-primary text-center">
+          <tr>
+            <th>Platform Number</th>
+            <th>Cylinder Number</th>
+            <th>Power Pack Number</th>
+            <th>Chain Length</th>
+            <th>WOHR Value</th>
+            <th>Magnet Assembly</th>
+            <th>PLC Version</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="7" class="text-center text-muted">Loading system details...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Details Section -->
+<div id="customerDetails" class="section-container">
+  <h4 class="section-title">Customer Details</h4>
+  <div class="row g-3">
+    <div class="col-md-4"><strong>Name:</strong> <span id="customerName">-</span></div>
+    <div class="col-md-4"><strong>Email:</strong> <span id="customerEmail">-</span></div>
+    <div class="col-md-4"><strong>Phone:</strong> <span id="customerPhone">-</span></div>
+
+    <div class="col-md-4"><strong>Shipping Street 1:</strong> <span id="ShippingrAddress1">-</span></div>
+    <div class="col-md-4"><strong>Shipping Street 2:</strong> <span id="ShippingrAddress2">-</span></div>
+    <div class="col-md-4"><strong>Shipping Street 3:</strong> <span id="ShippingrAddress3">-</span></div>
+
+    <div class="col-md-4"><strong>Shipping City:</strong> <span id="Shippingcity">-</span></div>
+    <div class="col-md-4"><strong>Shipping Postal:</strong> <span id="Shippingrpostal">-</span></div>
+    <div class="col-md-4"><strong>Shipping Country:</strong> <span id="Shippingrcountry">-</span></div>
+
+    <div class="col-md-4"><strong>Shipping State:</strong> <span id="Shippingrstate">-</span></div>
+  </div>
+</div>
+
+    <!-- Product Info Section -->
+    <div id="productInfo" class="section-container">
+      <h4 class="section-title">Product Info</h4>
+      <div class="table-responsive mt-3">
+        <table class="table table-bordered table-striped" id="productTable">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Product Code</th>
+              <th>Product Sub Family</th>
+              <th>Quantity</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="5" class="text-center text-muted">Loading product info...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="allRequests" class="section-container">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="section-title">All Requests Monthly</h4>
+        <select id="statusFilter" class="form-select w-auto">
+          <option value="All">All Statuses</option>
+          <option value="Open" selected>Open</option>
+          <option value="Work in Progress">Work in Progress</option>
+          <option value="Closed">Closed</option>
+        </select>
+      </div>
+    
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle" id="ServicerequestTable">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>APS/PS Parking Number</th>
+              <th>Parent ESN Number</th>
+              <th>Child ESN Number</th>
+              <th>Route</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">Loading requests...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  <!-- Add System Modal -->
+  <div class="modal fade" id="addSystemModal" tabindex="-1" aria-labelledby="addSystemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0 rounded-4">
+        <div class="modal-header text-white" style="background: linear-gradient(135deg, #0d6efd, #004bb5);">
+          <h5 class="modal-title fw-semibold"><i class="fas fa-plus-circle me-2"></i>Add New System Detail</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="systemForm">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Platform Number</label>
+                <input type="text" class="form-control form-control-lg" id="platformNumber" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Cylinder Number</label>
+                <input type="text" class="form-control form-control-lg" id="cylinderNumber" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Power Pack Number</label>
+                <input type="text" class="form-control form-control-lg" id="powerPackNumber" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Chain Length</label>
+                <input type="text" class="form-control form-control-lg" id="chainLength" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">WOHR Value</label>
+                <input type="text" class="form-control form-control-lg" id="wohrValue" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Magnet Assembly</label>
+                <input type="text" class="form-control form-control-lg" id="magnetAssembly" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">PLC Version</label>
+                <input type="text" class="form-control form-control-lg" id="plcVersion" required />
+              </div>
+            </div>
+  
+            <div class="text-end mt-4">
+              <button id="saveSystemBtn" class="btn btn-success px-4 py-2 rounded-3">
+                <i class="fas fa-save me-2"></i>Save System
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Status Modal -->
+  <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0 rounded-4">
+        <div class="modal-header text-white" style="background: linear-gradient(135deg, #0d6efd, #004bb5);">
+          <h5 class="modal-title fw-semibold"><i class="fas fa-pen-to-square me-2"></i>Update Request Status</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="statusForm">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Status</label>
+              <select class="form-select form-select-lg" id="statusSelect" required>
+                <option value="">Select</option>
+                <option value="Work in Progress">Work in Progress</option>
+                <option value="Closed">Closed</option>
+              </select>
+            </div>
+  
+            <div id="subStatusDiv" class="mb-3" style="display:none;">
+              <label class="form-label fw-semibold">Sub Status</label>
+              <select class="form-select form-select-lg" id="subStatusSelect">
+                <option value="">Select</option>
+                <option>Pending for Quotation</option>
+                <option>Pending for Customer approval</option>
+                <option>Pending for Payment</option>
+                <option>Pending for Material</option>
+                <option>Others</option>
+              </select>
+            </div>
+  
+            <div id="materialInfoDiv" class="mb-3" style="display:none;">
+              <label class="form-label fw-semibold">Material Information</label>
+              <textarea class="form-control" rows="3" id="materialInfo" placeholder="Enter material details..."></textarea>
+            </div>
+  
+            <div id="closedFields" class="mb-3" style="display:none;">
+              <div class="row g-2">
+                <div id="vp" class="col-md-4"><div class="form-check"><input type="checkbox" class="form-check-input"> Vertical Parts</div></div>
+                <div id="hp" class="col-md-4"><div class="form-check"><input type="checkbox" class="form-check-input"> Horizontal Parts</div></div>
+                <div id="ep" class="col-md-4"><div class="form-check"><input type="checkbox" class="form-check-input"> Electrical Parts</div></div>
+                <div id="pl" class="col-md-4"><div class="form-check"><input type="checkbox" class="form-check-input"> Platform Leveling</div></div>
+                <div id="bl" class="col-md-4"><div class="form-check"><input type="checkbox" class="form-check-input"> Button / Indicator</div></div>
+                <div id="hyp" class="col-md-4"><div class="form-check"><input type="checkbox" class="form-check-input"> Hydraulic Parts</div></div>
+              </div>
+            </div>
+  
+            <div class="text-end mt-4">
+              <button type="submit" class="btn btn-success px-4 py-2 rounded-3"><i class="fas fa-save me-2"></i>Save
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let childESNNumber = "";
+    let username = "";
+    let ESNSystemID = "";
+    let ServiceRequestID = "";
+    let loginuser;
+    let userRole;
+    ZOHO.CREATOR.init().then(async function () {
+      const queryParams = ZOHO.CREATOR.UTIL.getInitParams() || {};
+      loginuser = queryParams.loginUser;
+      const params = ZOHO.CREATOR.UTIL.getQueryParams();
+      childESNNumber = params["Child_ESN_Number"] || "";
+       var userRole = params.Role;
+      console.log("userrole: ", userRole);
+  
+      ESNDetails(childESNNumber);
+      ServiceRequest(childESNNumber);
+    });
+  
+    // ======================= // Fetch ESN Details// =======================
+    function ESNDetails(childESNNumber) {
+      const config = {
+        appName: "service-management",
+        reportName: "ESN_Scan_QR_Widget",
+        criteria: '(Child_ESN_Number == "' + childESNNumber + '")',
+        page: 1,
+        pageSize: 1
+      };
+  
+      ZOHO.CREATOR.API.getAllRecords(config).then(async function (response) {
+        if (response.code === 3000 && response.data.length > 0) {
+          const data = response.data[0];
+          ESNSystemID = data.ID;
+  
+          $("#parkingNumber").text(data.APS_PS_Parking_Number || "-");
+          $("#parentESN").text(data.Parent_ESN_Number || "-");
+          $("#childESN").text(data.Child_ESN_Number || "-");
+          $("#irnNumber").text(data.IRN_Number || "-");
+          $("#esnStatus").text(data.ESN_Status || "-");
+  
+          const tbody = $("#systemTable tbody").empty();
+          const systemDetails = data.System_Details || [];
+  
+          if (systemDetails.length === 0) {
+            tbody.html(`<tr><td colspan="7" class="text-center text-muted">No System Details Found</td></tr>`);
+          } else {
+            systemDetails.forEach((item) => {
+              const values = item.display_value ? item.display_value.split("*/*") : [];
+              const [platformNum, cylinderNum, powerPackNum, chainLen, wohrValue, magnetAssembly, plcVersion] = values;
+              const rowHTML = `
+                <tr>
+                  <td>${platformNum || "-"}</td>
+                  <td>${cylinderNum || "-"}</td>
+                  <td>${powerPackNum || "-"}</td>
+                  <td>${chainLen || "-"}</td>
+                  <td>${wohrValue || "-"}</td>
+                  <td>${magnetAssembly || "-"}</td>
+                  <td>${plcVersion || "-"}</td>
+                </tr>`;
+              tbody.append(rowHTML);
+            });
+          }
+  
+          // Fetch Customer Details
+          if (data.Customer_Master && data.Customer_Master.ID) {
+            const customerConfig = {
+              appName: "service-management",
+              reportName: "All_Customers",
+              id: data.Customer_Master.ID
+            };
+  
+            try {
+              const custResponse = await ZOHO.CREATOR.API.getRecordById(customerConfig);
+              if (custResponse.code === 3000) {
+                const cust = custResponse.data;
+                $("#customerName").text(cust.Customer_Name || "-");
+                $("#customerEmail").text(cust.Email || "-");
+                $("#customerPhone").text(cust.Phone_Number || "-");
+                $("#ShippingrAddress1").text(data.Shipping_Street_1 || "-");
+                $("#ShippingrAddress2").text(data.Shipping_Street_2 || "-");
+                $("#ShippingrAddress3").text(data.Shipping_Street_3 || "-");
+                $("#Shippingcity").text(data.Shipping_City || "-");
+                $("#Shippingrpostal").text(data.Shipping_Postal_Code || "-");
+                $("#Shippingrcountry").text(data.Shipping_Country || "-");
+                $("#Shippingrstate").text(data.Shipping_State || "-");
+              }
+            } catch (error) {
+              console.error("❌ Error fetching Customer Details:", error);
+            }
+          }
+  
+          // Product Info
+          const productTableBody = $("#productTable tbody").empty();
+          const products = data.ESN_Product || [];
+          if (products.length === 0) {
+            productTableBody.html(`<tr><td colspan="5" class="text-center text-muted">No Product Info Found</td></tr>`);
+          } else {
+            products.forEach((prod) => {
+              const values = prod.display_value ? prod.display_value.split("*/*") : [];
+              const cleaned = values.map(v => v.replace(/["']/g, "").trim());
+              const [productName, productCode, productSubFamily, quantity, description] = cleaned;
+              const rowHTML = `
+                <tr>
+                  <td>${productName || "-"}</td>
+                  <td>${productCode || "-"}</td>
+                  <td>${productSubFamily || "-"}</td>
+                  <td>${quantity || "-"}</td>
+                  <td>${description || "-"}</td>
+                </tr>`;
+              productTableBody.append(rowHTML);
+            });
+          }
+        } else {
+          $("#systemTable tbody").html(`<tr><td colspan="7" class="text-center text-muted">No record found for Child ESN: ${childESNNumber}</td></tr>`);
+        }
+      });
+    }
+  
+    // ======================= // System Update// =======================
+    function systemupdate(ESNSystemID) {
+      const newEntry = {
+        Platform_Number: $("#platformNumber").val(),
+        Cylender_Number: $("#cylinderNumber").val(),
+        Power_Pack_Number: $("#powerPackNumber").val(),
+        Chain_Length: $("#chainLength").val(),
+        WOHR_Valve: $("#wohrValue").val(),
+        Magnet_Assembly: $("#magnetAssembly").val(),
+        PLC_Version: $("#plcVersion").val()
+      };
+  
+      const SystemUpdateDetails = {
+        appName: "service-management",
+        reportName: "ESN_Scan_QR_Widget",
+        id: ESNSystemID
+      };
+  
+      ZOHO.CREATOR.API.getRecordById(SystemUpdateDetails).then(function (response) {
+        if (response.code !== 3000) {
+          Swal.fire("Error", "Error fetching record: " + (response.message || "Unknown error"), "error");
+          return;
+        }
+  
+        let recordData = response.data;
+        let approvalStatus = recordData.Approval_Status || "";
+  
+        // Disable Add New if Pending
+        if (approvalStatus.toLowerCase() === "pending") {
+          $("#addNewButton").prop("disabled", true);
+        } else {
+          $("#addNewButton").prop("disabled", false);
+        }
+  
+        let systemDetails = recordData.System_Details || [];
+        let allSystemDetails = [];
+  
+        if (systemDetails.length > 0) {
+          $.each(systemDetails, function (index, record) {
+            const labels = [
+              "Platform_Number",
+              "Cylender_Number",
+              "Power_Pack_Number",
+              "Chain_Length",
+              "WOHR_Valve",
+              "Magnet_Assembly",
+              "PLC_Version"
+            ];
+            const values = record.display_value ? record.display_value.split("*/*").map(v => v.trim()) : [];
+            const formatted = {};
+            $.each(labels, function (i, label) {
+              formatted[label] = values[i] || "";
+            });
+            allSystemDetails.push(formatted);
+          });
+        }
+  
+        if (approvalStatus.toLowerCase() !== "pending") {
+          allSystemDetails.push(newEntry);
+        } else {
+          Swal.fire("Notice", "You cannot add new system details while approval is pending.", "info");
+          return;
+        }
+  
+        const updateData = {
+          data: {
+            ESN_Status: "Completed",
+            Approval_Status: "Pending",
+            System_Details: allSystemDetails
+          }
+        };
+  
+        const updateConfig = {
+          appName: "service-management",
+          reportName: "ESN_Scan_QR_Widget",
+          id: ESNSystemID,
+          data: updateData
+        };
+  
+        ZOHO.CREATOR.API.updateRecord(updateConfig).then(function (updateResponse) {
+          if (updateResponse.code === 3000) {
+            Swal.fire("Success", "System details updated successfully!", "success");
+            $("#addSystemModal").modal("hide");
+            ESNDetails(childESNNumber);
+          } else {
+            Swal.fire("Error", "Update failed: " + (updateResponse.message || "Unknown error"), "error");
+          }
+        }).catch(function (err) {
+          Swal.fire("Error", "An unexpected error occurred while updating.", "error");
+          console.error("Update error:", err);
+        });
+      });
+    }
+  
+    $("#saveSystemBtn").click(function () {
+      var $btn = $(this);
+      $btn.prop("disabled", true).html("⏳ Saving...");
+      systemupdate(ESNSystemID);
+      setTimeout(function () {
+        $btn.prop("disabled", false).html("💾 Save System");
+      }, 3000);
+    });
+   // ======================= // Fetch Service Requests // =======================
+      function ServiceRequest(childESNNumber) {
+        const config = {
+          appName: "service-management",
+          reportName: "Scan_QR_Service_Request",
+          criteria: '(Child_ESN_Number.Child_ESN_Number == "' + childESNNumber + '")',
+          page: 1,
+          pageSize: 200
+        };
+
+        ZOHO.CREATOR.API.getAllRecords(config).then(function (response) {
+          const serviceTableBody = $("#ServicerequestTable tbody").empty();
+
+          if (response.code === 3000 && response.data && response.data.length > 0) {
+            $.each(response.data, function (i, list) {
+              const row = $("<tr></tr>");
+              row.append($("<td></td>").text(list.Status || "-"));
+              row.append($("<td></td>").text(list.APS_PS_Parking_Number?.display_value || "-"));
+              row.append($("<td></td>").text(list.Parent_ESN_Number?.display_value || "-"));
+              row.append($("<td></td>").text(list.Child_ESN_Number?.display_value || "-"));
+              row.append($("<td></td>").text(list.Route_Name || "-"));
+
+              const viewIcon = $('<i class="fas fa-eye text-primary" style="cursor:pointer;" data-record-id="' + list.ID + '"></i>');
+              const viewTd = $("<td></td>").append(viewIcon);
+              row.append(viewTd);
+              serviceTableBody.append(row);
+            });
+            updateRequestCount();
+            applyStatusFilter();
+          } else {
+            serviceTableBody.html('<tr><td colspan="6" class="text-center text-muted">No Service Requests Found</td></tr>');
+          }
+        });
+      }
+  
+    // ======================= View Icon Handler =======================
+    $(document).on("click", ".fa-eye", function () {
+      const recordId = $(this).data("record-id");
+      const childESN = $(this).data("esn");
+      $("#statusForm").data("record-id", recordId);
+      $("#statusForm").data("child-esn", childESN);
+      $("#statusForm")[0].reset();
+      $("#subStatusDiv, #materialInfoDiv, #closedFields").hide();
+
+      const config = {
+        appName: "service-management",
+        reportName: "Scan_QR_Service_Request",
+        id: recordId
+      };
+
+      ZOHO.CREATOR.API.getRecordById(config).then(function (response) {
+        if (response.code === 3000 && response.data) {
+          const record = response.data;
+          $("#statusSelect").val(record.Status || "");
+          $("#subStatusSelect").val(record.Reason_For_Hold || "");
+          $("#materialInfo").val(record.Material_Information || "");
+          $("#vp").prop("checked", record.Vertical_Parts || false);
+          $("#hp").prop("checked", record.Horizontal_Parts || false);
+          $("#ep").prop("checked", record.Electrical_Parts || false);
+          $("#pl").prop("checked", record.Platform_Leveling || false);
+          $("#bp").prop("checked", record.Button_Indicator || false);
+          $("#hyp").prop("checked", record.Hydraulic_Parts || false);
+
+          if (record.Status === "Work in Progress") {
+            $("#subStatusDiv, #materialInfoDiv").show();
+          } else if (record.Status === "Closed") {
+            $("#closedFields").show();
+          }
+        }
+      });
+
+      const modal = new bootstrap.Modal($("#statusModal"));
+      modal.show();
+    });
+      // ======================= // Save / Update Service Request // =======================
+        $(document).on("click", ".btn-success", function (e) {
+          e.preventDefault();
+          const recordId = $("#statusForm").data("record-id");
+          // Disable button during save
+          const $btn = $(this);
+          $btn.prop("disabled", true).html("⏳ Saving...");
+
+          let updateData = { data: {} };
+
+          function formatDateDDMonYYYY(d) {
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            const dt = d instanceof Date ? d : new Date(d);
+            return `${String(dt.getDate()).padStart(2,'0')}-${months[dt.getMonth()]}-${dt.getFullYear()}`;
+          }
+
+          if ($("#statusSelect").val() === "Closed") {
+            updateData.data = {
+              Status: $("#statusSelect").val() || "",
+              Closed_By: loginuser,
+              Closed_Date: formatDateDDMonYYYY(new Date()),
+              Material_Information: $("#materialInfo").val() || "",
+              Vertical_Parts: $("#vp input[type='checkbox']").prop("checked"),
+              Horizontal_Parts: $("#hp input[type='checkbox']").prop("checked"),
+              Electrical_Parts: $("#ep input[type='checkbox']").prop("checked"),
+              Platform_Leveling: $("#pl input[type='checkbox']").prop("checked"),
+              Button_Indicator: $("#bl input[type='checkbox']").prop("checked"),
+              Hydraulic_Parts: $("#hyp input[type='checkbox']").prop("checked")
+            };
+          }
+          else if ($("#statusSelect").val() === "Work in Progress") {
+            updateData.data = {
+            Status: $("#statusSelect").val() || "",
+            Reason_For_Hold: $("#subStatus").val() || "",
+            Material_Information: $("#materialInfo").val() || ""
+          };
+        }
+        console.log(updateData.data);
+          const config = {
+            appName: "service-management",
+            reportName: "Scan_QR_Service_Request",
+            id: recordId,
+            data: updateData
+          };
+
+          ZOHO.CREATOR.API.updateRecord(config)
+            .then(function (response) {
+              console.log("updated service request: ", response);
+              if (response.code === 3000) {
+                Swal.fire({
+                  icon: "success",
+                  title: "Success",
+                  text: "Service request updated successfully!",
+                  timer: 2000,
+                  showConfirmButton: false
+                });
+                bootstrap.Modal.getInstance($("#statusModal")[0]).hide();
+                ServiceRequest(childESNNumber); // Refresh table
+              } else {
+                Swal.fire("Error", "Update failed: " + (response.message || "Unknown error"), "error");
+              }
+            })
+            .finally(function () {
+              $btn.prop("disabled", false).html('<i class="fas fa-save me-2"></i>Save');
+            });
+        });
+
+        function applyStatusFilter() {
+        const selectedStatus = $("#statusFilter").val(); // will be "Open" by default
+
+        $("#ServicerequestTable tbody tr").each(function() {
+          const statusText = $(this).find("td:first").text().trim();
+
+          if (selectedStatus === "All" || statusText === selectedStatus) {
+            $(this).show();
+          } else {
+            $(this).hide();
+          }
+        });
+      }
+
+      // Trigger filter when user changes selection
+      $(document).on("change", "#statusFilter", function() {
+        applyStatusFilter();
+      });
+      function updateRequestCount() {
+  // Count only rows that are actual data (ignore the "No Service Requests Found" or loading row)
+        const totalRequests = $("#ServicerequestTable tbody tr")
+          .not(':has(td[colspan])') // exclude rows with colspan (like "No records")
+          .length;
+
+        // Update the card
+        $("#card-requests p").text(`${totalRequests} Requests`);
+      }
+    // =======================// UI & Form Handlers// =======================
+    $(document).ready(function () {
+      $(".card").on("click", function () {
+        const sectionId = $(this).data("section");
+        $(".section-container").hide();
+        $("#" + sectionId).fadeIn(200);
+        $(".card").removeClass("active");
+        $(this).addClass("active");
+      });
+      $("#statusSelect").on("change", function () {
+        const val = $(this).val();
+        if (val === "Work in Progress") {
+          $("#subStatusDiv, #materialInfoDiv").show();
+          $("#closedFields").hide();
+        } else if (val === "Closed") {
+          $("#subStatusDiv").hide();
+          $("#materialInfoDiv, #closedFields").show();
+        } else {
+          $("#subStatusDiv, #materialInfoDiv, #closedFields").hide();
+        }
+      });
+    });
+  </script>  
+</body>
+</html>
