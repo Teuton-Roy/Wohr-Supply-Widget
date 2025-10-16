@@ -9,6 +9,8 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <script src="https://js.zohostatic.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
 
   <style>
@@ -247,6 +249,21 @@
     transform: translateY(0);
     opacity: 1;
   }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1;
+    text-transform: none;
+  }
+  .status-open { background: #198754; }            /* green */
+  .status-wip  { background: #cbb617; }            /* orange */
+  .status-closed { background: #b6342a; }          /* gray */
+  .status-unknown { background: #0d6efd; }         /* blue fallback */
   </style>
   <style>
     #systemDetails th {
@@ -434,6 +451,7 @@
             <tr>
               <th>Status</th>
               <th>Service Request Type</th>
+              <th>Service Request Number</th>
               <th>APS/PS Parking Number</th>
               <th>Parent ESN Number</th>
               <th>Child ESN Number</th>
@@ -803,16 +821,18 @@
         console.log(config);
 
         ZOHO.CREATOR.API.getAllRecords(config).then(function (response) {
+          // DataTable initialization
+          if ($.fn.DataTable.isDataTable('#ServicerequestTable')) {
+            $('#ServicerequestTable').DataTable().destroy();
+          }
           const serviceTableBody = $("#ServicerequestTable tbody").empty();
           const selectedStatus = $("#statusFilter").val();
-          console.log(selectedStatus);
-          
 
           if (response.code === 3000 && response.data && response.data.length > 0) {
             console.log(response.data);
             let filteredData = response.data;
 
-                  // Helper to check if a date string is in the current month
+            // Helper to check if a date string is in the current month
             function isCurrentMonth(dateStr) {
               if (!dateStr) return false;
               const date = new Date(dateStr);
@@ -833,24 +853,44 @@
           if (filteredData.length > 0) {
             $.each(filteredData, function (i, list) {
               const row = $("<tr></tr>");
-              row.append($("<td></td>").text(list.Status || "-"));
+              // Status cell with colored badge
+              const statusText = list.Status || "-";
+              const sKey = (statusText || "").toString().toLowerCase();
+              let statusClass = "status-unknown";
+              if (sKey === "open") statusClass = "status-open";
+              else if (sKey === "work in progress" || sKey.includes("work")) statusClass = "status-wip";
+              else if (sKey === "closed") statusClass = "status-closed";
+              row.append($("<td></td>").html(`<span class="status-badge ${statusClass}">${statusText}</span>`));
               row.append($("<td></td>").text(list.Service_Request_Type || "-"));
+              row.append($("<td></td>").text(list.Service_Request_Number || "-"));
               row.append($("<td></td>").text(list.APS_PS_Parking_Number?.display_value || "-"));
               row.append($("<td></td>").text(list.Parent_ESN_Number?.display_value || "-"));
               row.append($("<td></td>").text(list.Child_ESN_Number?.display_value || "-"));
               row.append($("<td></td>").text(list.Route_Name || "-"));
               row.append($("<td></td>").text(list.Due_Date || "-"));
-
-              const viewIcon = $('<i class="fas fa-eye text-primary" style="cursor:pointer;" data-record-id="' + list.ID + '"></i>');
-              const viewTd = $("<td></td>").append(viewIcon);
+              let viewTd;
+              
+              if(sKey === "closed"){
+                viewTd = $("<td></td>").html('<i class="fas fa-eye text-secondary" style="cursor:not-allowed; opacity:0.5;" title="Closed request"></i>');
+              }else{
+                const viewIcon = $('<i class="fas fa-eye text-primary" style="cursor:pointer;" data-record-id="' + list.ID + '"></i>');
+                viewTd = $("<td></td>").append(viewIcon);
+              }
               row.append(viewTd);
               serviceTableBody.append(row);
             });
             // updateRequestCount();
             // applyStatusFilter();
           } else {
-            serviceTableBody.html('<tr><td colspan="8" class="text-center text-muted">No Service Requests Found</td></tr>');
+            serviceTableBody.html('<tr><td colspan="9" class="text-center text-muted">No Service Requests Found</td></tr>');
           }
+          $('#ServicerequestTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            pageLength: 20,
+            lengthChange: true,
+          });
           updateRequestCount();
         } else {
             serviceTableBody.html('<tr><td colspan="8" class="text-center text-muted">No Service Requests Found</td></tr>');
