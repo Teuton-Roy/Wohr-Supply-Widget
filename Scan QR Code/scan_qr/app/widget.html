@@ -339,7 +339,7 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="section-title mb-0">System Details</h4>
     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSystemModal">
-      <i class="fas fa-plus me-1"></i>Add New
+      <i class="fas fa-plus me-1"></i>Update System
     </button>
   </div>
 
@@ -454,7 +454,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content shadow-lg border-0 rounded-4">
         <div class="modal-header text-white" style="background: linear-gradient(135deg, #0d6efd, #004bb5);">
-          <h5 class="modal-title fw-semibold"><i class="fas fa-plus-circle me-2"></i>Add New System Detail</h5>
+          <h5 class="modal-title fw-semibold"><i class="fas fa-plus-circle me-2"></i>Update System Details</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4">
@@ -491,7 +491,7 @@
             </div>
   
             <div class="text-end mt-4">
-              <button id="saveSystemBtn" class="btn btn-success px-4 py-2 rounded-3">
+              <button id="saveSystemBtn" type="button" class="btn btn-success px-4 py-2 rounded-3">
                 <i class="fas fa-save me-2"></i>Save System
               </button>
             </div>
@@ -567,9 +567,11 @@
     ZOHO.CREATOR.init().then(async function () {
       const queryParams = ZOHO.CREATOR.UTIL.getInitParams() || {};
       loginuser = queryParams.loginUser;
+      console.log(loginuser);      
       const params = ZOHO.CREATOR.UTIL.getQueryParams();
       childESNNumber = params["Child_ESN_Number"] || "";
-       var userRole = params.Role;
+      console.log(childESNNumber);
+      var userRole = params.Role;
       console.log("userrole: ", userRole);
   
       ESNDetails(childESNNumber);
@@ -585,12 +587,14 @@
         page: 1,
         pageSize: 1
       };
+      console.log(config);
   
       ZOHO.CREATOR.API.getAllRecords(config).then(async function (response) {
         if (response.code === 3000 && response.data.length > 0) {
           const data = response.data[0];
           ESNSystemID = data.ID;
-  
+          console.log("ESNSytemID: ",data.ID);
+          
           $("#parkingNumber").text(data.APS_PS_Parking_Number || "-");
           $("#parentESN").text(data.Parent_ESN_Number || "-");
           $("#childESN").text(data.Child_ESN_Number || "-");
@@ -605,6 +609,7 @@
           } else {
             systemDetails.forEach((item) => {
               const values = item.display_value ? item.display_value.split("*/*") : [];
+              console.log("System Details: ",values);
               const [platformNum, cylinderNum, powerPackNum, chainLen, wohrValue, magnetAssembly, plcVersion] = values;
               const rowHTML = `
                 <tr>
@@ -686,30 +691,39 @@
         Magnet_Assembly: $("#magnetAssembly").val(),
         PLC_Version: $("#plcVersion").val()
       };
+      console.log("New Entry: ",newEntry);
   
       const SystemUpdateDetails = {
         appName: "service-management",
         reportName: "ESN_Scan_QR_Widget",
         id: ESNSystemID
       };
-  
+      console.log("System Update Details: ",SystemUpdateDetails);
       ZOHO.CREATOR.API.getRecordById(SystemUpdateDetails).then(function (response) {
+        console.log(response);
         if (response.code !== 3000) {
           Swal.fire("Error", "Error fetching record: " + (response.message || "Unknown error"), "error");
           return;
         }
   
         let recordData = response.data;
+        console.log("Record Data: ",recordData);
         let approvalStatus = recordData.Approval_Status || "";
+        console.log("Approval Status: ",approvalStatus);
   
         // Disable Add New if Pending
         if (approvalStatus.toLowerCase() === "pending") {
           $("#addNewButton").prop("disabled", true);
+          Swal.fire("Notice", "You cannot update system details while approval is pending.", "info");
+          $("#addSystemModal").modal("hide");
+          $("#systemForm")[0].reset();
+          return;
         } else {
           $("#addNewButton").prop("disabled", false);
         }
   
         let systemDetails = recordData.System_Details || [];
+        console.log("Existing System Details: ",systemDetails);
         let allSystemDetails = [];
   
         if (systemDetails.length > 0) {
@@ -724,20 +738,29 @@
               "PLC_Version"
             ];
             const values = record.display_value ? record.display_value.split("*/*").map(v => v.trim()) : [];
+            console.log("value", values);
+            
             const formatted = {};
             $.each(labels, function (i, label) {
               formatted[label] = values[i] || "";
             });
             allSystemDetails.push(formatted);
           });
-        }
-  
-        if (approvalStatus.toLowerCase() !== "pending") {
+          // ---new code added by Teuton---
+          allSystemDetails[allSystemDetails.length - 1] = newEntry;
+          $("#systemForm")[0].reset();
+        }else{
           allSystemDetails.push(newEntry);
-        } else {
-          Swal.fire("Notice", "You cannot add new system details while approval is pending.", "info");
-          return;
+          $("#systemForm")[0].reset();
         }
+
+  
+        // if (approvalStatus.toLowerCase() !== "pending") {
+        //   allSystemDetails.push(newEntry);
+        // } else {
+        //   Swal.fire("Notice", "You cannot update system details while approval is pending.", "info");
+        //   return;
+        // }
   
         const updateData = {
           data: {
@@ -769,7 +792,7 @@
       });
     }
   
-    $("#saveSystemBtn").click(function () {
+    $("#saveSystemBtn").click(function (e) {
       var $btn = $(this);
       $btn.prop("disabled", true).html("⏳ Saving...");
       systemupdate(ESNSystemID);
