@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,12 +17,12 @@
   <script src="https://js.zohostatic.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
 
   <style>
-    :root{
+    :root {
       /* spacing & radius */
       --radius-lg: 16px;
       --radius-md: 12px;
-      --shadow-soft: 0 4px 8px rgba(0,0,0,.06);
-      --shadow-hover: 0 8px 20px rgba(13,110,253,.2);
+      --shadow-soft: 0 4px 8px rgba(0, 0, 0, .06);
+      --shadow-hover: 0 8px 20px rgba(13, 110, 253, .2);
 
       /* brand */
       --brand: #0d6efd;
@@ -29,12 +30,14 @@
 
       /* text sizes scaled for mobile (>=16px to prevent iOS zoom on inputs) */
       --text-sm: 14px;
-      --text-md: 16px; /* base */
+      --text-md: 16px;
+      /* base */
       --text-lg: 18px;
       --text-xl: 20px;
     }
 
-    html, body {
+    html,
+    body {
       height: 100%;
     }
 
@@ -49,7 +52,7 @@
     }
 
     /* Section titles */
-    .section-title{
+    .section-title {
       font-weight: 700;
       color: var(--brand);
       border-left: 4px solid var(--brand);
@@ -73,20 +76,23 @@
       justify-content: center;
       text-align: center;
     }
-    .card h5{
+
+    .card h5 {
       margin: 0;
       font-weight: 600;
       color: var(--brand);
       font-size: var(--text-lg);
     }
-    .card.active, .card:hover {
+
+    .card.active,
+    .card:hover {
       transform: translateY(-3px);
       box-shadow: var(--shadow-hover);
       background: linear-gradient(135deg, #e9f1ff, #ffffff);
     }
 
     /* Sections container */
-    .section-container{
+    .section-container {
       display: none;
       /* margin-top: 18px;
       background: #fff;
@@ -95,15 +101,25 @@
       /* box-shadow: var(--shadow-soft); */
       animation: fadeIn .25s ease;
     }
-    .section-container#systemDetails{ display:block; }
 
-    @keyframes fadeIn{
-      from{ opacity: 0; transform: translateY(6px); }
-      to{ opacity: 1; transform: translateY(0); }
+    .section-container#systemDetails {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* Info pills */
-    .info-item{
+    .info-item {
       background: #f8faff;
       border-radius: 10px;
       padding: 10px 12px;
@@ -112,87 +128,120 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
       word-break: break-word;
     }
-    .info-item strong{ color: var(--brand); }
+
+    .info-item strong {
+      color: var(--brand);
+    }
 
     /* Tables */
-    .table{
+    .table {
       border-radius: var(--radius-md);
-      overflow: hidden; /* keeps rounded corners */
+      overflow: hidden;
+      /* keeps rounded corners */
       font-size: var(--text-sm);
     }
-    .table thead th{
+
+    .table thead th {
       background: linear-gradient(135deg, var(--brand), var(--brand-dark));
-      color:#fff;
+      color: #fff;
       text-align: center;
       font-weight: 500;
       vertical-align: middle;
       white-space: nowrap;
     }
-    .table td{
-      text-align:center;
-      vertical-align:middle;
-      color:#333;
+
+    .table td {
+      text-align: center;
+      vertical-align: middle;
+      color: #333;
       word-break: break-word;
     }
-    .table-striped tbody tr:nth-of-type(odd) { background-color:#f9fcff; }
-    .table-hover tbody tr:hover { background-color:#f1f5ff; }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+      background-color: #f9fcff;
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: #f1f5ff;
+    }
 
     /* Make table wrappers feel native on iOS */
-    .table-responsive{
+    .table-responsive {
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-x: contain;
     }
 
     /* Buttons */
-    .btn{
+    .btn {
       font-size: var(--text-md);
       line-height: 1.1;
     }
-    .btn-primary{
+
+    .btn-primary {
       background: linear-gradient(135deg, #007bff, #0056d2);
       border: none;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0, 123, 255, 0.25);
     }
-    .btn-primary:hover{ background: linear-gradient(135deg, #006ae6, #004bb5); }
-    .btn-success{
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #006ae6, #004bb5);
+    }
+
+    .btn-success {
       background: linear-gradient(135deg, #00b09b, #96c93d);
       border: none;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0, 176, 155, 0.25);
     }
-    .btn-success:hover{ background: linear-gradient(135deg, #00a389, #82b82e); }
+
+    .btn-success:hover {
+      background: linear-gradient(135deg, #00a389, #82b82e);
+    }
 
     /* Modal polish */
-    .modal-content{ border-radius: var(--radius-lg); box-shadow: 0 8px 25px rgba(0,0,0,.12); border:0; }
-    .modal-header{
+    .modal-content {
+      border-radius: var(--radius-lg);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, .12);
+      border: 0;
+    }
+
+    .modal-header {
       background: linear-gradient(135deg, var(--brand), var(--brand-dark));
       color: #fff;
       border-top-left-radius: var(--radius-lg);
       border-top-right-radius: var(--radius-lg);
     }
-    .modal.fade .modal-dialog{
+
+    .modal.fade .modal-dialog {
       transform: translateY(-40px);
       opacity: 0;
       transition: transform .25s ease-out, opacity .25s ease-out;
     }
-    .modal.show .modal-dialog{ transform: translateY(0); opacity: 1; }
+
+    .modal.show .modal-dialog {
+      transform: translateY(0);
+      opacity: 1;
+    }
 
     /* Forms (>=16px to avoid iOS zoom) */
-    .form-control, .form-select{
+    .form-control,
+    .form-select {
       border-radius: 10px;
       border: 1px solid #d0d7de;
       font-size: var(--text-md);
       padding: 10px 12px;
     }
-    .form-control:focus, .form-select:focus{
-      box-shadow: 0 0 0 .2rem rgba(13,110,253,.2);
+
+    .form-control:focus,
+    .form-select:focus {
+      box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .2);
       border-color: var(--brand);
       outline: none;
     }
 
     /* Status badges */
-    .status-badge{
+    .status-badge {
       display: inline-block;
       padding: 6px 12px;
       border-radius: 999px;
@@ -202,59 +251,127 @@
       line-height: 1;
       letter-spacing: .2px;
     }
-    .status-open{ background:#198754; }
-    .status-wip{ background:#cbb617; }
-    .status-closed{ background:#b6342a; }
-    .status-unknown{ background: var(--brand); }
+
+    .status-open {
+      background: #198754;
+    }
+
+    .status-wip {
+      background: #cbb617;
+    }
+
+    .status-closed {
+      background: #b6342a;
+    }
+
+    .status-unknown {
+      background: var(--brand);
+    }
 
     /* Loader overlay */
-    #loader{
-      display:none;
-      position:fixed; inset:0;
+    #loader {
+      display: none;
+      position: fixed;
+      inset: 0;
       z-index: 9999;
       background-color: rgba(0, 0, 0, 0.45);
-      text-align:center;
+      text-align: center;
     }
-    .bounce{
-      position:absolute; top:50%; left:50%;
+
+    .bounce {
+      position: absolute;
+      top: 50%;
+      left: 50%;
       transform: translate(-50%, -50%);
-      width:150px; height:150px;
-      display:flex; justify-content:space-around; align-items:flex-end;
+      width: 150px;
+      height: 150px;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
     }
-    .bounce div{
-      width:24px; height:24px; background: var(--brand); border-radius:50%;
-      animation: bounce .6s cubic-bezier(.19,.57,.3,.98) infinite alternate;
+
+    .bounce div {
+      width: 24px;
+      height: 24px;
+      background: var(--brand);
+      border-radius: 50%;
+      animation: bounce .6s cubic-bezier(.19, .57, .3, .98) infinite alternate;
     }
-    .bounce div:nth-child(2){ animation-delay:.1s; opacity:.85; }
-    .bounce div:nth-child(3){ animation-delay:.2s; opacity:.7; }
-    .bounce div:nth-child(4){ animation-delay:.3s; opacity:.55; }
-    @keyframes bounce{ from{ transform: translateY(0);} to{ transform: translateY(-90px);} }
+
+    .bounce div:nth-child(2) {
+      animation-delay: .1s;
+      opacity: .85;
+    }
+
+    .bounce div:nth-child(3) {
+      animation-delay: .2s;
+      opacity: .7;
+    }
+
+    .bounce div:nth-child(4) {
+      animation-delay: .3s;
+      opacity: .55;
+    }
+
+    @keyframes bounce {
+      from {
+        transform: translateY(0);
+      }
+
+      to {
+        transform: translateY(-90px);
+      }
+    }
 
     /* ---------- Mobile specific tweaks ---------- */
 
     /* Make cards stack nicely and keep big touch targets */
-    @media (max-width: 991.98px){
-      .card{ min-height: 56px; }
-      .card h5{ font-size: var(--text-md); }
+    @media (max-width: 991.98px) {
+      .card {
+        min-height: 56px;
+      }
+
+      .card h5 {
+        font-size: var(--text-md);
+      }
     }
 
     /* Ensure tables don’t overflow screen; keep readable on iPhone */
-    @media (max-width: 767.98px){
-      .section-container{ padding: 14px; }
-      .table td, .table th{ padding: .55rem; font-size: 13px; }
-      .table thead th{ white-space: nowrap; }
+    @media (max-width: 767.98px) {
+      .section-container {
+        padding: 14px;
+      }
+
+      .table td,
+      .table th {
+        padding: .55rem;
+        font-size: 13px;
+      }
+
+      .table thead th {
+        white-space: nowrap;
+      }
+
       /* Keep the “Action” column icons tappable */
-      #ServicerequestTable td:last-child i{
+      #ServicerequestTable td:last-child i {
         font-size: 18px;
         padding: 8px;
       }
+
       /* Improve spacing for info grid */
-      #systemInfo .info-item{ font-size: 13px; }
+      #systemInfo .info-item {
+        font-size: 13px;
+      }
     }
 
     /* Reduce motion if user prefers */
-    @media (prefers-reduced-motion: reduce){
-      * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+      }
     }
   </style>
   <style>
@@ -294,11 +411,15 @@
   </style>
   </style>
 </head>
+
 <body>
   <!-- Loader -->
   <div id="loader" aria-hidden="true">
     <div class="bounce" role="status" aria-label="Loading">
-      <div></div><div></div><div></div><div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
     </div>
   </div>
 
@@ -462,7 +583,8 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content shadow-lg border-0 rounded-4">
         <div class="modal-header">
-          <h5 class="modal-title fw-semibold" id="addSystemModalLabel"><i class="fas fa-plus-circle me-2"></i>Update System Details</h5>
+          <h5 class="modal-title fw-semibold" id="addSystemModalLabel"><i class="fas fa-plus-circle me-2"></i>Update
+            System Details</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4">
@@ -541,16 +663,35 @@
 
             <div id="materialInfoDiv" class="mb-3" style="display:none;">
               <label class="form-label fw-semibold" for="materialInfo">Material Information</label>
-              <textarea class="form-control" rows="3" id="materialInfo" placeholder="Enter material details..."></textarea>
+              <textarea class="form-control" rows="3" id="materialInfo"
+                placeholder="Enter material details..."></textarea>
             </div>
             <div id="closedFields" class="mb-3" style="display:none;">
               <div class="row g-2">
-                <div id="vp" class="col-md-4"><div class="form-check"><input type="checkbox" class="form-check-input" id="chk-vp"> <label class="form-check-label" for="chk-vp">Vertical Parts</label></div></div>
-                <div id="hp" class="col-md-4"><div class="form-check"><input type="checkbox" class="form-check-input" id="chk-hp"> <label class="form-check-label" for="chk-hp">Horizontal Parts</label></div></div>
-                <div id="ep" class="col-md-4"><div class="form-check"><input type="checkbox" class="form-check-input" id="chk-ep"> <label class="form-check-label" for="chk-ep">Electrical Parts</label></div></div>
-                <div id="pl" class="col-md-4"><div class="form-check"><input type="checkbox" class="form-check-input" id="chk-pl"> <label class="form-check-label" for="chk-pl">Platform Leveling</label></div></div>
-                <div id="bl" class="col-md-4"><div class="form-check"><input type="checkbox" class="form-check-input" id="chk-bl"> <label class="form-check-label" for="chk-bl">Button / Indicator</label></div></div>
-                <div id="hyp" class="col-md-4"><div class="form-check"><input type="checkbox" class="form-check-input" id="chk-hyp"> <label class="form-check-label" for="chk-hyp">Hydraulic Parts</label></div></div>
+                <div id="vp" class="col-md-4">
+                  <div class="form-check"><input type="checkbox" class="form-check-input" id="chk-vp"> <label
+                      class="form-check-label" for="chk-vp">Vertical Parts</label></div>
+                </div>
+                <div id="hp" class="col-md-4">
+                  <div class="form-check"><input type="checkbox" class="form-check-input" id="chk-hp"> <label
+                      class="form-check-label" for="chk-hp">Horizontal Parts</label></div>
+                </div>
+                <div id="ep" class="col-md-4">
+                  <div class="form-check"><input type="checkbox" class="form-check-input" id="chk-ep"> <label
+                      class="form-check-label" for="chk-ep">Electrical Parts</label></div>
+                </div>
+                <div id="pl" class="col-md-4">
+                  <div class="form-check"><input type="checkbox" class="form-check-input" id="chk-pl"> <label
+                      class="form-check-label" for="chk-pl">Platform Leveling</label></div>
+                </div>
+                <div id="bl" class="col-md-4">
+                  <div class="form-check"><input type="checkbox" class="form-check-input" id="chk-bl"> <label
+                      class="form-check-label" for="chk-bl">Button / Indicator</label></div>
+                </div>
+                <div id="hyp" class="col-md-4">
+                  <div class="form-check"><input type="checkbox" class="form-check-input" id="chk-hyp"> <label
+                      class="form-check-label" for="chk-hyp">Hydraulic Parts</label></div>
+                </div>
               </div>
             </div>
 
@@ -564,340 +705,352 @@
   </div>
 
   <!-- Edit Customer Modal -->
-<div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="editCustomerModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content shadow-lg border-0 rounded-4">
-      <div class="modal-header">
-        <h5 class="modal-title fw-semibold" id="editCustomerModalLabel">
-          <i class="fas fa-user-edit me-2"></i>Update Customer Details
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
+  <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="editCustomerModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0 rounded-4">
+        <div class="modal-header">
+          <h5 class="modal-title fw-semibold" id="editCustomerModalLabel">
+            <i class="fas fa-user-edit me-2"></i>Update Customer Details
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
 
-      <div class="modal-body p-4">
-        <form id="customerForm">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label fw-semibold" for="editCustomerName">Name</label>
-              <input type="text" class="form-control form-control-lg" id="editCustomerName" required />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold" for="editCustomerEmail">Email</label>
-              <input type="email" class="form-control form-control-lg" id="editCustomerEmail" required />
+        <div class="modal-body p-4">
+          <form id="customerForm">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="editCustomerName">Name</label>
+                <input type="text" class="form-control form-control-lg" id="editCustomerName" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="editCustomerEmail">Email</label>
+                <input type="email" class="form-control form-control-lg" id="editCustomerEmail" required />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="editCustomerPhone">Phone</label>
+                <input type="text" class="form-control form-control-lg" id="editCustomerPhone" required />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="editShipping1">Shipping Street 1</label>
+                <input type="text" class="form-control form-control-lg" id="editShipping1" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="editShipping2">Shipping Street 2</label>
+                <input type="text" class="form-control form-control-lg" id="editShipping2" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="editShipping3">Shipping Street 3</label>
+                <input type="text" class="form-control form-control-lg" id="editShipping3" />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="editCity">Shipping City</label>
+                <input type="text" class="form-control form-control-lg" id="editCity" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="editPostal">Postal Code</label>
+                <input type="text" class="form-control form-control-lg" id="editPostal" />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="editCountry">Country</label>
+                <input type="text" class="form-control form-control-lg" id="editCountry" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="editState">State</label>
+                <input type="text" class="form-control form-control-lg" id="editState" />
+              </div>
             </div>
 
-            <div class="col-md-6">
-              <label class="form-label fw-semibold" for="editCustomerPhone">Phone</label>
-              <input type="text" class="form-control form-control-lg" id="editCustomerPhone" required />
+            <div class="text-end mt-4">
+              <button id="saveCustomerBtn" type="button" class="btn btn-success px-4 py-2 rounded-3">
+                <i class="fas fa-save me-2"></i>Save Customer
+              </button>
             </div>
-
-            <div class="col-md-6">
-              <label class="form-label fw-semibold" for="editShipping1">Shipping Street 1</label>
-              <input type="text" class="form-control form-control-lg" id="editShipping1" />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold" for="editShipping2">Shipping Street 2</label>
-              <input type="text" class="form-control form-control-lg" id="editShipping2" />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold" for="editShipping3">Shipping Street 3</label>
-              <input type="text" class="form-control form-control-lg" id="editShipping3" />
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label fw-semibold" for="editCity">Shipping City</label>
-              <input type="text" class="form-control form-control-lg" id="editCity" />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold" for="editPostal">Postal Code</label>
-              <input type="text" class="form-control form-control-lg" id="editPostal" />
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label fw-semibold" for="editCountry">Country</label>
-              <input type="text" class="form-control form-control-lg" id="editCountry" />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-semibold" for="editState">State</label>
-              <input type="text" class="form-control form-control-lg" id="editState" />
-            </div>
-          </div>
-
-          <div class="text-end mt-4">
-            <button id="saveCustomerBtn" type="button" class="btn btn-success px-4 py-2 rounded-3">
-              <i class="fas fa-save me-2"></i>Save Customer
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<!-- SERVICE REPORT MODAL -->
-<div class="modal fade" id="serviceReportModalNew" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
-    <div class="modal-content shadow border-0 rounded-4">
+  <!-- SERVICE REPORT MODAL -->
+  <div class="modal fade" id="serviceReportModalNew" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+      <div class="modal-content shadow border-0 rounded-4">
 
-      <!-- Header -->
-      <div class="modal-header bg-primary text-white py-2">
-        <h6 class="modal-title fw-semibold mb-0">
-          <i class="fas fa-file-pdf me-2"></i>Service Report
-        </h6>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
+        <!-- Header -->
+        <div class="modal-header bg-primary text-white py-2">
+          <h6 class="modal-title fw-semibold mb-0">
+            <i class="fas fa-file-pdf me-2"></i>Service Report
+          </h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
 
-      <!-- Body -->
-      <div class="modal-body py-2">
-        <div id="servicePdfContainer" class="p-3 border border-dark rounded">
+        <!-- Body -->
+        <div class="modal-body py-2">
+          <div id="servicePdfContainer" class="p-3 border border-dark rounded">
 
-          <!-- Header -->
-          <div class="text-center mb-2 position-relative">
-            <img src="img/wohr_parking_systems_pvt_ltd__logo.jpeg" alt="Logo"
-              style="height:45px;width:auto;position:absolute;left:0;">
-            <div>
-              <div class="fw-bold" style="font-size:15px;">WOHR PARKING SYSTEMS PVT. LTD.</div>
-              <div class="fw-semibold" style="font-size:13px;">SERVICE REPORT</div>
+            <!-- Header -->
+            <div class="text-center mb-2 position-relative">
+              <img src="img/wohr_parking_systems_pvt_ltd__logo.jpeg" alt="Logo"
+                style="height:45px;width:auto;position:absolute;left:0;">
+              <div>
+                <div class="fw-bold" style="font-size:15px;">WOHR PARKING SYSTEMS PVT. LTD.</div>
+                <div class="fw-semibold" style="font-size:13px;">SERVICE REPORT</div>
+              </div>
+            </div>
+
+            <!-- Info Table -->
+            <table class="table table-bordered border-dark small mb-2">
+              <tr>
+                <td><strong>P.S. No:</strong> <span id="srPsNumber">-</span></td>
+                <td><strong>System Type:</strong> <span id="srSystemType">-</span></td>
+                <td><strong>Date:</strong> <span id="srDate">-</span></td>
+              </tr>
+              <tr>
+                <td><strong>Customer Name:</strong> <span id="srCustomerName">-</span></td>
+                <td colspan="2"><strong>Location:</strong> <span id="srLocation">-</span></td>
+              </tr>
+            </table>
+
+            <!-- Parts Details -->
+            <h6 class="mt-2 fw-bold text-primary small-label">Parts Details</h6>
+            <div class="row g-2 align-items-center mb-2">
+              <div class="col-md-6 d-flex align-items-center">
+                <input class="form-check-input me-2" type="checkbox" id="routineMaintenance">
+                <label class="form-check-label small-label mb-0" for="routineMaintenance">Routine Maintenance</label>
+              </div>
+              <div class="col-md-6 d-flex align-items-center">
+                <label class="form-label fw-semibold small-label me-2 mb-0" for="totalQuantity"
+                  style="width:120px;">Total Quantity</label>
+                <input type="number" min="0" class="form-control form-control-sm flex-grow-1" id="totalQuantity"
+                  placeholder="0">
+              </div>
+            </div>
+
+            <!-- Preventive Maintenance -->
+            <h6 class="fw-bold mb-1 text-decoration-underline">Routing Preventive Maintenance:</h6>
+            <div class="border p-2 rounded small">
+              <div class="row g-1">
+                <div class="col-6 col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="srChkVertical">
+                    <label class="form-check-label" for="srChkVertical">Vertical Parts</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="srChkHorizontal">
+                    <label class="form-check-label" for="srChkHorizontal">Horizontal Parts</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="srChkElectrical">
+                    <label class="form-check-label" for="srChkElectrical">Electrical Parts</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="srChkPlatform">
+                    <label class="form-check-label" for="srChkPlatform">Platform Leveling</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="srChkButtons">
+                    <label class="form-check-label" for="srChkButtons">Buttons / Indicator</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="srChkHydraulic">
+                    <label class="form-check-label" for="srChkHydraulic">Hydraulic Parts</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Work Description -->
+            <p class="fw-bold mt-2 mb-1 text-decoration-underline">Work Description:</p>
+            <textarea id="srRemarks" class="form-control form-control-sm border-dark" rows="2"
+              placeholder="Enter work details here..."></textarea>
+
+            <!-- Action Pending -->
+            <p class="fw-bold mt-2 mb-1 text-decoration-underline">Action Pending:</p>
+            <textarea id="srActionPending" class="form-control form-control-sm border-dark" rows="2"
+              placeholder="Enter any pending actions..."></textarea>
+
+            <!-- Signatures -->
+            <p class="fw-bold mt-3 mb-1 text-decoration-underline">Signatures:</p>
+            <div class="row g-4">
+
+              <!-- Service Engineer -->
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small-label mb-1">Service Engineer Signature</label>
+                <canvas id="srEngineerSign" class="border rounded w-100" style="height: 200px;"></canvas>
+
+                <div class="mt-2 mb-3">
+                  <button type="button" class="btn btn-sm btn-outline-danger" onclick="srClearSign('srEngineerSign')">
+                    Clear Signature
+                  </button>
+                </div>
+
+                <div class="mt-2">
+                  <label class="form-label fw-semibold small-label">Service Engineer Name</label>
+                  <input type="text" id="srEngineerName" class="form-control border-dark mb-2"
+                    placeholder="Enter engineer name">
+
+                  <label class="form-label fw-semibold small-label">Service Engineer Contact No.</label>
+                  <input type="text" id="srEngineerNo" class="form-control border-dark"
+                    placeholder="Enter contact number">
+                </div>
+              </div>
+
+              <!-- Customer -->
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small-label mb-1">Customer Signature</label>
+                <canvas id="srCustomerSign" class="border rounded w-100" style="height: 200px;"></canvas>
+
+                <div class="mt-2 mb-3">
+                  <button type="button" class="btn btn-sm btn-outline-danger" onclick="srClearSign('srCustomerSign')">
+                    Clear Signature
+                  </button>
+                </div>
+
+                <div class="mt-2">
+                  <label class="form-label fw-semibold small-label">Customer Name</label>
+                  <input type="text" id="srCustomerNameInput" class="form-control border-dark mb-2"
+                    placeholder="Enter customer name">
+
+                  <label class="form-label fw-semibold small-label">Customer Contact No.</label>
+                  <input type="text" id="srCustomerNo" class="form-control border-dark"
+                    placeholder="Enter contact number">
+                </div>
+              </div>
+
+
             </div>
           </div>
 
-          <!-- Info Table -->
-          <table class="table table-bordered border-dark small mb-2">
-            <tr>
-              <td><strong>P.S. No:</strong> <span id="srPsNumber">-</span></td>
-              <td><strong>System Type:</strong> <span id="srSystemType">-</span></td>
-              <td><strong>Date:</strong> <span id="srDate">-</span></td>
-            </tr>
-            <tr>
-              <td><strong>Customer Name:</strong> <span id="srCustomerName">-</span></td>
-              <td colspan="2"><strong>Location:</strong> <span id="srLocation">-</span></td>
-            </tr>
-          </table>
-
-          <!-- Parts Details -->
-          <h6 class="mt-2 fw-bold text-primary small-label">Parts Details</h6>
-          <div class="row g-2 align-items-center mb-2">
-            <div class="col-md-6 d-flex align-items-center">
-              <input class="form-check-input me-2" type="checkbox" id="routineMaintenance">
-              <label class="form-check-label small-label mb-0" for="routineMaintenance">Routine Maintenance</label>
-            </div>
-            <div class="col-md-6 d-flex align-items-center">
-              <label class="form-label fw-semibold small-label me-2 mb-0" for="totalQuantity" style="width:120px;">Total Quantity</label>
-              <input type="number" min="0" class="form-control form-control-sm flex-grow-1" id="totalQuantity" placeholder="0">
-            </div>
+          <!-- Footer -->
+          <div class="modal-footer py-2">
+            <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            <button id="srDownloadBtn" class="btn btn-success btn-sm">
+              <i class="fas fa-download me-1"></i>Download PDF
+            </button>
           </div>
-
-          <!-- Preventive Maintenance -->
-          <h6 class="fw-bold mb-1 text-decoration-underline">Routing Preventive Maintenance:</h6>
-          <div class="border p-2 rounded small">
-            <div class="row g-1">
-              <div class="col-6 col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="srChkVertical">
-                  <label class="form-check-label" for="srChkVertical">Vertical Parts</label>
-                </div>
-              </div>
-              <div class="col-6 col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="srChkHorizontal">
-                  <label class="form-check-label" for="srChkHorizontal">Horizontal Parts</label>
-                </div>
-              </div>
-              <div class="col-6 col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="srChkElectrical">
-                  <label class="form-check-label" for="srChkElectrical">Electrical Parts</label>
-                </div>
-              </div>
-              <div class="col-6 col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="srChkPlatform">
-                  <label class="form-check-label" for="srChkPlatform">Platform Leveling</label>
-                </div>
-              </div>
-              <div class="col-6 col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="srChkButtons">
-                  <label class="form-check-label" for="srChkButtons">Buttons / Indicator</label>
-                </div>
-              </div>
-              <div class="col-6 col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="srChkHydraulic">
-                  <label class="form-check-label" for="srChkHydraulic">Hydraulic Parts</label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Work Description -->
-          <p class="fw-bold mt-2 mb-1 text-decoration-underline">Work Description:</p>
-          <textarea id="srRemarks" class="form-control form-control-sm border-dark" rows="2" placeholder="Enter work details here..."></textarea>
-
-          <!-- Action Pending -->
-          <p class="fw-bold mt-2 mb-1 text-decoration-underline">Action Pending:</p>
-          <textarea id="srActionPending" class="form-control form-control-sm border-dark" rows="2" placeholder="Enter any pending actions..."></textarea>
-
-              <!-- Signatures -->
-              <p class="fw-bold mt-3 mb-1 text-decoration-underline">Signatures:</p>
-              <div class="row g-4">
-    
-                <!-- Service Engineer -->
-                <div class="col-md-6">
-                  <label class="form-label fw-semibold small-label mb-1">Service Engineer Signature</label>
-                  <canvas id="srEngineerSign" class="border rounded w-100" style="height: 200px;"></canvas>
-    
-                  <div class="mt-2 mb-3">
-                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="srClearSign('srEngineerSign')">
-                      Clear Signature
-                    </button>
-                  </div>
-    
-                  <div class="mt-2">
-                    <label class="form-label fw-semibold small-label">Service Engineer Name</label>
-                    <input type="text" id="srEngineerName" class="form-control border-dark mb-2" placeholder="Enter engineer name">
-    
-                    <label class="form-label fw-semibold small-label">Service Engineer Contact No.</label>
-                    <input type="text" id="srEngineerNo" class="form-control border-dark" placeholder="Enter contact number">
-                  </div>
-                </div>
-    
-                <!-- Customer -->
-                <div class="col-md-6">
-                  <label class="form-label fw-semibold small-label mb-1">Customer Signature</label>
-                  <canvas id="srCustomerSign" class="border rounded w-100" style="height: 200px;"></canvas>
-    
-                  <div class="mt-2 mb-3">
-                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="srClearSign('srCustomerSign')">
-                      Clear Signature
-                    </button>
-                  </div>
-    
-                  <div class="mt-2">
-                    <label class="form-label fw-semibold small-label">Customer Name</label>
-                    <input type="text" id="srCustomerNameInput" class="form-control border-dark mb-2" placeholder="Enter customer name">
-    
-                    <label class="form-label fw-semibold small-label">Customer Contact No.</label>
-                    <input type="text" id="srCustomerNo" class="form-control border-dark" placeholder="Enter contact number">
-                  </div>
-                </div>
-    
 
         </div>
       </div>
-
-      <!-- Footer -->
-      <div class="modal-footer py-2">
-        <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-        <button id="srDownloadBtn" class="btn btn-success btn-sm">
-          <i class="fas fa-download me-1"></i>Download PDF
-        </button>
-      </div>
-
     </div>
-  </div>
-</div>
 
 
-  <script>
-    let childESNNumber = "";
-    let username = "";
-    let ESNSystemID = "";
-    let ServiceRequestID = "";
-    let loginuser;
-    let userRole;
-    let customerID = "";
-    let Admin = false;
-    let Route = [];
-    let Region = "";
-    let City = "";
-    ZOHO.CREATOR.init().then(async function () {
-      $("#loader").css({ display: "block" });
-      const queryParams = ZOHO.CREATOR.UTIL.getInitParams() || {};
-      loginuser = queryParams.loginUser;  
-      
-      const params = ZOHO.CREATOR.UTIL.getQueryParams();
-      childESNNumber = params["Child_ESN_Number"] || "";
-      const config = {
-        appName: "service-management",
-        reportName: "My_Users",
-        criteria: '(Email == "' + loginuser + '")',
-        page: 1,
-        pageSize: 1
-      };
+    <script>
+      let childESNNumber = "";
+      let username = "";
+      let ESNSystemID = "";
+      let ServiceRequestID = "";
+      let loginuser;
+      let userRole;
+      let customerID = "";
+      let Admin = false;
+      let Route = [];
+      let Region = "";
+      let City = "";
+      ZOHO.CREATOR.init().then(async function () {
+        $("#loader").css({ display: "block" });
+        const queryParams = ZOHO.CREATOR.UTIL.getInitParams() || {};
+        loginuser = queryParams.loginUser;
+        console.log("Logged in user:", loginuser);
+        const params = ZOHO.CREATOR.UTIL.getQueryParams();
 
-      const response = await ZOHO.CREATOR.API.getAllRecords(config);
-      if (response.code === 3000 && response.data.length > 0) {
-        const data = response.data[0];
-        if (
-          (Array.isArray(data.New_Route_Name) && data.New_Route_Name.includes("All Route"))
-        ) {
-          Admin = true;
-        } else {
-          Admin = false;
-          let userRoute = Array.isArray(data.New_Route_Name) ? data.New_Route_Name[0] : data.New_Route_Name;
-          Route = [];
-          switch (userRoute) {
-            case "Pune All":
-              Route = ["Pune 1", "Pune 2", "Pune 3"];
-              break;
-            case "All North Region":
-              Route = ["North 1", "North 2", "North 3", "North 4"];
-              break;
-            case "All Hyderabad":
-              Route = ["Hyderabad 1", "Hyderabad 2", "Hyderabad 3"];
-              break;
-            case "All Chennai":
-              Route = ["Chennai 1", "Chennai 2"];
-              break;
-            case "All Bangalore Region":
-              Route = ["Bangalore 1", "Bangalore 2", "Bangalore 3", "Bangalore 4", "Bangalore 5", "Bangalore 6", "Bangalore 7"];
-              break;
-            case "All Ahmedabad":
-              Route = ["Ahmedabad 1", "Ahmedabad 2"];
-              break;
-            default:
-              Route = Array.isArray(data.New_Route_Name) ? data.New_Route_Name : [data.New_Route_Name];
-              break;
-          }
-        }
-      } else {
-        console.error("❌ User not found or error fetching records");
-      }
-      await ESNDetails(childESNNumber);
-    });
-    // ======================= Fetch ESN Details =======================
-    async function ESNDetails(childESNNumber) {
-      $("#loader").css({ display: "block" });
-      const config = {
-        appName: "service-management",
-        reportName: "ESN_Scan_QR_Widget",
-        criteria: '(Child_ESN_Number == "' + childESNNumber + '")',
-        page: 0,
-        pageSize: 0
-      };
+        childESNNumber = params["Child_ESN_Number"] || "";
+        const config = {
+          appName: "service-management",
+          reportName: "My_Users",
+          criteria: '(Email == "' + loginuser + '")',
+          page: 1,
+          pageSize: 1
+        };
 
-      try {
         const response = await ZOHO.CREATOR.API.getAllRecords(config);
         if (response.code === 3000 && response.data.length > 0) {
-          await ServiceRequest(childESNNumber);
           const data = response.data[0];
-          ESNSystemID = data.ID;
-          $("#parkingNumber").text(data.APS_PS_Parking_Number || "-");
-          $("#parentESN").text(data.Parent_ESN_Number || "-");
-          $("#childESN").text(data.Child_ESN_Number || "-");
-          $("#irnNumber").text(data.IRN_Number || "-");
-          $("#esnStatus").text(data.ESN_Status || "-");
-
-          // System Details
-          const tbody = $("#systemTable tbody").empty();
-          const systemDetails = data.System_Details || [];
-          if (systemDetails.length === 0) {
-            tbody.html(`<tr><td colspan="7" class="text-center text-muted">System Details not Found</td></tr>`);
+          console.log("User data fetched:", data);
+          if ((Array.isArray(data.New_Route_Name) && data.New_Route_Name.includes("All Route"))) {
+            console.log("Aha! pe code execute ho rha hai...");
+            Admin = true;
           } else {
-            systemDetails.forEach((item) => {
-              const values = item.display_value ? item.display_value.split("*/*") : [];
-              const [platformNum, cylinderNum, powerPackNum, chainLen, wohrValue, magnetAssembly, plcVersion] = values;
-              const rowHTML = `
+            console.log("Else, part mai code execute ho rha hai...");
+            Admin = false;
+            let userRoute = Array.isArray(data.New_Route_Name) ? data.New_Route_Name[0] : data.New_Route_Name;
+            console.log("User Route: ", userRoute);
+            Route = [];
+            switch (userRoute) {
+              case "Pune All":
+                Route = ["Pune 1", "Pune 2", "Pune 3"];
+                break;
+              case "All North Region":
+                Route = ["North 1", "North 2", "North 3", "North 4", "North 5", "North 6"];
+                break;
+              case "All Hyderabad":
+                Route = ["Hyderabad 1", "Hyderabad 2", "Hyderabad 3"];
+                break;
+              case "All Chennai":
+                Route = ["Chennai 1", "Chennai 2"];
+                break;
+              case "All Bangalore Region":
+                Route = ["Bangalore 1", "Bangalore 2", "Bangalore 3", "Bangalore 4", "Bangalore 5", "Bangalore 6", "Bangalore 7"];
+                break;
+              case "All Ahmedabad":
+                Route = ["Ahmedabad 1", "Ahmedabad 2"];
+                break;
+              default:
+                Route = Array.isArray(data.New_Route_Name) ? data.New_Route_Name : [data.New_Route_Name];
+                break;
+            }
+          }
+        } else {
+          console.error("❌ User not found or error fetching records");
+        }
+        await ESNDetails(childESNNumber);
+      });
+      // ======================= Fetch ESN Details =======================
+      async function ESNDetails(childESNNumber) {
+        $("#loader").css({ display: "block" });
+        const config = {
+          appName: "service-management",
+          reportName: "ESN_Scan_QR_Widget",
+          criteria: '(Child_ESN_Number == "' + childESNNumber + '")',
+          page: 0,
+          pageSize: 0
+        };
+
+        try {
+          const response = await ZOHO.CREATOR.API.getAllRecords(config);
+          if (response.code === 3000 && response.data.length > 0) {
+            await ServiceRequest(childESNNumber);
+            const data = response.data[0];
+            ESNSystemID = data.ID;
+            $("#parkingNumber").text(data.APS_PS_Parking_Number || "-");
+            $("#parentESN").text(data.Parent_ESN_Number || "-");
+            $("#childESN").text(data.Child_ESN_Number || "-");
+            $("#irnNumber").text(data.IRN_Number || "-");
+            $("#esnStatus").text(data.ESN_Status || "-");
+
+            // System Details
+            const tbody = $("#systemTable tbody").empty();
+            const systemDetails = data.System_Details || [];
+            if (systemDetails.length === 0) {
+              tbody.html(`<tr><td colspan="7" class="text-center text-muted">System Details not Found</td></tr>`);
+            } else {
+              systemDetails.forEach((item) => {
+                const values = item.display_value ? item.display_value.split("*/*") : [];
+                const [platformNum, cylinderNum, powerPackNum, chainLen, wohrValue, magnetAssembly, plcVersion] = values;
+                const rowHTML = `
                 <tr>
                   <td>${platformNum || "-"}</td>
                   <td>${cylinderNum || "-"}</td>
@@ -907,46 +1060,46 @@
                   <td>${magnetAssembly || "-"}</td>
                   <td>${plcVersion || "-"}</td>
                 </tr>`;
-              tbody.append(rowHTML);
-            });
-          }
-
-          // Fetch Customer Details
-          if (data.Customer_Master && data.Customer_Master.ID) {
-            customerID = data.Customer_Master.ID;
-            const customerConfig = {
-              appName: "service-management",
-              reportName: "My_Customer",
-              id: customerID
-            };
-            const custResponse = await ZOHO.CREATOR.API.getRecordById(customerConfig);
-            if (custResponse.code === 3000) {
-              const cust = custResponse.data;
-              $("#customerName").text(cust.Customer_Name || "-");
-              $("#customerEmail").text(cust.Email || "-");
-              $("#customerPhone").text(cust.Phone_Number || "-");
-              $("#ShippingrAddress1").text(cust.Shipping_Street || "-");
-              $("#ShippingrAddress2").text(cust.Shipping_Street_2 || "-");
-              $("#ShippingrAddress3").text(cust.Shipping_Street_3 || "-");
-              $("#Shippingcity").text(cust.Shipping_City || "-");
-              $("#Shippingrpostal").text(cust.Shipping_Postal_Code || "-");
-              $("#Shippingrcountry").text(cust.Shipping_Country || "-");
-              $("#Shippingrstate").text(cust.Domestic_Shipping_State || "-");
+                tbody.append(rowHTML);
+              });
             }
-          }
 
-          // Product Info
-          const productTableBody = $("#productTable tbody").empty();
-          const products = data.ESN_Product || [];
-          if (products.length === 0) {
-            productTableBody.html(`<tr><td colspan="5" class="text-center text-muted">Product details not found</td></tr>`);
-          } else {
-            products.forEach((prod) => {
-              const values = prod.display_value ? prod.display_value.split("*/*") : [];
-              
-              const cleaned = values.map(v => v.replace(/["']/g, "").trim());
-              const [productName, productCode, productSubFamily, quantity, description] = cleaned;
-              const rowHTML = `
+            // Fetch Customer Details
+            if (data.Customer_Master && data.Customer_Master.ID) {
+              customerID = data.Customer_Master.ID;
+              const customerConfig = {
+                appName: "service-management",
+                reportName: "My_Customer",
+                id: customerID
+              };
+              const custResponse = await ZOHO.CREATOR.API.getRecordById(customerConfig);
+              if (custResponse.code === 3000) {
+                const cust = custResponse.data;
+                $("#customerName").text(cust.Customer_Name || "-");
+                $("#customerEmail").text(cust.Email || "-");
+                $("#customerPhone").text(cust.Phone_Number || "-");
+                $("#ShippingrAddress1").text(cust.Shipping_Street || "-");
+                $("#ShippingrAddress2").text(cust.Shipping_Street_2 || "-");
+                $("#ShippingrAddress3").text(cust.Shipping_Street_3 || "-");
+                $("#Shippingcity").text(cust.Shipping_City || "-");
+                $("#Shippingrpostal").text(cust.Shipping_Postal_Code || "-");
+                $("#Shippingrcountry").text(cust.Shipping_Country || "-");
+                $("#Shippingrstate").text(cust.Domestic_Shipping_State || "-");
+              }
+            }
+
+            // Product Info
+            const productTableBody = $("#productTable tbody").empty();
+            const products = data.ESN_Product || [];
+            if (products.length === 0) {
+              productTableBody.html(`<tr><td colspan="5" class="text-center text-muted">Product details not found</td></tr>`);
+            } else {
+              products.forEach((prod) => {
+                const values = prod.display_value ? prod.display_value.split("*/*") : [];
+
+                const cleaned = values.map(v => v.replace(/["']/g, "").trim());
+                const [productName, productCode, productSubFamily, quantity, description] = cleaned;
+                const rowHTML = `
                 <tr>
                   <td>${productName || "-"}</td>
                   <td>${productCode || "-"}</td>
@@ -954,159 +1107,161 @@
                   <td>${quantity || "-"}</td>
                   <td>${description || "-"}</td>
                 </tr>`;
-              productTableBody.append(rowHTML);
-            });
+                productTableBody.append(rowHTML);
+              });
+            }
+          } else {
+            $("#systemTable tbody").html(`<tr><td colspan="7" class="text-center text-muted">Product details not found: ${childESNNumber}</td></tr>`);
           }
-        } else {
-          $("#systemTable tbody").html(`<tr><td colspan="7" class="text-center text-muted">Product details not found: ${childESNNumber}</td></tr>`);
-        }
-      } catch (error) {
-        console.error("❌ Error fetching ESN details:", error);
-      } finally {
-        $("#loader").css({ display: "none" });
-      }
-    }
-
-  
-    // ======================= // System Update// =======================
-    async function systemupdate(ESNSystemID) {
-     $("#loader").css({ "display": "block" });
-      const newEntry = {
-        Platform_Number: $("#platformNumber").val(),
-        Cylender_Number: $("#cylinderNumber").val(),
-        Power_Pack_Number: $("#powerPackNumber").val(),
-        Chain_Length: $("#chainLength").val(),
-        WOHR_Valve: $("#wohrValue").val(),
-        Magnet_Assembly: $("#magnetAssembly").val(),
-        PLC_Version: $("#plcVersion").val()
-      };
-  
-      const SystemUpdateDetails = {
-        appName: "service-management",
-        reportName: "ESN_Scan_QR_Widget",
-        id: ESNSystemID
-      };
-      ZOHO.CREATOR.API.getRecordById(SystemUpdateDetails).then(function (response) {
-        let recordData = response.data;
-        let approvalStatus = recordData.Approval_Status || "";
-        if (approvalStatus.toLowerCase() === "pending") {
-          $("#addNewButton").prop("disabled", true);
-          Swal.fire("Notice", "Approval Pending. Please contact your region operation in-charge.", "info");
-          $("#addSystemModal").modal("hide");
-          $("#systemForm")[0].reset();
+        } catch (error) {
+          console.error("❌ Error fetching ESN details:", error);
+        } finally {
           $("#loader").css({ display: "none" });
-          return;
-        } else {
-          $("#addNewButton").prop("disabled", false);
         }
-  
-        let systemDetails = recordData.System_Details || [];
-        let allSystemDetails = [];
-  
-        if (systemDetails.length > 0) {
-          $.each(systemDetails, function (index, record) {
-            const labels = [
-              "Platform_Number",
-              "Cylender_Number",
-              "Power_Pack_Number",
-              "Chain_Length",
-              "WOHR_Valve",
-              "Magnet_Assembly",
-              "PLC_Version"
-            ];
-            const values = record.display_value ? record.display_value.split("*/*").map(v => v.trim()) : [];
-            
-            const formatted = {};
-            $.each(labels, function (i, label) {
-              formatted[label] = values[i] || "";
-            });
-            $("#loader").css({ "display": "block" });
-            allSystemDetails.push(formatted);
-          });
-          allSystemDetails[allSystemDetails.length - 1] = newEntry;
-          $("#systemForm")[0].reset();
-        }else{
-          allSystemDetails.push(newEntry);
-          $("#systemForm")[0].reset();
-        }
-        const updateData = {
-          data: {
-            ESN_Status: "Completed",
-            Approval_Status: "Pending",
-            System_Details: allSystemDetails
-          }
+      }
+
+
+      // ======================= // System Update// =======================
+      async function systemupdate(ESNSystemID) {
+        $("#loader").css({ "display": "block" });
+        const newEntry = {
+          Platform_Number: $("#platformNumber").val(),
+          Cylender_Number: $("#cylinderNumber").val(),
+          Power_Pack_Number: $("#powerPackNumber").val(),
+          Chain_Length: $("#chainLength").val(),
+          WOHR_Valve: $("#wohrValue").val(),
+          Magnet_Assembly: $("#magnetAssembly").val(),
+          PLC_Version: $("#plcVersion").val()
         };
-  
-        const updateConfig = {
+
+        const SystemUpdateDetails = {
           appName: "service-management",
           reportName: "ESN_Scan_QR_Widget",
-          id: ESNSystemID,
-          data: updateData
+          id: ESNSystemID
         };
-  
-        ZOHO.CREATOR.API.updateRecord(updateConfig).then(function (updateResponse) {
-          $("#loader").css({ "display": "block" });
-          if (updateResponse.code === 3000) {
-            ESNDetails(childESNNumber);
-            $("#loader").css({ display: "none" });
-            Swal.fire("Success", "System details updated successfully!", "success");
+        ZOHO.CREATOR.API.getRecordById(SystemUpdateDetails).then(function (response) {
+          let recordData = response.data;
+          let approvalStatus = recordData.Approval_Status || "";
+          if (approvalStatus.toLowerCase() === "pending") {
+            $("#addNewButton").prop("disabled", true);
+            Swal.fire("Notice", "Approval Pending. Please contact your region operation in-charge.", "info");
             $("#addSystemModal").modal("hide");
+            $("#systemForm")[0].reset();
+            $("#loader").css({ display: "none" });
+            return;
           } else {
-            Swal.fire("Error", "Update failed: " + (updateResponse.message || "Unknown error"), "error");
+            $("#addNewButton").prop("disabled", false);
           }
-        })
-        $("#loader").css({ display: "none" });
-      });
-   }
-    $(document).on("click", '[data-bs-target="#addSystemModal"]', function () {
-      $("#loader").css({ "display": "block" });
-      if (!ESNSystemID) return;
-      const SystemUpdateDetails = {
-        appName: "service-management",
-        reportName: "ESN_Scan_QR_Widget",
-        id: ESNSystemID
-      };
 
-      ZOHO.CREATOR.API.getRecordById(SystemUpdateDetails).then(function (response) {
-        if (
-          response.code === 3000 &&
-          response.data &&
-          response.data.System_Details &&
-          response.data.System_Details.length > 0
-        ) {
-          // Get the last system detail entry
-          const lastDetail = response.data.System_Details[response.data.System_Details.length - 1];
-          const values = lastDetail.display_value ? lastDetail.display_value.split("*/*") : [];
-          // Map values to form fields
-          $("#platformNumber").val(values[0] || "");
-          $("#cylinderNumber").val(values[1] || "");
-          $("#powerPackNumber").val(values[2] || "");
-          $("#chainLength").val(values[3] || "");
-          $("#wohrValue").val(values[4] || "");
-          $("#magnetAssembly").val(values[5] || "");
-          $("#plcVersion").val(values[6] || "");
-        } else {
-          $("#systemForm")[0].reset();
-        }
-        $("#loader").css({ display: "none" });
-      });
-    });
-  
-    $("#saveSystemBtn").click(function (e) {
-      var $btn = $(this);
-      $btn.prop("disabled", true).html("⏳ Saving...");
-      systemupdate(ESNSystemID);
-      setTimeout(function () {
-        $btn.prop("disabled", false).html("💾 Save System");
-      }, 3000);
+          let systemDetails = recordData.System_Details || [];
+          let allSystemDetails = [];
 
-    });
-   // ======================= // Fetch Service Requests // =======================
-    async function ServiceRequest(childESNNumber) {
+          if (systemDetails.length > 0) {
+            $.each(systemDetails, function (index, record) {
+              const labels = [
+                "Platform_Number",
+                "Cylender_Number",
+                "Power_Pack_Number",
+                "Chain_Length",
+                "WOHR_Valve",
+                "Magnet_Assembly",
+                "PLC_Version"
+              ];
+              const values = record.display_value ? record.display_value.split("*/*").map(v => v.trim()) : [];
+
+              const formatted = {};
+              $.each(labels, function (i, label) {
+                formatted[label] = values[i] || "";
+              });
+              $("#loader").css({ "display": "block" });
+              allSystemDetails.push(formatted);
+            });
+            allSystemDetails[allSystemDetails.length - 1] = newEntry;
+            $("#systemForm")[0].reset();
+          } else {
+            allSystemDetails.push(newEntry);
+            $("#systemForm")[0].reset();
+          }
+          const updateData = {
+            data: {
+              ESN_Status: "Completed",
+              Approval_Status: "Pending",
+              System_Details: allSystemDetails
+            }
+          };
+
+          const updateConfig = {
+            appName: "service-management",
+            reportName: "ESN_Scan_QR_Widget",
+            id: ESNSystemID,
+            data: updateData
+          };
+
+          ZOHO.CREATOR.API.updateRecord(updateConfig).then(function (updateResponse) {
+            $("#loader").css({ "display": "block" });
+            if (updateResponse.code === 3000) {
+              ESNDetails(childESNNumber);
+              $("#loader").css({ display: "none" });
+              Swal.fire("Success", "System details updated successfully!", "success");
+              $("#addSystemModal").modal("hide");
+            } else {
+              Swal.fire("Error", "Update failed: " + (updateResponse.message || "Unknown error"), "error");
+            }
+          })
+          $("#loader").css({ display: "none" });
+        });
+      }
+      $(document).on("click", '[data-bs-target="#addSystemModal"]', function () {
+        $("#loader").css({ "display": "block" });
+        if (!ESNSystemID) return;
+        const SystemUpdateDetails = {
+          appName: "service-management",
+          reportName: "ESN_Scan_QR_Widget",
+          id: ESNSystemID
+        };
+
+        ZOHO.CREATOR.API.getRecordById(SystemUpdateDetails).then(function (response) {
+          if (
+            response.code === 3000 &&
+            response.data &&
+            response.data.System_Details &&
+            response.data.System_Details.length > 0
+          ) {
+            // Get the last system detail entry
+            const lastDetail = response.data.System_Details[response.data.System_Details.length - 1];
+            const values = lastDetail.display_value ? lastDetail.display_value.split("*/*") : [];
+            // Map values to form fields
+            $("#platformNumber").val(values[0] || "");
+            $("#cylinderNumber").val(values[1] || "");
+            $("#powerPackNumber").val(values[2] || "");
+            $("#chainLength").val(values[3] || "");
+            $("#wohrValue").val(values[4] || "");
+            $("#magnetAssembly").val(values[5] || "");
+            $("#plcVersion").val(values[6] || "");
+          } else {
+            $("#systemForm")[0].reset();
+          }
+          $("#loader").css({ display: "none" });
+        });
+      });
+
+      $("#saveSystemBtn").click(function (e) {
+        var $btn = $(this);
+        $btn.prop("disabled", true).html("⏳ Saving...");
+        systemupdate(ESNSystemID);
+        setTimeout(function () {
+          $btn.prop("disabled", false).html("💾 Save System");
+        }, 3000);
+
+      });
+      // ======================= // Fetch Service Requests // =======================
+      async function ServiceRequest(childESNNumber) {
         $("#loader").css({ "display": "block" });
         let criteria = '(Child_ESN_Number.Child_ESN_Number == "' + childESNNumber + '")';
+        // If Admin is true OR Route includes "All Route Name", do NOT filter by route : Added by Teuton [27/10/2025]
         if (!Admin) {
           let routeFilter = "";
+          console.log("User Routes:", Route);
           if (Route.length > 0) {
             routeFilter = Route
               .filter(r => r && r.trim() !== "")
@@ -1130,6 +1285,7 @@
           }
           if (response.code === 3000 && response.data && response.data.length > 0) {
             let filteredData = response.data;
+            console.log(filteredData);
             const serviceTableBody = $("#ServicerequestTable tbody").empty();
             const selectedStatus = $("#statusFilter").val();
             // Helper to check if a date string is in the current month
@@ -1139,39 +1295,39 @@
               const now = new Date();
               return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
             }
-              if (selectedStatus !== "All") {
+            if (selectedStatus !== "All") {
               // Only show current month for non-All
-                  filteredData = filteredData.filter(req => isCurrentMonth(req.Due_Date));
-                  if (selectedStatus !== "Current month Open") {
-                    filteredData = filteredData.filter(req => (req.Status || "-") === selectedStatus);
-                  } else {
-                    filteredData = filteredData.filter(req => (req.Status || "-") === "Current month Open");
-                  }
+              filteredData = filteredData.filter(req => isCurrentMonth(req.Due_Date));
+              if (selectedStatus !== "Current month Open") {
+                filteredData = filteredData.filter(req => (req.Status || "-") === selectedStatus);
+              } else {
+                filteredData = filteredData.filter(req => (req.Status || "-") === "Current month Open");
               }
-                if (filteredData.length > 0) {
-                  $.each(filteredData, function (i, list) {
-                    const row = $("<tr></tr>");
-                    const statusText = list.Status || "-";
-                    const sKey = (statusText || "").toString().toLowerCase();
-                    let statusClass = "status-unknown";
-                    if (sKey === "open") statusClass = "status-open";
-                    else if (sKey === "work in progress" || sKey.includes("work")) statusClass = "status-wip";
-                    else if (sKey === "closed") statusClass = "status-closed";
-                    row.append($("<td></td>").html(`<span class="status-badge ${statusClass}">${statusText}</span>`));
-                    row.append($("<td></td>").text(list.Service_Request_Type || "-"));
-                    row.append($("<td></td>").text(list.APS_PS_Parking_Number?.display_value || "-"));
-                    row.append($("<td></td>").text(list.Parent_ESN_Number?.display_value || "-"));
-                    row.append($("<td></td>").text(list.Child_ESN_Number?.display_value || "-"));
-                    row.append($("<td></td>").text(list.Route_Name || "-"));
-                    row.append($("<td></td>").text(list.Due_Date || "-"));
-                    row.append($("<td></td>").text(list.Call_Status || "-"));
-                    
-                    const showEye    = (selectedStatus !== "Closed");
-                    const showReport = (selectedStatus === "Closed");
+            }
+            if (filteredData.length > 0) {
+              $.each(filteredData, function (i, list) {
+                const row = $("<tr></tr>");
+                const statusText = list.Status || "-";
+                const sKey = (statusText || "").toString().toLowerCase();
+                let statusClass = "status-unknown";
+                if (sKey === "open") statusClass = "status-open";
+                else if (sKey === "work in progress" || sKey.includes("work")) statusClass = "status-wip";
+                else if (sKey === "closed") statusClass = "status-closed";
+                row.append($("<td></td>").html(`<span class="status-badge ${statusClass}">${statusText}</span>`));
+                row.append($("<td></td>").text(list.Service_Request_Type || "-"));
+                row.append($("<td></td>").text(list.APS_PS_Parking_Number?.display_value || "-"));
+                row.append($("<td></td>").text(list.Parent_ESN_Number?.display_value || "-"));
+                row.append($("<td></td>").text(list.Child_ESN_Number?.display_value || "-"));
+                row.append($("<td></td>").text(list.Route_Name || "-"));
+                row.append($("<td></td>").text(list.Due_Date || "-"));
+                row.append($("<td></td>").text(list.Call_Status || "-"));
 
-                  let viewTd = $("<td></td>");
-                    if (showEye) {
-                      const viewIcon = $(`
+                const showEye = (selectedStatus !== "Closed");
+                const showReport = (selectedStatus === "Closed");
+
+                let viewTd = $("<td></td>");
+                if (showEye) {
+                  const viewIcon = $(`
                         <i class="fas fa-eye text-primary"
                           style="cursor:pointer;"
                           title="View"
@@ -1179,49 +1335,49 @@
                           data-due-date="${list.Due_Date}">
                         </i>
                       `);
-                      viewTd.append(viewIcon);
-                    } else {
-                      // hidden when filter is Closed
-                      viewTd.html('<span class="text-muted">—</span>');
-                    }
-                    row.append(viewTd);
-                      // ================== Service Report Icon ==================
-                      let reportTd = $("<td></td>");
-                      if (showReport) {
-                        const reportIcon = $(`
+                  viewTd.append(viewIcon);
+                } else {
+                  // hidden when filter is Closed
+                  viewTd.html('<span class="text-muted">—</span>');
+                }
+                row.append(viewTd);
+                // ================== Service Report Icon ==================
+                let reportTd = $("<td></td>");
+                if (showReport) {
+                  const reportIcon = $(`
                           <i class="fas fa-file-alt text-success"
                             style="cursor:pointer;"
                             title="Open Service Report"
                             data-report-id="${list.ID}">
                           </i>
                         `);
-                        reportTd.append(reportIcon);
-                      } else {
-                        // hidden when filter is not Closed
-                        reportTd.html('<span class="text-muted">—</span>');
-                      }
-                      row.append(reportTd);
-                    serviceTableBody.append(row);
-                  });
-                  $('#ServicerequestTable').DataTable({
-                    paging: true,
-                    searching: true,
-                    ordering: true,
-                    pageLength: 20,
-                    lengthChange: true,
-                  });
+                  reportTd.append(reportIcon);
                 } else {
-                  $("#loader").css({ display: "none" });
-                  serviceTableBody.html('<tr><td colspan="8" class="text-center text-muted">No Service Requests Found</td></tr>');
+                  // hidden when filter is not Closed
+                  reportTd.html('<span class="text-muted">—</span>');
                 }
-                updateRequestCount();
-                } else {
-                  $("#loader").css({ display: "none" });
-                  serviceTableBody.html('<tr><td colspan="8" class="text-center text-muted">No Service Requests Found</td></tr>');
-                }
-                $("#loader").css({ display: "none" });
-            }).catch(function(error) {
-              $("#ServicerequestTable tbody").html(`
+                row.append(reportTd);
+                serviceTableBody.append(row);
+              });
+              $('#ServicerequestTable').DataTable({
+                paging: true,
+                searching: true,
+                ordering: true,
+                pageLength: 20,
+                lengthChange: true,
+              });
+            } else {
+              $("#loader").css({ display: "none" });
+              serviceTableBody.html('<tr><td colspan="8" class="text-center text-muted">No Service Requests Found</td></tr>');
+            }
+            updateRequestCount();
+          } else {
+            $("#loader").css({ display: "none" });
+            serviceTableBody.html('<tr><td colspan="8" class="text-center text-muted">No Service Requests Found</td></tr>');
+          }
+          $("#loader").css({ display: "none" });
+        }).catch(function (error) {
+          $("#ServicerequestTable tbody").html(`
               <tr>
                 <td colspan="100%" class="text-center align-middle text-muted py-5" style="height: 50px;">
                   <div style="display: flex; align-items: center; justify-content: center; height: 50%;">
@@ -1230,116 +1386,117 @@
                 </td>
               </tr>
             `);
-            Swal.fire({
-              text: "No service requests found for the given route.",
-              timer: 2000,
-              timerProgressBar: true,
-              showConfirmButton: false
-            });
-              updateRequestCount();
-              $("#loader").css({ display: "none" });
-            });
-           }
-  
-    // ======================= View Icon Handler =======================
-    $(document).on("click", ".fa-eye", function () {
-      const recordId = $(this).data("record-id");
-      const childESN = $(this).data("esn");
-      const dueDateVal = $(this).data("due-date");
-      function formatDateDDMonYYYY(d) {
-          const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+          Swal.fire({
+            text: "No service requests found for the given route.",
+            timer: 3000,
+            timerProgressBar: true,
+            showConfirmButton: false
+          });
+          updateRequestCount();
+          $("#loader").css({ display: "none" });
+        });
+      }
+
+      // ======================= View Icon Handler =======================
+      $(document).on("click", ".fa-eye", function () {
+        const recordId = $(this).data("record-id");
+        console.log(recordId);
+        const childESN = $(this).data("esn");
+        const dueDateVal = $(this).data("due-date");
+        function formatDateDDMonYYYY(d) {
+          const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
           const dt = d instanceof Date ? d : new Date(d);
-          return `${String(dt.getDate()).padStart(2,'0')}-${months[dt.getMonth()]}-${dt.getFullYear()}`;
+          return `${String(dt.getDate()).padStart(2, '0')}-${months[dt.getMonth()]}-${dt.getFullYear()}`;
         }
-      function formatDateDDMonYYYY(d) {
-          const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        function formatDateDDMonYYYY(d) {
+          const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
           const dt = d instanceof Date ? d : new Date(d);
-          return `${String(dt.getDate()).padStart(2,'0')}-${months[dt.getMonth()]}-${dt.getFullYear()}`;
-          }
+          return `${String(dt.getDate()).padStart(2, '0')}-${months[dt.getMonth()]}-${dt.getFullYear()}`;
+        }
         function isCurrentMonth(dateStr) {
-            if (!dateStr) return false;
-            const date = new Date(dateStr);
-            const now = new Date();
-            return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+          if (!dateStr) return false;
+          const date = new Date(dateStr);
+          const now = new Date();
+          return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
         }
 
         if (!isCurrentMonth(dueDateVal)) {
-            const formattedDate = formatDateDDMonYYYY(new Date(dueDateVal));
-            Swal.fire({
-                text: `Allow only current month calls. Selected Due Date: ${formattedDate}`,
-                timer: 2000,
-                timerProgressBar: true,
-                showConfirmButton: false
-            });
-            const modalInstance = bootstrap.Modal.getInstance($("#statusModal")[0]);
-            if (modalInstance) modalInstance.hide();
-            if (typeof $btn !== "undefined" && $btn) {
-              $btn.prop("disabled", false).html('<i class="fas fa-save me-2"></i>Save');
-            }
-            return;
-        }
-      $("#statusForm").data("record-id", recordId);
-      $("#statusForm").data("child-esn", childESN);
-      $("#statusForm").data("due-date", dueDateVal);
-      $("#statusForm")[0].reset();
-      $("#subStatusDiv, #materialInfoDiv, #closedFields").hide();
-      const config = {
-        appName: "service-management",
-        reportName: "Scan_QR_Service_Request",
-        id: recordId
-      };
-
-      ZOHO.CREATOR.API.getRecordById(config).then(function (response) {
-        if (response.code === 3000 && response.data) {
-          const record = response.data;
-          $("#statusSelect").val(record.Status || "");
-          $("#subStatusSelect").val(record.Reason_For_Hold || "");
-          $("#materialInfo").val(record.Material_Information || "");
-          $("#dueDate").val(record.Due_Date || "");
-          $("#vp").prop("checked", record.Vertical_Parts || false);
-          $("#hp").prop("checked", record.Horizontal_Parts || false);
-          $("#ep").prop("checked", record.Electrical_Parts || false);
-          $("#pl").prop("checked", record.Platform_Leveling || false);
-          $("#bp").prop("checked", record.Button_Indicator || false);
-          $("#hyp").prop("checked", record.Hydraulic_Parts || false);
-          $("#loader").css({ display: "none" });
-          if (record.Status === "Work in Progress") {
-            $("#subStatusDiv, #materialInfoDiv").show();
-          } else if (record.Status === "Closed") {
-            $("#closedFields").show();
+          const formattedDate = formatDateDDMonYYYY(new Date(dueDateVal));
+          Swal.fire({
+            html: `<span style="color: #d9534f;">Allow only current month calls.<br>Selected Due Date: ${formattedDate}</span>`,
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false
+          });
+          const modalInstance = bootstrap.Modal.getInstance($("#statusModal")[0]);
+          if (modalInstance) modalInstance.hide();
+          if (typeof $btn !== "undefined" && $btn) {
+            $btn.prop("disabled", false).html('<i class="fas fa-save me-2"></i>Save');
           }
+          return;
         }
+        $("#statusForm").data("record-id", recordId);
+        $("#statusForm").data("child-esn", childESN);
+        $("#statusForm").data("due-date", dueDateVal);
+        $("#statusForm")[0].reset();
+        $("#subStatusDiv, #materialInfoDiv, #closedFields").hide();
+        const config = {
+          appName: "service-management",
+          reportName: "Scan_QR_Service_Request",
+          id: recordId
+        };
+
+        ZOHO.CREATOR.API.getRecordById(config).then(function (response) {
+          if (response.code === 3000 && response.data) {
+            const record = response.data;
+            $("#statusSelect").val(record.Status || "");
+            $("#subStatusSelect").val(record.Reason_For_Hold || "");
+            $("#materialInfo").val(record.Material_Information || "");
+            $("#dueDate").val(record.Due_Date || "");
+            $("#vp").prop("checked", record.Vertical_Parts || false);
+            $("#hp").prop("checked", record.Horizontal_Parts || false);
+            $("#ep").prop("checked", record.Electrical_Parts || false);
+            $("#pl").prop("checked", record.Platform_Leveling || false);
+            $("#bp").prop("checked", record.Button_Indicator || false);
+            $("#hyp").prop("checked", record.Hydraulic_Parts || false);
+            $("#loader").css({ display: "none" });
+            if (record.Status === "Work in Progress") {
+              $("#subStatusDiv, #materialInfoDiv").show();
+            } else if (record.Status === "Closed") {
+              $("#closedFields").show();
+            }
+          }
+        });
+        const modal = new bootstrap.Modal($("#statusModal"));
+        modal.show();
       });
-      const modal = new bootstrap.Modal($("#statusModal"));
-      modal.show();
-    });
       // ======================= // Save / Update Service Request // =======================
       $(document).on("click", "#saveStatusBtn", function (e) {
         e.preventDefault();
-          const recordId = $("#statusForm").data("record-id");
-          const dueDateVal = $("#statusForm").data("due-date");
-          
-          const $btn = $(this);
-          $btn.prop("disabled", true).html("⏳ Saving...");
-         
-          const statusVal = $("#statusSelect").val();
-          const subStatusVal = $("#subStatusSelect").val();
+        const recordId = $("#statusForm").data("record-id");
+        const dueDateVal = $("#statusForm").data("due-date");
 
-          if(statusVal === "None" || !statusVal) {
+        const $btn = $(this);
+        $btn.prop("disabled", true).html("⏳ Saving...");
+
+        const statusVal = $("#statusSelect").val();
+        const subStatusVal = $("#subStatusSelect").val();
+
+        if (statusVal === "None" || !statusVal) {
           Swal.fire({
             text: "Please select a Status before saving.",
             timer: 2000,
             timerProgressBar: true,
             showConfirmButton: false
           });
-          
+
           bootstrap.Modal.getInstance($("#statusModal")[0]).hide();
           return;
         }
         else if ((statusVal === "Work in Progress" || statusVal === "Closed") && subStatusVal.trim() === "") {
           Swal.fire({
             text: "Please select a Reason before saving.",
-            timer: 2000,
+            timer: 4000,
             timerProgressBar: true,
             showConfirmButton: false
           });
@@ -1348,63 +1505,68 @@
           return;
         }
         function formatDateDDMonYYYY(d) {
-          const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+          const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
           const dt = d instanceof Date ? d : new Date(d);
-          return `${String(dt.getDate()).padStart(2,'0')}-${months[dt.getMonth()]}-${dt.getFullYear()}`;
+          return `${String(dt.getDate()).padStart(2, '0')}-${months[dt.getMonth()]}-${dt.getFullYear()}`;
         }
-          let updateData = { data: {} };
-          if ($("#statusSelect").val() === "Closed") {
-            updateData.data = {
-              Status: $("#statusSelect").val() || "",
-              Closed_By: loginuser,
-              Closed_Date: formatDateDDMonYYYY(new Date()),
-              Material_Information: $("#materialInfo").val() || "",
-              Vertical_Parts: $("#vp input[type='checkbox']").prop("checked"),
-              Horizontal_Parts: $("#hp input[type='checkbox']").prop("checked"),
-              Electrical_Parts: $("#ep input[type='checkbox']").prop("checked"),
-              Platform_Leveling: $("#pl input[type='checkbox']").prop("checked"),
-              Button_Indicator: $("#bl input[type='checkbox']").prop("checked"),
-              Hydraulic_Parts: $("#hyp input[type='checkbox']").prop("checked")
-            };
-          }
-          else if ($("#statusSelect").val() === "Work in Progress") {
-            updateData.data = {
+        let updateData = { data: {} };
+        if ($("#statusSelect").val() === "Closed") {
+          updateData.data = {
+            Status: $("#statusSelect").val() || "",
+            Closed_By: loginuser,
+            Closed_Date: formatDateDDMonYYYY(new Date()),
+            Material_Information: $("#materialInfo").val() || "",
+            Vertical_Parts: $("#vp input[type='checkbox']").prop("checked"),
+            Horizontal_Parts: $("#hp input[type='checkbox']").prop("checked"),
+            Electrical_Parts: $("#ep input[type='checkbox']").prop("checked"),
+            Platform_Leveling: $("#pl input[type='checkbox']").prop("checked"),
+            Button_Indicator: $("#bl input[type='checkbox']").prop("checked"),
+            Hydraulic_Parts: $("#hyp input[type='checkbox']").prop("checked"),
+            Reason_For_Hold: $("#subStatus").val() || "",
+            Material_Information: $("#materialInfo").val() || ""
+          };
+        }
+        else if ($("#statusSelect").val() === "Work in Progress") {
+          updateData.data = {
             Status: $("#statusSelect").val() || "",
             Reason_For_Hold: $("#subStatus").val() || "",
             Material_Information: $("#materialInfo").val() || ""
           };
         }
-          const config = {
-            appName: "service-management",
-            reportName: "Scan_QR_Service_Request",
-            id: recordId,
-            data: updateData
-          };
+        console.log("data: ", updateData);
 
-          ZOHO.CREATOR.API.updateRecord(config)
-            .then(function (response) {
-              if (response.code === 3000) {
-                Swal.fire({
-                  text: "Service request updated successfully!",
-                  timer: 2000,
-                  timerProgressBar: true,
-                  showConfirmButton: false
-                });
-                bootstrap.Modal.getInstance($("#statusModal")[0]).hide();
-                ServiceRequest(childESNNumber); // Refresh table
-              } else {
-                Swal.fire("Error", "Update failed: " + (response.message || "Unknown error"), "error");
-              }
-            })
-            .finally(function () {
-              $btn.prop("disabled", false).html('<i class="fas fa-save me-2"></i>Save');
-            });
+        const config = {
+          appName: "service-management",
+          reportName: "Scan_QR_Service_Request",
+          id: recordId,
+          data: updateData
+        };
+
+        ZOHO.CREATOR.API.updateRecord(config)
+          .then(function (response) {
+            console.log("Response: ", response);
+            if (response.code === 3000) {
+              Swal.fire({
+                text: "Service request updated successfully!",
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              });
+              bootstrap.Modal.getInstance($("#statusModal")[0]).hide();
+              ServiceRequest(childESNNumber); // Refresh table
+            } else {
+              Swal.fire("Error", "Update failed: " + (response.message || "Unknown error"), "error");
+            }
+          })
+          .finally(function () {
+            $btn.prop("disabled", false).html('<i class="fas fa-save me-2"></i>Save');
+          });
       });
 
-        // ======================= // Status Filter Handler // =======================
+      // ======================= // Status Filter Handler // =======================
       function applyStatusFilter() {
         const selectedStatus = $("#statusFilter").val();
-        $("#ServicerequestTable tbody tr").each(function() {
+        $("#ServicerequestTable tbody tr").each(function () {
           const statusText = $(this).find("td:first").text().trim();
           if (selectedStatus === "All" || statusText === selectedStatus) {
             $(this).show();
@@ -1413,330 +1575,431 @@
           }
         });
       }
-    // SERVICE REPORT ICON CLICK → open modal + populate fields
-    $(document).on("click", ".fa-file-alt", function () {
-      const srRecordId = $(this).data("report-id");
+      // SERVICE REPORT ICON CLICK → open modal + populate fields
+      let srRecordId = null;
+      $(document).on("click", ".fa-file-alt", function () {
+        srRecordId = $(this).data("report-id");
+        console.log("ID: ----> ",srRecordId);
 
-      const srConfig = {
-        appName: "service-management",
-        reportName: "Scan_QR_Service_Request",
-        id: srRecordId
-      };
+        const srConfig = {
+          appName: "service-management",
+          reportName: "Scan_QR_Service_Request",
+          id: srRecordId
+        };
 
-      ZOHO.CREATOR.API.getRecordById(srConfig).then(function (response) {
-        if (response.code === 3000 && response.data) {
-          const rec = response.data;
-          $("#srPsNumber").text(rec.APS_PS_Parking_Number?.display_value || "-");
-          $("#srSystemType").text(rec.Service_Request_Type || "-");
-          $("#srCustomerName").text(rec.Customer_Name || "-");
-          $("#srDate").text(new Date().toLocaleDateString());
+        ZOHO.CREATOR.API.getRecordById(srConfig).then(function (response) {
+          if (response.code === 3000 && response.data) {
+            const rec = response.data;
+            console.log(rec);
+            $("#srPsNumber").text(rec.APS_PS_Parking_Number?.display_value || "-");
+            $("#srSystemType").text(rec.Service_Request_Type || "-");
+            $("#srCustomerName").text(rec.Customer_Name || "-");
+            $("#srDate").text(new Date().toLocaleDateString());
 
-          // 🔹 Combine location parts
-          const location = [
-            rec.Shipping_Street_1,
-            rec.Shipping_Street_2,
-            rec.Shipping_Street_3,
-            rec.Shipping_City,
-            rec.Shipping_State,
-            rec.Shipping_Postal_Code,
-            rec.Shipping_Country
-          ].filter(v => v && v.trim() !== "").join(", ");
-          $("#srLocation").text(location || "-");
+            // 🔹 Combine location parts
+            const location = [
+              rec.Shipping_Street_1,
+              rec.Shipping_Street_2,
+              rec.Shipping_Street_3,
+              rec.Shipping_City,
+              rec.Shipping_State,
+              rec.Shipping_Postal_Code,
+              rec.Shipping_Country
+            ].filter(v => v && v.trim() !== "").join(", ");
+            $("#srLocation").text(location || "-");
 
-          // 🔹 Disable checkbox fields and set values
-          $("#srChkVertical")
-            .prop("checked", rec.Vertical_Parts || false)
-            .prop("disabled", true);
-          $("#srChkHorizontal")
-            .prop("checked", rec.Horizontal_Parts || false)
-            .prop("disabled", true);
-          $("#srChkElectrical")
-            .prop("checked", rec.Electrical_Parts || false)
-            .prop("disabled", true);
-          $("#srChkPlatform")
-            .prop("checked", rec.Platform_Leveling || false)
-            .prop("disabled", true);
-          $("#srChkButtons")
-            .prop("checked", rec.Button_Indicator || false)
-            .prop("disabled", true);
-          $("#srChkHydraulic")
-            .prop("checked", rec.Hydraulic_Parts || false)
-            .prop("disabled", true);
+            // 🔹 Disable checkbox fields and set values
+            $("#srChkVertical")
+              .prop("checked", rec.Vertical_Parts || false)
+              .prop("disabled", true);
+            $("#srChkHorizontal")
+              .prop("checked", rec.Horizontal_Parts || false)
+              .prop("disabled", true);
+            $("#srChkElectrical")
+              .prop("checked", rec.Electrical_Parts || false)
+              .prop("disabled", true);
+            $("#srChkPlatform")
+              .prop("checked", rec.Platform_Leveling || false)
+              .prop("disabled", true);
+            $("#srChkButtons")
+              .prop("checked", rec.Button_Indicator || false)
+              .prop("disabled", true);
+            $("#srChkHydraulic")
+              .prop("checked", rec.Hydraulic_Parts || false)
+              .prop("disabled", true);
 
-          // 🔹 Parts Details (Routine Maintenance + Quantity)
-          // $("#routineMaintenance")
-          //   .prop("checked", rec.Routine_Maintenance || false);
-          // $("#totalQuantity")
-          //   .val(rec.Total_Quantity || "");
+            // 🔹 Parts Details (Routine Maintenance + Quantity)
+            // $("#routineMaintenance")
+            //   .prop("checked", rec.Routine_Maintenance || false);
+            // $("#totalQuantity")
+            //   .val(rec.Total_Quantity || "");
 
-          // 🔹 Prefill editable inputs (user can change)
-          // $("#srEngineerName").val(rec.Service_Engineer_Name || "");
-          // $("#srEngineerNo").val(rec.Service_Engineer_No || "");
-          $("#srCustomerNameInput").val(rec.Customer_Name || "");
-          $("#srCustomerNo").val(rec.Customer_Phone || "");
+            // 🔹 Prefill editable inputs (user can change)
+            // $("#srEngineerName").val(rec.Service_Engineer_Name || "");
+            // $("#srEngineerNo").val(rec.Service_Engineer_No || "");
+            $("#srCustomerNameInput").val(rec.Customer_Name || "");
+            $("#srCustomerNo").val(rec.Customer_Phone || "");
 
-          // 🔹 Remarks & Action Pending (editable)
-          // $("#srRemarks").val(rec.Remarks || "");
-          // $("#srActionPending").val(rec.Action_Pending || "");
+            // 🔹 Remarks & Action Pending (editable)
+            // $("#srRemarks").val(rec.Remarks || "");
+            // $("#srActionPending").val(rec.Action_Pending || "");
+          }
+
+          // 🔹 Show modal
+          const srModal = new bootstrap.Modal($("#serviceReportModalNew"));
+          srModal.show();
+        });
+      });
+
+
+      function srInitSignaturePad(canvasId) {
+        const canvas = document.getElementById(canvasId);
+        const ctx = canvas.getContext("2d");
+        let drawing = false;
+
+        // Resize canvas properly once modal is visible
+        function resizeCanvas() {
+          const rect = canvas.getBoundingClientRect();
+          const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+          canvas.width = rect.width * ratio;
+          canvas.height = rect.height * ratio;
+
+          ctx.scale(ratio, ratio);
+          ctx.lineWidth = 2;
+          ctx.lineCap = "round";
+          ctx.strokeStyle = "#000";
         }
 
-        // 🔹 Show modal
-        const srModal = new bootstrap.Modal($("#serviceReportModalNew"));
-        srModal.show();
-      });
-    });
+        // Call after modal is fully visible
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
 
+        // ===== MOUSE EVENTS =====
+        canvas.addEventListener("mousedown", (e) => {
+          drawing = true;
+          ctx.beginPath();
+          ctx.moveTo(e.offsetX, e.offsetY);
+        });
 
-    function srInitSignaturePad(canvasId) {
-      const canvas = document.getElementById(canvasId);
-      const ctx = canvas.getContext("2d");
-      let drawing = false;
+        canvas.addEventListener("mousemove", (e) => {
+          if (!drawing) return;
+          ctx.lineTo(e.offsetX, e.offsetY);
+          ctx.stroke();
+        });
 
-      // Resize canvas properly once modal is visible
-      function resizeCanvas() {
-        const rect = canvas.getBoundingClientRect();
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.addEventListener("mouseup", () => (drawing = false));
+        canvas.addEventListener("mouseout", () => (drawing = false));
 
-        canvas.width = rect.width * ratio;
-        canvas.height = rect.height * ratio;
+        // ===== TOUCH EVENTS =====
+        canvas.addEventListener("touchstart", (e) => {
+          e.preventDefault();
+          const rect = canvas.getBoundingClientRect();
+          const touch = e.touches[0];
+          ctx.beginPath();
+          ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+          drawing = true;
+        });
 
-        ctx.scale(ratio, ratio);
-        ctx.lineWidth = 2;
-        ctx.lineCap = "round";
-        ctx.strokeStyle = "#000";
+        canvas.addEventListener("touchmove", (e) => {
+          e.preventDefault();
+          if (!drawing) return;
+          const rect = canvas.getBoundingClientRect();
+          const touch = e.touches[0];
+          ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+          ctx.stroke();
+        });
+
+        canvas.addEventListener("touchend", () => (drawing = false));
+
+        return {
+          clear: () => ctx.clearRect(0, 0, canvas.width, canvas.height),
+          toDataURL: () => canvas.toDataURL("image/png")
+        };
       }
 
-      // Call after modal is fully visible
-      resizeCanvas();
-      window.addEventListener("resize", resizeCanvas);
-
-      // ===== MOUSE EVENTS =====
-      canvas.addEventListener("mousedown", (e) => {
-        drawing = true;
-        ctx.beginPath();
-        ctx.moveTo(e.offsetX, e.offsetY);
+      function srClearSign(canvasId) {
+        const canvas = document.getElementById(canvasId);
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      let srEngineerPad, srCustomerPad;
+      $('#serviceReportModalNew').on('shown.bs.modal', function () {
+        // Allow modal to finish rendering before calculating dimensions
+        setTimeout(() => {
+          srEngineerPad = srInitSignaturePad("srEngineerSign");
+          srCustomerPad = srInitSignaturePad("srCustomerSign");
+        }, 200);
       });
-
-      canvas.addEventListener("mousemove", (e) => {
-        if (!drawing) return;
-        ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.stroke();
-      });
-
-      canvas.addEventListener("mouseup", () => (drawing = false));
-      canvas.addEventListener("mouseout", () => (drawing = false));
-
-      // ===== TOUCH EVENTS =====
-      canvas.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        ctx.beginPath();
-        ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
-        drawing = true;
-      });
-
-      canvas.addEventListener("touchmove", (e) => {
-        e.preventDefault();
-        if (!drawing) return;
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
-        ctx.stroke();
-      });
-
-      canvas.addEventListener("touchend", () => (drawing = false));
-
-      return {
-        clear: () => ctx.clearRect(0, 0, canvas.width, canvas.height),
-        toDataURL: () => canvas.toDataURL("image/png")
-      };
-    }
-
-    function srClearSign(canvasId) {
-      const canvas = document.getElementById(canvasId);
-      const ctx = canvas.getContext("2d");
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-    let srEngineerPad, srCustomerPad;
-    $('#serviceReportModalNew').on('shown.bs.modal', function () {
-      // Allow modal to finish rendering before calculating dimensions
-      setTimeout(() => {
-        srEngineerPad = srInitSignaturePad("srEngineerSign");
-        srCustomerPad = srInitSignaturePad("srCustomerSign");
-      }, 200);
-    });
-  // ==================== PDF DOWNLOAD HANDLER ====================
-  $("#srDownloadBtn").click(function () {
-    // Capture signature canvases
-    const engCanvas = document.getElementById("srEngineerSign");
-    const cusCanvas = document.getElementById("srCustomerSign");
-
-    const engSig = engCanvas.toDataURL("image/png");
-    const cusSig = cusCanvas.toDataURL("image/png");
-
-    // Create images to replace canvases
-    const engImg = document.createElement("img");
-    engImg.src = engSig;
-    engImg.style.width = "100%";
-    engImg.style.height = "120px";
-
-    const cusImg = document.createElement("img");
-    cusImg.src = cusSig;
-    cusImg.style.width = "100%";
-    cusImg.style.height = "120px";
-
-    // Replace canvases with images temporarily for PDF generation
-    engCanvas.parentNode.replaceChild(engImg, engCanvas);
-    cusCanvas.parentNode.replaceChild(cusImg, cusCanvas);
-
-    // PDF options
-    const element = document.getElementById("servicePdfContainer");
-    const options = {
-      margin: [0.5, 0.4, 0.5, 0.4],
-      filename: "Service_Report_" + new Date().toISOString().slice(0, 10) + ".pdf",
-      image: { type: "jpeg", quality: 1 },
-      html2canvas: { scale: 3, useCORS: true },
-      jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
-    };
-
-    // Generate PDF
-    html2pdf()
-      .set(options)
-      .from(element)
-      .save()
-      .then(() => {
-        engImg.parentNode.replaceChild(engCanvas, engImg);
-        cusImg.parentNode.replaceChild(cusCanvas, cusImg);
-        const modalInstance = bootstrap.Modal.getInstance($("#serviceReportModalNew")[0]);
-        if (modalInstance) modalInstance.hide();
-      })
-      .catch((err) => {
-        console.error("PDF generation failed:", err);
-        // Even on error, restore canvases
-        engImg.parentNode.replaceChild(engCanvas, engImg);
-        cusImg.parentNode.replaceChild(cusCanvas, cusImg);
-      });
-  });
-
-
-   // ======================= Customer Edit Modal =======================
-  $(document).on("click", '[data-bs-target="#editCustomerModal"]', function () {
-    if (!customerID) {
-      Swal.fire("Error", "Customer not asociated with ESN number!", "error");
-      return;
-    }
-    $("#loader").css({ display: "block" });
-    const config = {
-      appName: "service-management",
-      reportName: "All_Customers",
-      id: customerID
-    };
-    ZOHO.CREATOR.API.getRecordById(config)
-      .then(function (response) {
-        if (response.code === 3000 && response.data) {
-          const cust = response.data;
-          $("#editCustomerName").val(cust.Customer_Name || "");
-          $("#editCustomerEmail").val(cust.Email || "");
-          $("#editCustomerPhone").val(cust.Phone_Number || "");
-          $("#editShipping1").val(cust.Shipping_Street || "");
-          $("#editShipping2").val(cust.Shipping_Street_2 || "");
-          $("#editShipping3").val(cust.Shipping_Street_3 || "");
-          $("#editCity").val(cust.Shipping_City || "");
-          $("#editPostal").val(cust.Shipping_Postal_Code || "");
-          $("#editCountry").val(cust.Shipping_Country || "");
-          $("#editState").val(cust.Domestic_Shipping_State || "");
-        } else {
-          Swal.fire("Error", "Failed to load customer details!", "error");
+      // ==================== PDF DOWNLOAD HANDLER ====================
+      $("#srDownloadBtn").click(function () {
+        // 1. Gather data from the modal (without signature images)
+        function formatDate(date) {
+          const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+          const d = new Date(date);
+          return `${String(d.getDate()).padStart(2,'0')}-${months[d.getMonth()]}-${d.getFullYear()}`;
         }
-      })
-      .catch(function (err) {
-        console.error("❌ Error loading customer:", err);
-        Swal.fire("Error", "Failed to load customer details!", "error");
-      })
-      .finally(function () {
-        $("#loader").css({ display: "none" });
-      });
-  });
+        // To:
+        $("#srDate").text(formatDate(new Date()));
+        let formData  = {
+          "data" :{
+            Parking_Number: $("#srPsNumber").text() || '',
+            System_Type: $("#srSystemType").text() || '',
+            Site_Customer_Name: $("#srCustomerName").text(),
+            Location: $("#srLocation").text(),
+            Create_Date: $("#srDate").text(),
+            Vertical_Parts: $("#srChkVertical").prop("checked"),
+            Horizontal_Parts: $("#srChkHorizontal").prop("checked"),
+            Electrical_Parts: $("#srChkElectrical").prop("checked"),
+            Platform_Leveling: $("#srChkPlatform").prop("checked"),
+            Buttons_Indicator: $("#srChkButtons").prop("checked"),
+            Hydraulic_Parts: $("#srChkHydraulic").prop("checked"),
+            Routine_Maintenance: $("#routineMaintenance").prop("checked"),
+            Total_Quantity: $("#totalQuantity").val(),
+            As_Mentioned_Below: $("#srRemarks").val(),
+            Any_Action_Pending1: $("#srActionPending").val(),
+            Service_Engineer_Name: $("#srEngineerName").val(),
+            Service_Engineer_No: $("#srEngineerNo").val(),
+            Customer_Name: $("#srCustomerName").text(),
+            Customer_No: $("#srCustomerNo").val(),
+            Service_Request: srRecordId
+          }
+        };
 
-  $("#saveCustomerBtn").on("click", function () {
-    if (!customerID) {
-      Swal.fire("Error", "Customer ID missing!", "error");
-      return;
-    }
-    $("#loader").css({ display: "block" });
-    $("#saveCustomerBtn").prop("disabled", true).html("⏳ Saving...");
-
-    const updateData = {
-      data: {
-        Customer_Name: $("#editCustomerName").val() || "",
-        Email: $("#editCustomerEmail").val() || "",
-        Phone_Number: $("#editCustomerPhone").val() || "",
-        Shipping_Street_1: $("#editShipping1").val() || "",
-        Shipping_Street_2: $("#editShipping2").val() || "",
-        Shipping_Street_3: $("#editShipping3").val() || "",
-        Shipping_City: $("#editCity").val() || "",
-        Shipping_Postal_Code: $("#editPostal").val() || "",
-        Shipping_Country: $("#editCountry").val() || "",
-        Shipping_State: $("#editState").val() || ""
-      }
-    };
-
-    const updateConfig = {
-      appName: "service-management",
-      reportName: "My_Customer",
-      id: customerID,
-      data: updateData
-    };
-
-    ZOHO.CREATOR.API.updateRecord(updateConfig)
-      .then(function (response) {
-        console.error("❌ Error updating customer:", response);
-        if (response.code === 3000) {
-          Swal.fire({
-            title: "Customer details updated!",
-            timer: 2000,
-            timerProgressBar: true,
-            showConfirmButton: false,
+        console.log("Data: ",formData)
+        // 2. Create the record in All_Service_Reports
+        const config = {
+          appName: "service-management",
+          formName: "Service_Report_Form",
+          data: formData
+        };
+        ZOHO.CREATOR.API.addRecord(config).then(function(response) {
+          console.log(response.code);
+          if(response.code === 3000) {
+              Swal.fire({
+                text: "Service report saved successfully!",
+                icon: "success",
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              });
+            const recordId = response.data.ID;
+            console.log("RECORD ID:-> ", recordId);
             
-          });
-          hideModalById("editCustomerModal");
-          const ESNupdateData = { data: updateData.data };
-          const updateCusConfig = {
-            appName: "service-management",
-            reportName: "ESN_Scan_QR_Widget",
-            id: ESNSystemID,
-            data: ESNupdateData
-          };
-
-          return ZOHO.CREATOR.API.updateRecord(updateCusConfig).then(function (updateResponse) {
-            if (updateResponse.code === 3000) ESNDetails(childESNNumber);
-            else Swal.fire("Warning", "Customer updated but ESN not synced.", "warning");
-          });
-        } else {
+            // Upload signatures if record created successfully
+            uploadSignatures(recordId);
+          } else {
+            Swal.fire("❌ Failed to save service report:", response);
+          }
+        });
+        
+        // Helper function to upload signatures
+        function uploadSignatures(recordId) {
+          const engSig = srEngineerPad.toDataURL();
+          const cusSig = srCustomerPad.toDataURL();
           
+          // Convert base64 to File object
+          function dataURLtoFile(dataurl, filename) {
+            const arr = dataurl.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while(n--) u8arr[n] = bstr.charCodeAt(n);
+            return new File([u8arr], filename, {type:mime});
+          }
+          
+          const engFile = dataURLtoFile(engSig, 'engineer_signature.png');
+          const cusFile = dataURLtoFile(cusSig, 'customer_signature.png');
+          
+          // Upload engineer signature
+          ZOHO.CREATOR.API.uploadFile({
+            appName: "service-management",
+            reportName: "All_Service_Reports",
+            id: recordId,
+            fieldName: "Service_Engineer_Signature",
+            file: engFile
+          }).then(() => console.log("✅ Engineer signature uploaded"));
+          
+          // Upload customer signature
+          ZOHO.CREATOR.API.uploadFile({
+            appName: "service-management",
+            reportName: "All_Service_Reports",
+            id: recordId,
+            fieldName: "Customer_Signature",
+            file: cusFile
+          }).then(() => console.log("✅ Customer signature uploaded"));
         }
-      })
-      .catch(function (err) {
-        Swal.fire("Error", "Failed to update customer.", error);
-      })
-      .finally(function () {
-        $("#loader").css({ display: "none" });
-        $("#saveCustomerBtn").prop("disabled", false).html("💾 Save Customer");
+
+        // Capture signature canvases
+        const engCanvas = document.getElementById("srEngineerSign");
+        const cusCanvas = document.getElementById("srCustomerSign");
+
+        const engSig = engCanvas.toDataURL("image/png");
+        const cusSig = cusCanvas.toDataURL("image/png");
+
+        // Create images to replace canvases
+        const engImg = document.createElement("img");
+        engImg.src = engSig;
+        engImg.style.width = "100%";
+        engImg.style.height = "120px";
+
+        const cusImg = document.createElement("img");
+        cusImg.src = cusSig;
+        cusImg.style.width = "100%";
+        cusImg.style.height = "120px";
+
+        // Replace canvases with images temporarily for PDF generation
+        engCanvas.parentNode.replaceChild(engImg, engCanvas);
+        cusCanvas.parentNode.replaceChild(cusImg, cusCanvas);
+
+        // PDF options
+        const element = document.getElementById("servicePdfContainer");
+        const options = {
+          margin: [0.5, 0.4, 0.5, 0.4],
+          filename: "Service_Report_" + new Date().toISOString().slice(0, 10) + ".pdf",
+          image: { type: "jpeg", quality: 1 },
+          html2canvas: { scale: 3, useCORS: true },
+          jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+        };
+
+        // Generate PDF
+        html2pdf()
+          .set(options)
+          .from(element)
+          .save()
+          .then(() => {
+            engImg.parentNode.replaceChild(engCanvas, engImg);
+            cusImg.parentNode.replaceChild(cusCanvas, cusImg);
+            const modalInstance = bootstrap.Modal.getInstance($("#serviceReportModalNew")[0]);
+            if (modalInstance) modalInstance.hide();
+          })
+          .catch((err) => {
+            console.error("PDF generation failed:", err);
+            // Even on error, restore canvases
+            engImg.parentNode.replaceChild(engCanvas, engImg);
+            cusImg.parentNode.replaceChild(cusCanvas, cusImg);
+          });
       });
-  });
-    function hideModalById(id) {
-      try {
-        const el = document.getElementById(id);
-        if (!el) return;
-        // Use existing modal instance if available, else create new instance
-        const modalInstance = bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
-        modalInstance.hide();
-      } catch (err) {
-        console.error("Error hiding modal:", err);
+
+
+      // ======================= Customer Edit Modal =======================
+      $(document).on("click", '[data-bs-target="#editCustomerModal"]', function () {
+        if (!customerID) {
+          Swal.fire("Error", "Customer not asociated with ESN number!", "error");
+          return;
+        }
+        $("#loader").css({ display: "block" });
+        const config = {
+          appName: "service-management",
+          reportName: "All_Customers",
+          id: customerID
+        };
+        ZOHO.CREATOR.API.getRecordById(config)
+          .then(function (response) {
+            if (response.code === 3000 && response.data) {
+              const cust = response.data;
+              $("#editCustomerName").val(cust.Customer_Name || "");
+              $("#editCustomerEmail").val(cust.Email || "");
+              $("#editCustomerPhone").val(cust.Phone_Number || "");
+              $("#editShipping1").val(cust.Shipping_Street || "");
+              $("#editShipping2").val(cust.Shipping_Street_2 || "");
+              $("#editShipping3").val(cust.Shipping_Street_3 || "");
+              $("#editCity").val(cust.Shipping_City || "");
+              $("#editPostal").val(cust.Shipping_Postal_Code || "");
+              $("#editCountry").val(cust.Shipping_Country || "");
+              $("#editState").val(cust.Domestic_Shipping_State || "");
+            } else {
+              Swal.fire("Error", "Failed to load customer details!", "error");
+            }
+          })
+          .catch(function (err) {
+            console.error("❌ Error loading customer:", err);
+            Swal.fire("Error", "Failed to load customer details!", "error");
+          })
+          .finally(function () {
+            $("#loader").css({ display: "none" });
+          });
+      });
+
+      $("#saveCustomerBtn").on("click", function () {
+        if (!customerID) {
+          Swal.fire("Error", "Customer ID missing!", "error");
+          return;
+        }
+        $("#loader").css({ display: "block" });
+        $("#saveCustomerBtn").prop("disabled", true).html("⏳ Saving...");
+
+        const updateData = {
+          data: {
+            Customer_Name: $("#editCustomerName").val() || "",
+            Email: $("#editCustomerEmail").val() || "",
+            Phone_Number: $("#editCustomerPhone").val() || "",
+            Shipping_Street_1: $("#editShipping1").val() || "",
+            Shipping_Street_2: $("#editShipping2").val() || "",
+            Shipping_Street_3: $("#editShipping3").val() || "",
+            Shipping_City: $("#editCity").val() || "",
+            Shipping_Postal_Code: $("#editPostal").val() || "",
+            Shipping_Country: $("#editCountry").val() || "",
+            Shipping_State: $("#editState").val() || ""
+          }
+        };
+
+        const updateConfig = {
+          appName: "service-management",
+          reportName: "My_Customer",
+          id: customerID,
+          data: updateData
+        };
+
+        ZOHO.CREATOR.API.updateRecord(updateConfig)
+          .then(function (response) {
+            console.error("❌ Error updating customer:", response);
+            if (response.code === 3000) {
+              Swal.fire({
+                title: "Customer details updated!",
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+
+              });
+              hideModalById("editCustomerModal");
+              const ESNupdateData = { data: updateData.data };
+              const updateCusConfig = {
+                appName: "service-management",
+                reportName: "ESN_Scan_QR_Widget",
+                id: ESNSystemID,
+                data: ESNupdateData
+              };
+
+              return ZOHO.CREATOR.API.updateRecord(updateCusConfig).then(function (updateResponse) {
+                if (updateResponse.code === 3000) ESNDetails(childESNNumber);
+                else Swal.fire("Warning", "Customer updated but ESN not synced.", "warning");
+              });
+            } else {
+
+            }
+          })
+          .catch(function (err) {
+            Swal.fire("Error", "Failed to update customer.", error);
+          })
+          .finally(function () {
+            $("#loader").css({ display: "none" });
+            $("#saveCustomerBtn").prop("disabled", false).html("💾 Save Customer");
+          });
+      });
+      function hideModalById(id) {
+        try {
+          const el = document.getElementById(id);
+          if (!el) return;
+          // Use existing modal instance if available, else create new instance
+          const modalInstance = bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
+          modalInstance.hide();
+        } catch (err) {
+          console.error("Error hiding modal:", err);
+        }
       }
-    }
-     $(document).on("change", "#statusFilter", function() {
+      $(document).on("change", "#statusFilter", function () {
         ServiceRequest(childESNNumber);
       });
       function updateRequestCount() {
@@ -1749,27 +2012,28 @@
         const countText = totalRequests > 0 ? `${totalRequests} Requests` : "0 Requests";
         $("#card-requests p").text(countText);
       }
-    // =======================// UI & Form Handlers// =======================
-    $(document).ready(function () {
-      $(".card").on("click", function () {
-        const sectionId = $(this).data("section");
-        $(".section-container").hide();
-        $("#" + sectionId).fadeIn(200);
-        $(".card").removeClass("active");
-        $(this).addClass("active");
+      // =======================// UI & Form Handlers// =======================
+      $(document).ready(function () {
+        $(".card").on("click", function () {
+          const sectionId = $(this).data("section");
+          $(".section-container").hide();
+          $("#" + sectionId).fadeIn(200);
+          $(".card").removeClass("active");
+          $(this).addClass("active");
+        });
+        $("#statusSelect").on("change", function () {
+          const val = $(this).val();
+          if (val === "Work in Progress") {
+            $("#subStatusDiv, #materialInfoDiv").show();
+            $("#closedFields").hide();
+          } else if (val === "Closed") {
+            $("#subStatusDiv,#materialInfoDiv, #closedFields").show();
+          } else {
+            $("#subStatusDiv, #materialInfoDiv, #closedFields").hide();
+          }
+        });
       });
-      $("#statusSelect").on("change", function () {
-        const val = $(this).val();
-        if (val === "Work in Progress") {
-          $("#subStatusDiv, #materialInfoDiv").show();
-          $("#closedFields").hide();
-        } else if (val === "Closed") {
-          $("#subStatusDiv,#materialInfoDiv, #closedFields").show();
-        } else {
-          $("#subStatusDiv, #materialInfoDiv, #closedFields").hide();
-        }
-      });
-    });
-  </script>  
+    </script>
 </body>
+
 </html>
