@@ -960,6 +960,7 @@
       let Route = [];
       let Region = "";
       let City = "";
+      let ReportRecordID = "";
       ZOHO.CREATOR.init().then(async function () {
         $("#loader").css({ display: "block" });
         const queryParams = ZOHO.CREATOR.UTIL.getInitParams() || {};
@@ -1031,6 +1032,7 @@
 
         try {
           const response = await ZOHO.CREATOR.API.getAllRecords(config);
+          console.log(response.data);
           if (response.code === 3000 && response.data.length > 0) {
             await ServiceRequest(childESNNumber);
             const data = response.data[0];
@@ -1400,7 +1402,7 @@
       // ======================= View Icon Handler =======================
       $(document).on("click", ".fa-eye", function () {
         const recordId = $(this).data("record-id");
-        console.log(recordId);
+        console.log("SR Record:--> ",recordId);
         const childESN = $(this).data("esn");
         const dueDateVal = $(this).data("due-date");
         function formatDateDDMonYYYY(d) {
@@ -1548,11 +1550,20 @@
             if (response.code === 3000) {
               Swal.fire({
                 text: "Service request updated successfully!",
-                timer: 3000,
+                icon: "success",
+                timer: 2000,
                 timerProgressBar: true,
                 showConfirmButton: false
               });
               bootstrap.Modal.getInstance($("#statusModal")[0]).hide();
+              // ========= Auto-update filter to match the new status ===========
+              $("#statusFilter").val(statusVal);
+              // ========= If status is Closed, auto-open service report =========
+              if (statusVal === "Closed") {
+                setTimeout(() => {
+                  openServiceReportModal(recordId);
+                }, 2000);
+              }
               ServiceRequest(childESNNumber); // Refresh table
             } else {
               Swal.fire("Error", "Update failed: " + (response.message || "Unknown error"), "error");
@@ -1575,80 +1586,25 @@
           }
         });
       }
-      // SERVICE REPORT ICON CLICK → open modal + populate fields
+      // ======================= // Status Filter Handler // =======================
+      function applyStatusFilter() {
+        const selectedStatus = $("#statusFilter").val();
+        $("#ServicerequestTable tbody tr").each(function () {
+          const statusText = $(this).find("td:first").text().trim();
+          if (selectedStatus === "All" || statusText === selectedStatus) {
+            $(this).show();
+          } else {
+            $(this).hide();
+          }
+        });
+      }
+
+      // ============ SERVICE REPORT ICON CLICK → open modal + populate fields =================
       let srRecordId = null;
       $(document).on("click", ".fa-file-alt", function () {
         srRecordId = $(this).data("report-id");
-        console.log("ID: ----> ",srRecordId);
-
-        const srConfig = {
-          appName: "service-management",
-          reportName: "Scan_QR_Service_Request",
-          id: srRecordId
-        };
-
-        ZOHO.CREATOR.API.getRecordById(srConfig).then(function (response) {
-          if (response.code === 3000 && response.data) {
-            const rec = response.data;
-            console.log(rec);
-            $("#srPsNumber").text(rec.APS_PS_Parking_Number?.display_value || "-");
-            $("#srSystemType").text(rec.Service_Request_Type || "-");
-            $("#srCustomerName").text(rec.Customer_Name || "-");
-            $("#srDate").text(new Date().toLocaleDateString());
-
-            // 🔹 Combine location parts
-            const location = [
-              rec.Shipping_Street_1,
-              rec.Shipping_Street_2,
-              rec.Shipping_Street_3,
-              rec.Shipping_City,
-              rec.Shipping_State,
-              rec.Shipping_Postal_Code,
-              rec.Shipping_Country
-            ].filter(v => v && v.trim() !== "").join(", ");
-            $("#srLocation").text(location || "-");
-
-            // 🔹 Disable checkbox fields and set values
-            $("#srChkVertical")
-              .prop("checked", rec.Vertical_Parts || false)
-              .prop("disabled", true);
-            $("#srChkHorizontal")
-              .prop("checked", rec.Horizontal_Parts || false)
-              .prop("disabled", true);
-            $("#srChkElectrical")
-              .prop("checked", rec.Electrical_Parts || false)
-              .prop("disabled", true);
-            $("#srChkPlatform")
-              .prop("checked", rec.Platform_Leveling || false)
-              .prop("disabled", true);
-            $("#srChkButtons")
-              .prop("checked", rec.Button_Indicator || false)
-              .prop("disabled", true);
-            $("#srChkHydraulic")
-              .prop("checked", rec.Hydraulic_Parts || false)
-              .prop("disabled", true);
-
-            // 🔹 Parts Details (Routine Maintenance + Quantity)
-            // $("#routineMaintenance")
-            //   .prop("checked", rec.Routine_Maintenance || false);
-            // $("#totalQuantity")
-            //   .val(rec.Total_Quantity || "");
-
-            // 🔹 Prefill editable inputs (user can change)
-            // $("#srEngineerName").val(rec.Service_Engineer_Name || "");
-            // $("#srEngineerNo").val(rec.Service_Engineer_No || "");
-            $("#srCustomerNameInput").val(rec.Customer_Name || "");
-            $("#srCustomerNo").val(rec.Customer_Phone || "");
-
-            // 🔹 Remarks & Action Pending (editable)
-            // $("#srRemarks").val(rec.Remarks || "");
-            // $("#srActionPending").val(rec.Action_Pending || "");
-          }
-
-          // 🔹 Show modal
-          const srModal = new bootstrap.Modal($("#serviceReportModalNew"));
-          srModal.show();
-        });
+        console.log("Service Request ID: ", srRecordId);
+        openServiceReportModal(srRecordId);
       });
 
 
@@ -1725,11 +1681,15 @@
       }
       let srEngineerPad, srCustomerPad;
       $('#serviceReportModalNew').on('shown.bs.modal', function () {
-        // Allow modal to finish rendering before calculating dimensions
         setTimeout(() => {
           srEngineerPad = srInitSignaturePad("srEngineerSign");
           srCustomerPad = srInitSignaturePad("srCustomerSign");
         }, 200);
+      });
+      
+      // Refresh table when modal is closed
+      $('#serviceReportModalNew').on('hidden.bs.modal', function () {
+        ServiceRequest(childESNNumber);
       });
       // ==================== PDF DOWNLOAD HANDLER ====================
       $("#srDownloadBtn").click(function () {
@@ -1739,8 +1699,11 @@
           const d = new Date(date);
           return `${String(d.getDate()).padStart(2,'0')}-${months[d.getMonth()]}-${d.getFullYear()}`;
         }
-        // To:
+        
         $("#srDate").text(formatDate(new Date()));
+        
+        console.log("srRecordId before form:", srRecordId);
+        
         let formData  = {
           "data" :{
             Parking_Number: $("#srPsNumber").text() || '',
@@ -1748,13 +1711,13 @@
             Site_Customer_Name: $("#srCustomerName").text(),
             Location: $("#srLocation").text(),
             Create_Date: $("#srDate").text(),
-            Vertical_Parts: $("#srChkVertical").prop("checked"),
-            Horizontal_Parts: $("#srChkHorizontal").prop("checked"),
-            Electrical_Parts: $("#srChkElectrical").prop("checked"),
-            Platform_Leveling: $("#srChkPlatform").prop("checked"),
-            Buttons_Indicator: $("#srChkButtons").prop("checked"),
-            Hydraulic_Parts: $("#srChkHydraulic").prop("checked"),
-            Routine_Maintenance: $("#routineMaintenance").prop("checked"),
+            Vertical_Parts: $("#srChkVertical").is(":checked"),
+            Horizontal_Parts: $("#srChkHorizontal").is(":checked"),
+            Electrical_Parts: $("#srChkElectrical").is(":checked"),
+            Platform_Leveling: $("#srChkPlatform").is(":checked"),
+            Buttons_Indicator: $("#srChkButtons").is(":checked"),
+            Hydraulic_Parts: $("#srChkHydraulic").is(":checked"),
+            Routine_Maintenance: $("#routineMaintenance").is(":checked"),
             Total_Quantity: $("#totalQuantity").val(),
             As_Mentioned_Below: $("#srRemarks").val(),
             Any_Action_Pending1: $("#srActionPending").val(),
@@ -1766,7 +1729,7 @@
           }
         };
 
-        console.log("Data: ",formData)
+        console.log("Form Data:", formData)
         // 2. Create the record in All_Service_Reports
         const config = {
           appName: "service-management",
@@ -1783,18 +1746,33 @@
                 timerProgressBar: true,
                 showConfirmButton: false
               });
-            const recordId = response.data.ID;
-            console.log("RECORD ID:-> ", recordId);
+            ReportRecordID = response.data.ID;
+            console.log("RECORD ID:-> ", ReportRecordID);
             
             // Upload signatures if record created successfully
-            uploadSignatures(recordId);
+            uploadSignatures(ReportRecordID);
+
+            // Close modal and refresh table
+            setTimeout(() => {
+              const modalInstance = bootstrap.Modal.getInstance($("#serviceReportModalNew")[0]);
+              if (modalInstance) modalInstance.hide();
+              ServiceRequest(childESNNumber); // Refresh table
+            }, 1000);
           } else {
-            Swal.fire("❌ Failed to save service report:", response);
+            Swal.fire({
+              text: "Failed to save service report!",
+              icon: "error",
+              timer: 3000,
+              timerProgressBar: true,
+              showConfirmButton: false
+            });
           }
         });
+
+
         
-        // Helper function to upload signatures
-        function uploadSignatures(recordId) {
+        // ================= Helper function to upload signatures ================
+        function uploadSignatures(ReportRecordID) {
           const engSig = srEngineerPad.toDataURL();
           const cusSig = srCustomerPad.toDataURL();
           
@@ -1816,7 +1794,7 @@
           ZOHO.CREATOR.API.uploadFile({
             appName: "service-management",
             reportName: "All_Service_Reports",
-            id: recordId,
+            id: ReportRecordID,
             fieldName: "Service_Engineer_Signature",
             file: engFile
           }).then(() => console.log("✅ Engineer signature uploaded"));
@@ -1825,7 +1803,7 @@
           ZOHO.CREATOR.API.uploadFile({
             appName: "service-management",
             reportName: "All_Service_Reports",
-            id: recordId,
+            id: ReportRecordID,
             fieldName: "Customer_Signature",
             file: cusFile
           }).then(() => console.log("✅ Customer signature uploaded"));
@@ -1881,7 +1859,204 @@
             cusImg.parentNode.replaceChild(cusCanvas, cusImg);
           });
       });
-
+      
+      // ======================= Open Service Report Modal =======================
+      function openServiceReportModal(ReportRecordID) {
+        console.log("Opening service report for ID:", ReportRecordID);
+        srRecordId = ReportRecordID;
+        
+        const checkConfig = {
+          appName: "service-management",
+          reportName: "All_Service_Reports",
+          criteria: '(Service_Request == ' + ReportRecordID + ')',
+          page: 1,
+          pageSize: 1
+        };
+        
+        ZOHO.CREATOR.API.getAllRecords(checkConfig).then(function(checkResponse) {
+          console.log("All Reports Response: ", checkResponse);
+          
+          let savedReport = null;
+          let reportExists = false;
+          
+          if (checkResponse.code === 3000 && checkResponse.data && checkResponse.data.length > 0) {
+            savedReport = checkResponse.data[0];
+            reportExists = true;
+            console.log("Found Report:", savedReport);
+          } else {
+            console.log("No report found");
+          }
+          processServiceRequest(reportExists, savedReport);
+        }).catch(function(error) {
+          console.log("Error fetching reports:", error);
+          processServiceRequest(false, null);
+        });
+        
+        function processServiceRequest(reportExists, savedReport) {
+          const srConfig = {
+            appName: "service-management",
+            reportName: "Scan_QR_Service_Request",
+            id: ReportRecordID
+          };
+          
+          ZOHO.CREATOR.API.getRecordById(srConfig).then(function (response) {
+            if (response.code === 3000 && response.data) {
+              const rec = response.data;
+              console.log("Details:-> ",rec);
+              
+              $("#srPsNumber").text(rec.APS_PS_Parking_Number?.display_value || "-");
+              $("#srSystemType").text(rec.Service_Request_Type || "-");
+              $("#srCustomerName").text(rec.Customer_Name || "-");
+              
+              function formatDate(date) {
+                const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+                const d = new Date(date);
+                return `${String(d.getDate()).padStart(2,'0')}-${months[d.getMonth()]}-${d.getFullYear()}`;
+              }
+              $("#srDate").text(formatDate(new Date()));
+              
+              const location = [
+                rec.Shipping_Street_1, rec.Shipping_Street_2, rec.Shipping_Street_3,
+                rec.Shipping_City, rec.Shipping_State, rec.Shipping_Postal_Code, rec.Shipping_Country
+              ].filter(v => v && v.trim() !== "").join(", ");
+              $("#srLocation").text(location || "-");
+              
+              $("#srChkVertical").prop("checked", rec.Vertical_Parts === true || rec.Vertical_Parts === "true").prop("disabled", true);
+              $("#srChkHorizontal").prop("checked", rec.Horizontal_Parts === true || rec.Horizontal_Parts === "true").prop("disabled", true);
+              $("#srChkElectrical").prop("checked", rec.Electrical_Parts === true || rec.Electrical_Parts === "true").prop("disabled", true);
+              $("#srChkPlatform").prop("checked", rec.Platform_Leveling === true || rec.Platform_Leveling === "true").prop("disabled", true);
+              $("#srChkButtons").prop("checked", rec.Button_Indicator === true || rec.Button_Indicator === "true").prop("disabled", true);
+              $("#srChkHydraulic").prop("checked", rec.Hydraulic_Parts === true || rec.Hydraulic_Parts === "true").prop("disabled", true);
+              
+              const userConfig = {
+                appName: "service-management",
+                reportName: "My_Users",
+                criteria: '(Email == "' + loginuser + '")',
+                page: 1,
+                pageSize: 1
+              };
+              ZOHO.CREATOR.API.getAllRecords(userConfig).then(function(userResponse) {
+                if (userResponse.code === 3000 && userResponse.data.length > 0) {
+                  $("#srEngineerName").val(userResponse.data[0].Name || "");
+                  $("#srEngineerNo").val(userResponse.data[0].Mobile_No || "");
+                }
+              });
+              
+              $("#srCustomerNameInput").val(rec.Customer_Name || "");
+              $("#srCustomerNo").val(rec.Customer_Phone || "");
+              
+              // Always disable these fields
+              $("#srEngineerName, #srEngineerNo, #srCustomerNameInput, #srCustomerNo").prop("disabled", true);
+              
+              if (reportExists) {
+                $("#srRemarks, #srActionPending, #totalQuantity").prop("disabled", true);
+                $("#routineMaintenance").prop("disabled", true);
+                $("#srDownloadBtn").hide();
+                $(".btn-outline-danger").hide();
+                
+                if (savedReport) {
+                  $("#srRemarks").val(savedReport.As_Mentioned_Below || "");
+                  $("#srActionPending").val(savedReport.Any_Action_Pending1 || "");
+                  $("#totalQuantity").val(savedReport.Total_Quantity || "");
+                  $("#routineMaintenance").prop("checked", savedReport.Routine_Maintenance === true || savedReport.Routine_Maintenance === "true");
+                  $("#srEngineerName").val(savedReport.Service_Engineer_Name || "");
+                  $("#srEngineerNo").val(savedReport.Service_Engineer_No || "");
+                  $("#srCustomerNameInput").val(savedReport.Customer_Name || "");
+                  $("#srCustomerNo").val(savedReport.Customer_No || "");
+                  
+                  // Load signatures after modal is shown
+                  setTimeout(() => {
+                    $("#routineMaintenance").prop("checked", savedReport.Routine_Maintenance === true || savedReport.Routine_Maintenance === "true");
+                    if (savedReport.Service_Engineer_Signature) {
+                      const query_params = { recordId: savedReport.ID }
+                      const queryString = new URLSearchParams(query_params).toString();
+                      const config = {
+                        api_name: "Service_Engineer_Signature",
+                        http_method: "GET",   
+                        workspace_name: "wohr_parking", 
+                        public_key: "ZazkAOkNYFdZKJDOKk5FBSBrU",
+                        query_params: queryString
+                      }
+                      ZOHO.CREATOR.API.invokeCustomApi(config).then(function (response) {
+                        var base64Data = response.result;
+                        var binaryData = atob(base64Data);
+                        var uint8Array = new Uint8Array(binaryData.length);
+                        for (var i = 0; i < binaryData.length; i++) {
+                          uint8Array[i] = binaryData.charCodeAt(i);
+                        }
+                        var blob = new Blob([uint8Array], { type: 'image/png' });
+                        var objectURL = URL.createObjectURL(blob);
+                        
+                        const engCanvas = document.getElementById("srEngineerSign");
+                        const img = new Image();
+                        img.onload = function() {
+                          const ctx = engCanvas.getContext("2d");
+                          ctx.drawImage(img, 0, 0, engCanvas.width, engCanvas.height);
+                          engCanvas.style.pointerEvents = "none";
+                          engCanvas.style.opacity = "0.7";
+                        };
+                        img.src = objectURL;
+                      })
+                    }
+                          
+                      if (savedReport.Customer_Signature) {
+                        const query_params = {
+                          recordId: savedReport.ID,
+                        }
+                        const queryString = new URLSearchParams(query_params).toString();
+                        const config = {
+                          api_name: "Fetch_Signature",
+                          http_method: "GET",   
+                          workspace_name: "wohr_parking", 
+                          public_key: "fRNbdO60a4nfvXh7eAJn3N4TS",
+                          query_params: queryString
+                        }
+                        ZOHO.CREATOR.API.invokeCustomApi(config).then(function (response) {
+                          console.log(response);
+                          const base64PDF = response.result;                      
+                          var base64Data = response.result;
+                          var binaryData = atob(base64Data);
+                          var uint8Array = new Uint8Array(binaryData.length);
+                          for (var i = 0; i < binaryData.length; i++) {
+                            uint8Array[i] = binaryData.charCodeAt(i);
+                          }
+                          var blob = new Blob([uint8Array], { type: 'image/png' });
+                          var objectURL = URL.createObjectURL(blob);
+                          // document.getElementById("srCustomerSign").innerHTML = `<iframe src="${objectURL}" type="image/png" width="100%" height="150px"></iframe>`;
+                          const cusCanvas = document.getElementById("srCustomerSign");
+                          const img = new Image();
+                          img.onload = function() {
+                            const ctx = cusCanvas.getContext("2d");
+                            ctx.drawImage(img, 0, 0, cusCanvas.width, cusCanvas.height);
+                            cusCanvas.style.pointerEvents = "none";
+                            cusCanvas.style.opacity = "0.7";
+                          };
+                          img.src = objectURL;
+                        })
+                      }
+                  }, 800);
+                }
+              } else {
+                $("#srRemarks, #srActionPending, #totalQuantity").prop("disabled", false).val("");
+                $("#routineMaintenance").prop("disabled", false).prop("checked", false);
+                $("#srDownloadBtn").show();
+                $(".btn-outline-danger").show();
+                
+                // Clear signatures for new report
+                setTimeout(() => {
+                  const engCanvas = document.getElementById("srEngineerSign");
+                  const cusCanvas = document.getElementById("srCustomerSign");
+                  if (engCanvas) engCanvas.getContext("2d").clearRect(0, 0, engCanvas.width, engCanvas.height);
+                  if (cusCanvas) cusCanvas.getContext("2d").clearRect(0, 0, cusCanvas.width, cusCanvas.height);
+                }, 500);
+              }
+            }
+            
+            const srModal = new bootstrap.Modal($("#serviceReportModalNew"));
+            srModal.show();
+          });
+        }
+      };
 
       // ======================= Customer Edit Modal =======================
       $(document).on("click", '[data-bs-target="#editCustomerModal"]', function () {
