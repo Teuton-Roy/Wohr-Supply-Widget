@@ -362,6 +362,12 @@
       #systemInfo .info-item {
         font-size: 13px;
       }
+      #srCustomerSign{
+        width: 100%;
+      }
+      #srEngineerSign{
+        width: 100%;
+      }
     }
 
     /* Reduce motion if user prefers */
@@ -644,7 +650,7 @@
             <div class="mb-3">
               <label class="form-label fw-semibold" for="statusSelect">Status</label>
               <select class="form-select form-select-lg" id="statusSelect" required>
-                <option value="None">Select Status</option>
+                <option value="Select Status">Select Status</option>
                 <option value="Work in Progress">Work in Progress</option>
                 <option value="Closed">Closed</option>
               </select>
@@ -967,6 +973,7 @@
         loginuser = queryParams.loginUser;
         console.log("Logged in user:", loginuser);
         const params = ZOHO.CREATOR.UTIL.getQueryParams();
+        console.log(params);
 
         childESNNumber = params["Child_ESN_Number"] || "";
         const config = {
@@ -1260,7 +1267,7 @@
       async function ServiceRequest(childESNNumber) {
         $("#loader").css({ "display": "block" });
         let criteria = '(Child_ESN_Number.Child_ESN_Number == "' + childESNNumber + '")';
-        // If Admin is true OR Route includes "All Route Name", do NOT filter by route : Added by Teuton [27/10/2025]
+        // If Admin is true OR Route includes "All Route", do NOT filter by route : Added by Teuton [27/10/2025]
         if (!Admin) {
           let routeFilter = "";
           console.log("User Routes:", Route);
@@ -1402,7 +1409,7 @@
       // ======================= View Icon Handler =======================
       $(document).on("click", ".fa-eye", function () {
         const recordId = $(this).data("record-id");
-        console.log("SR Record:--> ",recordId);
+        console.log("SR Record:--> ", recordId);
         const childESN = $(this).data("esn");
         const dueDateVal = $(this).data("due-date");
         function formatDateDDMonYYYY(d) {
@@ -1484,7 +1491,7 @@
         const statusVal = $("#statusSelect").val();
         const subStatusVal = $("#subStatusSelect").val();
 
-        if (statusVal === "None" || !statusVal) {
+        if (statusVal === "Select Status" || !statusVal) {
           Swal.fire({
             text: "Please select a Status before saving.",
             timer: 2000,
@@ -1524,14 +1531,15 @@
             Platform_Leveling: $("#pl input[type='checkbox']").prop("checked"),
             Button_Indicator: $("#bl input[type='checkbox']").prop("checked"),
             Hydraulic_Parts: $("#hyp input[type='checkbox']").prop("checked"),
-            Reason_For_Hold: $("#subStatus").val() || "",
+            Reason_For_Hold: $("#subStatusSelect").val() || "",
             Material_Information: $("#materialInfo").val() || ""
           };
         }
         else if ($("#statusSelect").val() === "Work in Progress") {
+          // console.log($("#subStatus").val());
           updateData.data = {
             Status: $("#statusSelect").val() || "",
-            Reason_For_Hold: $("#subStatus").val() || "",
+            Reason_For_Hold: $("#subStatusSelect").val() || "",
             Material_Information: $("#materialInfo").val() || ""
           };
         }
@@ -1686,7 +1694,7 @@
           srCustomerPad = srInitSignaturePad("srCustomerSign");
         }, 200);
       });
-      
+
       // Refresh table when modal is closed
       $('#serviceReportModalNew').on('hidden.bs.modal', function () {
         ServiceRequest(childESNNumber);
@@ -1695,17 +1703,17 @@
       $("#srDownloadBtn").click(function () {
         // 1. Gather data from the modal (without signature images)
         function formatDate(date) {
-          const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+          const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
           const d = new Date(date);
-          return `${String(d.getDate()).padStart(2,'0')}-${months[d.getMonth()]}-${d.getFullYear()}`;
+          return `${String(d.getDate()).padStart(2, '0')}-${months[d.getMonth()]}-${d.getFullYear()}`;
         }
-        
+
         $("#srDate").text(formatDate(new Date()));
-        
+
         console.log("srRecordId before form:", srRecordId);
-        
-        let formData  = {
-          "data" :{
+
+        let formData = {
+          "data": {
             Parking_Number: $("#srPsNumber").text() || '',
             System_Type: $("#srSystemType").text() || '',
             Site_Customer_Name: $("#srCustomerName").text(),
@@ -1736,28 +1744,31 @@
           formName: "Service_Report_Form",
           data: formData
         };
-        ZOHO.CREATOR.API.addRecord(config).then(function(response) {
+        ZOHO.CREATOR.API.addRecord(config).then(async function (response) {
           console.log(response.code);
-          if(response.code === 3000) {
-              Swal.fire({
-                text: "Service report saved successfully!",
-                icon: "success",
-                timer: 3000,
-                timerProgressBar: true,
-                showConfirmButton: false
-              });
+          if (response.code === 3000) {
+            Swal.fire({
+              text: "Service report saved successfully!",
+              icon: "success",
+              timer: 3000,
+              timerProgressBar: true,
+              showConfirmButton: false
+            });
             ReportRecordID = response.data.ID;
             console.log("RECORD ID:-> ", ReportRecordID);
-            
-            // Upload signatures if record created successfully
-            uploadSignatures(ReportRecordID);
 
-            // Close modal and refresh table
-            setTimeout(() => {
-              const modalInstance = bootstrap.Modal.getInstance($("#serviceReportModalNew")[0]);
-              if (modalInstance) modalInstance.hide();
-              ServiceRequest(childESNNumber); // Refresh table
-            }, 1000);
+            // Upload signatures if record created successfully
+            // WEB: fire-and-forget (unchanged). MOBILE: await to avoid WebView aborts.
+            if (supportsProgrammaticFile()) {
+              uploadSignatures(ReportRecordID);
+            } else {
+              await uploadSignatures(ReportRecordID);
+            }
+
+            // Now it’s safe to close and refresh
+            const modalInstance = bootstrap.Modal.getInstance($("#serviceReportModalNew")[0]);
+            if (modalInstance) modalInstance.hide();
+            ServiceRequest(childESNNumber);
           } else {
             Swal.fire({
               text: "Failed to save service report!",
@@ -1769,45 +1780,97 @@
           }
         });
 
+        // ===== MOBILE SUPPORT HELPERS (add once) =====
+        function supportsProgrammaticFile() {
+          try {
+            // Browsers that throw here are typically iOS Safari / WebViews
+            return !!new File([new Blob(['x'], { type: 'text/plain' })], 't.txt');
+          } catch (e) {
+            return false;
+          }
+        }
+        function dataURLtoBlob(dataurl) {
+          const [meta, data] = dataurl.split(',');
+          const mime = (meta.match(/:(.*?);/) || [,'image/png'])[1];
+          const bin = atob(data);
+          const u8 = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+          return new Blob([u8], { type: mime });
+        }
 
-        
+
         // ================= Helper function to upload signatures ================
-        function uploadSignatures(ReportRecordID) {
+        async function uploadSignatures(ReportRecordID) {
+          if (!srEngineerPad || !srCustomerPad) {
+            console.error("❌ Signature pads not initialized");
+            return;
+          }
+
           const engSig = srEngineerPad.toDataURL();
           const cusSig = srCustomerPad.toDataURL();
-          
-          // Convert base64 to File object
-          function dataURLtoFile(dataurl, filename) {
-            const arr = dataurl.split(',');
-            const mime = arr[0].match(/:(.*?);/)[1];
-            const bstr = atob(arr[1]);
-            let n = bstr.length;
-            const u8arr = new Uint8Array(n);
-            while(n--) u8arr[n] = bstr.charCodeAt(n);
-            return new File([u8arr], filename, {type:mime});
+
+          // ---- WEB PATH: keep your existing File-based behavior (no await) ----
+          if (supportsProgrammaticFile()) {
+            // Reuse your original "dataURLtoFile" logic here
+            function dataURLtoFile(dataurl, filename) {
+              const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1];
+              const bstr = atob(arr[1]); let n = bstr.length; const u8arr = new Uint8Array(n);
+              while (n--) u8arr[n] = bstr.charCodeAt(n);
+              return new File([u8arr], filename, { type: mime });
+            }
+            const engFile = dataURLtoFile(engSig, 'engineer_signature.png');
+            const cusFile = dataURLtoFile(cusSig, 'customer_signature.png');
+
+            ZOHO.CREATOR.API.uploadFile({
+              appName: "service-management",
+              reportName: "All_Service_Reports",
+              id: ReportRecordID,
+              fieldName: "Service_Engineer_Signature",
+              file: engFile
+            }).catch(err => console.error("❌ Engineer upload failed:", err));
+
+            ZOHO.CREATOR.API.uploadFile({
+              appName: "service-management",
+              reportName: "All_Service_Reports",
+              id: ReportRecordID,
+              fieldName: "Customer_Signature",
+              file: cusFile
+            }).catch(err => console.error("❌ Customer upload failed:", err));
+
+            return; // web: fire-and-forget (unchanged)
           }
-          
-          const engFile = dataURLtoFile(engSig, 'engineer_signature.png');
-          const cusFile = dataURLtoFile(cusSig, 'customer_signature.png');
-          
-          // Upload engineer signature
-          ZOHO.CREATOR.API.uploadFile({
-            appName: "service-management",
-            reportName: "All_Service_Reports",
-            id: ReportRecordID,
-            fieldName: "Service_Engineer_Signature",
-            file: engFile
-          }).then(() => console.log("✅ Engineer signature uploaded"));
-          
-          // Upload customer signature
-          ZOHO.CREATOR.API.uploadFile({
-            appName: "service-management",
-            reportName: "All_Service_Reports",
-            id: ReportRecordID,
-            fieldName: "Customer_Signature",
-            file: cusFile
-          }).then(() => console.log("✅ Customer signature uploaded"));
+
+          // ---- MOBILE / WEBVIEW PATH: use Blob + await to avoid silent fails ----
+          const engBlob = dataURLtoBlob(engSig); engBlob.name = 'engineer_signature.png';
+          const cusBlob = dataURLtoBlob(cusSig); cusBlob.name = 'customer_signature.png';
+
+          const uploadOne = (fieldName, fileish) =>
+            ZOHO.CREATOR.API.uploadFile({
+              appName: "service-management",
+              reportName: "All_Service_Reports",
+              id: ReportRecordID,
+              fieldName,
+              file: fileish,                 // Blob in mobile
+              filename: fileish.name || undefined
+            });
+
+          const [u1, u2] = await Promise.allSettled([
+            uploadOne("Service_Engineer_Signature", engBlob),
+            uploadOne("Customer_Signature",   cusBlob),
+          ]);
+
+          if (u1.status !== "fulfilled" || u2.status !== "fulfilled") {
+            console.error("Signature upload issue:", {u1, u2});
+            Swal.fire({
+              icon: "warning",
+              text: "PDF saved, but one or both signatures failed to upload on this device. Please retry.",
+              timer: 3000,
+              showConfirmButton: false,
+              timerProgressBar: true
+            });
+          }
         }
+
 
         // Capture signature canvases
         const engCanvas = document.getElementById("srEngineerSign");
@@ -1859,12 +1922,12 @@
             cusImg.parentNode.replaceChild(cusCanvas, cusImg);
           });
       });
-      
+
       // ======================= Open Service Report Modal =======================
       function openServiceReportModal(ReportRecordID) {
         console.log("Opening service report for ID:", ReportRecordID);
         srRecordId = ReportRecordID;
-        
+
         const checkConfig = {
           appName: "service-management",
           reportName: "All_Service_Reports",
@@ -1872,13 +1935,13 @@
           page: 1,
           pageSize: 1
         };
-        
-        ZOHO.CREATOR.API.getAllRecords(checkConfig).then(function(checkResponse) {
+
+        ZOHO.CREATOR.API.getAllRecords(checkConfig).then(function (checkResponse) {
           console.log("All Reports Response: ", checkResponse);
-          
+
           let savedReport = null;
           let reportExists = false;
-          
+
           if (checkResponse.code === 3000 && checkResponse.data && checkResponse.data.length > 0) {
             savedReport = checkResponse.data[0];
             reportExists = true;
@@ -1887,47 +1950,47 @@
             console.log("No report found");
           }
           processServiceRequest(reportExists, savedReport);
-        }).catch(function(error) {
+        }).catch(function (error) {
           console.log("Error fetching reports:", error);
           processServiceRequest(false, null);
         });
-        
+
         function processServiceRequest(reportExists, savedReport) {
           const srConfig = {
             appName: "service-management",
             reportName: "Scan_QR_Service_Request",
             id: ReportRecordID
           };
-          
+
           ZOHO.CREATOR.API.getRecordById(srConfig).then(function (response) {
             if (response.code === 3000 && response.data) {
               const rec = response.data;
-              console.log("Details:-> ",rec);
-              
+              console.log("Details:-> ", rec);
+
               $("#srPsNumber").text(rec.APS_PS_Parking_Number?.display_value || "-");
               $("#srSystemType").text(rec.Service_Request_Type || "-");
               $("#srCustomerName").text(rec.Customer_Name || "-");
-              
+
               function formatDate(date) {
-                const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const d = new Date(date);
-                return `${String(d.getDate()).padStart(2,'0')}-${months[d.getMonth()]}-${d.getFullYear()}`;
+                return `${String(d.getDate()).padStart(2, '0')}-${months[d.getMonth()]}-${d.getFullYear()}`;
               }
               $("#srDate").text(formatDate(new Date()));
-              
+
               const location = [
                 rec.Shipping_Street_1, rec.Shipping_Street_2, rec.Shipping_Street_3,
                 rec.Shipping_City, rec.Shipping_State, rec.Shipping_Postal_Code, rec.Shipping_Country
               ].filter(v => v && v.trim() !== "").join(", ");
               $("#srLocation").text(location || "-");
-              
+
               $("#srChkVertical").prop("checked", rec.Vertical_Parts === true || rec.Vertical_Parts === "true").prop("disabled", true);
               $("#srChkHorizontal").prop("checked", rec.Horizontal_Parts === true || rec.Horizontal_Parts === "true").prop("disabled", true);
               $("#srChkElectrical").prop("checked", rec.Electrical_Parts === true || rec.Electrical_Parts === "true").prop("disabled", true);
               $("#srChkPlatform").prop("checked", rec.Platform_Leveling === true || rec.Platform_Leveling === "true").prop("disabled", true);
               $("#srChkButtons").prop("checked", rec.Button_Indicator === true || rec.Button_Indicator === "true").prop("disabled", true);
               $("#srChkHydraulic").prop("checked", rec.Hydraulic_Parts === true || rec.Hydraulic_Parts === "true").prop("disabled", true);
-              
+
               const userConfig = {
                 appName: "service-management",
                 reportName: "My_Users",
@@ -1935,25 +1998,25 @@
                 page: 1,
                 pageSize: 1
               };
-              ZOHO.CREATOR.API.getAllRecords(userConfig).then(function(userResponse) {
+              ZOHO.CREATOR.API.getAllRecords(userConfig).then(function (userResponse) {
                 if (userResponse.code === 3000 && userResponse.data.length > 0) {
                   $("#srEngineerName").val(userResponse.data[0].Name || "");
                   $("#srEngineerNo").val(userResponse.data[0].Mobile_No || "");
                 }
               });
-              
+
               $("#srCustomerNameInput").val(rec.Customer_Name || "");
               $("#srCustomerNo").val(rec.Customer_Phone || "");
-              
+
               // Always disable these fields
               $("#srEngineerName, #srEngineerNo, #srCustomerNameInput, #srCustomerNo").prop("disabled", true);
-              
+
               if (reportExists) {
                 $("#srRemarks, #srActionPending, #totalQuantity").prop("disabled", true);
                 $("#routineMaintenance").prop("disabled", true);
                 $("#srDownloadBtn").hide();
                 $(".btn-outline-danger").hide();
-                
+
                 if (savedReport) {
                   $("#srRemarks").val(savedReport.As_Mentioned_Below || "");
                   $("#srActionPending").val(savedReport.Any_Action_Pending1 || "");
@@ -1963,7 +2026,7 @@
                   $("#srEngineerNo").val(savedReport.Service_Engineer_No || "");
                   $("#srCustomerNameInput").val(savedReport.Customer_Name || "");
                   $("#srCustomerNo").val(savedReport.Customer_No || "");
-                  
+
                   // Load signatures after modal is shown
                   setTimeout(() => {
                     $("#routineMaintenance").prop("checked", savedReport.Routine_Maintenance === true || savedReport.Routine_Maintenance === "true");
@@ -1972,8 +2035,8 @@
                       const queryString = new URLSearchParams(query_params).toString();
                       const config = {
                         api_name: "Service_Engineer_Signature",
-                        http_method: "GET",   
-                        workspace_name: "wohr_parking", 
+                        http_method: "GET",
+                        workspace_name: "wohr_parking",
                         public_key: "ZazkAOkNYFdZKJDOKk5FBSBrU",
                         query_params: queryString
                       }
@@ -1986,54 +2049,71 @@
                         }
                         var blob = new Blob([uint8Array], { type: 'image/png' });
                         var objectURL = URL.createObjectURL(blob);
-                        
+
                         const engCanvas = document.getElementById("srEngineerSign");
                         const img = new Image();
-                        img.onload = function() {
+                        img.onload = function () {
                           const ctx = engCanvas.getContext("2d");
-                          ctx.drawImage(img, 0, 0, engCanvas.width, engCanvas.height);
+                          const rect = engCanvas.getBoundingClientRect();
+                          
+                          // Scale canvas to match container size
+                          const ratio = window.devicePixelRatio || 1;
+                          engCanvas.width = rect.width * ratio;
+                          engCanvas.height = rect.height * ratio;
+                          ctx.scale(ratio, ratio);
+                          
+                          // Draw image to fit canvas
+                          ctx.drawImage(img, 0, 0, rect.width, rect.height);
                           engCanvas.style.pointerEvents = "none";
                           engCanvas.style.opacity = "0.7";
                         };
                         img.src = objectURL;
                       })
                     }
-                          
-                      if (savedReport.Customer_Signature) {
-                        const query_params = {
-                          recordId: savedReport.ID,
-                        }
-                        const queryString = new URLSearchParams(query_params).toString();
-                        const config = {
-                          api_name: "Fetch_Signature",
-                          http_method: "GET",   
-                          workspace_name: "wohr_parking", 
-                          public_key: "fRNbdO60a4nfvXh7eAJn3N4TS",
-                          query_params: queryString
-                        }
-                        ZOHO.CREATOR.API.invokeCustomApi(config).then(function (response) {
-                          console.log(response);
-                          const base64PDF = response.result;                      
-                          var base64Data = response.result;
-                          var binaryData = atob(base64Data);
-                          var uint8Array = new Uint8Array(binaryData.length);
-                          for (var i = 0; i < binaryData.length; i++) {
-                            uint8Array[i] = binaryData.charCodeAt(i);
-                          }
-                          var blob = new Blob([uint8Array], { type: 'image/png' });
-                          var objectURL = URL.createObjectURL(blob);
-                          // document.getElementById("srCustomerSign").innerHTML = `<iframe src="${objectURL}" type="image/png" width="100%" height="150px"></iframe>`;
-                          const cusCanvas = document.getElementById("srCustomerSign");
-                          const img = new Image();
-                          img.onload = function() {
-                            const ctx = cusCanvas.getContext("2d");
-                            ctx.drawImage(img, 0, 0, cusCanvas.width, cusCanvas.height);
-                            cusCanvas.style.pointerEvents = "none";
-                            cusCanvas.style.opacity = "0.7";
-                          };
-                          img.src = objectURL;
-                        })
+
+                    if (savedReport.Customer_Signature) {
+                      const query_params = {
+                        recordId: savedReport.ID,
                       }
+                      const queryString = new URLSearchParams(query_params).toString();
+                      const config = {
+                        api_name: "Fetch_Signature",
+                        http_method: "GET",
+                        workspace_name: "wohr_parking",
+                        public_key: "fRNbdO60a4nfvXh7eAJn3N4TS",
+                        query_params: queryString
+                      }
+                      ZOHO.CREATOR.API.invokeCustomApi(config).then(function (response) {
+                        console.log(response);
+                        const base64PDF = response.result;
+                        var base64Data = response.result;
+                        var binaryData = atob(base64Data);
+                        var uint8Array = new Uint8Array(binaryData.length);
+                        for (var i = 0; i < binaryData.length; i++) {
+                          uint8Array[i] = binaryData.charCodeAt(i);
+                        }
+                        var blob = new Blob([uint8Array], { type: 'image/png' });
+                        var objectURL = URL.createObjectURL(blob);
+                        const cusCanvas = document.getElementById("srCustomerSign");
+                        const img = new Image();
+                        img.onload = function () {
+                          const ctx = cusCanvas.getContext("2d");
+                          const rect = cusCanvas.getBoundingClientRect();
+                          
+                          // Scale canvas to match container size
+                          const ratio = window.devicePixelRatio || 1;
+                          cusCanvas.width = rect.width * ratio;
+                          cusCanvas.height = rect.height * ratio;
+                          ctx.scale(ratio, ratio);
+                          
+                          // Draw image to fit canvas
+                          ctx.drawImage(img, 0, 0, rect.width, rect.height);
+                          cusCanvas.style.pointerEvents = "none";
+                          cusCanvas.style.opacity = "0.7";
+                        };
+                        img.src = objectURL;
+                      })
+                    }
                   }, 800);
                 }
               } else {
@@ -2041,7 +2121,7 @@
                 $("#routineMaintenance").prop("disabled", false).prop("checked", false);
                 $("#srDownloadBtn").show();
                 $(".btn-outline-danger").show();
-                
+
                 // Clear signatures for new report
                 setTimeout(() => {
                   const engCanvas = document.getElementById("srEngineerSign");
@@ -2051,7 +2131,7 @@
                 }, 500);
               }
             }
-            
+
             const srModal = new bootstrap.Modal($("#serviceReportModalNew"));
             srModal.show();
           });
