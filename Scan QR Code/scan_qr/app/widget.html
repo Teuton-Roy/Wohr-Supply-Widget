@@ -268,6 +268,10 @@
       background: var(--brand);
     }
 
+    .form-select-sm{
+      width: 200px !important;
+    }
+
     /* Loader overlay */
     #loader {
       display: none;
@@ -767,7 +771,52 @@
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-semibold" for="editState">State</label>
-                <input type="text" class="form-control form-control-lg" id="editState" />
+                <!-- <input type="text" class="form-control form-control-lg" id="editState" /> -->
+                 <select class="form-control form-control-lg" id="editState">
+  <option value="AN (Andaman and Nico.Is.)">AN (Andaman and Nico.Is.)</option>
+  <option value="AP (Andhra Pradesh)">AP (Andhra Pradesh)</option>
+  <option value="AR (Arunachal Pradesh)">AR (Arunachal Pradesh)</option>
+  <option value="AS (Assam)">AS (Assam)</option>
+  <option value="BR (Bihar)">BR (Bihar)</option>
+  <option value="CG (Chhattisgarh)">CG (Chhattisgarh)</option>
+  <option value="CH (Chandigarh)">CH (Chandigarh)</option>
+  <option value="CT (Obsolete)">CT (Obsolete)</option>
+  <option value="DD (Obsolete)">DD (Obsolete)</option>
+  <option value="DH (DadraNagHavDamanDiu)">DH (DadraNagHavDamanDiu)</option>
+  <option value="DL (Delhi)">DL (Delhi)</option>
+  <option value="DN (Obsolete)">DN (Obsolete)</option>
+  <option value="GA (Goa)">GA (Goa)</option>
+  <option value="GJ (Gujarat)">GJ (Gujarat)</option>
+  <option value="HP (Himachal Pradesh)">HP (Himachal Pradesh)</option>
+  <option value="HR (Haryana)">HR (Haryana)</option>
+  <option value="JH (Jharkhand)">JH (Jharkhand)</option>
+  <option value="JK (Jammu and Kashmir)">JK (Jammu and Kashmir)</option>
+  <option value="KA (Karnataka)">KA (Karnataka)</option>
+  <option value="KL (Kerala)">KL (Kerala)</option>
+  <option value="LA (Ladakh)">LA (Ladakh)</option>
+  <option value="LD (Lakshadweep)">LD (Lakshadweep)</option>
+  <option value="MH (Maharashtra)">MH (Maharashtra)</option>
+  <option value="ML (Megalaya)">ML (Megalaya)</option>
+  <option value="MN (Manipur)">MN (Manipur)</option>
+  <option value="MP (Madhya Pradesh)">MP (Madhya Pradesh)</option>
+  <option value="MZ (Mizoram)">MZ (Mizoram)</option>
+  <option value="NL (Nagaland)">NL (Nagaland)</option>
+  <option value="OD (Odisha)">OD (Odisha)</option>
+  <option value="OR (Obsolete)">OR (Obsolete)</option>
+  <option value="PB (Punjab)">PB (Punjab)</option>
+  <option value="PY (Pondicherry)">PY (Pondicherry)</option>
+  <option value="RJ (Rajasthan)">RJ (Rajasthan)</option>
+  <option value="SK (Sikkim)">SK (Sikkim)</option>
+  <option value="TG (Obsolete)">TG (Obsolete)</option>
+  <option value="TN (Tamil Nadu)">TN (Tamil Nadu)</option>
+  <option value="TR (Tripura)">TR (Tripura)</option>
+  <option value="TS (Telangana)">TS (Telangana)</option>
+  <option value="UK (Uttarakhand)">UK (Uttarakhand)</option>
+  <option value="UP (Uttar Pradesh)">UP (Uttar Pradesh)</option>
+  <option value="UT (Obsolete)">UT (Obsolete)</option>
+  <option value="WB (West Bengal)">WB (West Bengal)</option>
+</select>
+
               </div>
             </div>
 
@@ -945,7 +994,7 @@
           <div class="modal-footer py-2">
             <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
             <button id="srDownloadBtn" class="btn btn-success btn-sm">
-              <i class="fas fa-download me-1"></i>Download PDF
+              <i class="fas fa-download me-1"></i>Save Report
             </button>
           </div>
 
@@ -1153,7 +1202,7 @@
           let approvalStatus = recordData.Approval_Status || "";
           if (approvalStatus.toLowerCase() === "pending") {
             $("#addNewButton").prop("disabled", true);
-            Swal.fire("Notice", "Approval Pending. Please contact your region operation in-charge.", "info");
+            Swal.fire("Notice", "Approval Pending. Please contact to regional operation incharge.", "warning");
             $("#addSystemModal").modal("hide");
             $("#systemForm")[0].reset();
             $("#loader").css({ display: "none" });
@@ -1214,7 +1263,13 @@
               Swal.fire("Success", "System details updated successfully!", "success");
               $("#addSystemModal").modal("hide");
             } else {
-              Swal.fire("Error", "Update failed: " + (updateResponse.message || "Unknown error"), "error");
+                Swal.fire({
+                title: "Error",
+                text: "Update failed: " + (updateResponse.message || "Unknown error"),
+                icon: "error",
+                iconColor: "#d63031",
+                confirmButtonColor: "#d63031"
+              });
             }
           })
           $("#loader").css({ display: "none" });
@@ -1331,8 +1386,8 @@
                 row.append($("<td></td>").text(list.Due_Date || "-"));
                 row.append($("<td></td>").text(list.Call_Status || "-"));
 
-                const showEye = (selectedStatus !== "Closed");
-                const showReport = (selectedStatus === "Closed");
+                const showEye = (selectedStatus !== "Closed" && sKey !== "closed");
+                const showReport = (selectedStatus === "Closed" || sKey === "closed");
 
                 let viewTd = $("<td></td>");
                 if (showEye) {
@@ -1432,7 +1487,7 @@
         if (!isCurrentMonth(dueDateVal)) {
           const formattedDate = formatDateDDMonYYYY(new Date(dueDateVal));
           Swal.fire({
-            html: `<span style="color: #d9534f;">Allow only current month calls.<br>Selected Due Date: ${formattedDate}</span>`,
+            html: `<span style="color: #d9534f;">System allows only to work on current month Open calls or Overdue calls</span>`,
             timer: 2000,
             timerProgressBar: true,
             showConfirmButton: false
@@ -1574,7 +1629,13 @@
               }
               ServiceRequest(childESNNumber); // Refresh table
             } else {
-              Swal.fire("Error", "Update failed: " + (response.message || "Unknown error"), "error");
+              Swal.fire({
+                title: "Error",
+                text: "Update failed: " + (updateResponse.message || "Unknown error"),
+                icon: "error",
+                iconColor: "#e17055",
+                confirmButtonColor: "#e17055"
+              });
             }
           })
           .finally(function () {
@@ -1637,8 +1698,18 @@
 
         // Call after modal is fully visible
         resizeCanvas();
-        window.addEventListener("resize", resizeCanvas);
-
+        // window.addEventListener("resize", resizeCanvas);
+          // let resizeTimeout;
+          // window.addEventListener("resize", () => {
+          //   // Prevent clearing during keyboard open/close
+          //   clearTimeout(resizeTimeout);
+          //   resizeTimeout = setTimeout(() => {
+          //     const viewportHeight = window.innerHeight;
+          //     if (viewportHeight > 400) { // arbitrary threshold to skip keyboard events
+          //       resizeCanvas();
+          //     }
+          //   }, 800);
+          // });
         // ===== MOUSE EVENTS =====
         canvas.addEventListener("mousedown", (e) => {
           drawing = true;
@@ -1745,7 +1816,8 @@
           data: formData
         };
         ZOHO.CREATOR.API.addRecord(config).then(async function (response) {
-          console.log(response.code);
+
+          console.log(response.data);
           if (response.code === 3000) {
             Swal.fire({
               text: "Service report saved successfully!",
@@ -1823,7 +1895,8 @@
 
             ZOHO.CREATOR.API.uploadFile({
               appName: "service-management",
-              reportName: "All_Service_Reports",
+              // reportName: "All_Service_Reports",
+              reportName: "Service_Report2",
               id: ReportRecordID,
               fieldName: "Service_Engineer_Signature",
               file: engFile
@@ -1831,7 +1904,8 @@
 
             ZOHO.CREATOR.API.uploadFile({
               appName: "service-management",
-              reportName: "All_Service_Reports",
+              // reportName: "All_Service_Reports",
+              reportName: "Service_Report2",
               id: ReportRecordID,
               fieldName: "Customer_Signature",
               file: cusFile
@@ -1847,7 +1921,8 @@
           const uploadOne = (fieldName, fileish) =>
             ZOHO.CREATOR.API.uploadFile({
               appName: "service-management",
-              reportName: "All_Service_Reports",
+              // reportName: "All_Service_Reports",
+              reportName: "Service_Report2",
               id: ReportRecordID,
               fieldName,
               file: fileish,                 // Blob in mobile
@@ -1894,6 +1969,14 @@
         engCanvas.parentNode.replaceChild(engImg, engCanvas);
         cusCanvas.parentNode.replaceChild(cusImg, cusCanvas);
 
+       function isMobileWebView() {
+  const ua = navigator.userAgent || "";
+  // Detect ANY mobile device (Android or iOS)
+  return /Android|iPhone|iPad|iPod/i.test(ua);
+}
+
+
+if (!isMobileWebView()) {
         // PDF options
         const element = document.getElementById("servicePdfContainer");
         const options = {
@@ -1921,7 +2004,60 @@
             engImg.parentNode.replaceChild(engCanvas, engImg);
             cusImg.parentNode.replaceChild(cusCanvas, cusImg);
           });
+        }
       });
+
+      // --- Base64 normalizer (fixes iOS URL-safe & padding issues) ---
+      function normalizeBase64(b64) {
+        if (!b64) return "";
+        b64 = String(b64).replace(/\s+/g, "");           // strip whitespace/newlines
+        b64 = b64.replace(/-/g, "+").replace(/_/g, "/"); // URL-safe -> standard
+        const mod = b64.length % 4;                      // add padding
+        if (mod === 2) b64 += "==";
+        else if (mod === 3) b64 += "=";
+        return b64;
+      }
+
+      // --- Draw base64 image onto a canvas (DPR-aware & iOS-safe) ---
+      function drawBase64OnCanvas(canvasId, base64, mime = "image/png") {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas || !base64) return;
+
+        // decode base64 into a Blob
+        const norm = normalizeBase64(base64);
+        const bin = atob(norm);
+        const u8 = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+        const blob = new Blob([u8], { type: mime });
+        const url = URL.createObjectURL(blob);
+
+        const img = new Image();
+        img.decoding = "sync";
+        img.onload = function () {
+          const ctx = canvas.getContext("2d");
+          const rect = canvas.getBoundingClientRect();
+
+          // reset any previous transforms, then scale for device pixel ratio
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          const ratio = window.devicePixelRatio || 1;
+          canvas.width = Math.max(1, Math.round(rect.width * ratio));
+          canvas.height = Math.max(1, Math.round(rect.height * ratio));
+          ctx.scale(ratio, ratio);
+
+          // draw image to the CSS size
+          ctx.clearRect(0, 0, rect.width, rect.height);
+          ctx.drawImage(img, 0, 0, rect.width, rect.height);
+
+          canvas.style.pointerEvents = "none";
+          canvas.style.opacity = "0.7";
+          URL.revokeObjectURL(url);
+        };
+        img.onerror = function () {
+          try { URL.revokeObjectURL(url); } catch (_) {}
+        };
+        img.src = url;
+      }
+
 
       // ======================= Open Service Report Modal =======================
       function openServiceReportModal(ReportRecordID) {
@@ -1930,7 +2066,8 @@
 
         const checkConfig = {
           appName: "service-management",
-          reportName: "All_Service_Reports",
+          // reportName: "All_Service_Reports",
+          reportName: "Service_Report2",
           criteria: '(Service_Request == ' + ReportRecordID + ')',
           page: 1,
           pageSize: 1
@@ -2141,7 +2278,13 @@
       // ======================= Customer Edit Modal =======================
       $(document).on("click", '[data-bs-target="#editCustomerModal"]', function () {
         if (!customerID) {
-          Swal.fire("Error", "Customer not asociated with ESN number!", "error");
+          Swal.fire({
+            title: "Error",
+            text: "Customer not asociated with ESN number!",
+            icon: "error",
+            iconColor: "#d63031",
+            confirmButtonColor: "#d63031"
+          });
           return;
         }
         $("#loader").css({ display: "block" });
@@ -2165,12 +2308,24 @@
               $("#editCountry").val(cust.Shipping_Country || "");
               $("#editState").val(cust.Domestic_Shipping_State || "");
             } else {
-              Swal.fire("Error", "Failed to load customer details!", "error");
+              Swal.fire({
+                title: "Error",
+                text: "Failed to load customer details!",
+                icon: "error",
+                iconColor: "#d63031",
+                confirmButtonColor: "#d63031"
+              });
             }
           })
           .catch(function (err) {
             console.error("❌ Error loading customer:", err);
-            Swal.fire("Error", "Failed to load customer details!", "error");
+            Swal.fire({
+              title: "Error",
+              text: "Failed to load customer details!",
+              icon: "error",
+              iconColor: "#d63031",
+              confirmButtonColor: "#d63031"
+            });
           })
           .finally(function () {
             $("#loader").css({ display: "none" });
@@ -2196,7 +2351,7 @@
             Shipping_City: $("#editCity").val() || "",
             Shipping_Postal_Code: $("#editPostal").val() || "",
             Shipping_Country: $("#editCountry").val() || "",
-            Shipping_State: $("#editState").val() || ""
+            Domestic_Shipping_State: $("#editState").val() || ""
           }
         };
 
@@ -2236,7 +2391,13 @@
             }
           })
           .catch(function (err) {
-            Swal.fire("Error", "Failed to update customer.", error);
+            Swal.fire({
+              title: "Error",
+              text: "Failed to update customer.",
+              icon: "error",
+              iconColor: "#d63031",
+              confirmButtonColor: "#d63031"
+            });
           })
           .finally(function () {
             $("#loader").css({ display: "none" });
