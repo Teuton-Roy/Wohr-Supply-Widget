@@ -268,8 +268,8 @@
       background: var(--brand);
     }
 
-    .form-select-sm{
-      width: 200px !important;
+    .form-select-sm {
+      width: 255px !important;
     }
 
     /* Loader overlay */
@@ -366,10 +366,12 @@
       #systemInfo .info-item {
         font-size: 13px;
       }
-      #srCustomerSign{
+
+      #srCustomerSign {
         width: 100%;
       }
-      #srEngineerSign{
+
+      #srEngineerSign {
         width: 100%;
       }
     }
@@ -464,6 +466,7 @@
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h4 id="system-title" class="section-title mb-0">System Details</h4>
         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSystemModal">
+          <!-- <button class="btn btn-primary btn-sm" id="updateSystemBtn"> -->
           <i class="fas fa-plus me-1"></i>Update System
         </button>
       </div>
@@ -473,30 +476,39 @@
         <div class="col-12 col-md-3 info-item"><strong>Parent ESN Number:</strong> <span id="parentESN">-</span></div>
         <div class="col-12 col-md-3 info-item"><strong>Child ESN Number:</strong> <span id="childESN">-</span></div>
         <div class="col-12 col-md-3 info-item"><strong>IRN Number:</strong> <span id="irnNumber">-</span></div>
-      </div>
-
-      <div class="table-container mt-3">
-        <div class="table-responsive">
-          <table class="table table-hover table-bordered align-middle" id="systemTable">
-            <thead class="text-center">
-              <tr>
-                <th>Platform Number</th>
-                <th>Cylinder Number</th>
-                <th>Power Pack Number</th>
-                <th>Chain Length</th>
-                <th>WOHR Value</th>
-                <th>Magnet Assembly</th>
-                <th>PLC Version</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colspan="7" class="text-center text-muted">Loading system details...</td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- ==== Status Field added by Teuton ===== -->
+        <div class="col-12 col-md-3 info-item">
+          <strong>Status:</strong>
+          <select id="systemStatusSelect" class="form-select form-select-sm d-inline-block w-auto" disabled>
+            <option value="System details need to update">System details need to update</option>
+            <option value="Approval Pending">Approval Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
         </div>
-      </div>
+
+        <div class="table-container mt-3">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle" id="systemTable">
+              <thead class="text-center">
+                <tr>
+                  <th>Platform Number</th>
+                  <th>Cylinder Number</th>
+                  <th>Power Pack Number</th>
+                  <th>Chain Length</th>
+                  <th>WOHR Value</th>
+                  <th>Magnet Assembly</th>
+                  <th>PLC Version</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="7" class="text-center text-muted">Loading system details...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
     </section>
 
     <!-- Customer Details -->
@@ -772,50 +784,50 @@
               <div class="col-md-6">
                 <label class="form-label fw-semibold" for="editState">State</label>
                 <!-- <input type="text" class="form-control form-control-lg" id="editState" /> -->
-                 <select class="form-control form-control-lg" id="editState">
-  <option value="AN (Andaman and Nico.Is.)">AN (Andaman and Nico.Is.)</option>
-  <option value="AP (Andhra Pradesh)">AP (Andhra Pradesh)</option>
-  <option value="AR (Arunachal Pradesh)">AR (Arunachal Pradesh)</option>
-  <option value="AS (Assam)">AS (Assam)</option>
-  <option value="BR (Bihar)">BR (Bihar)</option>
-  <option value="CG (Chhattisgarh)">CG (Chhattisgarh)</option>
-  <option value="CH (Chandigarh)">CH (Chandigarh)</option>
-  <option value="CT (Obsolete)">CT (Obsolete)</option>
-  <option value="DD (Obsolete)">DD (Obsolete)</option>
-  <option value="DH (DadraNagHavDamanDiu)">DH (DadraNagHavDamanDiu)</option>
-  <option value="DL (Delhi)">DL (Delhi)</option>
-  <option value="DN (Obsolete)">DN (Obsolete)</option>
-  <option value="GA (Goa)">GA (Goa)</option>
-  <option value="GJ (Gujarat)">GJ (Gujarat)</option>
-  <option value="HP (Himachal Pradesh)">HP (Himachal Pradesh)</option>
-  <option value="HR (Haryana)">HR (Haryana)</option>
-  <option value="JH (Jharkhand)">JH (Jharkhand)</option>
-  <option value="JK (Jammu and Kashmir)">JK (Jammu and Kashmir)</option>
-  <option value="KA (Karnataka)">KA (Karnataka)</option>
-  <option value="KL (Kerala)">KL (Kerala)</option>
-  <option value="LA (Ladakh)">LA (Ladakh)</option>
-  <option value="LD (Lakshadweep)">LD (Lakshadweep)</option>
-  <option value="MH (Maharashtra)">MH (Maharashtra)</option>
-  <option value="ML (Megalaya)">ML (Megalaya)</option>
-  <option value="MN (Manipur)">MN (Manipur)</option>
-  <option value="MP (Madhya Pradesh)">MP (Madhya Pradesh)</option>
-  <option value="MZ (Mizoram)">MZ (Mizoram)</option>
-  <option value="NL (Nagaland)">NL (Nagaland)</option>
-  <option value="OD (Odisha)">OD (Odisha)</option>
-  <option value="OR (Obsolete)">OR (Obsolete)</option>
-  <option value="PB (Punjab)">PB (Punjab)</option>
-  <option value="PY (Pondicherry)">PY (Pondicherry)</option>
-  <option value="RJ (Rajasthan)">RJ (Rajasthan)</option>
-  <option value="SK (Sikkim)">SK (Sikkim)</option>
-  <option value="TG (Obsolete)">TG (Obsolete)</option>
-  <option value="TN (Tamil Nadu)">TN (Tamil Nadu)</option>
-  <option value="TR (Tripura)">TR (Tripura)</option>
-  <option value="TS (Telangana)">TS (Telangana)</option>
-  <option value="UK (Uttarakhand)">UK (Uttarakhand)</option>
-  <option value="UP (Uttar Pradesh)">UP (Uttar Pradesh)</option>
-  <option value="UT (Obsolete)">UT (Obsolete)</option>
-  <option value="WB (West Bengal)">WB (West Bengal)</option>
-</select>
+                <select class="form-control form-control-lg" id="editState">
+                  <option value="AN (Andaman and Nico.Is.)">AN (Andaman and Nico.Is.)</option>
+                  <option value="AP (Andhra Pradesh)">AP (Andhra Pradesh)</option>
+                  <option value="AR (Arunachal Pradesh)">AR (Arunachal Pradesh)</option>
+                  <option value="AS (Assam)">AS (Assam)</option>
+                  <option value="BR (Bihar)">BR (Bihar)</option>
+                  <option value="CG (Chhattisgarh)">CG (Chhattisgarh)</option>
+                  <option value="CH (Chandigarh)">CH (Chandigarh)</option>
+                  <option value="CT (Obsolete)">CT (Obsolete)</option>
+                  <option value="DD (Obsolete)">DD (Obsolete)</option>
+                  <option value="DH (DadraNagHavDamanDiu)">DH (DadraNagHavDamanDiu)</option>
+                  <option value="DL (Delhi)">DL (Delhi)</option>
+                  <option value="DN (Obsolete)">DN (Obsolete)</option>
+                  <option value="GA (Goa)">GA (Goa)</option>
+                  <option value="GJ (Gujarat)">GJ (Gujarat)</option>
+                  <option value="HP (Himachal Pradesh)">HP (Himachal Pradesh)</option>
+                  <option value="HR (Haryana)">HR (Haryana)</option>
+                  <option value="JH (Jharkhand)">JH (Jharkhand)</option>
+                  <option value="JK (Jammu and Kashmir)">JK (Jammu and Kashmir)</option>
+                  <option value="KA (Karnataka)">KA (Karnataka)</option>
+                  <option value="KL (Kerala)">KL (Kerala)</option>
+                  <option value="LA (Ladakh)">LA (Ladakh)</option>
+                  <option value="LD (Lakshadweep)">LD (Lakshadweep)</option>
+                  <option value="MH (Maharashtra)">MH (Maharashtra)</option>
+                  <option value="ML (Megalaya)">ML (Megalaya)</option>
+                  <option value="MN (Manipur)">MN (Manipur)</option>
+                  <option value="MP (Madhya Pradesh)">MP (Madhya Pradesh)</option>
+                  <option value="MZ (Mizoram)">MZ (Mizoram)</option>
+                  <option value="NL (Nagaland)">NL (Nagaland)</option>
+                  <option value="OD (Odisha)">OD (Odisha)</option>
+                  <option value="OR (Obsolete)">OR (Obsolete)</option>
+                  <option value="PB (Punjab)">PB (Punjab)</option>
+                  <option value="PY (Pondicherry)">PY (Pondicherry)</option>
+                  <option value="RJ (Rajasthan)">RJ (Rajasthan)</option>
+                  <option value="SK (Sikkim)">SK (Sikkim)</option>
+                  <option value="TG (Obsolete)">TG (Obsolete)</option>
+                  <option value="TN (Tamil Nadu)">TN (Tamil Nadu)</option>
+                  <option value="TR (Tripura)">TR (Tripura)</option>
+                  <option value="TS (Telangana)">TS (Telangana)</option>
+                  <option value="UK (Uttarakhand)">UK (Uttarakhand)</option>
+                  <option value="UP (Uttar Pradesh)">UP (Uttar Pradesh)</option>
+                  <option value="UT (Obsolete)">UT (Obsolete)</option>
+                  <option value="WB (West Bengal)">WB (West Bengal)</option>
+                </select>
 
               </div>
             </div>
@@ -1016,6 +1028,9 @@
       let Region = "";
       let City = "";
       let ReportRecordID = "";
+      let pollTimerId = null;
+      let pollingStarted = false;
+      let lastDisplayStatus = null;
       ZOHO.CREATOR.init().then(async function () {
         $("#loader").css({ display: "block" });
         const queryParams = ZOHO.CREATOR.UTIL.getInitParams() || {};
@@ -1074,6 +1089,8 @@
           console.error("❌ User not found or error fetching records");
         }
         await ESNDetails(childESNNumber);
+        console.log("loggggggggggggg");
+        await startStatusPollingSafe();
       });
       // ======================= Fetch ESN Details =======================
       async function ESNDetails(childESNNumber) {
@@ -1093,11 +1110,49 @@
             await ServiceRequest(childESNNumber);
             const data = response.data[0];
             ESNSystemID = data.ID;
+            console.log("System ESN ID: ", ESNSystemID);
             $("#parkingNumber").text(data.APS_PS_Parking_Number || "-");
             $("#parentESN").text(data.Parent_ESN_Number || "-");
             $("#childESN").text(data.Child_ESN_Number || "-");
             $("#irnNumber").text(data.IRN_Number || "-");
             $("#esnStatus").text(data.ESN_Status || "-");
+
+            // Add this to set the status dropdown on page load
+            // const approvalStatus = data.Approval_Status || "";
+            // const esnStatus = data.ESN_Status || "";
+            // let displayStatus = "System details need to update";
+            // if (esnStatus.toLowerCase() === "completed" && approvalStatus.toLowerCase() === "pending") {
+            //   displayStatus = "Approval Pending";
+            // } else if (approvalStatus.toLowerCase() === "approved") {
+            //   displayStatus = "Approved";
+            // } else if (approvalStatus.toLowerCase() === "rejected") {
+            //   displayStatus = "Rejected";
+            // }
+            // // $("#systemStatusSelect").val(displayStatus);
+            // setSystemStatus(displayStatus);
+            // if (displayStatus === "Rejected") {
+            //   $('[data-bs-target="#addSystemModal"]').prop("disabled", true);
+            // } else {
+            //   $('[data-bs-target="#addSystemModal"]').prop("disabled", false);
+            // }
+
+            const approvalStatus = data.Approval_Status || "";
+            const esnStatus = data.ESN_Status || "";
+            let displayStatus = "System details need to update";
+
+            if (esnStatus.toLowerCase() === "completed" && approvalStatus.toLowerCase() === "pending") {
+              displayStatus = "Approval Pending";
+            } else if (approvalStatus.toLowerCase() === "approved") {
+              displayStatus = "Approved";
+            } else if (approvalStatus.toLowerCase() === "rejected") {
+              displayStatus = "Rejected";
+            }
+
+            // ✅ Use safe update (prevents blank dropdown)
+            lastDisplayStatus = displayStatus; // keep poller synced
+            setSystemStatusSafe(displayStatus);
+            $('[data-bs-target="#addSystemModal"]').prop("disabled", displayStatus === "Rejected");
+
 
             // System Details
             const tbody = $("#systemTable tbody").empty();
@@ -1175,13 +1230,140 @@
           console.error("❌ Error fetching ESN details:", error);
         } finally {
           $("#loader").css({ display: "none" });
+          console.log("🎯 Finally block reached. pollingStarted:", pollingStarted, "ESNSystemID:", ESNSystemID);
+          // ✅ Start polling only once — keep it here
+          // if (!pollingStarted) {
+          //   console.log("🚀 About to start polling...");
+          //   startStatusPolling();
+          //   pollingStarted = true;
+          //   console.log("✅ Polling flag set to true");
+          // }
+          startStatusPollingSafe()
         }
       }
+
+      function computeDisplayStatus(esnStatus = "", approvalStatus = "") {
+        const esn = String(esnStatus || "").toLowerCase();
+        const appr = String(approvalStatus || "").toLowerCase();
+        if (esn === "completed" && appr === "pending") return "Approval Pending";
+        if (appr === "approved") return "Approved";
+        if (appr === "rejected") return "Rejected";
+        return "System details need to update";
+      }
+
+      // Fetch latest & update only the UI bits that depend on status
+      async function refreshEsnStatusOnce() {
+        if (!ESNSystemID) {
+          console.log("[poll] ESNSystemID not set yet, will retry…");
+          return lastDisplayStatus;
+        }
+
+        const cfg = {
+          appName: "service-management",
+          reportName: "ESN_Scan_QR_Widget",
+          id: ESNSystemID
+        };
+
+        try {
+          const resp = await ZOHO.CREATOR.API.getRecordById(cfg);
+          if (resp.code !== 3000 || !resp.data) return lastDisplayStatus;
+
+          const approvalStatus = resp.data.Approval_Status || "";
+          const esnStatus = resp.data.ESN_Status || "";
+          const nextDisplay = computeDisplayStatus(esnStatus, approvalStatus);
+
+          if (nextDisplay !== lastDisplayStatus) {
+            console.log("[poll] Status changed:", lastDisplayStatus, "→", nextDisplay);
+            lastDisplayStatus = nextDisplay;
+            setSystemStatusSafe(nextDisplay);
+            $('[data-bs-target="#addSystemModal"]').prop("disabled", nextDisplay === "Rejected");
+          }
+
+          return lastDisplayStatus;
+        } catch (e) {
+          console.error("[poll] refreshEsnStatusOnce error:", e);
+          return lastDisplayStatus;
+        }
+      }
+
+      // Single safe poller that won’t overlap or double-start
+      async function startStatusPollingSafe() {
+        if (pollingStarted) {
+          console.log("[poll] already started");
+          return;
+        }
+        pollingStarted = true;
+        console.log("[poll] starting…");
+
+        let intervalMs = 2000;
+
+        const tick = async () => {
+          const status = await refreshEsnStatusOnce();
+          intervalMs = (status === "Approved" || status === "Rejected") ? 15000 : 2000;
+          pollTimerId = setTimeout(tick, intervalMs);
+        };
+
+        tick(); // fire immediately
+
+        // Refresh on focus (helps in mobile/iOS webview)
+        window.addEventListener("visibilitychange", () => {
+          if (!document.hidden) refreshEsnStatusOnce();
+        });
+        window.addEventListener("focus", () => refreshEsnStatusOnce());
+      }
+
+      // canonical statuses your UI supports
+      const STATUS_OPTIONS = [
+        "System details need to update",
+        "Approval Pending",
+        "Approved",
+        "Rejected"
+      ];
+
+      function setSystemStatusSafe(nextDisplay) {
+        const $el = $("#systemStatusSelect");
+        if (!$el.length) return;
+
+        // normalize
+        const val = (nextDisplay || "").toString().trim();
+        if (!val) {
+          // don't write empty/undefined into the select
+          console.warn("[status] skip empty status update");
+          return;
+        }
+
+        // if it's not a <select> (maybe a <div>), just display text
+        if ($el.prop("tagName") !== "SELECT") {
+          $el.text(val);
+          return;
+        }
+
+        // ensure all canonical options exist once
+        STATUS_OPTIONS.forEach(v => {
+          if ($el.find(`option[value="${v}"]`).length === 0) {
+            $el.append(`<option value="${v}">${v}</option>`);
+          }
+        });
+
+        // only set to a known value (prevents blank UI)
+        if (!STATUS_OPTIONS.includes(val)) {
+          console.warn("[status] unknown status, ignoring:", val);
+          return;
+        }
+
+        // set + trigger so UI plugins (Select2) repaint
+        $el.val(val)
+          .trigger("change")
+          .trigger("input")
+          .trigger("change.select2");
+      }
+
 
 
       // ======================= // System Update// =======================
       async function systemupdate(ESNSystemID) {
         $("#loader").css({ "display": "block" });
+
         const newEntry = {
           Platform_Number: $("#platformNumber").val(),
           Cylender_Number: $("#cylinderNumber").val(),
@@ -1199,8 +1381,21 @@
         };
         ZOHO.CREATOR.API.getRecordById(SystemUpdateDetails).then(function (response) {
           let recordData = response.data;
+          console.log("Fetched Record Data for Update:", recordData);
           let approvalStatus = recordData.Approval_Status || "";
+          let esnStatus = recordData.ESN_Status || "";
           if (approvalStatus.toLowerCase() === "pending") {
+            $("#addNewButton").prop("disabled", true);
+            Swal.fire("Notice", "Approval Pending. Please contact to regional operation incharge.", "warning");
+            $("#addSystemModal").modal("hide");
+            $("#systemForm")[0].reset();
+            $("#loader").css({ display: "none" });
+            return;
+          } else {
+            $("#addNewButton").prop("disabled", false);
+          }
+
+          if (approvalStatus.toLowerCase() === "rejected") {
             $("#addNewButton").prop("disabled", true);
             Swal.fire("Notice", "Approval Pending. Please contact to regional operation incharge.", "warning");
             $("#addSystemModal").modal("hide");
@@ -1256,6 +1451,7 @@
           };
 
           ZOHO.CREATOR.API.updateRecord(updateConfig).then(function (updateResponse) {
+            console.log("Update Response:", updateResponse);
             $("#loader").css({ "display": "block" });
             if (updateResponse.code === 3000) {
               ESNDetails(childESNNumber);
@@ -1263,7 +1459,7 @@
               Swal.fire("Success", "System details updated successfully!", "success");
               $("#addSystemModal").modal("hide");
             } else {
-                Swal.fire({
+              Swal.fire({
                 title: "Error",
                 text: "Update failed: " + (updateResponse.message || "Unknown error"),
                 icon: "error",
@@ -1277,6 +1473,9 @@
       }
       $(document).on("click", '[data-bs-target="#addSystemModal"]', function () {
         $("#loader").css({ "display": "block" });
+
+        let value = $("#systemStatusSelect").val();
+        console.log("Selected Status:", value);
         if (!ESNSystemID) return;
         const SystemUpdateDetails = {
           appName: "service-management",
@@ -1316,7 +1515,6 @@
         setTimeout(function () {
           $btn.prop("disabled", false).html("💾 Save System");
         }, 3000);
-
       });
       // ======================= // Fetch Service Requests // =======================
       async function ServiceRequest(childESNNumber) {
@@ -1587,7 +1785,7 @@
             Button_Indicator: $("#bl input[type='checkbox']").prop("checked"),
             Hydraulic_Parts: $("#hyp input[type='checkbox']").prop("checked"),
             Reason_For_Hold: $("#subStatusSelect").val() || "",
-            Material_Information: $("#materialInfo").val() || ""
+            Material_Information: $("#materialInfo").val() || "",
           };
         }
         else if ($("#statusSelect").val() === "Work in Progress") {
@@ -1699,17 +1897,17 @@
         // Call after modal is fully visible
         resizeCanvas();
         // window.addEventListener("resize", resizeCanvas);
-          // let resizeTimeout;
-          // window.addEventListener("resize", () => {
-          //   // Prevent clearing during keyboard open/close
-          //   clearTimeout(resizeTimeout);
-          //   resizeTimeout = setTimeout(() => {
-          //     const viewportHeight = window.innerHeight;
-          //     if (viewportHeight > 400) { // arbitrary threshold to skip keyboard events
-          //       resizeCanvas();
-          //     }
-          //   }, 800);
-          // });
+        // let resizeTimeout;
+        // window.addEventListener("resize", () => {
+        //   // Prevent clearing during keyboard open/close
+        //   clearTimeout(resizeTimeout);
+        //   resizeTimeout = setTimeout(() => {
+        //     const viewportHeight = window.innerHeight;
+        //     if (viewportHeight > 400) { // arbitrary threshold to skip keyboard events
+        //       resizeCanvas();
+        //     }
+        //   }, 800);
+        // });
         // ===== MOUSE EVENTS =====
         canvas.addEventListener("mousedown", (e) => {
           drawing = true;
@@ -1863,7 +2061,7 @@
         }
         function dataURLtoBlob(dataurl) {
           const [meta, data] = dataurl.split(',');
-          const mime = (meta.match(/:(.*?);/) || [,'image/png'])[1];
+          const mime = (meta.match(/:(.*?);/) || [, 'image/png'])[1];
           const bin = atob(data);
           const u8 = new Uint8Array(bin.length);
           for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
@@ -1931,11 +2129,11 @@
 
           const [u1, u2] = await Promise.allSettled([
             uploadOne("Service_Engineer_Signature", engBlob),
-            uploadOne("Customer_Signature",   cusBlob),
+            uploadOne("Customer_Signature", cusBlob),
           ]);
 
           if (u1.status !== "fulfilled" || u2.status !== "fulfilled") {
-            console.error("Signature upload issue:", {u1, u2});
+            console.error("Signature upload issue:", { u1, u2 });
             Swal.fire({
               icon: "warning",
               text: "PDF saved, but one or both signatures failed to upload on this device. Please retry.",
@@ -1969,41 +2167,41 @@
         engCanvas.parentNode.replaceChild(engImg, engCanvas);
         cusCanvas.parentNode.replaceChild(cusImg, cusCanvas);
 
-       function isMobileWebView() {
-  const ua = navigator.userAgent || "";
-  // Detect ANY mobile device (Android or iOS)
-  return /Android|iPhone|iPad|iPod/i.test(ua);
-}
+        function isMobileWebView() {
+          const ua = navigator.userAgent || "";
+          // Detect ANY mobile device (Android or iOS)
+          return /Android|iPhone|iPad|iPod/i.test(ua);
+        }
 
 
-if (!isMobileWebView()) {
-        // PDF options
-        const element = document.getElementById("servicePdfContainer");
-        const options = {
-          margin: [0.5, 0.4, 0.5, 0.4],
-          filename: "Service_Report_" + new Date().toISOString().slice(0, 10) + ".pdf",
-          image: { type: "jpeg", quality: 1 },
-          html2canvas: { scale: 3, useCORS: true },
-          jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
-        };
+        if (!isMobileWebView()) {
+          // PDF options
+          const element = document.getElementById("servicePdfContainer");
+          const options = {
+            margin: [0.5, 0.4, 0.5, 0.4],
+            filename: "Service_Report_" + new Date().toISOString().slice(0, 10) + ".pdf",
+            image: { type: "jpeg", quality: 1 },
+            html2canvas: { scale: 3, useCORS: true },
+            jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+          };
 
-        // Generate PDF
-        html2pdf()
-          .set(options)
-          .from(element)
-          .save()
-          .then(() => {
-            engImg.parentNode.replaceChild(engCanvas, engImg);
-            cusImg.parentNode.replaceChild(cusCanvas, cusImg);
-            const modalInstance = bootstrap.Modal.getInstance($("#serviceReportModalNew")[0]);
-            if (modalInstance) modalInstance.hide();
-          })
-          .catch((err) => {
-            console.error("PDF generation failed:", err);
-            // Even on error, restore canvases
-            engImg.parentNode.replaceChild(engCanvas, engImg);
-            cusImg.parentNode.replaceChild(cusCanvas, cusImg);
-          });
+          // Generate PDF
+          html2pdf()
+            .set(options)
+            .from(element)
+            .save()
+            .then(() => {
+              engImg.parentNode.replaceChild(engCanvas, engImg);
+              cusImg.parentNode.replaceChild(cusCanvas, cusImg);
+              const modalInstance = bootstrap.Modal.getInstance($("#serviceReportModalNew")[0]);
+              if (modalInstance) modalInstance.hide();
+            })
+            .catch((err) => {
+              console.error("PDF generation failed:", err);
+              // Even on error, restore canvases
+              engImg.parentNode.replaceChild(engCanvas, engImg);
+              cusImg.parentNode.replaceChild(cusCanvas, cusImg);
+            });
         }
       });
 
@@ -2053,7 +2251,7 @@ if (!isMobileWebView()) {
           URL.revokeObjectURL(url);
         };
         img.onerror = function () {
-          try { URL.revokeObjectURL(url); } catch (_) {}
+          try { URL.revokeObjectURL(url); } catch (_) { }
         };
         img.src = url;
       }
@@ -2192,13 +2390,13 @@ if (!isMobileWebView()) {
                         img.onload = function () {
                           const ctx = engCanvas.getContext("2d");
                           const rect = engCanvas.getBoundingClientRect();
-                          
+
                           // Scale canvas to match container size
                           const ratio = window.devicePixelRatio || 1;
                           engCanvas.width = rect.width * ratio;
                           engCanvas.height = rect.height * ratio;
                           ctx.scale(ratio, ratio);
-                          
+
                           // Draw image to fit canvas
                           ctx.drawImage(img, 0, 0, rect.width, rect.height);
                           engCanvas.style.pointerEvents = "none";
@@ -2236,13 +2434,13 @@ if (!isMobileWebView()) {
                         img.onload = function () {
                           const ctx = cusCanvas.getContext("2d");
                           const rect = cusCanvas.getBoundingClientRect();
-                          
+
                           // Scale canvas to match container size
                           const ratio = window.devicePixelRatio || 1;
                           cusCanvas.width = rect.width * ratio;
                           cusCanvas.height = rect.height * ratio;
                           ctx.scale(ratio, ratio);
-                          
+
                           // Draw image to fit canvas
                           ctx.drawImage(img, 0, 0, rect.width, rect.height);
                           cusCanvas.style.pointerEvents = "none";
