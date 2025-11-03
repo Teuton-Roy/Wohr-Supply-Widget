@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
@@ -861,7 +862,7 @@
 
             <!-- Header -->
             <div class="text-center mb-2 position-relative">
-              <img src="img/wohr_parking_systems_pvt_ltd__logo.jpeg" alt="Logo"
+              <img src="img/wohr_parking_systems_pvt_ltd__logo.jpeg" alt="Logo" crossorigin="anonymous"
                 style="height:45px;width:auto;position:absolute;left:0;">
               <div>
                 <div class="fw-bold" style="font-size:15px;">WOHR PARKING SYSTEMS PVT. LTD.</div>
@@ -1022,6 +1023,7 @@
       let ServiceRequestID = "";
       let loginuser;
       let userRole;
+      let closed_by;
       let customerID = "";
       let Admin = false;
       let Route = [];
@@ -1052,6 +1054,7 @@
         if (response.code === 3000 && response.data.length > 0) {
           const data = response.data[0];
           console.log("User data fetched:", data);
+          closed_by = data.Name;
           if ((Array.isArray(data.New_Route_Name) && data.New_Route_Name.includes("All Route"))) {
             console.log("Aha! pe code execute ho rha hai...");
             Admin = true;
@@ -1231,13 +1234,6 @@
         } finally {
           $("#loader").css({ display: "none" });
           console.log("🎯 Finally block reached. pollingStarted:", pollingStarted, "ESNSystemID:", ESNSystemID);
-          // ✅ Start polling only once — keep it here
-          // if (!pollingStarted) {
-          //   console.log("🚀 About to start polling...");
-          //   startStatusPolling();
-          //   pollingStarted = true;
-          //   console.log("✅ Polling flag set to true");
-          // }
           startStatusPollingSafe()
         }
       }
@@ -1598,7 +1594,19 @@
                         </i>
                       `);
                   viewTd.append(viewIcon);
-                } else {
+                } 
+                // else if (sKey === "closed") {
+                //   // download icons for Closed requests
+                //   const downloadIcon = $(`
+                //     <i class="fas fa-download text-success download-report-icon"
+                //       style="cursor:pointer;"
+                //       title="Download Service Report"
+                //       data-record-id="${list.ID}">
+                //     </i>
+                //   `);
+                //   viewTd.append(downloadIcon);
+                // } 
+                else {
                   // hidden when filter is Closed
                   viewTd.html('<span class="text-muted">—</span>');
                 }
@@ -1658,6 +1666,96 @@
           $("#loader").css({ display: "none" });
         });
       }
+
+      // ======================= Download Report Icon Handler =======================
+      // $(document).on("click", ".download-report-icon", function () {
+      //   const recordId = $(this).data("record-id");
+      //   console.log("Download Report for Record ID:", recordId);
+      //   openServiceReportModal(recordId);
+      // });
+      // ======================= Download Report Icon Handler =======================
+      // $(document).on("click", ".download-report-icon", function () {
+      //   const recordId = $(this).data("record-id");
+      //   console.log("Download Report for Record ID:", recordId);
+        
+      //   $("#loader").css({ display: "block" });
+        
+      //   const checkConfig = {
+      //     appName: "service-management",
+      //     reportName: "Service_Report2",
+      //     criteria: '(Service_Request == ' + recordId + ')',
+      //     page: 1,
+      //     pageSize: 1
+      //   };
+
+      //   ZOHO.CREATOR.API.getAllRecords(checkConfig).then(function (checkResponse) {
+      //     if (checkResponse.code === 3000 && checkResponse.data && checkResponse.data.length > 0) {
+      //       openServiceReportModal(recordId);
+            
+      //       setTimeout(() => {
+      //         const element = document.getElementById("servicePdfContainer");
+      //         if (element) {
+      //           const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      //           const filename = "Service_Report_" + new Date().toISOString().slice(0, 10) + ".pdf";
+                
+      //           const options = {
+      //             margin: [0.5, 0.4, 0.5, 0.4],
+      //             filename: filename,
+      //             image: { type: "jpeg", quality: 1 },
+      //             html2canvas: { scale: isMobile ? 2 : 3, useCORS: true },
+      //             jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+      //           };
+                
+      //           if (isMobile) {
+      //             // Mobile: Generate blob and trigger download
+      //             html2pdf().set(options).from(element).outputPdf('blob').then((blob) => {
+      //               const url = URL.createObjectURL(blob);
+      //               const a = document.createElement('a');
+      //               a.href = url;
+      //               a.download = filename;
+      //               document.body.appendChild(a);
+      //               a.click();
+      //               document.body.removeChild(a);
+      //               URL.revokeObjectURL(url);
+                    
+      //               const modalInstance = bootstrap.Modal.getInstance($("#serviceReportModalNew")[0]);
+      //               if (modalInstance) modalInstance.hide();
+      //               $("#loader").css({ display: "none" });
+                    
+      //               Swal.fire({
+      //                 text: "PDF downloaded successfully!",
+      //                 icon: "success",
+      //                 timer: 2000,
+      //                 showConfirmButton: false
+      //               });
+      //             }).catch(() => {
+      //               $("#loader").css({ display: "none" });
+      //             });
+      //           } else {
+      //             // Web: Direct save
+      //             html2pdf().set(options).from(element).save().then(() => {
+      //               const modalInstance = bootstrap.Modal.getInstance($("#serviceReportModalNew")[0]);
+      //               if (modalInstance) modalInstance.hide();
+      //               $("#loader").css({ display: "none" });
+      //             }).catch(() => {
+      //               $("#loader").css({ display: "none" });
+      //             });
+      //           }
+      //         }
+      //       }, 2000);
+      //     } else {
+      //       $("#loader").css({ display: "none" });
+      //       Swal.fire({
+      //         text: "No service report found.",
+      //         icon: "warning",
+      //         timer: 2000,
+      //         showConfirmButton: false
+      //       });
+      //     }
+      //   });
+      // });
+
+
 
       // ======================= View Icon Handler =======================
       $(document).on("click", ".fa-eye", function () {
@@ -1775,7 +1873,7 @@
         if ($("#statusSelect").val() === "Closed") {
           updateData.data = {
             Status: $("#statusSelect").val() || "",
-            Closed_By: loginuser,
+            Closed_Owner: closed_by,
             Closed_Date: formatDateDDMonYYYY(new Date()),
             Material_Information: $("#materialInfo").val() || "",
             Vertical_Parts: $("#vp input[type='checkbox']").prop("checked"),
@@ -2034,7 +2132,6 @@
             } else {
               await uploadSignatures(ReportRecordID);
             }
-
             // Now it’s safe to close and refresh
             const modalInstance = bootstrap.Modal.getInstance($("#serviceReportModalNew")[0]);
             if (modalInstance) modalInstance.hide();
@@ -2144,7 +2241,6 @@
           }
         }
 
-
         // Capture signature canvases
         const engCanvas = document.getElementById("srEngineerSign");
         const cusCanvas = document.getElementById("srCustomerSign");
@@ -2167,15 +2263,54 @@
         engCanvas.parentNode.replaceChild(engImg, engCanvas);
         cusCanvas.parentNode.replaceChild(cusImg, cusCanvas);
 
+        // const element = document.getElementById("servicePdfContainer");
+        // const options = {
+        //   margin: [0.5, 0.4, 0.5, 0.4],
+        //   filename: "Service_Report_" + new Date().toISOString().slice(0, 10) + ".pdf",
+        //   image: { type: "jpeg", quality: 1 },
+        //   html2canvas: { scale: 2, useCORS: true },
+        //   jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+        // };
+
+        // html2pdf().set(options).from(element).outputPdf('blob').then((pdfBlob) => {
+        //   pdfBlob.name = options.filename;
+          
+        //   // Upload PDF to Zoho Creator
+        //   ZOHO.CREATOR.API.uploadFile({
+        //     appName: "service-management",
+        //     reportName: "Service_Report2",
+        //     id: ReportRecordID,
+        //     fieldName: "PDF_File",
+        //     file: pdfBlob,
+        //     filename: pdfBlob.name
+        //   }).then(() => {
+        //     console.log("✅ PDF uploaded to Zoho Creator");
+        //   }).catch(err => console.error("❌ PDF upload failed:", err));
+          
+        //   // Download PDF locally
+        //   const url = URL.createObjectURL(pdfBlob);
+        //   const a = document.createElement('a');
+        //   a.href = url;
+        //   a.download = pdfBlob.name;
+        //   document.body.appendChild(a);
+        //   a.click();
+        //   document.body.removeChild(a);
+        //   URL.revokeObjectURL(url);
+          
+        //   engImg.parentNode.replaceChild(engCanvas, engImg);
+        //   cusImg.parentNode.replaceChild(cusCanvas, cusImg);
+        // });
+
         function isMobileWebView() {
           const ua = navigator.userAgent || "";
           // Detect ANY mobile device (Android or iOS)
           return /Android|iPhone|iPad|iPod/i.test(ua);
         }
 
-
         if (!isMobileWebView()) {
           // PDF options
+          // console.log("Desktop chala rha hu.......");
+          
           const element = document.getElementById("servicePdfContainer");
           const options = {
             margin: [0.5, 0.4, 0.5, 0.4],
@@ -2197,12 +2332,74 @@
               if (modalInstance) modalInstance.hide();
             })
             .catch((err) => {
-              console.error("PDF generation failed:", err);
+              // console.error("PDF generation failed:", err);
               // Even on error, restore canvases
               engImg.parentNode.replaceChild(engCanvas, engImg);
               cusImg.parentNode.replaceChild(cusCanvas, cusImg);
-            });
+            })
         }
+        // else{
+        //   console.log("Mobile chala rha hu.......");
+        //   // MOBILE: Use jsPDF directly (html2pdf often fails on mobile)
+        //   const { jsPDF } = window.jspdf;
+        //   const pdf = new jsPDF({
+        //     unit: "in",
+        //     format: "a4",
+        //     orientation: "portrait"
+        //   });
+          
+        //   pdf.html(element, {
+        //     callback: function(doc) {
+        //       const pdfBlob = doc.output('blob');
+        //       pdfBlob.name = options.filename;
+              
+        //       // Upload PDF to Zoho Creator
+        //       ZOHO.CREATOR.API.uploadFile({
+        //         appName: "service-management",
+        //         reportName: "Service_Report2",
+        //         id: ReportRecordID,
+        //         fieldName: "PDF_File",
+        //         file: pdfBlob,
+        //         filename: pdfBlob.name
+        //       }).then(() => {
+        //         // console.log("✅ PDF uploaded to Zoho Creator");
+        //         Swal.fire({
+        //           text: "PDF uploaded to Zoho Creator successfully!",
+        //           icon: "success",
+        //           timer: 2000,
+        //           showConfirmButton: false
+        //         });
+        //       }).catch(err => {
+        //         console.error("❌ PDF upload failed:", err);
+        //         Swal.fire({
+        //           text: "PDF upload failed. Please try again.",
+        //           icon: "error",
+        //           timer: 2000,
+        //           showConfirmButton: false
+        //         });
+        //       });
+        //       // Download PDF locally
+        //       const url = URL.createObjectURL(pdfBlob);
+        //       const a = document.createElement('a');
+        //       a.href = url;
+        //       a.download = pdfBlob.name;
+        //       document.body.appendChild(a);
+        //       a.click();
+        //       document.body.removeChild(a);
+        //       URL.revokeObjectURL(url);
+              
+        //       engImg.parentNode.replaceChild(engCanvas, engImg);
+        //       cusImg.parentNode.replaceChild(cusCanvas, cusImg);
+              
+        //       const modalInstance = bootstrap.Modal.getInstance($("#serviceReportModalNew")[0]);
+        //       if (modalInstance) modalInstance.hide();
+        //     },
+        //     x: 0.4,
+        //     y: 0.5,
+        //     html2canvas: { scale: 1.5 },
+        //     margin: [0.5, 0.4, 0.5, 0.4]
+        //   });
+        // }
       });
 
       // --- Base64 normalizer (fixes iOS URL-safe & padding issues) ---
