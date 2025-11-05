@@ -2618,15 +2618,23 @@
       $(document).on("change", "#statusFilter", function () {
         ServiceRequest(childESNNumber);
       });
+      // =========== Update Request Count in Card =============
       function updateRequestCount() {
-        // Count only valid rows (ignore placeholder rows with colspan)
-        const totalRequests = $("#ServicerequestTable tbody tr")
-          .not(':has(td[colspan])')
-          .length;
-
-        // If no valid rows, show 0 Requests
-        const countText = totalRequests > 0 ? `${totalRequests} Requests` : "0 Requests";
-        $("#card-requests p").text(countText);
+        // Check if DataTable is initialized
+        if ($.fn.DataTable.isDataTable('#ServicerequestTable')) {
+          // Use DataTable API to get total rows (excluding filtered)
+          const table = $('#ServicerequestTable').DataTable();
+          const totalRequests = table.rows().count();
+          const countText = totalRequests > 0 ? `${totalRequests} Requests` : "0 Requests";
+          $("#card-requests p").text(countText);
+        } else {
+          // Fallback if DataTable not initialized
+          const totalRequests = $("#ServicerequestTable tbody tr")
+            .not(':has(td[colspan])')
+            .length;
+          const countText = totalRequests > 0 ? `${totalRequests} Requests` : "0 Requests";
+          $("#card-requests p").text(countText);
+        }
       }
       // =======================// UI & Form Handlers// =======================
       $(document).ready(function () {
