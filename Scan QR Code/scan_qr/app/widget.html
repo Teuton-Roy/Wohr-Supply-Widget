@@ -252,35 +252,41 @@
       letter-spacing: .2px;
     }
 
-.status-open {
-  background-color: #198754; /* Green */
-  color: #fff;
-}
+    .status-open {
+      background-color: #198754;
+      /* Green */
+      color: #fff;
+    }
 
-.status-overdue {
-  background-color: #dc3545; /* Red */
-  color: #fff;
-}
+    .status-overdue {
+      background-color: #dc3545;
+      /* Red */
+      color: #fff;
+    }
 
-.status-upcoming {
-  background-color: #ffc107; /* Yellow */
-  color: #000;
-}
+    .status-upcoming {
+      background-color: #ffc107;
+      /* Yellow */
+      color: #000;
+    }
 
-.status-wip {
-  background-color: #0dcaf0; /* Blue */
-  color: #000;
-}
+    .status-wip {
+      background-color: #0dcaf0;
+      /* Blue */
+      color: #000;
+    }
 
-.status-closed {
-  background-color: #6c757d; /* Gray */
-  color: #fff;
-}
+    .status-closed {
+      background-color: #6c757d;
+      /* Gray */
+      color: #fff;
+    }
 
-.status-unknown {
-  background-color: #adb5bd; /* Light Gray */
-  color: #000;
-}
+    .status-unknown {
+      background-color: #adb5bd;
+      /* Light Gray */
+      color: #000;
+    }
 
     .form-select-sm {
       width: 255px !important;
@@ -628,31 +634,38 @@
           <form id="systemForm">
             <div class="row g-3">
               <div class="col-md-6">
-                <label class="form-label fw-semibold" for="platformNumber">Platform Number <span class="text-danger">*</span></label>
+                <label class="form-label fw-semibold" for="platformNumber">Platform Number <span
+                    class="text-danger">*</span></label>
                 <input type="text" class="form-control form-control-lg" id="platformNumber" required />
               </div>
               <div class="col-md-6">
-                <label class="form-label fw-semibold" for="cylinderNumber">Cylinder Number <span class="text-danger">*</span></label>
+                <label class="form-label fw-semibold" for="cylinderNumber">Cylinder Number <span
+                    class="text-danger">*</span></label>
                 <input type="text" class="form-control form-control-lg" id="cylinderNumber" required />
               </div>
               <div class="col-md-6">
-                <label class="form-label fw-semibold" for="powerPackNumber">Power Pack Number <span class="text-danger">*</span></label>
+                <label class="form-label fw-semibold" for="powerPackNumber">Power Pack Number <span
+                    class="text-danger">*</span></label>
                 <input type="text" class="form-control form-control-lg" id="powerPackNumber" required />
               </div>
               <div class="col-md-6">
-                <label class="form-label fw-semibold" for="chainLength">Chain Length <span class="text-danger">*</span></label>
+                <label class="form-label fw-semibold" for="chainLength">Chain Length <span
+                    class="text-danger">*</span></label>
                 <input type="text" class="form-control form-control-lg" id="chainLength" required />
               </div>
               <div class="col-md-6">
-                <label class="form-label fw-semibold" for="wohrValue">WOHR Valve <span class="text-danger">*</span></label>
+                <label class="form-label fw-semibold" for="wohrValue">WOHR Valve <span
+                    class="text-danger">*</span></label>
                 <input type="text" class="form-control form-control-lg" id="wohrValue" required />
               </div>
               <div class="col-md-6">
-                <label class="form-label fw-semibold" for="magnetAssembly">Magnet Assembly <span class="text-danger">*</span></label>
+                <label class="form-label fw-semibold" for="magnetAssembly">Magnet Assembly <span
+                    class="text-danger">*</span></label>
                 <input type="text" class="form-control form-control-lg" id="magnetAssembly" required />
               </div>
               <div class="col-md-6">
-                <label class="form-label fw-semibold" for="plcVersion">PLC Version <span class="text-danger">*</span></label>
+                <label class="form-label fw-semibold" for="plcVersion">PLC Version <span
+                    class="text-danger">*</span></label>
                 <input type="text" class="form-control form-control-lg" id="plcVersion" required />
               </div>
             </div>
@@ -1579,7 +1592,7 @@
           // Constants - exact labels used in Zoho dropdown
           const FIRST_LABEL = "Updated";
           const SECOND_LABEL = "Pending";
-          const WORKFLOW_ESN_STATUS = "Pending"; // <-- set to the exact ESN_Status value that triggers your workflow
+          const WORKFLOW_ESN_STATUS = "Completed"; // <-- set to the exact ESN_Status value that triggers your workflow
 
           // Decide Approval_Status / ESN_Status
           if (!currentApprovalStatus) {
@@ -1732,7 +1745,7 @@
       //       const serviceTableBody = $("#ServicerequestTable tbody").empty();
       //       const selectedStatus = $("#statusFilter").val();
       //       console.log(selectedStatus);
-            
+
       //       // Helper to check if a date string is in the current month
       //       function isCurrentMonth(dateStr) {
       //         if (!dateStr) return false;
@@ -2032,7 +2045,7 @@
         const dueDateVal = $(this).data("due-date");
         console.log("Due Date:--> ", dueDateVal);
         function formatDateDDMonYYYY(d) {
-          const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];S
+          const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]; S
           const dt = d instanceof Date ? d : new Date(d);
           return `${String(dt.getDate()).padStart(2, '0')}-${months[dt.getMonth()]}-${dt.getFullYear()}`;
         }
