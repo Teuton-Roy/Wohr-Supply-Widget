@@ -1082,6 +1082,12 @@
           const data = response.data[0];
           console.log("User data fetched:", data);
           user = data.ID;
+          userRole = data.Role;
+          // Disable Edit Customer button for specific roles
+          if (userRole === "Service Technician" || userRole === "Handover Engineer") {
+            $('[data-bs-target="#editCustomerModal"]').prop("disabled", true).css("opacity", "0.5");
+          }
+
           if ((Array.isArray(data.New_Route_Name) && data.New_Route_Name.includes("All Route"))) {
             console.log("Aha! pe code execute ho rha hai...");
             Admin = true;
@@ -2854,6 +2860,7 @@
 
       // ======================= Customer Edit Modal =======================
       $(document).on("click", '[data-bs-target="#editCustomerModal"]', function () {
+
         if (!customerID) {
           Swal.fire({
             title: "Error",
@@ -2867,7 +2874,8 @@
         $("#loader").css({ display: "block" });
         const config = {
           appName: "service-management",
-          reportName: "All_Customers",
+          // reportName: "All_Customers",
+          reportName: "My_Customer",
           id: customerID
         };
         ZOHO.CREATOR.API.getRecordById(config)
