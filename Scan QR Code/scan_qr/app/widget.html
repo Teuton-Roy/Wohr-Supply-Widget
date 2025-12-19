@@ -594,6 +594,8 @@
             <option value="Closed">Closed</option>
           </select>
         </label>
+        <button id="createBreakdownCall" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+          data-bs-target="#breakdownCallModal">Create Breakdown Call</button>
       </div>
       <div class="table-responsive">
         <table class="table table-bordered table-striped align-middle" id="ServicerequestTable">
@@ -621,6 +623,234 @@
     </section>
   </div>
 
+  <!-- Breakdown Call Modal -->
+  <div class="modal fade" id="breakdownCallModal" tabindex="-1" aria-labelledby="breakdownCallModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0 rounded-4">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title fw-semibold" id="breakdownCallModalLabel">
+            <i class="fas fa-phone me-2"></i>Create Breakdown Call
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="breakdownCallForm">
+            <!-- Service Details Section -->
+            <h6 class="fw-bold mb-3 text-primary">Service Details</h6>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="apsParkingNumber">APS/PS Parking Number</label>
+                <input type="text" id="breakdownparkingNumber" class="form-control" required disabled />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="parentESNNumber">Parent ESN Number</label>
+                <input type="text" id="breakdownparentESN" class="form-control" required disabled />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="status">Status</label>
+                <select id="status" class="form-select" required disabled>
+                  <option value="Current month due">Current month due</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="childESNNumber">Child ESN Number</label>
+                <input type="text" id="breakdownchildESN" class="form-control" required disabled />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="materialInfo">Material Information</label>
+                <textarea id="breakdownmaterialInfo" class="form-control" rows="2"
+                  placeholder="Enter material information here"></textarea>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="serviceRequestType">Service Request Type</label>
+                <select id="serviceRequestType" class="form-select" required disabled>
+                  <option value="">-Select-</option>
+                  <option value="Breakdown" selected>Breakdown</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="serviceContractType">Service Contract Type</label>
+                <select id="serviceContractType" class="form-select" disabled>
+                  <option value="">-Select-</option>
+                  <option value="AMC">AMC</option>
+                  <option value="Warranty">Warranty</option>
+                  <option value="No AMC-No Warranty">No AMC-No Warranty</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="supervisorName">Supervisor Name</label>
+                <textarea id="breakdownsupervisorName" class="form-control" row="2" disabled></textarea>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="serviceTechnicianName">Service Technician Name</label>
+                <textarea id="breakdownserviceTechnicianName" class="form-control" type="text" disabled></textarea>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="routeName">Route Name</label>
+                <select id="breakdownrouteName" class="form-select" disabled>
+                  <option value="">-Select-</option>
+                  <option value="Pune 1">Pune 1</option>
+                  <option value="Pune 2">Pune 2</option>
+                  <option value="Pune 3">Pune 3</option>
+                  <option value="Mumbai Western 1">Mumbai Western 1</option>
+                  <option value="Mumbai Western 2">Mumbai Western 2</option>
+                  <option value="Mumbai Western 3">Mumbai Western 3</option>
+                  <option value="Mumbai Central 4">Mumbai Central 4</option>
+                  <option value="Mumbai Central 5">Mumbai Central 5</option>
+                  <option value="Mumbai Central 6">Mumbai Central 6</option>
+                  <option value="Mumbai Harbour 7">Mumbai Harbour 7</option>
+                  <option value="North 1">North 1</option>
+                  <option value="North 2">North 2</option>
+                  <option value="North 3">North 3</option>
+                  <option value="North 4">North 4</option>
+                  <option value="North 5">North 5</option>
+                  <option value="North 6">North 6</option>
+                  <option value="All North Region">All North Region</option>
+                  <option value="Hyderabad 1">Hyderabad 1</option>
+                  <option value="Hyderabad 2">Hyderabad 2</option>
+                  <option value="Hyderabad 3">Hyderabad 3</option>
+                  <option value="Chennai 1">Chennai 1</option>
+                  <option value="Chennai 2">Chennai 2</option>
+                  <option value="Bangalore 1">Bangalore 1</option>
+                  <option value="Bangalore 2">Bangalore 2</option>
+                  <option value="Bangalore 3">Bangalore 3</option>
+                  <option value="Bangalore 4">Bangalore 4</option>
+                  <option value="Bangalore 5">Bangalore 5</option>
+                  <option value="Bangalore 6">Bangalore 6</option>
+                  <option value="Bangalore 7">Bangalore 7</option>
+                  <option value="Ahmedabad 1">Ahmedabad 1</option>
+                  <option value="Ahmedabad 2">Ahmedabad 2</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="cityName">City Name</label>
+                <input type="text" id="breakdowncityName" class="form-control" disabled />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold" for="region">Region</label>
+                <select id="breakdownregion" class="form-select" disabled>
+                  <option value="">-Select-</option>
+                  <option value="North">North</option>
+                  <option value="South">South</option>
+                  <option value="West">West</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Customer Information Section -->
+            <h6 class="fw-bold mt-4 mb-3 text-primary">Customer Information</h6>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="customerName">Customer Name</label>
+                <input type="text" id="breakdowncustomerName" class="form-control" disabled />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="secondaryCustomerName">Secondary Customer Name</label>
+                <input type="text" id="breakdownsecondaryCustomerName" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="customerPhone">Customer Phone</label>
+                <input type="text" id="breakdowncustomerPhone" class="form-control" disabled />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="secondaryPhoneNo">Secondary Phone No</label>
+                <input type="text" id="breakdownsecondaryPhoneNo" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="customerEmail">Customer Email</label>
+                <input type="email" id="breakdowncustomerEmail" class="form-control" disabled />
+              </div>
+            </div>
+
+            <!-- Address Details Section -->
+            <h6 class="fw-bold mt-4 mb-3 text-primary">Address Details</h6>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="shippingStreet1">Shipping Street 1</label>
+                <input type="text" id="breakdownshippingStreet1" class="form-control" disabled />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="shippingStreet2">Shipping Street 2</label>
+                <input type="text" id="breakdownshippingStreet2" class="form-control" disabled />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="shippingStreet3">Shipping Street 3</label>
+                <input type="text" id="breakdownshippingStreet3" class="form-control" disabled />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="shippingCity">Shipping City</label>
+                <input type="text" id="breakdownshippingCity" class="form-control" disabled />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="shippingPostalCode">Shipping Postal Code</label>
+                <input type="text" id="breakdownshippingPostalCode" class="form-control" disabled />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="shippingState">Shipping State</label>
+                <select id="breakdownshippingState" class="form-select" disabled>
+                  <option value="">-Select-</option>
+                  <option value="AN (Andaman and Nico.Is.)">AN (Andaman and Nico.Is.)</option>
+                  <option value="AP (Andhra Pradesh)">AP (Andhra Pradesh)</option>
+                  <option value="AR (Arunachal Pradesh)">AR (Arunachal Pradesh)</option>
+                  <option value="AS (Assam)">AS (Assam)</option>
+                  <option value="BR (Bihar)">BR (Bihar)</option>
+                  <option value="CG (Chhattisgarh)">CG (Chhattisgarh)</option>
+                  <option value="CH (Chandigarh)">CH (Chandigarh)</option>
+                  <option value="CT (Obsolete)">CT (Obsolete)</option>
+                  <option value="DD (Obsolete)">DD (Obsolete)</option>
+                  <option value="DH (DadraNagHavDamanDiu)">DH (DadraNagHavDamanDiu)</option>
+                  <option value="DL (Delhi)">DL (Delhi)</option>
+                  <option value="DN (Obsolete)">DN (Obsolete)</option>
+                  <option value="GA (Goa)">GA (Goa)</option>
+                  <option value="GJ (Gujarat)">GJ (Gujarat)</option>
+                  <option value="HP (Himachal Pradesh)">HP (Himachal Pradesh)</option>
+                  <option value="HR (Haryana)">HR (Haryana)</option>
+                  <option value="JH (Jharkhand)">JH (Jharkhand)</option>
+                  <option value="JK (Jammu and Kashmir)">JK (Jammu and Kashmir)</option>
+                  <option value="KA (Karnataka)">KA (Karnataka)</option>
+                  <option value="KL (Kerala)">KL (Kerala)</option>
+                  <option value="LA (Ladakh)">LA (Ladakh)</option>
+                  <option value="LD (Lakshadweep)">LD (Lakshadweep)</option>
+                  <option value="MH (Maharashtra)">MH (Maharashtra)</option>
+                  <option value="ML (Megalaya)">ML (Megalaya)</option>
+                  <option value="MN (Manipur)">MN (Manipur)</option>
+                  <option value="MP (Madhya Pradesh)">MP (Madhya Pradesh)</option>
+                  <option value="MZ (Mizoram)">MZ (Mizoram)</option>
+                  <option value="NL (Nagaland)">NL (Nagaland)</option>
+                  <option value="OD (Odisha)">OD (Odisha)</option>
+                  <option value="OR (Obsolete)">OR (Obsolete)</option>
+                  <option value="PB (Punjab)">PB (Punjab)</option>
+                  <option value="PY (Pondicherry)">PY (Pondicherry)</option>
+                  <option value="RJ (Rajasthan)">RJ (Rajasthan)</option>
+                  <option value="SK (Sikkim)">SK (Sikkim)</option>
+                  <option value="TG (Obsolete)">TG (Obsolete)</option>
+                  <option value="TN (Tamil Nadu)">TN (Tamil Nadu)</option>
+                  <option value="TR (Tripura)">TR (Tripura)</option>
+                  <option value="TS (Telangana)">TS (Telangana)</option>
+                  <option value="UK (Uttarakhand)">UK (Uttarakhand)</option>
+                  <option value="UP (Uttar Pradesh)">UP (Uttar Pradesh)</option>
+                  <option value="UT (Obsolete)">UT (Obsolete)</option>
+                  <option value="WB (West Bengal)">WB (West Bengal)</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="shippingCountry">Shipping Country</label>
+                <input type="text" id="breakdownshippingCountry" class="form-control" disabled />
+              </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="text-end mt-4">
+              <button id="saveServiceRequestBtn" type="submit" class="btn btn-success px-4 py-2 rounded-3">
+                <i class="fas fa-save me-2"></i>Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- Add System Modal -->
   <div class="modal fade" id="addSystemModal" tabindex="-1" aria-labelledby="addSystemModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -2857,6 +3087,158 @@
           });
         }
       };
+
+      // ======================= Breakdown Call Model ======================
+      let esnRec;
+      $(document).on("click", '#createBreakdownCall', function () {
+        console.log("Breakdown Call");
+        $("#breakdownCallModal").modal("show");
+        const ensConfig = {
+          appName: "service-management",
+          reportName: "ESN_Scan_QR_Widget",
+          criteria: '(Child_ESN_Number == "' + childESNNumber + '")',
+          page: 0,
+          pageSize: 0
+        }
+        ZOHO.CREATOR.API.getAllRecords(ensConfig).then(function (response) {
+          console.log("ESN Response for breakdown call: ", response);
+          if (response.code === 3000 && response.data) {
+            console.log("Hello");
+            esnRec = response.data[0];
+            console.log(esnRec);
+            $("#breakdownparkingNumber").val(esnRec.APS_PS_Parking_Number || "");
+            $("#breakdownparentESN").val(esnRec.Parent_ESN_Number || "");
+            $("#breakdownchildESN").val(esnRec.Child_ESN_Number || "");
+            $("#serviceContractType").val(esnRec.Contract_Type || "");
+            $("#breakdownrouteName").val(esnRec.Route_Name || "");
+            $("#breakdowncityName").val(esnRec.City_Name || "");
+            $("#breakdownregion").val(esnRec.Region || "");
+            if (Array.isArray(esnRec.Service_Technician_Name)) {
+              const technicianNames = esnRec.Service_Technician_Name.map(technician => technician.display_value).join(", ");
+              $("#breakdownserviceTechnicianName").val(technicianNames);
+            }
+            if (Array.isArray(esnRec.Supervisor_Name)) {
+              const supervisorNames = esnRec.Supervisor_Name.map(supervisor => supervisor.display_value).join(", ");
+              $("#breakdownsupervisorName").val(supervisorNames);
+            }
+
+            $("#breakdowncustomerName").val(esnRec.Customer_Name || "");
+            $("#breakdowncustomerPhone").val(esnRec.Phone_Number || "");
+            $("#breakdowncustomerEmail").val(esnRec.Email || "");
+
+            $("#breakdownshippingStreet1").val(esnRec.Shipping_Street_1 || "");
+            $("#breakdownshippingStreet2").val(esnRec.Shipping_Street_2 || "");
+            $("#breakdownshippingStreet3").val(esnRec.Shipping_Street_3 || "");
+            $("#breakdownshippingCity").val(esnRec.Shipping_City || "");
+            $("#breakdownshippingPostalCode").val(esnRec.Shipping_Postal_Code || "");
+            $("#breakdownshippingState").val(esnRec.Shipping_State || "");
+            $("#breakdownshippingCountry").val(esnRec.Shipping_Country || "");
+          }
+        }).catch(function (err) {
+          console.error("❌ Error loading ESN for breakdown call:", err);
+        });
+      })
+      // ======================= Save Breakdown Call =======================
+      $(document).on("click", "#saveServiceRequestBtn", function () {
+        const $btn = $(this);
+        $btn.prop("disabled", true).text("Saving...");
+        console.log("Saving Service Request...");
+
+        // Extract technician and supervisor IDs
+        const serviceTechnicians = Array.isArray(esnRec.Service_Technician_Name)
+          ? esnRec.Service_Technician_Name.map(technician => technician.ID)
+          : [];
+        console.log(serviceTechnicians);
+
+        const supervisor = Array.isArray(esnRec.Supervisor_Name)
+          ? esnRec.Supervisor_Name.map(supervisor => supervisor.ID)
+          : [];
+        console.log(supervisor);
+
+        // Prepare the data to be added
+        const serviceRequestData = {
+          data: {
+            APS_PS_Parking_Number: esnRec.ID,
+            Parent_ESN_Number: esnRec.ID,
+            Child_ESN_Number: esnRec.ID,
+            Service_Contract_Type: $("#serviceContractType").val(),
+            Service_Request_Type: "Breakdown",
+            Status: "Current month due",
+            Material_Information: $("#breakdownmaterialInfo").val(),
+            Route_Name: $("#breakdownrouteName").val(),
+            City_Name: $("#breakdowncityName").val(),
+            Region: $("#breakdownregion").val(),
+            Supervisior_Name: supervisor,
+            Service_Technician_Name: serviceTechnicians,
+            Due_Date: (() => {
+              const d = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+              const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+              return `${String(d.getDate()).padStart(2, '0')}-${months[d.getMonth()]}-${d.getFullYear()}`;
+            })(),
+            Customer_Name: $("#breakdowncustomerName").val(),
+            Phone_Number: $("#breakdowncustomerPhone").val(),
+            Email: $("#breakdowncustomerEmail").val(),
+            Secondary_Customer_Name: $("#breakdownsecondaryCustomerName").val(),
+            Secondary_Phone_Number: $("#breakdownsecondaryPhoneNo").val(),
+            Shipping_Street_1: $("#breakdownshippingStreet1").val(),
+            Shipping_Street_2: $("#breakdownshippingStreet2").val(),
+            Shipping_Street_3: $("#breakdownshippingStreet3").val(),
+            Shipping_City: $("#breakdownshippingCity").val(),
+            Shipping_Postal_Code: $("#breakdownshippingPostalCode").val(),
+            Shipping_State: $("#breakdownshippingState").val(),
+            Shipping_Country: $("#breakdownshippingCountry").val(),
+          }
+        };
+
+        console.log(serviceRequestData);
+        // API configuration
+        const config = {
+          appName: "service-management",
+          formName: "Service_Request",
+          data: serviceRequestData
+        };
+
+        // Call the API to save the record
+        ZOHO.CREATOR.API.addRecord(config)
+          .then(function (response) {
+            console.log("API Response:", response.data);
+            if (response.code === 3000) {
+              // console.log(response.data);
+              // Success
+              Swal.fire({
+                text: "Breakdown call created successfully!",
+                icon: "success",
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              }).then(() => {
+                // Close the modal
+                $("#breakdownCallModal").modal("hide");
+              });
+            } else {
+              // Error
+              Swal.fire({
+                text: "Failed to create Breakdown call: " + response.message,
+                icon: "error",
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              }).then(() => {
+                $("#breakdownCallModal").modal("hide");
+              });
+            }
+          })
+          .catch(function (error) {
+            console.error("❌ Error adding Service Request:", error);
+            Swal.fire("Error", "An unexpected error occurred while adding the Service Request.", "error");
+          })
+          .finally(function () {
+            // Re-enable the button
+            $btn.prop("disabled", false).text("Save");
+          });
+      });
+
+
 
       // ======================= Customer Edit Modal =======================
       $(document).on("click", '[data-bs-target="#editCustomerModal"]', function () {
