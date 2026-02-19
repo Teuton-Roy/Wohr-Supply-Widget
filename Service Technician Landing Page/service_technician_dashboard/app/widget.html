@@ -264,6 +264,49 @@
       white-space: nowrap;
     }
     .filter-option:hover { background: #f1f3f5; }
+
+
+    .other-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.other-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.other-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.other-row:nth-child(2) {
+  grid-template-columns: 100px auto 1fr;
+}
+
+.other-label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.other-metrics {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.other-metrics .metric-item {
+  flex: 1;
+  min-width: 80px;
+}
+
+
   </style>
 </head>
 
@@ -280,7 +323,7 @@
 
     <div class="dashboard-grid">
       <!-- 1) Priority Calls -->
-      <div class="card grid-item with-tag" data-card="priority">
+      <!-- <div class="card grid-item with-tag" data-card="priority">
         <span class="card-tag">Priority Calls</span>
         <div class="card-body">
           <div class="metric-grid metric-grid-priority">
@@ -289,60 +332,63 @@
             <div class="metric-item metric-success"><span>Closed</span><strong id="priorityClosed">0</strong></div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <!-- 2) Other Calls -->
-      <div class="card grid-item with-tag" data-card="other">
-        <span class="card-tag">Other Calls</span>
+<!-- 2) Other Calls -->
+<div class="card grid-item with-tag" data-card="other">
+  <span class="card-tag">Other Calls</span>
 
-        <div class="card-header card-header-actions">
-          <div class="filter-container" data-section="other_calls">
-            <button type="button" class="filter-btn">
-              <i class="bi bi-funnel"></i>
-              <small class="active-period">This Month</small>
-            </button>
-            <div class="filter-dropdown">
-              <button type="button" class="filter-option" data-period="this_month">This Month</button>
-              <button type="button" class="filter-option" data-period="this_quarter">This Quarter</button>
-              <button type="button" class="filter-option" data-period="last_quarter">Last Quarter</button>
-              <button type="button" class="filter-option" data-period="this_year">This Year (YTD)</button>
-              <button type="button" class="filter-option" data-period="custom">Custom Date Range</button>
-            </div>
-          </div>
-        </div>
+  <div class="card-header card-header-actions">
+    <div class="filter-container" data-section="other_calls">
+      <button type="button" class="filter-btn">
+        <i class="bi bi-funnel"></i>
+        <small class="active-period">This Month</small>
+      </button>
+      <div class="filter-dropdown">
+        <button type="button" class="filter-option" data-period="this_month">This Month</button>
+        <button type="button" class="filter-option" data-period="this_quarter">This Quarter</button>
+        <button type="button" class="filter-option" data-period="last_quarter">Last Quarter</button>
+        <button type="button" class="filter-option" data-period="this_year">This Year (YTD)</button>
+        <button type="button" class="filter-option" data-period="custom">Custom Date Range</button>
+      </div>
+    </div>
+  </div>
 
-        <div class="card-body">
-          <div class="section-split">
-            <div class="split-left">
-              <div class="chart-wrapper">
-                <canvas id="pmChart"></canvas>
-              </div>
-            </div>
-
-            <div class="split-right">
-              <div class="count-box count-link" id="openAllServiceRequests" role="button" tabindex="0">
-                <span>All</span>
-                <strong id="otherAll">0</strong>
-              </div>
-
-              <div class="count-box count-link" id="openClosedServiceRequests" role="button" tabindex="0">
-                <span>Closed</span>
-                <strong id="otherClosed">0</strong>
-              </div>
-
-              <div class="count-box overdue count-link" id="openOverdueServiceRequests" role="button" tabindex="0">
-                <span>Overdue</span>
-                <strong id="otherOverdue">0</strong>
-              </div>
-
-              <div class="count-box count-link" id="openActiveServiceRequests" role="button" tabindex="0">
-                <span>Active</span>
-                <strong id="otherActive">0</strong>
-              </div>
-            </div>
-          </div>
+  <div class="card-body">
+    <div class="other-section">
+      <div class="other-row">
+        <span class="other-label">Breakdown</span>
+        <div class="other-metrics">
+          <div class="metric-item metric-light count-link" role="button" tabindex="0"><span>All</span><strong id="breakdownAll">10</strong></div>
+          <div class="metric-item metric-light count-link" role="button" tabindex="0"><span>Closed</span><strong id="breakdownClosed">8</strong></div>
         </div>
       </div>
+      
+      <div class="other-row">
+        <span class="other-label">PM</span>
+        <div class="chart-wrapper">
+          <canvas id="pmChart"></canvas>
+        </div>
+        <div class="other-metrics">
+          <div class="metric-item metric-light count-link" role="button" tabindex="0"><span>All</span><strong id="pmAll">250</strong></div>
+          <div class="metric-item metric-light count-link" role="button" tabindex="0"><span>Closed</span><strong id="pmClosed">8</strong></div>
+          <div class="metric-item metric-light overdue count-link" role="button" tabindex="0"><span>Overdue</span><strong id="pmOverdue">32</strong></div>
+        </div>
+      </div>
+      
+      <div class="other-row">
+        <span class="other-label">Other</span>
+        <div class="other-metrics">
+          <div class="metric-item metric-light count-link" role="button" tabindex="0"><span>Active</span><strong id="otherActive">26</strong></div>
+          <div class="metric-item metric-light count-link" role="button" tabindex="0"><span>Closed</span><strong id="otherClosed">2</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
       <!-- 3) ESN -->
       <div class="card grid-item with-tag" data-card="esn">
@@ -395,7 +441,7 @@
 
         <div class="card-body">
           <div class="metric-grid metric-grid-me">
-            <div class="metric-item metric-light"><span>Brkdwn</span><strong id="meBrkdwn">0</strong></div>
+            <div class="metric-item metric-light"><span>Breakdown</span><strong id="meBrkdwn">0</strong></div>
             <div class="metric-item metric-light"><span>PM</span><strong id="mePm">0</strong></div>
             <div class="metric-item metric-light"><span>Other</span><strong id="meOther">0</strong></div>
             <div class="metric-item metric-light"><span>ESN</span><strong id="meEsn">0</strong></div>
@@ -1003,12 +1049,13 @@
         bindFilterUI();
 
         const queryParams = ZOHO.CREATOR.UTIL.getInitParams() || {};
+        console.log
         loginuser = queryParams.loginUser || "";
         console.log("loginuser: ", loginuser);
 
         const config = {
-          appName: applicationName,
-          reportName: MyUser,
+          appName: "service-management",
+          reportName: "My_Users",
           criteria: `(Email == "${loginuser}")`,
           page: 1,
           pageSize: 1
@@ -1018,7 +1065,8 @@
 
         if (response?.code === 3000 && response?.data?.length) {
           const data = response.data[0];
-          UserName = data.Role || "User";
+          console.log("User data: ", data);
+          UserName = data.Name || "User";
           const routeList = data.New_Route_Name;
 
           if (Array.isArray(routeList) && routeList.includes("All Route")) {
@@ -1029,6 +1077,7 @@
             Admin = false;
 
             let userRoute = Array.isArray(routeList) ? routeList[0] : routeList;
+            console.log("User route from data: ", userRoute);
             Route = [];
             switch (userRoute) {
               case "Pune All": Route = ["Pune 1", "Pune 2", "Pune 3"]; break;
@@ -1047,6 +1096,79 @@
         } else {
           setHeaderUI("User", "--");
         }
+
+        // ------------- build criteria for fetching service requests based on route -------
+
+        function buildRouteCriteriaForAPI() {
+          if (Admin) return ""; // Admin gets all data
+          if (!Route || Route.length === 0) return "";
+
+          // Map region names to their sub-routes
+          const regionRouteMap = {
+            "Pune All": ["Pune 1", "Pune 2", "Pune 3"],
+            "All North Region": ["North 1", "North 2", "North 3", "North 4", "North 5", "North 6"],
+            "All Hyderabad": ["Hyderabad 1", "Hyderabad 2", "Hyderabad 3"],
+            "All Chennai": ["Chennai 1", "Chennai 2"],
+            "All Bangalore Region": ["Bangalore 1", "Bangalore 2", "Bangalore 3", "Bangalore 4", "Bangalore 5", "Bangalore 6", "Bangalore 7"],
+            "All Ahmedabad": ["Ahmedabad 1", "Ahmedabad 2"]
+          };
+
+          // If the user's route is a region, expand it to sub-routes
+          let expandedRoutes = [];
+          Route.forEach(r => {
+            if (regionRouteMap[r]) {
+              expandedRoutes.push(...regionRouteMap[r]);
+            } else {
+              expandedRoutes.push(r);
+            }
+          });
+
+          // Remove duplicates
+          expandedRoutes = [...new Set(expandedRoutes)];
+
+          if (expandedRoutes.length === 1) {
+            return `(Route_Name == "${expandedRoutes[0]}")`;
+          }
+          return "(" + expandedRoutes.map(r => `(Route_Name == "${r}")`).join(" || ") + ")";
+        }
+
+        //  ----------fetch all Service Requests -----
+        async function fetchAllServiceRequests(config) {
+          const allRecords = [];
+          let page = 1;
+          const pageSize = 200; // Max allowed by Zoho Creator
+
+          while (true) {
+            const response = await ZOHO.CREATOR.API.getAllRecords({
+              ...config,
+              page,
+              pageSize
+            });
+            if (response?.code !== 3000 || !Array.isArray(response.data)) break;
+            allRecords.push(...response.data);
+            if (response.data.length < pageSize) break; // Last page reached
+            page++;
+          }
+          return allRecords;
+        }
+
+        const serviceRequestConfig = {
+          appName: "service-management",
+          reportName: "Scan_QR_Service_Request",
+          criteria: buildRouteCriteriaForAPI(),
+          // page: 1,
+          // pageSize: 1
+        };
+        const allServiceRequests = await fetchAllServiceRequests(serviceRequestConfig);
+        console.log("All Service Request Records: ", allServiceRequests);
+
+        // ---- Fetch Breakdown Calls -----
+        const breakdownRequests = allServiceRequests.filter(
+          req => req.Service_Request_Type === "Breakdown"
+        );
+
+        console.log("Breakdown Service Requests:", breakdownRequests);
+
 
         // Initial load
         await loadOtherCalls(otherCallsPeriod, otherCallsCustomFrom, otherCallsCustomTo);

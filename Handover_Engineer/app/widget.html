@@ -1,0 +1,308 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<meta charset="UTF-8"> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+<style>
+  :root{
+    --tag-blue:#0088ff;
+    --border:#bdbdbd;
+    --funnel:#00078d;
+
+    --open:#ffdf08;
+    --under:#f9cdcc;
+    --partial:#fff3cc;
+    --closed:#d5e9d4;
+
+    --text:#111;
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    padding:18px 14px 30px;
+    background:#fff;
+    font-family:"Segoe UI", system-ui, -apple-system, Aexrial, sans-serif;
+    color:var(--text);
+  }
+  /* ===== Top user bubble (optional, like screenshot) ===== */
+  .top-user{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    align-items:center;
+    margin-bottom:12px;
+  }
+  .avatar{
+    width:44px;height:44px;
+    border-radius:999px;
+    background:#cfe4ff;
+    border:2px solid #4d86c6;
+    display:grid;place-items:center;
+    font-weight:800;
+  }
+  .loc{
+    font-weight:600;
+    line-height:1.05;
+  }
+
+  /* ===== Card ===== */
+  .status-card{
+    position:relative;
+    border:2px solid var(--border);
+    border-radius:16px;
+    background:#fff;
+    padding:18px 16px 16px;
+    margin:14px 0;
+  }
+  .card-tag{
+    position:absolute;
+    top:-16px;
+    left:14px;
+    background:var(--tag-blue);
+    color:#fff;
+    padding:10px 16px;
+    border-radius:10px;
+    font-size:24px;
+    font-weight:800;
+    line-height:1;
+    box-shadow:0 4px 14px rgba(0,136,255,.25);
+  }
+
+  /* top-right period + funnel */
+  .card-top-right{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    gap:10px;
+    padding-top:4px;
+  }
+
+  /* FILTER (dropdown) */
+  .filter-container{ position:relative; display:inline-flex; align-items:center; }
+  .filter-btn{
+    border:none;
+    background:transparent;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .active-period{
+    font-style:italic;
+    font-size:18px;
+    color:#444;
+  }
+  .funnel{
+    font-size:30px;
+    color:var(--funnel);
+    transform: translateY(2px);
+  }
+  .filter-dropdown{
+    position:absolute;
+    right:0;
+    top:34px;
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 8px 24px rgba(0,0,0,.18);
+    display:none;
+    min-width:220px;
+    z-index:1000;
+    padding:6px;
+    border:1px solid rgba(0,0,0,.08);
+  }
+  .filter-dropdown.open{ display:block; }
+  .filter-option{
+    width:100%;
+    text-align:left;
+    border:none;
+    background:transparent;
+    padding:10px 12px;
+    font-size:14px;
+    cursor:pointer;
+    border-radius:10px;
+    white-space:nowrap;
+  }
+  .filter-option:hover{ background:#f1f3f5; }
+  .table-head{
+    margin-top:6px;
+    display:grid;
+    grid-template-columns: 1.3fr .7fr .9fr;
+    align-items:center;
+    padding:6px 18px 2px;
+    font-size:22px;
+    font-weight:500;
+    color:#222;
+  }
+  .table-head div:nth-child(2),
+  .table-head div:nth-child(3){
+    text-align:center;
+  }
+
+  /* status rows */
+  .status-row{
+    margin:16px 18px;
+    border-radius:14px;
+    padding:16px 18px;
+    display:grid;
+    grid-template-columns: 1.3fr .7fr .9fr;
+    align-items:center;
+    border:2px solid rgba(0,0,0,.14);
+  }
+
+  .status-label{
+    font-size:22px;
+    font-weight:500;
+    text-align:left;
+    line-height:1.05;
+    white-space:normal;
+  }
+
+  .status-calls,
+  .status-spaces{
+    text-align:center;
+    font-weight:900;
+    font-size:34px;
+    letter-spacing:.5px;
+  }
+
+  /* Colors */
+  .open{ background:var(--open); }
+  .under{ background:var(--under); }
+  .partial{ background:var(--partial); }
+  .closed{ background:var(--closed); }
+
+  /* small tweaks for mobile */
+  @media (max-width:420px){
+    .card-tag{ font-size:20px; padding:8px 12px; top:-14px; }
+    .active-period{ font-size:16px; }
+    .funnel{ font-size:26px; }
+    .table-head{ font-size:18px; padding:6px 10px 2px; }
+    .status-row{ margin:12px 10px; padding:14px 14px; }
+    .status-label{ font-size:18px; }
+    .status-calls,.status-spaces{ font-size:28px; }
+  }
+</style>
+</head>
+<body>
+    <!-- ===== Optional top header (like screenshot) ===== -->
+    <div class="top-user">
+      <div class="avatar" id="userInitials">AD</div>
+      <div class="loc">
+        <div id="userRegion">West</div>
+      </div>
+    </div>
+
+    <!-- ===== QI Calls Card ===== -->
+    <section class="status-card">
+      <div class="card-tag">Handovers</div>
+
+      <!--MODIFIED FILTER DROPDOWN (period-based) -->
+      <div class="card-top-right">
+        <div class="filter-container" data-section="qi">
+          <button type="button" class="filter-btn">
+            <span class="active-period" id="qiPeriodLabel">This month</span>
+            <i class="bi bi-funnel-fill funnel"></i>
+          </button>
+
+          <div class="filter-dropdown" id="qiFilterDropdown">
+            <button type="button" class="filter-option" data-period="this_month">This month</button>
+            <button type="button" class="filter-option" data-period="this_quarter">This quarter</button>
+            <button type="button" class="filter-option" data-period="last_quarter">Last quarter</button>
+            <button type="button" class="filter-option" data-period="this_year">This year (YTD financial year)</button>
+            <button type="button" class="filter-option" data-period="custom">Custom date range</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-head">
+        <div></div>
+        <div>Calls</div>
+        <div>Spaces</div>
+      </div>
+
+      <div class="status-row open">
+        <div class="status-label">QI<br>Completed</div>
+        <div class="status-calls" id="qiOpenCalls">3</div>
+        <div class="status-spaces" id="qiOpenSpaces">120</div>
+      </div>
+
+      <div class="status-row under">
+        <div class="status-label">Pending<br>Handovers</div>
+        <div class="status-calls" id="qiUnderCalls">5</div>
+        <div class="status-spaces" id="qiUnderSpaces">234</div>
+      </div>
+
+      <div class="status-row partial">
+        <div class="status-label">Handovers<br>Completed</div>
+        <div class="status-calls" id="qiPartialCalls">3</div>
+        <div class="status-spaces" id="qiPartialSpaces">232</div>
+      </div>
+
+      <div class="status-row closed">
+        <div class="status-label">ESN<br>Completed</div>
+        <div class="status-calls" id="qiClosedCalls">1</div>
+        <div class="status-spaces" id="qiClosedSpaces">25</div>
+      </div>
+    </section>
+
+    <!-- ===== Me Card ===== -->
+    <section class="status-card">
+      <div class="card-tag">Me</div>
+      <div class="card-top-right">
+        <div class="filter-container" data-section="me">
+          <button type="button" class="filter-btn">
+            <span class="active-period" id="mePeriodLabel">This month</span>
+            <i class="bi bi-funnel-fill funnel"></i>
+          </button>
+          <div class="filter-dropdown" id="meFilterDropdown">
+            <button type="button" class="filter-option" data-period="this_month">This month</button>
+            <button type="button" class="filter-option" data-period="this_quarter">This quarter</button>
+            <button type="button" class="filter-option" data-period="last_quarter">Last quarter</button>
+            <button type="button" class="filter-option" data-period="this_year">This year (YTD financial year)</button>
+            <button type="button" class="filter-option" data-period="custom">Custom date range</button>
+          </div>
+        </div>
+      </div>
+      <div class="status-row closed" style="margin-top:22px;">
+        <div class="status-label">Handover<br>Completed</div>
+        <div class="status-calls" id="meClosedCalls">1</div>
+        <div class="status-spaces" id="meClosedSpaces">25</div>
+      </div>
+      <div class="status-row closed" style="margin-top:22px;">
+        <div class="status-label">ESN<br>Completed</div>
+        <div class="status-calls" id="meClosedCalls">1</div>
+        <div class="status-spaces" id="meClosedSpaces">25</div>
+      </div>
+    </section>
+    <script>
+      function closeAllDropdowns(){
+        document.querySelectorAll(".filter-dropdown.open").forEach(dd => dd.classList.remove("open"));
+      }
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".filter-btn");
+        const option = e.target.closest(".filter-option");
+        if(option){
+          const container = option.closest(".filter-container");
+          const label = container?.querySelector(".active-period");
+          const periodText = option.textContent?.trim() || "This month";
+          if(label) label.textContent = periodText;
+          closeAllDropdowns();
+          return;
+        }
+        if(btn){
+          e.stopPropagation();
+          const container = btn.closest(".filter-container");
+          const dd = container?.querySelector(".filter-dropdown");
+          if(!dd) return;
+          const isOpen = dd.classList.contains("open");
+          closeAllDropdowns();
+          if(!isOpen) dd.classList.add("open");
+          return;
+        }
+        closeAllDropdowns();
+      });
+    </script>
+</body>
+</html>
