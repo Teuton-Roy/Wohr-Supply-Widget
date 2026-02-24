@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script defer src="https://js.zohostatic.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
+
+  <style>
+    :root { --brand: #1f66ff; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+
+    .cd-fullscreen {
+      position: fixed;
+      inset: 0;
+      overflow: auto;
+      background: #f6f7fb;
+      padding: 16px;
+    }
+
+    .cd-top{ display:flex; justify-content:flex-end; margin-bottom: 10px; }
+    .cd-user{ display:flex; flex-direction:column; align-items:flex-end; gap: 4px; }
+
+    .cd-avatar{
+      width: 32px; height: 32px;
+      border-radius: 999px;
+      border: 2px solid #111;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 800;
+      font-size: 12px;
+      background: #eef2ff;
+    }
+
+    .cd-region{ font-size: 12px; color:#222; }
+
+    .cd-panel{
+      border: 2px solid #aeb3b8;
+      border-radius: 12px;
+      padding: 32px 12px 12px;
+      margin: 18px 0;
+      position: relative;
+      background: #fff;
+      overflow: visible;
+    }
+
+    .cd-panel-head{
+      position: absolute;
+      top: -14px;
+      left: 12px;
+      z-index: 6;
+      background: transparent;
+      padding: 0;
+    }
+
+    .cd-panel-head--with-actions{
+      left: 12px;
+      right: 12px;
+      width: auto;
+      justify-content: space-between;
+    }
+
+    .cd-badge{
+      background: #1f66ff;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-weight: 800;
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      box-shadow: 0 0 0 6px #fff, 0 2px 0 rgba(0,0,0,0.08);
+    }
+
+    .cd-actions{
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      z-index: 5;
+    }
+
+    .cd-muted{
+      font-size: 12px;
+      font-style: italic;
+      color:#444;
+      white-space: nowrap;
+    }
+
+    .cd-filter{
+      border: 0;
+      background: transparent;
+      padding: 4px;
+      cursor: pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius: 8px;
+    }
+    .cd-filter:hover{ background: rgba(31,102,255,0.08); }
+    .cd-filter svg path{ fill:#1a2a7a; }
+
+    .cd-row{ display:grid; gap: 10px; margin-top: 8px; }
+    .cd-row-2{ grid-template-columns: repeat(2, 1fr); }
+    .cd-row-3{ grid-template-columns: repeat(3, 1fr); }
+    .cd-row-4{ grid-template-columns: repeat(4, 1fr); }
+
+    .cd-stat{
+      border: 2px solid rgba(0,0,0,0.18);
+      border-radius: 10px;
+      padding: 10px 10px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 50px;
+    }
+
+    .cd-stat-label{ font-weight: 800; font-size: 12px; line-height: 1.05; }
+    .cd-stat-value{ font-weight: 900; font-size: 22px; line-height: 1; }
+
+    .cd-yellow{ background:#ffe65b; }
+    .cd-orange{ background:#ff4b1f; color:#111; }
+    .cd-green{ background:#d7f1d3; }
+    .cd-blue{ background:#cfe0ff; }
+
+    .cd-pill{
+      border: 2px solid rgba(0,0,0,0.18);
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px 10px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 44px;
+    }
+
+    .cd-pill--block{ width: 100%; }
+    .cd-pill-k{ font-size: 12px; font-weight: 700; color:#222; white-space: nowrap; }
+    .cd-pill-v{ font-size: 22px; font-weight: 900; line-height: 1; }
+
+    .cd-breakdown{ margin-top: 6px; }
+    .cd-breakdown-row{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .cd-label{ font-weight: 700; color:#222; padding-left: 2px; }
+    .cd-label--center{ display:flex; align-items:center; justify-content:center; font-weight: 800; color:#333; }
+
+    .cd-divider{
+      height: 2px;
+      background: rgba(0,0,0,0.20);
+      margin: 12px 0;
+      border-radius: 999px;
+    }
+
+    .cd-matrix{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 10px;
+      align-items:center;
+    }
+
+    .cd-pie-wrap{ display:flex; justify-content:center; align-items:center; }
+    .cd-pie{
+      width: 78px;
+      height: 78px;
+      border-radius: 999px;
+      border: 3px solid #1f66ff;
+      background: conic-gradient(#bcbcbc 0deg 240deg, #d9d9d9 240deg 300deg, #a8a8a8 300deg 360deg);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+    }
+
+    .cd-stack{ display:flex; flex-direction:column; gap: 10px; }
+
+    @media (max-width: 720px){
+      .cd-row-3{ grid-template-columns: 1fr; }
+      .cd-row-4{ grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 420px){
+      .cd-breakdown-row,.cd-matrix{ grid-template-columns: 1fr; text-align:left; }
+      .cd-label--center{ justify-content:flex-start; }
+      .cd-stack{ width: 100%; }
+      .cd-pie{ margin: 8px 0; }
+    }
+  </style>
+
+  <style>
+    #loader{
+      display:none;
+      position:fixed; inset:0;
+      z-index: 9999;
+      background-color: rgba(0, 0, 0, 0.45);
+      text-align:center;
+    }
+    .bounce{
+      position:absolute; top:50%; left:50%;
+      transform: translate(-50%, -50%);
+      width:150px; height:150px;
+      display:flex; justify-content:space-around; align-items:flex-end;
+    }
+    .bounce div{
+      width:24px; height:24px; background: var(--brand); border-radius:50%;
+      animation: bounce .6s cubic-bezier(.19,.57,.3,.98) infinite alternate;
+    }
+    .bounce div:nth-child(2){ animation-delay:.1s; opacity:.85; }
+    .bounce div:nth-child(3){ animation-delay:.2s; opacity:.7; }
+    .bounce div:nth-child(4){ animation-delay:.3s; opacity:.55; }
+    @keyframes bounce{ from{ transform: translateY(0);} to{ transform: translateY(-90px);} }
+  </style>
+
+  <!-- ✅ Proper modal CSS (no Bootstrap dependency) -->
+  <style>
+    #OtherCallsBackdrop{
+      display:none;
+      position: fixed;
+      inset: 0;
+      z-index: 1050;
+      background:#000;
+      opacity: .5;
+    }
+    #OtherCallsBackdrop.show{ display:block; }
+
+    #filterModal{
+      display:none;
+      position: fixed;
+      inset: 0;
+      z-index: 1055;
+      overflow:auto;
+      padding: 18px 12px;
+    }
+    #filterModal.show{ display:block; }
+
+    #filterModal .modal-dialog{
+      max-width: 900px;
+      margin: 30px auto;
+    }
+
+    #filterModal .modal-content{
+      background:#fff;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.15);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+
+    #filterModal .modal-header,
+    #filterModal .modal-footer{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+    }
+    #filterModal .modal-footer{
+      border-top: 1px solid rgba(0,0,0,.08);
+      border-bottom: none;
+      justify-content:flex-end;
+    }
+    #filterModal .modal-body{ padding: 14px; }
+
+    .row{ display:flex; flex-wrap:wrap; margin: -8px; }
+    .row.g-3 > *{ padding: 8px; }
+    .col-md-3{ width: 25%; }
+    .col-md-6{ width: 50%; }
+
+    @media (max-width: 768px){
+      .col-md-3,.col-md-6{ width: 100%; }
+      #filterModal .modal-dialog{ margin: 12px auto; }
+    }
+
+    .form-label{ display:block; margin-bottom: 6px; }
+    .fw-bold{ font-weight: 700; }
+    .form-select,.form-control{
+      width:100%;
+      padding: 9px 10px;
+      border: 1px solid rgba(0,0,0,.2);
+      border-radius: 8px;
+      outline:none;
+      background:#fff;
+    }
+
+    .btn{
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,.15);
+      cursor:pointer;
+      background:#f2f2f2;
+    }
+    .btn-primary{ background:#1f66ff; border-color:#1f66ff; color:#fff; }
+    .btn-light{ background:#fff; }
+
+    .btn-close{
+      width: 34px;
+      height: 34px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+    }
+    .btn-close:before,.btn-close:after{
+      content:"";
+      position:absolute;
+      top:50%; left:50%;
+      width: 18px;
+      height: 2px;
+      background:#333;
+      transform-origin:center;
+    }
+    .btn-close:before{ transform: translate(-50%,-50%) rotate(45deg); }
+    .btn-close:after{ transform: translate(-50%,-50%) rotate(-45deg); }
+
+    body.modal-open{ overflow:hidden !important; }
+  </style>
+
+  <!-- Suggestions dropdown -->
+  <style>
+    .field-wrap{ position: relative; }
+    .suggestions{
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 10px;
+      background: #fff;
+      margin-top: 6px;
+      max-height: 220px;
+      overflow: auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+      z-index: 2000;
+      position: absolute;
+      left: 0; right: 0;
+    }
+    .sugg-item{
+      padding: 10px 12px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .sugg-item:hover{ background: rgba(31,102,255,0.08); }
+    .sugg-empty{
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Loader -->
+  <div id="loader" aria-hidden="true">
+    <div class="bounce" role="status" aria-label="Loading">
+      <div></div><div></div><div></div><div></div>
+    </div>
+  </div>
+
+  <div class="cd-fullscreen">
+    <div class="call-dashboard" id="callDashboard">
+      <!-- Top right profile -->
+      <div class="cd-top">
+        <div class="cd-user">
+          <div class="cd-avatar" id="user_Role">NA</div>
+          <div class="cd-region" id="User_Route">NA</div>
+        </div>
+      </div>
+
+      <!-- Priority Calls -->
+      <section class="cd-panel">
+        <div class="cd-panel-head">
+          <span class="cd-badge">Priority Calls</span>
+        </div>
+
+        <div class="cd-row cd-row-3">
+          <div class="cd-stat cd-yellow">
+            <div class="cd-stat-label">Within<br/>SLA</div>
+            <div class="cd-stat-value" id="priorityWithinSla">0</div>
+          </div>
+
+          <div class="cd-stat cd-orange">
+            <div class="cd-stat-label">SLA</div>
+            <div class="cd-stat-value" id="prioritySla">0</div>
+          </div>
+
+          <div class="cd-stat cd-green">
+            <div class="cd-stat-label">Closed</div>
+            <div class="cd-stat-value" id="priorityClosed">0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Other Calls -->
+      <section class="cd-panel">
+        <div class="cd-panel-head cd-panel-head--with-actions">
+          <span class="cd-badge">Other Calls</span>
+
+          <div class="cd-actions">
+            <span class="cd-muted">This month</span>
+            <button class="cd-filter" type="button" id="OtherCalls" aria-label="Filter Other Calls">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="cd-breakdown">
+          <div class="cd-breakdown-row">
+            <div class="cd-label">Breakdown</div>
+            <div class="cd-pill" role="group" aria-label="Other Calls Breakdown">
+              <span class="cd-pill-k">All</span>
+              <span class="cd-pill-v" id="BreakdownAll">0</span>
+            </div>
+            <div class="cd-pill">
+              <span class="cd-pill-k">Closed</span>
+              <span class="cd-pill-v" id="BreakdownClosed">0</span>
+            </div>
+          </div>
+
+          <div class="cd-divider"></div>
+
+          <div class="cd-matrix">
+            <div class="cd-label cd-label--center">PM</div>
+
+            <div class="cd-pie-wrap">
+              <div class="cd-pie" id="pmPie" aria-label="PM pie chart"></div>
+            </div>
+
+            <div class="cd-stack">
+              <div class="cd-pill cd-pill--block">
+                <span class="cd-pill-k">All</span>
+                <span class="cd-pill-v" id="PmAll">0</span>
+              </div>
+              <div class="cd-pill cd-pill--block">
+                <span class="cd-pill-k">Closed</span>
+                <span class="cd-pill-v" id="PmClosed">0</span>
+              </div>
+              <div class="cd-pill cd-pill--block">
+                <span class="cd-pill-k">Overdue</span>
+                <span class="cd-pill-v" id="PmOverdue">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cd-divider"></div>
+
+          <div class="cd-breakdown-row">
+            <div class="cd-label cd-label--center">Other</div>
+            <div class="cd-pill">
+              <span class="cd-pill-k">Active</span>
+              <span class="cd-pill-v" id="otherActive">0</span>
+            </div>
+            <div class="cd-pill">
+              <span class="cd-pill-k">Closed</span>
+              <span class="cd-pill-v" id="otherClosed">0</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ESN -->
+      <section class="cd-panel">
+        <div class="cd-panel-head cd-panel-head--with-actions">
+          <span class="cd-badge">ESN</span>
+
+          <div class="cd-actions">
+            <span class="cd-muted">This month</span>
+            <button class="cd-filter" type="button" id="esn" aria-label="Filter ESN">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="cd-row cd-row-2">
+          <div class="cd-stat cd-blue">
+            <div class="cd-stat-label">Pending</div>
+            <div class="cd-stat-value" id="esnPending">0</div>
+          </div>
+
+          <div class="cd-stat cd-green">
+            <div class="cd-stat-label">Completed</div>
+            <div class="cd-stat-value" id="esnCompleted">0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Me -->
+      <section class="cd-panel">
+        <div class="cd-panel-head cd-panel-head--with-actions">
+          <span class="cd-badge">Me</span>
+
+          <div class="cd-actions">
+            <span class="cd-muted">This month</span>
+            <button class="cd-filter" type="button" id="me" aria-label="Filter Me">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="cd-row cd-row-4">
+          <div class="cd-pill">
+            <span class="cd-pill-k">Brkdwn</span>
+            <span class="cd-pill-v" id="meBrkdwn">0</span>
+          </div>
+          <div class="cd-pill">
+            <span class="cd-pill-k">PM</span>
+            <span class="cd-pill-v" id="mePm">0</span>
+          </div>
+          <div class="cd-pill">
+            <span class="cd-pill-k">Other</span>
+            <span class="cd-pill-v" id="meOther">0</span>
+          </div>
+          <div class="cd-pill">
+            <span class="cd-pill-k">ESN</span>
+            <span class="cd-pill-v" id="meEsn">0</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="filterModal" class="modal fade" tabindex="-1" aria-hidden="true" style="display:none;">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Filters</h5>
+          <button type="button" class="btn-close" aria-label="Close" id="filterModalCloseTop"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Period</label>
+              <select class="form-select" id="periodSelect">
+                <option value="this_month">This month</option>
+                <option value="this_quarter">This quarter</option>
+                <option value="last_quarter">Last quarter</option>
+                <option value="this_year">This year</option>
+                <option value="custom">Custom range</option>
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold">From</label>
+              <input type="date" class="form-control" id="dateFrom" disabled />
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold">To</label>
+              <input type="date" class="form-control" id="dateTo" disabled />
+            </div>
+
+            <!-- Service Technician -->
+            <div class="col-md-6 field-wrap">
+              <label class="form-label fw-bold">Service Technician</label>
+              <input type="text" class="form-control" id="techSearch" placeholder="Type technician name..." autocomplete="off" />
+              <div id="techSuggestions" class="suggestions" style="display:none;"></div>
+            </div>
+
+            <!-- Route -->
+            <div class="col-md-6 field-wrap">
+              <label class="form-label fw-bold">Route</label>
+              <input type="text" class="form-control" id="routeSearch" placeholder="Type route..." autocomplete="off" />
+              <div id="routeSuggestions" class="suggestions" style="display:none;"></div>
+            </div>
+
+            <!-- Team Leader -->
+            <div class="col-md-6 field-wrap">
+              <label class="form-label fw-bold">Team Leader</label>
+              <input type="text" class="form-control" id="tlSearch" placeholder="Type team leader..." autocomplete="off" />
+              <div id="tlSuggestions" class="suggestions" style="display:none;"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" id="filterClear">Clear</button>
+          <button type="button" class="btn btn-primary" id="filterApply">Apply</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div id="OtherCallsBackdrop" class="modal-backdrop fade" style="display:none;"></div>
+  <script>
+    let techSearchTimer = null;
+    let routeSearchTimer = null;
+    let tlSearchTimer = null;
+  
+    let esnTechSearchTimer = null;
+    let esnRouteSearchTimer = null;
+    let esnTlSearchTimer = null;
+  
+    let meTechSearchTimer = null;
+    let meRouteSearchTimer = null;
+    let meTlSearchTimer = null;
+  let userID = "";
+    let applicationName = "service-management";
+    let userReport = "My_Users";
+    let serviceReport = "Scan_QR_Service_Request";
+    let ESNReport = "ESN_Scan_QR_Widget";
+  
+    const TECH_NAME_FIELD = "Name";
+    const TL_NAME_FIELD   = "Name";
+    const ROUTE_FIELD     = "New_Route_Name";
+  
+    $(document).ready(function () {
+  
+      /* ---------------------------
+         Helpers
+      --------------------------- */
+      function escapeDelugeString(s){
+        return String(s || "").replace(/\\/g,"\\\\").replace(/"/g,'\\"');
+      }
+      function showSuggestions($box, html){ $box.html(html).show(); }
+      function hideSuggestions($box){ $box.hide().empty(); }
+  
+      // ✅ Robust modal opener (works even if panel-specific modal ids are missing)
+      function openFilterModal(type){
+        // Preferred modal ids (if you created separate modals):
+        // ESN  : #EsnBackdrop, #esnFilterModal
+        // ME   : #MeBackdrop,  #meFilterModal
+        // Other: #OtherCallsBackdrop, #filterModal
+  
+        const hasEsnModal = $("#esnFilterModal").length && $("#EsnBackdrop").length;
+        const hasMeModal  = $("#meFilterModal").length  && $("#MeBackdrop").length;
+  
+        let $backdrop = $("#OtherCallsBackdrop");
+        let $modal    = $("#filterModal");
+  
+        if(type === "esn" && hasEsnModal){
+          $backdrop = $("#EsnBackdrop");
+          $modal    = $("#esnFilterModal");
+        } else if(type === "me" && hasMeModal){
+          $backdrop = $("#MeBackdrop");
+          $modal    = $("#meFilterModal");
+        }
+  
+        $backdrop.show().addClass("show");
+        $modal.show().addClass("show").attr("aria-hidden", "false");
+        $("body").addClass("modal-open");
+      }
+  
+      function closeFilterModal(type){
+        const hasEsnModal = $("#esnFilterModal").length && $("#EsnBackdrop").length;
+        const hasMeModal  = $("#meFilterModal").length  && $("#MeBackdrop").length;
+  
+        let $backdrop = $("#OtherCallsBackdrop");
+        let $modal    = $("#filterModal");
+  
+        if(type === "esn" && hasEsnModal){
+          $backdrop = $("#EsnBackdrop");
+          $modal    = $("#esnFilterModal");
+        } else if(type === "me" && hasMeModal){
+          $backdrop = $("#MeBackdrop");
+          $modal    = $("#meFilterModal");
+        }
+  
+        $modal.removeClass("show").attr("aria-hidden", "true").hide();
+        $backdrop.removeClass("show").hide();
+        $("body").removeClass("modal-open");
+  
+        // hide suggestions (all sets)
+        hideSuggestions($("#techSuggestions"));
+        hideSuggestions($("#routeSuggestions"));
+        hideSuggestions($("#tlSuggestions"));
+  
+        hideSuggestions($("#esnTechSuggestions"));
+        hideSuggestions($("#esnRouteSuggestions"));
+        hideSuggestions($("#esnTlSuggestions"));
+  
+        hideSuggestions($("#meTechSuggestions"));
+        hideSuggestions($("#meRouteSuggestions"));
+        hideSuggestions($("#meTlSuggestions"));
+      }
+  
+      /* ---------------------------
+         ✅ Modal open/close (Other Calls)
+      --------------------------- */
+      $(document).off("click", "#OtherCalls").on("click", "#OtherCalls", function (e) {
+        e.preventDefault();
+        openFilterModal("other");
+      });
+  
+      $(document).off("click", "#filterModalCloseTop, #OtherCallsBackdrop")
+        .on("click", "#filterModalCloseTop, #OtherCallsBackdrop", function () {
+          closeFilterModal("other");
+        });
+  
+      $("#periodSelect").off("change").on("change", function () {
+        var isCustom = $(this).val() === "custom";
+        $("#dateFrom").prop("disabled", !isCustom);
+        $("#dateTo").prop("disabled", !isCustom);
+        if(!isCustom){ $("#dateFrom").val(""); $("#dateTo").val(""); }
+      });
+  
+      /* ---------------------------
+         ✅ ESN filter button (delegated)
+      --------------------------- */
+      $(document).off("click", "#esn").on("click", "#esn", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openFilterModal("esn");
+      });
+  
+      $(document).off("click", "#esnFilterModalCloseTop, #EsnBackdrop")
+        .on("click", "#esnFilterModalCloseTop, #EsnBackdrop", function () {
+          closeFilterModal("esn");
+        });
+  
+      $("#esnPeriodSelect").off("change").on("change", function () {
+        var isCustom = $(this).val() === "custom";
+        $("#esnDateFrom").prop("disabled", !isCustom);
+        $("#esnDateTo").prop("disabled", !isCustom);
+        if(!isCustom){ $("#esnDateFrom").val(""); $("#esnDateTo").val(""); }
+      });
+  
+      /* ---------------------------
+         ✅ ME filter button (delegated)  <-- YOUR NEW REQUIREMENT
+      --------------------------- */
+      $(document).off("click", "#me").on("click", "#me", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openFilterModal("me"); // opens ME modal if exists, else opens same #filterModal
+      });
+  
+      $(document).off("click", "#meFilterModalCloseTop, #MeBackdrop")
+        .on("click", "#meFilterModalCloseTop, #MeBackdrop", function () {
+          closeFilterModal("me");
+        });
+  
+      $("#mePeriodSelect").off("change").on("change", function () {
+        var isCustom = $(this).val() === "custom";
+        $("#meDateFrom").prop("disabled", !isCustom);
+        $("#meDateTo").prop("disabled", !isCustom);
+        if(!isCustom){ $("#meDateFrom").val(""); $("#meDateTo").val(""); }
+      });
+  
+      /* ---------------------------
+         Zoho init (sequential)
+      --------------------------- */
+      ZOHO.CREATOR.init().then(() => {
+        $("#loader").show();
+  
+        const params = ZOHO.CREATOR.UTIL.getInitParams() || {};
+        var loginuser = params.loginUser || "";
+  
+        const config = {
+          appName: applicationName,
+          reportName: userReport,
+          criteria: `(Email == "${loginuser}")`,
+          page: 1,
+          pageSize: 1
+        };
+  
+        ZOHO.CREATOR.API.getAllRecords(config)
+          .then(function (response) {
+            if (response.data && response.data.length > 0) {
+              const record = response.data[0];
+              console.log("record:",record);
+              userID = record.ID || "";
+              var userRole = record.Role || "";
+              var userRegion = record.Region || "";
+              var userRoute = record.New_Route_Name || record.Route || record.Region || "";
+  
+              if (userRole == "Wohr Parking Administrator") {
+                adminProfile(userRole, userRegion, userRoute);
+              } else if (userRole == "Operation Incharge") {
+                operationIncharge(userRole, userRegion, userRoute);
+              } else if (userRole == "Team Leader") {
+                teamLead(userRole, userRegion, userRoute);
+              } else {
+                console.log("other user found");
+              }
+  
+              $("#user_Role").text(userRole ? userRole.substring(0, 2).toUpperCase() : "NA");
+              $("#User_Route").text(userRoute || "NA");
+  
+              $("#user_Role").css("cursor", "pointer");
+              $("#user_Role").off("click").on("click", function () {
+                const targetUrl = "https://creatorapp.zoho.in/dsvcorporationptyltd/service-management#Report:All_Service_Requests?Status=Overdue";
+                ZOHO.CREATOR.UTIL.navigateParentURL({
+                  action: "open",
+                  url: targetUrl,
+                  window: "same"
+                });
+              });
+  
+            } else {
+              $("#user_Role").text("NA");
+              $("#User_Route").text("NA");
+              $("#loader").hide();
+              console.log("No user found for email:", loginuser);
+            }
+          })
+          .catch(function (err) {
+            console.error("Error fetching user record:", err);
+            $("#user_Role").text("NA");
+            $("#User_Route").text("NA");
+            $("#loader").hide();
+          });
+  
+        /* ---------------------------
+           TYPE-TO-SEARCH (Other Calls)
+        --------------------------- */
+        $("#techSearch").off("input").on("input", function () {
+          const val = $(this).val();
+          clearTimeout(techSearchTimer);
+          techSearchTimer = setTimeout(function () {
+            fetchTechniciansByName(val, "#techSuggestions");
+          }, 350);
+        });
+  
+        $("#routeSearch").off("input").on("input", function(){
+          const val = $(this).val();
+          clearTimeout(routeSearchTimer);
+          routeSearchTimer = setTimeout(function(){
+            fetchRoutesByName(val, "#routeSuggestions");
+          }, 300);
+        });
+  
+        $("#tlSearch").off("input").on("input", function(){
+          const val = $(this).val();
+          clearTimeout(tlSearchTimer);
+          tlSearchTimer = setTimeout(function(){
+            fetchTeamLeadersByName(val, "#tlSuggestions");
+          }, 300);
+        });
+  
+        /* ---------------------------
+           TYPE-TO-SEARCH (ESN) - if exists
+        --------------------------- */
+        $("#esnTechSearch").off("input").on("input", function () {
+          const val = $(this).val();
+          clearTimeout(esnTechSearchTimer);
+          esnTechSearchTimer = setTimeout(function () {
+            fetchTechniciansByName(val, "#esnTechSuggestions");
+          }, 350);
+        });
+  
+        $("#esnRouteSearch").off("input").on("input", function(){
+          const val = $(this).val();
+          clearTimeout(esnRouteSearchTimer);
+          esnRouteSearchTimer = setTimeout(function(){
+            fetchRoutesByName(val, "#esnRouteSuggestions");
+          }, 300);
+        });
+  
+        $("#esnTlSearch").off("input").on("input", function(){
+          const val = $(this).val();
+          clearTimeout(esnTlSearchTimer);
+          esnTlSearchTimer = setTimeout(function(){
+            fetchTeamLeadersByName(val, "#esnTlSuggestions");
+          }, 300);
+        });
+  
+        /* ---------------------------
+           TYPE-TO-SEARCH (ME) - if exists  <-- optional inputs
+        --------------------------- */
+        $("#meTechSearch").off("input").on("input", function () {
+          const val = $(this).val();
+          clearTimeout(meTechSearchTimer);
+          meTechSearchTimer = setTimeout(function () {
+            fetchTechniciansByName(val, "#meTechSuggestions");
+          }, 350);
+        });
+  
+        $("#meRouteSearch").off("input").on("input", function(){
+          const val = $(this).val();
+          clearTimeout(meRouteSearchTimer);
+          meRouteSearchTimer = setTimeout(function(){
+            fetchRoutesByName(val, "#meRouteSuggestions");
+          }, 300);
+        });
+  
+        $("#meTlSearch").off("input").on("input", function(){
+          const val = $(this).val();
+          clearTimeout(meTlSearchTimer);
+          meTlSearchTimer = setTimeout(function(){
+            fetchTeamLeadersByName(val, "#meTlSuggestions");
+          }, 300);
+        });
+  
+      });
+  
+      /* ---------------------------
+         Existing count functions (unchanged)
+      --------------------------- */
+      function adminProfile(userRole, userRegion, userRoute) {
+        var config = {
+          appName: applicationName,
+          reportName: serviceReport,
+          criteria: '(Service_Request_Type == "Breakdown" && Status !="Closed")'
+        };
+  
+        ZOHO.CREATOR.API.getRecordCount(config).then(function (response) {
+          var allAdminBreakDownCall = response.result.records_count;
+          $("#BreakdownAll").text(allAdminBreakDownCall);
+          adminBreakdownclosed();
+        }).catch(function (err) {
+          console.error(err);
+          adminBreakdownclosed();
+        });
+      }
+  
+      function adminBreakdownclosed() {
+        var config = {
+          appName: applicationName,
+          reportName: serviceReport,
+          criteria: '(Service_Request_Type == "Breakdown" && Status =="Closed")'
+        };
+        ZOHO.CREATOR.API.getRecordCount(config).then(function (response) {
+          var closedAdminBreakDownCall = response.result.records_count;
+          $("#BreakdownClosed").text(closedAdminBreakDownCall);
+          adminPMAll();
+        }).catch(function (err) {
+          console.error(err);
+          adminPMAll();
+        });
+      }
+  
+      function adminPMAll() {
+        var config = {
+          appName: applicationName,
+          reportName: serviceReport,
+          criteria: '(Service_Request_Type == "Routine" && Status != "Closed" && Status != "Overdue")'
+        };
+        ZOHO.CREATOR.API.getRecordCount(config).then(function (response) {
+          var allAdminPMCall = response.result.records_count;
+          $("#PmAll").text(allAdminPMCall);
+          overDueadminPMAll();
+        }).catch(function (err) {
+          console.error(err);
+          overDueadminPMAll();
+        });
+      }
+  
+      function overDueadminPMAll() {
+        var config = {
+          appName: applicationName,
+          reportName: serviceReport,
+          criteria: '(Service_Request_Type == "Routine" && Status == "Overdue" && Status != "Closed")'
+        };
+        ZOHO.CREATOR.API.getRecordCount(config).then(function (response) {
+          var OverDueAdminPMCall = response.result.records_count;
+          $("#PmOverdue").text(OverDueAdminPMCall);
+          closedadminPMAll();
+        }).catch(function (err) {
+          console.error(err);
+          closedadminPMAll();
+        });
+      }
+  
+      function closedadminPMAll() {
+        var config = {
+          appName: applicationName,
+          reportName: serviceReport,
+          criteria: '(Service_Request_Type == "Routine" && Status == "Closed")'
+        };
+        ZOHO.CREATOR.API.getRecordCount(config).then(function (response) {
+          var closedAdminPM = response.result.records_count;
+          $("#PmClosed").text(closedAdminPM);
+          otherActiveAdminServiceType();
+        }).catch(function (err) {
+          console.error(err);
+          otherActiveAdminServiceType();
+        });
+      }
+  
+      function otherActiveAdminServiceType() {
+        var config = {
+          appName: applicationName,
+          reportName: serviceReport,
+          criteria: '(Service_Request_Type != "Routine" && Status != "Closed")'
+        };
+        ZOHO.CREATOR.API.getRecordCount(config).then(function (response) {
+          var otherActiveAdminCall = response.result.records_count;
+          $("#otherActive").text(otherActiveAdminCall);
+          otherClosedAdminServiceType();
+        }).catch(function (err) {
+          console.error(err);
+          otherClosedAdminServiceType();
+        });
+      }
+  
+      function otherClosedAdminServiceType() {
+        var config = {
+          appName: applicationName,
+          reportName: serviceReport,
+          criteria: '(Service_Request_Type != "Routine" && Status == "Closed")'
+        };
+        ZOHO.CREATOR.API.getRecordCount(config).then(function (response) {
+          var otherActiveAdminCall = response.result.records_count;
+          $("#otherClosed").text(otherActiveAdminCall);
+          completedAdminEsn();
+        }).catch(function (err) {
+          console.error(err);
+          completedAdminEsn();
+        });
+      }
+  
+      function completedAdminEsn() {
+        var config = {
+          appName: applicationName,
+          reportName: ESNReport,
+          criteria: '(ESN_Status == "Completed")'
+        };
+        ZOHO.CREATOR.API.getRecordCount(config).then(function (response) {
+          var completedAdminEsn = response.result.records_count;
+          $("#esnCompleted").text(completedAdminEsn);
+          pendingAdminEsn();
+        }).catch(function (err) {
+          console.error(err);
+          pendingAdminEsn();
+        });
+      }
+  
+      function pendingAdminEsn() {
+        var config = {
+          appName: applicationName,
+          reportName: ESNReport,
+          criteria: '(ESN_Status == "Pending")'
+        };
+        ZOHO.CREATOR.API.getRecordCount(config).then(function (response) {
+          var pendingAdminEsn = response.result.records_count;
+          $("#esnPending").text(pendingAdminEsn);
+          AdminMeBreakdown()
+        }).catch(function (err) {
+          console.error(err);
+          AdminMeBreakdown()
+        });
+      }
+      function AdminMeBreakdown() {
+        var config = {
+          appName: applicationName,
+          reportName: serviceReport,
+          criteria: '(Service_Request_Type == "Breakdown")'
+        };
+        ZOHO.CREATOR.API.getRecordCount(config).then(function (response) {
+          var AdminBrd = response.result.records_count;
+          $("#meBrkdwn").text(AdminBrd);
+          AdminMePM()
+        }).catch(function (err) {
+          console.error(err);
+          AdminMePM()
+        });
+      }
+  
+      function AdminMePM() {
+        var config = {
+          appName: applicationName,
+          reportName: serviceReport,
+          criteria: '(Service_Request_Type == "Routine")'
+        };
+        ZOHO.CREATOR.API.getRecordCount(config).then(function (response) {
+          var AdminMePmcall = response.result.records_count;
+          $("#mePm").text(AdminMePmcall);
+          AdminMeOthers();
+        }).catch(function (err) {
+          console.error(err);
+          AdminMeOthers();
+        });
+      }
+      function AdminMeOthers() {
+        var config = {
+          appName: applicationName,
+          reportName: serviceReport,
+          criteria: '(Service_Request_Type != "Routine")'
+        };
+        ZOHO.CREATOR.API.getRecordCount(config).then(function (response) {
+          var AdminMeOther = response.result.records_count;
+          $("#meOther").text(AdminMeOther);
+          AdminMeESN();
+        }).catch(function (err) {
+          console.error(err);
+          AdminMeESN();
+        });
+      }
+  
+      function AdminMeESN() {
+        var config = {
+          appName: applicationName,
+          reportName: ESNReport,
+          criteria: '(ESN_Status == "Pending" || ESN_Status == "Completed")'
+        };
+        ZOHO.CREATOR.API.getRecordCount(config).then(function (response) {
+          var AdminmeEsn = response.result.records_count;
+          $("#meEsn").text(AdminmeEsn);
+          $("#loader").hide();
+        }).catch(function (err) {
+          console.error(err);
+          $("#loader").hide();
+        });
+      }
+      function operationIncharge(userRole, userRegion, userRoute) { }
+      function teamLead(userRole, userRegion, userRoute) { }
+  
+      /* ---------------------------
+         Search functions (shared)
+      --------------------------- */
+      function fetchTechniciansByName(searchText, boxSelector){
+        const q = (searchText || "").trim();
+        const $box = $(boxSelector);
+        if(!q){ hideSuggestions($box); return; }
+  
+        const criteria =
+          `(Role == "Service Technician" && User_Status == "Active" && ${TECH_NAME_FIELD}.contains("${escapeDelugeString(q)}"))`;
+  
+        const config = { appName: applicationName, reportName: userReport, criteria, pageSize: 50 };
+  
+        showSuggestions($box, `<div class="sugg-empty">Loading...</div>`);
+        ZOHO.CREATOR.API.getAllRecords(config)
+          .then(function(res){
+            const rows = (res && res.data) ? res.data : [];
+            if(!rows.length){ showSuggestions($box, `<div class="sugg-empty">Record not found</div>`); return; }
+            const html = rows.slice(0,50).map(r => {
+              const name = r[TECH_NAME_FIELD] || r.Email || "Unnamed";
+              const id = r.ID || "";
+              return `<div class="sugg-item" data-id="${id}" data-value="${escapeDelugeString(name)}">${name}</div>`;
+            }).join("");
+            showSuggestions($box, html);
+          })
+          .catch(function(err){
+            console.error(err);
+            showSuggestions($box, `<div class="sugg-empty">Record not found</div>`);
+          });
+      }
+  
+      function fetchRoutesByName(searchText, boxSelector){
+        const q = (searchText || "").trim();
+        const $box = $(boxSelector);
+        if(!q){ hideSuggestions($box); return; }
+  
+        const criteria = `(${ROUTE_FIELD}.contains("${escapeDelugeString(q)}"))`;
+        const config = { appName: applicationName, reportName: userReport, criteria, pageSize: 200 };
+  
+        showSuggestions($box, `<div class="sugg-empty">Loading...</div>`);
+        ZOHO.CREATOR.API.getAllRecords(config)
+          .then(function(res){
+            const rows = (res && res.data) ? res.data : [];
+            if(!rows.length){ showSuggestions($box, `<div class="sugg-empty">Record not found</div>`); return; }
+  
+            // dedupe normalized
+            const map = new Map();
+            rows.forEach(r => {
+              const raw = r[ROUTE_FIELD];
+              if(!raw) return;
+              const display = String(raw).trim();
+              if(!display) return;
+              const key = display.toLowerCase().replace(/\s+/g," ");
+              if(!map.has(key)) map.set(key, display);
+            });
+  
+            const list = Array.from(map.values()).slice(0,50);
+            if(!list.length){ showSuggestions($box, `<div class="sugg-empty">Record not found</div>`); return; }
+  
+            const html = list.map(v => `<div class="sugg-item" data-value="${escapeDelugeString(v)}">${v}</div>`).join("");
+            showSuggestions($box, html);
+          })
+          .catch(function(err){
+            console.error(err);
+            showSuggestions($box, `<div class="sugg-empty">Record not found</div>`);
+          });
+      }
+  
+      function fetchTeamLeadersByName(searchText, boxSelector){
+        const q = (searchText || "").trim();
+        const $box = $(boxSelector);
+        if(!q){ hideSuggestions($box); return; }
+  
+        const criteria =
+          `(Role == "Team Leader" && User_Status == "Active" && ${TL_NAME_FIELD}.contains("${escapeDelugeString(q)}"))`;
+  
+        const config = { appName: applicationName, reportName: userReport, criteria, pageSize: 50 };
+  
+        showSuggestions($box, `<div class="sugg-empty">Loading...</div>`);
+        ZOHO.CREATOR.API.getAllRecords(config)
+          .then(function(res){
+            const rows = (res && res.data) ? res.data : [];
+            if(!rows.length){ showSuggestions($box, `<div class="sugg-empty">Record not found</div>`); return; }
+  
+            const html = rows.slice(0,50).map(r => {
+              const name = r[TL_NAME_FIELD] || r.Email || "Unnamed";
+              const id = r.ID || "";
+              return `<div class="sugg-item" data-id="${id}" data-value="${escapeDelugeString(name)}">${name}</div>`;
+            }).join("");
+  
+            showSuggestions($box, html);
+          })
+          .catch(function(err){
+            console.error(err);
+            showSuggestions($box, `<div class="sugg-empty">Record not found</div>`);
+          });
+      }
+  
+      /* ---------------------------
+         Click select (supports ALL modals)
+      --------------------------- */
+      $(document).off("click", "#techSuggestions .sugg-item").on("click", "#techSuggestions .sugg-item", function(){
+        $("#techSearch").val($(this).data("value") || "");
+        hideSuggestions($("#techSuggestions"));
+      });
+      $(document).off("click", "#routeSuggestions .sugg-item").on("click", "#routeSuggestions .sugg-item", function(){
+        $("#routeSearch").val($(this).data("value") || "");
+        hideSuggestions($("#routeSuggestions"));
+      });
+      $(document).off("click", "#tlSuggestions .sugg-item").on("click", "#tlSuggestions .sugg-item", function(){
+        $("#tlSearch").val($(this).data("value") || "");
+        hideSuggestions($("#tlSuggestions"));
+      });
+  
+      $(document).off("click", "#esnTechSuggestions .sugg-item").on("click", "#esnTechSuggestions .sugg-item", function(){
+        $("#esnTechSearch").val($(this).data("value") || "");
+        hideSuggestions($("#esnTechSuggestions"));
+      });
+      $(document).off("click", "#esnRouteSuggestions .sugg-item").on("click", "#esnRouteSuggestions .sugg-item", function(){
+        $("#esnRouteSearch").val($(this).data("value") || "");
+        hideSuggestions($("#esnRouteSuggestions"));
+      });
+      $(document).off("click", "#esnTlSuggestions .sugg-item").on("click", "#esnTlSuggestions .sugg-item", function(){
+        $("#esnTlSearch").val($(this).data("value") || "");
+        hideSuggestions($("#esnTlSuggestions"));
+      });
+  
+      $(document).off("click", "#meTechSuggestions .sugg-item").on("click", "#meTechSuggestions .sugg-item", function(){
+        $("#meTechSearch").val($(this).data("value") || "");
+        hideSuggestions($("#meTechSuggestions"));
+      });
+      $(document).off("click", "#meRouteSuggestions .sugg-item").on("click", "#meRouteSuggestions .sugg-item", function(){
+        $("#meRouteSearch").val($(this).data("value") || "");
+        hideSuggestions($("#meRouteSuggestions"));
+      });
+      $(document).off("click", "#meTlSuggestions .sugg-item").on("click", "#meTlSuggestions .sugg-item", function(){
+        $("#meTlSearch").val($(this).data("value") || "");
+        hideSuggestions($("#meTlSuggestions"));
+      });
+  
+      /* ---------------------------
+         Hide on outside click
+      --------------------------- */
+      $(document).off("click.suggHide").on("click.suggHide", function(e){
+        if(!$(e.target).closest("#techSearch, #techSuggestions").length) hideSuggestions($("#techSuggestions"));
+        if(!$(e.target).closest("#routeSearch, #routeSuggestions").length) hideSuggestions($("#routeSuggestions"));
+        if(!$(e.target).closest("#tlSearch, #tlSuggestions").length) hideSuggestions($("#tlSuggestions"));
+  
+        if(!$(e.target).closest("#esnTechSearch, #esnTechSuggestions").length) hideSuggestions($("#esnTechSuggestions"));
+        if(!$(e.target).closest("#esnRouteSearch, #esnRouteSuggestions").length) hideSuggestions($("#esnRouteSuggestions"));
+        if(!$(e.target).closest("#esnTlSearch, #esnTlSuggestions").length) hideSuggestions($("#esnTlSuggestions"));
+  
+        if(!$(e.target).closest("#meTechSearch, #meTechSuggestions").length) hideSuggestions($("#meTechSuggestions"));
+        if(!$(e.target).closest("#meRouteSearch, #meRouteSuggestions").length) hideSuggestions($("#meRouteSuggestions"));
+        if(!$(e.target).closest("#meTlSearch, #meTlSuggestions").length) hideSuggestions($("#meTlSuggestions"));
+      });
+    });
+  </script>  
+</body>
+</html>
