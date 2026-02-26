@@ -10,61 +10,31 @@
   <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script defer src="https://js.zohostatic.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
+
   <style>
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: #f4f6f8;
-      font-family: "Segoe UI", sans-serif;
-    }
-
+    body { margin: 0; background: #f4f6f8; font-family: "Segoe UI", sans-serif; }
     .dashboard { padding: 12px; }
 
-    .dash-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
     .dash-header-right{
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 12px;
-      padding-bottom: 14px;
-      margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 12px; padding-bottom: 14px; margin-bottom: 12px;
     }
 
     .tech { display: flex; align-items: center; gap: 10px; }
-
     .tech-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: #0d6efd;
-      color: #fff;
-      display: grid;
-      place-items: center;
-      font-weight: 700;
+      width: 40px; height: 40px; border-radius: 12px; background: #0d6efd; color: #fff;
+      display: grid; place-items: center; font-weight: 700;
     }
     .tech-loc { font-size: 12px; line-height: 1.1; }
 
     .dashboard-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      grid-template-areas:
-        "priority"
-        "other"
-        "esn"
-        "me";
+      display: grid; grid-template-columns: 1fr; gap: 12px;
+      grid-template-areas: "other" "esn" "me";
     }
-    [data-card="priority"] { grid-area: priority; }
     [data-card="other"] { grid-area: other; }
-    [data-card="esn"] { grid-area: esn; }
-    [data-card="me"] { grid-area: me; }
+    [data-card="esn"]   { grid-area: esn; }
+    [data-card="me"]    { grid-area: me; }
 
     @media (min-width: 992px) {
       .dashboard { padding: 20px; }
@@ -72,248 +42,113 @@
         grid-template-columns: 1fr 1fr;
         gap: 16px;
         grid-template-areas:
-          "priority priority"
           "other other"
           "esn esn"
           "me me";
       }
     }
+
     .card {
-      position: relative;
-      overflow: visible;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,0.25);
-      background: #fff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      position: relative; overflow: visible;
+      border-radius: 14px; border: 1px solid rgba(0,0,0,0.25);
+      background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
 
     .card-tag {
-      position: absolute;
-      top: -14px;
-      left: 14px;
-      z-index: 5;
-      background: #0d6efd;
-      color: #fff;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1;
+      position: absolute; top: -14px; left: 14px; z-index: 5;
+      background: #0d6efd; color: #fff; padding: 6px 14px; border-radius: 8px;
+      font-size: 14px; font-weight: 700; line-height: 1;
       box-shadow: 0 2px 6px rgba(13,110,253,0.25);
     }
 
     @media (max-width: 420px) {
-      .card-tag {
-        top: -12px;
-        left: 12px;
-        padding: 6px 12px;
-        font-size: 13px;
-      }
+      .card-tag { top: -12px; left: 12px; padding: 6px 12px; font-size: 13px; }
     }
 
     .card.with-tag .card-body { padding-top: 18px; }
 
     .card-header.card-header-actions {
-      background: transparent;
-      border-bottom: none;
+      background: transparent; border-bottom: none;
       padding: 10px 14px 0;
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
+      display: flex; justify-content: flex-end; align-items: center;
     }
 
     .metric-grid {
-      display: grid;
-      grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
-      gap: 10px;
+      display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 10px;
     }
 
     .metric-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: #f8f9fa;
-      font-size: 13px;
-      min-width: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; padding: 10px 12px; border-radius: 12px;
+      background: #f8f9fa; font-size: 13px; min-width: 0;
     }
 
-    .metric-item span {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .metric-item strong {
-      font-size: 16px;
-      font-weight: 800;
-    }
-
-    .metric-grid-priority {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    @media (max-width: 420px) {
-      .metric-grid-priority { gap: 8px; }
-      .metric-grid-priority .metric-item { padding: 8px 8px; font-size: 12px; }
-      .metric-grid-priority .metric-item strong { font-size: 14px; }
-    }
-
-    .metric-grid-me { --cols: 2; }
-    @media (min-width: 768px) { .metric-grid-me { --cols: 4; } }
+    .metric-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .metric-item strong { font-size: 16px; font-weight: 800; }
 
     .metric-warning { background: #fff3cd; }
     .metric-danger  { background: #f8d7da; color: #842029; }
     .metric-success { background: #d1e7dd; color: #0f5132; }
     .metric-light   { background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 
-    /* =============== Other Calls Split =============== */
-    .section-split {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      align-items: center;
-    }
-
-    @media (min-width: 768px) {
-      .section-split { grid-template-columns: 240px 1fr; }
-    }
-
-    .chart-wrapper {
-      width: 180px;
-      height: 180px;
-      margin: 0 auto;
-      position: relative;
-    }
-
-    @media (max-width: 767px) {
-      .chart-wrapper { width: 140px; height: 140px; }
-    }
-
-    /* ✅ Let canvas fill wrapper correctly */
-    #pmChart { width: 100% !important; height: 100% !important; display: block; }
-
-    .count-box {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 10px;
-      margin-bottom: 8px;
-      border-radius: 10px;
-      background: #f8f9fa;
-      font-size: 13px;
-    }
-
-    .count-box strong { font-size: 15px; }
-    .count-box.overdue { background: #fdecea; color: #dc3545; }
-
-    .count-link{
-      cursor: pointer;
-      user-select: none;
-      transition: transform .05s ease, box-shadow .15s ease;
-    }
+    .count-link{ cursor: pointer; user-select: none; transition: transform .05s ease, box-shadow .15s ease; }
     .count-link:hover{ box-shadow: 0 4px 14px rgba(0,0,0,0.12); }
     .count-link:active{ transform: scale(0.98); }
-    .count-link:focus{
-      outline: 2px solid rgba(13,110,253,0.35);
-      outline-offset: 2px;
-    }
+    .count-link:focus{ outline: 2px solid rgba(13,110,253,0.35); outline-offset: 2px; }
 
-    /* =============== Filter =============== */
     .filter-container { position: relative; }
-
     .filter-btn {
-      border: none;
-      background: transparent;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: #333;
-      cursor: pointer;
-      padding: 0;
+      border: none; background: transparent;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; color: #333; cursor: pointer; padding: 0;
       -webkit-tap-highlight-color: transparent;
     }
     .filter-btn i { font-size: 14px; }
 
     .filter-dropdown {
-      position: absolute;
-      right: 0;
-      top: 28px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-      display: none;
-      min-width: 190px;
-      z-index: 1000;
-      padding: 6px;
+      position: absolute; right: 0; top: 28px;
+      background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      display: none; min-width: 190px; z-index: 1000; padding: 6px;
     }
     .filter-dropdown.open { display: block; }
 
     .filter-option {
-      width: 100%;
-      text-align: left;
-      border: none;
-      background: transparent;
-      padding: 9px 10px;
-      font-size: 13px;
-      cursor: pointer;
-      border-radius: 8px;
+      width: 100%; text-align: left; border: none; background: transparent;
+      padding: 9px 10px; font-size: 13px; cursor: pointer; border-radius: 8px;
       white-space: nowrap;
     }
     .filter-option:hover { background: #f1f3f5; }
 
+    /* =============== Other Calls Layout =============== */
+    .other-section { display: flex; flex-direction: column; gap: 16px; }
 
-    .other-section {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+    .other-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .other-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .other-row:nth-child(2) { grid-template-columns: 100px auto 1fr; }
 
-.other-row {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 12px;
-  align-items: center;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e9ecef;
-}
+    .other-label { font-weight: 600; font-size: 14px; }
 
-.other-row:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
+    .other-metrics { display: flex; gap: 8px; flex-wrap: wrap; }
+    .other-metrics .metric-item { flex: 1; min-width: 80px; }
 
-.other-row:nth-child(2) {
-  grid-template-columns: 100px auto 1fr;
-}
+    .chart-wrapper { width: 180px; height: 180px; margin: 0 auto; position: relative; }
+    @media (max-width: 767px) { .chart-wrapper { width: 140px; height: 140px; } }
+    #pmChart { width: 100% !important; height: 100% !important; display: block; }
 
-.other-label {
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.other-metrics {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.other-metrics .metric-item {
-  flex: 1;
-  min-width: 80px;
-}
-
-
+    .overdue { background: #fdecea; color: #dc3545; }
   </style>
 </head>
 
 <body>
   <div class="dashboard container-fluid">
-    <div class="dash-header dash-header-right">
+    <div class="dash-header-right">
       <div class="tech">
         <div class="tech-meta">
           <div class="tech-avatar" id="techAvatar">--</div>
@@ -323,73 +158,74 @@
     </div>
 
     <div class="dashboard-grid">
-      <!-- 1) Priority Calls -->
-      <!-- <div class="card grid-item with-tag" data-card="priority">
-        <span class="card-tag">Priority Calls</span>
-        <div class="card-body">
-          <div class="metric-grid metric-grid-priority">
-            <div class="metric-item metric-warning"><span>Within SLA</span><strong id="priorityWithin">0</strong></div>
-            <div class="metric-item metric-danger"><span>SLA</span><strong id="prioritySla">0</strong></div>
-            <div class="metric-item metric-success"><span>Closed</span><strong id="priorityClosed">0</strong></div>
+
+      <!-- 2) Other Calls -->
+      <div class="card grid-item with-tag" data-card="other">
+        <span class="card-tag">Other Calls</span>
+
+        <div class="card-header card-header-actions">
+          <div class="filter-container" data-section="other_calls">
+            <button type="button" class="filter-btn">
+              <i class="bi bi-funnel"></i>
+              <small class="active-period">This Month</small>
+            </button>
+            <div class="filter-dropdown">
+              <button type="button" class="filter-option" data-period="this_month">This Month</button>
+              <button type="button" class="filter-option" data-period="this_quarter">This Quarter</button>
+              <button type="button" class="filter-option" data-period="last_quarter">Last Quarter</button>
+              <button type="button" class="filter-option" data-period="this_year">This Year (YTD)</button>
+              <button type="button" class="filter-option" data-period="custom">Custom Date Range</button>
+            </div>
           </div>
         </div>
-      </div> -->
 
+        <div class="card-body">
+          <div class="other-section">
+            <div class="other-row">
+              <span class="other-label">Breakdown</span>
+              <div class="other-metrics">
+                <div class="metric-item metric-light count-link" role="button" tabindex="0">
+                  <span>All</span><strong id="breakdownAll">0</strong>
+                </div>
+                <div class="metric-item metric-light count-link" role="button" tabindex="0">
+                  <span>Closed</span><strong id="breakdownClosed">0</strong>
+                </div>
+              </div>
+            </div>
 
-<!-- 2) Other Calls -->
-<div class="card grid-item with-tag" data-card="other">
-  <span class="card-tag">Other Calls</span>
+            <div class="other-row">
+              <span class="other-label">PM</span>
+              <div class="chart-wrapper">
+                <canvas id="pmChart"></canvas>
+              </div>
+              <div class="other-metrics">
+                <div class="metric-item metric-light count-link" role="button" tabindex="0">
+                  <span>All</span><strong id="pmAll">0</strong>
+                </div>
+                <div class="metric-item metric-light count-link" role="button" tabindex="0">
+                  <span>Closed</span><strong id="pmClosed">0</strong>
+                </div>
+                <div class="metric-item overdue count-link" role="button" tabindex="0">
+                  <span>Overdue</span><strong id="pmOverdue">0</strong>
+                </div>
+              </div>
+            </div>
 
-  <div class="card-header card-header-actions">
-    <div class="filter-container" data-section="other_calls">
-      <button type="button" class="filter-btn">
-        <i class="bi bi-funnel"></i>
-        <small class="active-period">This Month</small>
-      </button>
-      <div class="filter-dropdown">
-        <button type="button" class="filter-option" data-period="this_month">This Month</button>
-        <button type="button" class="filter-option" data-period="this_quarter">This Quarter</button>
-        <button type="button" class="filter-option" data-period="last_quarter">Last Quarter</button>
-        <button type="button" class="filter-option" data-period="this_year">This Year (YTD)</button>
-        <button type="button" class="filter-option" data-period="custom">Custom Date Range</button>
-      </div>
-    </div>
-  </div>
+            <div class="other-row">
+              <span class="other-label">Other</span>
+              <div class="other-metrics">
+                <div class="metric-item metric-light count-link" role="button" tabindex="0">
+                  <span>Active</span><strong id="otherActive">0</strong>
+                </div>
+                <div class="metric-item metric-light count-link" role="button" tabindex="0">
+                  <span>Closed</span><strong id="otherClosed">0</strong>
+                </div>
+              </div>
+            </div>
 
-  <div class="card-body">
-    <div class="other-section">
-      <div class="other-row">
-        <span class="other-label">Breakdown</span>
-        <div class="other-metrics">
-          <div class="metric-item metric-light count-link" role="button" tabindex="0"><span>All</span><strong id="breakdownAll">10</strong></div>
-          <div class="metric-item metric-light count-link" role="button" tabindex="0"><span>Closed</span><strong id="breakdownClosed">8</strong></div>
+          </div>
         </div>
       </div>
-      
-      <div class="other-row">
-        <span class="other-label">PM</span>
-        <div class="chart-wrapper">
-          <canvas id="pmChart"></canvas>
-        </div>
-        <div class="other-metrics">
-          <div class="metric-item metric-light count-link" role="button" tabindex="0"><span>All</span><strong id="pmAll">250</strong></div>
-          <div class="metric-item metric-light count-link" role="button" tabindex="0"><span>Closed</span><strong id="pmClosed">8</strong></div>
-          <div class="metric-item metric-light overdue count-link" role="button" tabindex="0"><span>Overdue</span><strong id="pmOverdue">32</strong></div>
-        </div>
-      </div>
-      
-      <div class="other-row">
-        <span class="other-label">Other</span>
-        <div class="other-metrics">
-          <div class="metric-item metric-light count-link" role="button" tabindex="0"><span>Active</span><strong id="otherActive">26</strong></div>
-          <div class="metric-item metric-light count-link" role="button" tabindex="0"><span>Closed</span><strong id="otherClosed">2</strong></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
 
       <!-- 3) ESN -->
       <div class="card grid-item with-tag" data-card="esn">
@@ -441,7 +277,7 @@
         </div>
 
         <div class="card-body">
-          <div class="metric-grid metric-grid-me">
+          <div class="metric-grid" style="--cols:2;">
             <div class="metric-item metric-light"><span>Breakdown</span><strong id="meBrkdwn">0</strong></div>
             <div class="metric-item metric-light"><span>PM</span><strong id="mePm">0</strong></div>
             <div class="metric-item metric-light"><span>Other</span><strong id="meOther">0</strong></div>
@@ -472,7 +308,7 @@
                 <input type="date" class="form-control" id="customToDate" />
               </div>
             </div>
-            <small class="text-muted d-block mt-2">Dates will filter based on Closed Date.</small>
+            <small class="text-muted d-block mt-2">Dates will filter based on Due Date (or Added Time for ESN).</small>
           </div>
 
           <div class="modal-footer">
@@ -482,18 +318,25 @@
         </div>
       </div>
     </div>
+
   </div>
+
   <script>
+    // ===================== CONFIG =====================
     let MyUser = "My_Users";
     let applicationName = "service-management";
     let ServiceRequest = "Scan_QR_Service_Request";
     let ESNMaster = "ESN_Scan_QR_Widget";
+
     let Admin = false;
     let Route = [];
     let loginuser = "";
     let UserName = "";
+
     let breakdownRequests = [];
     let routineRequests = [];
+    let allServiceRequests = [];
+
     const ROUTE_FIELD = "Route_Name";
     const STATUS_FIELD = "Status";
     const STATUS_CLOSED = "Closed";
@@ -501,56 +344,75 @@
     const STATUS_ACTIVE_LIST = ["Open", "Work in Progress", "Current month due", "Upcoming due"];
     const CLOSED_DATE_FIELD = "Closed_Date";
     const DUE_DATE_FIELD = "Due_Date";
+
+    // ✅ Financial Year start month:
+    // AU FY (Jul-Jun) => 6
+    // India FY (Apr-Mar) => 3
+    const FY_START_MONTH = 6;
+
+    // ===================== FILTER STATE =====================
     let otherCallsPeriod = "this_month";
-    let otherCallsCustomFrom = null;
-    let otherCallsCustomTo = null;
-    const els = {
-      all: () => document.getElementById("otherAll"),
-      closed: () => document.getElementById("otherClosed"),
-      overdue: () => document.getElementById("otherOverdue"),
-      active: () => document.getElementById("otherActive"),
-    };
-    // ===================== ESN SECTION =====================
+    let otherCallsCustomFrom = null; // ISO yyyy-MM-dd
+    let otherCallsCustomTo = null;   // ISO yyyy-MM-dd
+
+    // ESN
     const ESNStatus = "ESN_Status";
     const ESNCreatedTime = "Added_Time"; // Date-Time field
     const PendingESN = "Pending";
     const CompletedESN = "Completed";
     let esnPeriod = "this_month";
-    let esnCustomFrom = null;
-    let esnCustomTo = null;
-    const esnEls = {
-      pending: () => document.getElementById("esnPending"),
-      completed: () => document.getElementById("esnCompleted"),
-    };
-    // ===================== ME SECTION (UPDATED AS PER YOUR RULES) =====================
-    // Brkdwn  -> Service_Request_Type == "Breakdown"
-    // PM      -> Service_Request_Type == "Routine"
-    // Other   -> Service_Request_Type != "Breakdown" AND != "Routine"
+    let esnCustomFrom = null; // ISO
+    let esnCustomTo = null;   // ISO
+
+    // ME
     const SERVICE_TYPE_FIELD = "Service_Request_Type";
     const SERVICE_TYPE_BREAKDOWN = "Breakdown";
-
     let mePeriod = "this_month";
-    let meCustomFrom = null;
-    let meCustomTo = null;
-
-    const meEls = {
-      brkdwn: () => document.getElementById("meBrkdwn"),
-      pm: () => document.getElementById("mePm"),
-      other: () => document.getElementById("meOther"),
-      esn: () => document.getElementById("meEsn"),
-    };
-
-    function buildMeUserCriteria() {
-      const adminuser = "dsvcorporationptyltd";
-      if (!loginuser) return "";
-      return `((Added_User == "${loginuser}") || (Added_User == "${adminuser}"))`;
-    }
+    let meCustomFrom = null; // ISO
+    let meCustomTo = null;   // ISO
 
     // ===================== MODAL CONTEXT =====================
     let pendingCustomLabelEl = null;
     let activeCustomSection = null; // "other_calls" | "esn" | "me"
 
     // ===================== DATE HELPERS =====================
+    function parseISODateInput(val) {
+      if (!val) return null;
+      const [y, m, d] = val.split("-").map(Number);
+      if (!y || !m || !d) return null;
+      return new Date(y, m - 1, d);
+    }
+
+    function parseCreatorOrISODate(val) {
+      if (!val) return null;
+      if (val instanceof Date) return val;
+
+      const str = String(val).trim();
+
+      // ISO
+      if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+        const d = new Date(str);
+        return isNaN(d.getTime()) ? null : d;
+      }
+
+      // Creator dd-MMM-yyyy
+      const m = str.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
+      if (m) {
+        const dd = Number(m[1]);
+        const mon = m[2];
+        const yyyy = Number(m[3]);
+        const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        const mi = months.indexOf(mon);
+        if (mi >= 0) return new Date(yyyy, mi, dd);
+      }
+
+      const d = new Date(str);
+      return isNaN(d.getTime()) ? null : d;
+    }
+
+    function startOfDay(d) { const x = new Date(d); x.setHours(0,0,0,0); return x; }
+    function endOfDay(d)   { const x = new Date(d); x.setHours(23,59,59,999); return x; }
+
     function formatDateForCreator(dateObj) {
       const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
       const dd = String(dateObj.getDate()).padStart(2, "0");
@@ -570,78 +432,147 @@
       return `${dd}-${mmm}-${yyyy} ${hh}:${mm}:${ss}`;
     }
 
-    function parseISODateInput(val) {
-      if (!val) return null;
-      const [y, m, d] = val.split("-").map(Number);
-      if (!y || !m || !d) return null;
-      return new Date(y, m - 1, d);
+
+    function getFinancialYearStart(today = new Date()) {
+      const y = today.getFullYear();
+      const m = today.getMonth();
+      const fyYear = (m < FY_START_MONTH) ? (y - 1) : y;
+      return new Date(fyYear, FY_START_MONTH, 1);
     }
 
-    function normalizeESNPeriodKey(period) {
-      return String(period || "").replace(/^ESN/i, "");
+    function getFinancialQuarterIndex(today = new Date()) {
+      const fyStart = getFinancialYearStart(today);
+      const monthsDiff = (today.getFullYear() - fyStart.getFullYear()) * 12 + (today.getMonth() - fyStart.getMonth());
+      return Math.floor(monthsDiff / 3);
     }
 
-    function getPeriodRange(periodKey, customFromStr, customToStr) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const year = today.getFullYear();
-      const month = today.getMonth();
-      const quarterIndex = Math.floor(month / 3);
-
-      let start, end;
-
-      switch (periodKey) {
-        case "this_month":
-          start = new Date(year, month, 1);
-          end = new Date(year, month + 1, 0);
-          break;
-
-        case "this_quarter": {
-          const qStartMonth = quarterIndex * 3;
-          start = new Date(year, qStartMonth, 1);
-          end = new Date(year, qStartMonth + 3, 0);
-          break;
-        }
-
-        case "last_quarter": {
-          let qYear = year;
-          let qStartMonth = (quarterIndex - 1) * 3;
-          if (quarterIndex === 0) {
-            qYear = year - 1;
-            qStartMonth = 9;
-          }
-          start = new Date(qYear, qStartMonth, 1);
-          end = new Date(qYear, qStartMonth + 3, 0);
-          break;
-        }
-
-        case "this_year":
-          start = new Date(year, 0, 1);
-          end = new Date(today);
-          break;
-
-        case "custom": {
-          const cFrom = parseISODateInput(customFromStr);
-          const cTo = parseISODateInput(customToStr);
-          if (!cFrom || !cTo) return null;
-
-          cFrom.setHours(0, 0, 0, 0);
-          cTo.setHours(0, 0, 0, 0);
-
-          start = cFrom <= cTo ? cFrom : cTo;
-          end = cFrom <= cTo ? cTo : cFrom;
-          break;
-        }
-
-        default:
-          start = new Date(year, month, 1);
-          end = new Date(year, month + 1, 0);
-          break;
-      }
-
+    function getLastFinancialQuarterRange(today = new Date()) {
+      const fyStart = getFinancialYearStart(today);
+      const fqIndex = getFinancialQuarterIndex(today);
+      const currQStart = new Date(fyStart.getFullYear(), fyStart.getMonth() + fqIndex * 3, 1);
+      const start = new Date(currQStart.getFullYear(), currQStart.getMonth() - 3, 1);
+      const end = new Date(start.getFullYear(), start.getMonth() + 3, 0);
       return { start, end };
     }
+
+    // ✅ Single source of truth:
+    // - this_month: Due_Date month
+    // - this_quarter: Due_Date calendar quarter
+    // - last_quarter: Financial quarter
+    // - this_year: Financial year YTD
+    // - custom: ISO range
+    // function getPeriodRange(periodKey, customFromISO, customToISO) {
+    //   const today = startOfDay(new Date());
+
+    //   let start, end;
+
+    //   switch (periodKey) {
+    //     case "this_month": {
+    //       const y = today.getFullYear();
+    //       const m = today.getMonth();
+    //       start = new Date(y, m, 1);
+    //       end = new Date(y, m + 1, 0);
+    //       break;
+    //     }
+
+    //     case "this_quarter": {
+    //       const y = today.getFullYear();
+    //       const m = today.getMonth();
+    //       const q = Math.floor(m / 3);
+    //       start = new Date(y, q * 3, 1);
+    //       end = new Date(y, q * 3 + 3, 0);
+    //       break;
+    //     }
+
+    //     case "last_quarter": {
+    //       const r = getLastFinancialQuarterRange(today);
+    //       start = r.start;
+    //       end = r.end;
+    //       break;
+    //     }
+
+    //     case "this_year": {
+    //       start = getFinancialYearStart(today);
+    //       end = today; // FY YTD
+    //       break;
+    //     }
+
+    //     case "custom": {
+    //       const cFrom = parseISODateInput(customFromISO);
+    //       const cTo = parseISODateInput(customToISO);
+    //       if (!cFrom || !cTo) return null;
+
+    //       const s = startOfDay(cFrom);
+    //       const e = startOfDay(cTo);
+    //       start = s <= e ? s : e;
+    //       end = s <= e ? e : s;
+    //       break;
+    //     }
+
+    //     default: {
+    //       const y = today.getFullYear();
+    //       const m = today.getMonth();
+    //       start = new Date(y, m, 1);
+    //       end = new Date(y, m + 1, 0);
+    //       break;
+    //     }
+    //   }
+
+    //   return { start: startOfDay(start), end: startOfDay(end) };
+    // }
+
+    function getPeriodRange(periodKey, customFromISO, customToISO) {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+
+  let start, end;
+
+  switch (periodKey) {
+
+    case "this_month":
+      start = new Date(year, month, 1);
+      end = new Date(year, month + 1, 0);
+      break;
+
+    case "this_quarter": {
+      const currentQuarter = Math.floor(month / 3);
+      start = new Date(year, currentQuarter * 3, 1);
+      end = new Date(year, currentQuarter * 3 + 3, 0);
+      break;
+    }
+
+    case "last_quarter": {
+      const currentQuarter = Math.floor(month / 3);
+      const lastQuarterMonth = (currentQuarter - 1) * 3;
+      const lastQuarterYear = currentQuarter === 0 ? year - 1 : year;
+      const startMonth = currentQuarter === 0 ? 9 : lastQuarterMonth;
+
+      start = new Date(lastQuarterYear, startMonth, 1);
+      end = new Date(lastQuarterYear, startMonth + 3, 0);
+      break;
+    }
+
+    case "this_year":
+      start = new Date(year, 0, 1);
+      end = new Date(year, 11, 31);
+      break;
+
+    case "custom":
+      const from = parseISODateInput(customFromISO);
+      const to = parseISODateInput(customToISO);
+      if (!from || !to) return null;
+      start = startOfDay(from);
+      end = startOfDay(to);
+      break;
+
+    default:
+      start = new Date(year, month, 1);
+      end = new Date(year, month + 1, 0);
+  }
+
+  return { start: startOfDay(start), end: startOfDay(end) };
+}
 
     function buildDateRangeCriteria(fieldLinkName, startDate, endDate) {
       const s = formatDateForCreator(startDate);
@@ -649,11 +580,17 @@
       return `(${fieldLinkName} >= '${s}' && ${fieldLinkName} <= '${e}')`;
     }
 
+    // function buildDateTimeRangeCriteria(fieldLinkName, startDate, endDate) {
+    //   const s = formatDateTimeForCreator(startDate);
+    //   const e = formatDateTimeForCreator(endDate);
+    //   return `(${fieldLinkName} >= '${s}' && ${fieldLinkName} <= '${e}')`;
+    // }
     function buildDateTimeRangeCriteria(fieldLinkName, startDate, endDate) {
-      const s = formatDateTimeForCreator(startDate);
-      const e = formatDateTimeForCreator(endDate);
-      return `(${fieldLinkName} >= '${s}' && ${fieldLinkName} <= '${e}')`;
-    }
+  const s = formatDateTimeForCreator(startDate);
+  const e = formatDateTimeForCreator(endDate);
+  return `((${fieldLinkName} >= '${s}') && (${fieldLinkName} <= '${e}'))`;
+}
+
 
     function periodLabel(key) {
       switch (key) {
@@ -685,11 +622,7 @@
 
     // ===================== API COUNT HELPERS =====================
     async function getCountByCriteria(criteria) {
-      const config = {
-        appName: applicationName,
-        reportName: ServiceRequest,
-        criteria
-      };
+      const config = { appName: applicationName, reportName: ServiceRequest, criteria };
       try {
         const res = await ZOHO.CREATOR.API.getRecordCount(config);
         return Number(res?.result?.records_count || 0);
@@ -698,12 +631,9 @@
         return 0;
       }
     }
+
     async function getESNCountByCriteria(criteria) {
-      const config = {
-        appName: applicationName,
-        reportName: ESNMaster,
-        criteria
-      };
+      const config = { appName: applicationName, reportName: ESNMaster, criteria };
       try {
         const res = await ZOHO.CREATOR.API.getRecordCount(config);
         return Number(res?.result?.records_count || 0);
@@ -718,12 +648,7 @@
 
     function renderOtherCallsChart(closed, overdue, active) {
       const canvas = document.getElementById("pmChart");
-      if (!canvas) return;
-
-      if (!window.Chart) {
-        console.error("Chart.js not loaded.");
-        return;
-      }
+      if (!canvas || !window.Chart) return;
 
       const ctx = canvas.getContext("2d");
 
@@ -756,57 +681,90 @@
       });
     }
 
-    // ===================== OTHER CALLS: COUNTS + PIE =====================
-    async function loadOtherCalls(periodKey = "this_month", customFrom = null, customTo = null) {
-      const range = getPeriodRange(periodKey, customFrom, customTo);
+    // ===================== OTHER CALLS: SERVER COUNTS (chart) =====================
+    // Chart is for overall service requests (Closed/Overdue/Active) for the selected period.
+    async function loadOtherCalls(periodKey = "this_month", customFromISO = null, customToISO = null) {
+      const range = getPeriodRange(periodKey, customFromISO, customToISO);
       if (!range) return;
+
       const routePart = buildRouteCriteria();
       const closedDatePart = buildDateRangeCriteria(CLOSED_DATE_FIELD, range.start, range.end);
       const dueDatePart = buildDateRangeCriteria(DUE_DATE_FIELD, range.start, range.end);
 
-      const allCriteria = `${dueDatePart}${routePart}`;
       const closedCriteria = `(${STATUS_FIELD} == "${STATUS_CLOSED}") && ${closedDatePart}${routePart}`;
       const overdueCriteria = `(${STATUS_FIELD} == "${STATUS_OVERDUE}") && ${dueDatePart}${routePart}`;
       const activeCriteria = `${buildOrPicklistCriteria(STATUS_FIELD, STATUS_ACTIVE_LIST)} && ${dueDatePart}${routePart}`;
 
-      const [all, closed, overdue, active] = await Promise.all([
-        getCountByCriteria(allCriteria),
+      const [closed, overdue, active] = await Promise.all([
         getCountByCriteria(closedCriteria),
         getCountByCriteria(overdueCriteria),
         getCountByCriteria(activeCriteria)
       ]);
 
-      if (els.all()) els.all().textContent = all;
-      if (els.closed()) els.closed().textContent = closed;
-      if (els.overdue()) els.overdue().textContent = overdue;
-      if (els.active()) els.active().textContent = active;
-
       renderOtherCallsChart(closed, overdue, active);
+
+      // Client-side metric tiles (Breakdown/PM/Other) are updated separately
+      updateBreakdownCounts(periodKey, customFromISO, customToISO);
+      updatePMCounts(periodKey, customFromISO, customToISO);
+      updateOtherTypeCounts(periodKey, customFromISO, customToISO);
     }
 
-    // ===================== ESN: COUNTS (Date-Time field) =====================
-    async function ESNSectionRecordCount(periodKey = "this_month", customFrom = null, customTo = null) {
-      const range = getPeriodRange(periodKey, customFrom, customTo);
-      if (!range) return;
+    // ===================== ESN: COUNTS (Added_Time Date-Time) =====================
+    // async function ESNSectionRecordCount(periodKey = "this_month", customFromISO = null, customToISO = null) {
+    //   const range = getPeriodRange(periodKey, customFromISO, customToISO);
+    //   if (!range) return;
 
-      const routePart = buildRouteCriteria();
+    //   const routePart = buildRouteCriteria();
 
-      const startDT = new Date(range.start); startDT.setHours(0,0,0,0);
-      const endDT = new Date(range.end); endDT.setHours(23,59,59,0);
+    //   const startDT = startOfDay(range.start);
+    //   const endDT = endOfDay(range.end);
 
-      const addedTimePart = buildDateTimeRangeCriteria(ESNCreatedTime, startDT, endDT);
+    //   const addedTimePart = buildDateTimeRangeCriteria(ESNCreatedTime, startDT, endDT);
 
-      const pendingCriteria = `(${ESNStatus} == "${PendingESN}") && ${addedTimePart}${routePart}`;
-      const completedCriteria = `(${ESNStatus} == "${CompletedESN}") && ${addedTimePart}${routePart}`;
+    //   const pendingCriteria = `(${ESNStatus} == "${PendingESN}") && ${addedTimePart}${routePart}`;
+    //   const completedCriteria = `(${ESNStatus} == "${CompletedESN}") && ${addedTimePart}${routePart}`;
 
-      const [pendingCount, completedCount] = await Promise.all([
-        getESNCountByCriteria(pendingCriteria),
-        getESNCountByCriteria(completedCriteria)
-      ]);
+    //   const [pendingCount, completedCount] = await Promise.all([
+    //     getESNCountByCriteria(pendingCriteria),
+    //     getESNCountByCriteria(completedCriteria)
+    //   ]);
 
-      if (esnEls.pending()) esnEls.pending().textContent = pendingCount;
-      if (esnEls.completed()) esnEls.completed().textContent = completedCount;
-    }
+    //   const pEl = document.getElementById("esnPending");
+    //   const cEl = document.getElementById("esnCompleted");
+    //   if (pEl) pEl.textContent = pendingCount;
+    //   if (cEl) cEl.textContent = completedCount;
+    // }
+
+
+    async function ESNSectionRecordCount(periodKey, customFromISO, customToISO) {
+
+  const routePart = buildRouteCriteria();
+
+  // Pending = no filter
+  const pendingCriteria = `(${ESNStatus} == "${PendingESN}")${routePart}`;
+
+  const range = getPeriodRange(periodKey, customFromISO, customToISO);
+  let completedCriteria;
+
+  if (range) {
+    const startDT = startOfDay(range.start);
+    const endDT = endOfDay(range.end);
+    const addedTimePart = buildDateTimeRangeCriteria(ESNCreatedTime, startDT, endDT);
+
+    completedCriteria = `(${ESNStatus} == "${CompletedESN}") && ${addedTimePart}${routePart}`;
+  } else {
+    completedCriteria = `(${ESNStatus} == "${CompletedESN}")${routePart}`;
+  }
+
+  const [pendingCount, completedCount] = await Promise.all([
+    getESNCountByCriteria(pendingCriteria),
+    getESNCountByCriteria(completedCriteria)
+  ]);
+
+  esnPending.textContent = pendingCount;
+  esnCompleted.textContent = completedCount;
+}
+
 
     // ===================== HEADER =====================
     function getInitials(str) {
@@ -815,6 +773,7 @@
       if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
+
     function setHeaderUI(displayName, locationText) {
       const avatarEl = document.getElementById("techAvatar");
       const locEl = document.getElementById("techLoc");
@@ -822,10 +781,27 @@
       if (locEl) locEl.textContent = locationText || "--";
     }
 
-    // ===================== ME COUNTS (POPULATES "Me" CARD) =====================
-    // NOTE: Using Due_Date for period filtering (same pattern as other counts)
-    async function serviceBreakDownCount(periodKey = mePeriod, customFrom = meCustomFrom, customTo = meCustomTo) {
-      const range = getPeriodRange(periodKey, customFrom, customTo);
+    // ===================== ME SECTION (server counts) =====================
+    const meEls = {
+      brkdwn: () => document.getElementById("meBrkdwn"),
+      pm:     () => document.getElementById("mePm"),
+      other:  () => document.getElementById("meOther"),
+      esn:    () => document.getElementById("meEsn"),
+    };
+
+    // function buildMeUserCriteria() {
+    //   const adminuser = "dsvcorporationptyltd";
+    //   if (!loginuser) return "";
+    //   return `((Added_User == "${loginuser}") || (Added_User == "${adminuser}"))`;
+    // }
+
+    function buildMeUserCriteria() {
+  if (!UserName) return "";
+  return `(Service_Technician_Name == "${UserName}")`;
+}
+
+    async function serviceBreakDownCount(periodKey = mePeriod, customFromISO = meCustomFrom, customToISO = meCustomTo) {
+      const range = getPeriodRange(periodKey, customFromISO, customToISO);
       if (!range) return 0;
 
       const routePart = buildRouteCriteria();
@@ -834,15 +810,19 @@
 
       const baseCriteria = userPart ? `${userPart} && ${datePart}${routePart}` : `${datePart}${routePart}`;
       const criteria = `(${SERVICE_TYPE_FIELD} == "${SERVICE_TYPE_BREAKDOWN}") && ${baseCriteria}`;
+// const criteria =
+//   `(${SERVICE_TYPE_FIELD} == "Breakdown") && ` +
+//   `(Status == "Current month due") && ` +
+//   `${datePart} && ` +
+//   `${userPart}`;
 
       const count = await getCountByCriteria(criteria);
       if (meEls.brkdwn()) meEls.brkdwn().textContent = count;
       return count;
     }
 
-    // PM -> Routine
-    async function servicePMCount(periodKey = mePeriod, customFrom = meCustomFrom, customTo = meCustomTo) {
-      const range = getPeriodRange(periodKey, customFrom, customTo);
+    async function servicePMCount(periodKey = mePeriod, customFromISO = meCustomFrom, customToISO = meCustomTo) {
+      const range = getPeriodRange(periodKey, customFromISO, customToISO);
       if (!range) return 0;
 
       const routePart = buildRouteCriteria();
@@ -851,55 +831,277 @@
 
       const baseCriteria = userPart ? `${userPart} && ${datePart}${routePart}` : `${datePart}${routePart}`;
       const criteria = `(${SERVICE_TYPE_FIELD} == "Routine") && ${baseCriteria}`;
+// const criteria =
+//   `(${SERVICE_TYPE_FIELD} == "Breakdown") && ` +
+//   `(Status == "Current month due") && ` +
+//   `${datePart} && ` +
+//   `${userPart}`;
 
       const count = await getCountByCriteria(criteria);
       if (meEls.pm()) meEls.pm().textContent = count;
       return count;
     }
 
-    // Other -> NOT Breakdown and NOT Routine
-    async function serviceOtherCount(periodKey = mePeriod, customFrom = meCustomFrom, customTo = meCustomTo) {
-      const range = getPeriodRange(periodKey, customFrom, customTo);
-      if (!range) return 0;
+async function serviceOtherCount(periodKey = mePeriod, customFrom = meCustomFrom, customTo = meCustomTo) {
+  const range = getPeriodRange(periodKey, customFrom, customTo);
+  if (!range) return 0;
 
-      const routePart = buildRouteCriteria();
-      const userPart = buildMeUserCriteria();
-      const datePart = buildDateRangeCriteria(DUE_DATE_FIELD, range.start, range.end);
+  const routePart = buildRouteCriteria();
+  const userPart = buildMeUserCriteria();
+  const datePart = buildDateRangeCriteria(DUE_DATE_FIELD, range.start, range.end);
 
-      const baseCriteria = userPart ? `${userPart} && ${datePart}${routePart}` : `${datePart}${routePart}`;
-      const criteria = `(${SERVICE_TYPE_FIELD} != "Breakdown") && (${SERVICE_TYPE_FIELD} != "Routine") && ${baseCriteria}`;
+  const baseCriteria = userPart ? `${userPart} && ${datePart}${routePart}` : `${datePart}${routePart}`;
+  const criteria = `((${SERVICE_TYPE_FIELD} != "Breakdown") && (${SERVICE_TYPE_FIELD} != "Routine")) && ${baseCriteria}`;
 
-      const count = await getCountByCriteria(criteria);
-      if (meEls.other()) meEls.other().textContent = count;
-      return count;
-    }
+  const count = await getCountByCriteria(criteria);
+  if (meEls.other()) meEls.other().textContent = count;
+  return count;
+}
 
-    // ESN total count -> shows in Me -> ESN
-    async function ESNNumberCount(periodKey = mePeriod, customFrom = meCustomFrom, customTo = meCustomTo) {
-      const range = getPeriodRange(periodKey, customFrom, customTo);
-      if (!range) return 0;
 
-      const routePart = buildRouteCriteria();
-      const userPart = buildMeUserCriteria();
+//     async function ESNNumberCount(periodKey = mePeriod, customFromISO = meCustomFrom, customToISO = meCustomTo) {
+//       const range = getPeriodRange(periodKey, customFromISO, customToISO);
+//       if (!range) return 0;
 
-      const startDT = new Date(range.start); startDT.setHours(0,0,0,0);
-      const endDT = new Date(range.end); endDT.setHours(23,59,59,0);
-      const addedTimePart = buildDateTimeRangeCriteria(ESNCreatedTime, startDT, endDT);
+//       const routePart = buildRouteCriteria();
+//       const userPart = buildMeUserCriteria();
 
-      const criteria = userPart ? `${userPart} && ${addedTimePart}${routePart}` : `${addedTimePart}${routePart}`;
-      const count = await getESNCountByCriteria(criteria);
+//       const startDT = startOfDay(range.start);
+//       const endDT = endOfDay(range.end);
+//       const addedTimePart = buildDateTimeRangeCriteria(ESNCreatedTime, startDT, endDT);
 
-      if (meEls.esn()) meEls.esn().textContent = count;
-      return count;
-    }
+//       const criteria = userPart ? `${userPart} && ${addedTimePart}${routePart}` : `${addedTimePart}${routePart}`;
+// // const criteria =
+// //   `(${SERVICE_TYPE_FIELD} == "Breakdown") && ` +
+// //   `(Status == "Current month due") && ` +
+// //   `${datePart} && ` +
+// //   `${userPart}`;
+  
+//       const count = await getESNCountByCriteria(criteria);
 
-    async function loadMeSection(periodKey = mePeriod, customFrom = meCustomFrom, customTo = meCustomTo) {
+//       if (meEls.esn()) meEls.esn().textContent = count;
+//       return count;
+//     }
+
+async function ESNNumberCount(periodKey = mePeriod, customFrom = meCustomFrom, customTo = meCustomTo) {
+  const range = getPeriodRange(periodKey, customFrom, customTo);
+  if (!range) return 0;
+
+  const routePart = buildRouteCriteria();
+  const userPart = buildMeUserCriteria();
+
+  const startDT = new Date(range.start); startDT.setHours(0,0,0,0);
+  const endDT = new Date(range.end); endDT.setHours(23,59,59,0);
+  
+  const s = formatDateTimeForCreator(startDT);
+  const e = formatDateTimeForCreator(endDT);
+  const addedTimePart = `(${ESNCreatedTime} >= '${s}' && ${ESNCreatedTime} <= '${e}')`;
+
+  let criteria = addedTimePart;
+  if (userPart) {
+    criteria = `${userPart} && ${addedTimePart}`;
+  }
+  if (routePart) {
+    criteria = `${criteria}${routePart}`;
+  }
+
+  console.log("ESN Criteria:", criteria);
+  const count = await getESNCountByCriteria(criteria);
+
+  if (meEls.esn()) meEls.esn().textContent = count;
+  return count;
+}
+
+
+    async function loadMeSection(periodKey = mePeriod, customFromISO = meCustomFrom, customToISO = meCustomTo) {
       await Promise.all([
-        serviceBreakDownCount(periodKey, customFrom, customTo),
-        servicePMCount(periodKey, customFrom, customTo),
-        serviceOtherCount(periodKey, customFrom, customTo),
-        ESNNumberCount(periodKey, customFrom, customTo),
+        serviceBreakDownCount(periodKey, customFromISO, customToISO),
+        servicePMCount(periodKey, customFromISO, customToISO),
+        serviceOtherCount(periodKey, customFromISO, customToISO),
+        ESNNumberCount(periodKey, customFromISO, customToISO),
       ]);
+    }
+
+    // ===================== CLIENT-SIDE TILE COUNTS (Other Calls card) =====================
+    function isDateInRange(dateVal, start, end) {
+      const d = parseCreatorOrISODate(dateVal);
+      if (!d) return false;
+      const x = startOfDay(d);
+      return x >= startOfDay(start) && x <= startOfDay(end);
+    }
+
+    // Breakdown tiles:
+    // - All => Due_Date in range (any status)
+    // - Closed => Closed_Date in range (Status Closed)
+    // function updateBreakdownCounts(periodKey = "this_month", customFromISO = null, customToISO = null) {
+    //   const range = getPeriodRange(periodKey, customFromISO, customToISO);
+    //   if (!range) return;
+
+    //   const all = breakdownRequests.filter(req => isDateInRange(req.Due_Date, range.start, range.end));
+    //   const closed = breakdownRequests.filter(req => req.Status === "Closed" && isDateInRange(req.Closed_Date, range.start, range.end));
+
+    //   const breakdownAllEl = document.getElementById("breakdownAll");
+    //   const breakdownClosedEl = document.getElementById("breakdownClosed");
+
+    //   if (breakdownAllEl) breakdownAllEl.textContent = all.length;
+    //   if (breakdownClosedEl) breakdownClosedEl.textContent = closed.length;
+    // }
+
+    function updateBreakdownCounts(periodKey, customFromISO, customToISO) {
+
+  const range = getPeriodRange(periodKey, customFromISO, customToISO);
+  if (!range) return;
+
+  const all = breakdownRequests.filter(req =>
+    req.Status === "Current month due" &&
+    isDateInRange(req.Due_Date, range.start, range.end)
+  );
+
+  const closed = breakdownRequests.filter(req =>
+    req.Status === "Closed" &&
+    isDateInRange(req.Due_Date, range.start, range.end)
+  );
+
+  breakdownAll.textContent = all.length;
+  breakdownClosed.textContent = closed.length;
+}
+
+    // PM tiles:
+    // - All => Due_Date in range AND Status != Closed
+    // - Closed => Closed_Date in range AND Status Closed
+    // - Overdue => Due_Date in range AND Status Overdue
+    // function updatePMCounts(periodKey = "this_month", customFromISO = null, customToISO = null) {
+    //   const range = getPeriodRange(periodKey, customFromISO, customToISO);
+    //   if (!range) return;
+
+    //   const all = routineRequests.filter(req =>
+    //     req.Service_Request_Type === "Routine" &&
+    //     req.Status !== "Closed" &&
+    //     isDateInRange(req.Due_Date, range.start, range.end)
+    //   );
+
+    //   const closed = routineRequests.filter(req =>
+    //     req.Service_Request_Type === "Routine" &&
+    //     req.Status === "Closed" &&
+    //     isDateInRange(req.Closed_Date, range.start, range.end)
+    //   );
+
+    //   const overdue = routineRequests.filter(req =>
+    //     req.Service_Request_Type === "Routine" &&
+    //     req.Status === "Overdue" &&
+    //     isDateInRange(req.Due_Date, range.start, range.end)
+    //   );
+
+    //   const pmAllEl = document.getElementById("pmAll");
+    //   const pmClosedEl = document.getElementById("pmClosed");
+    //   const pmOverdueEl = document.getElementById("pmOverdue");
+
+    //   if (pmAllEl) pmAllEl.textContent = all.length;
+    //   if (pmClosedEl) pmClosedEl.textContent = closed.length;
+    //   if (pmOverdueEl) pmOverdueEl.textContent = overdue.length;
+    // }
+
+    function updatePMCounts(periodKey, customFromISO, customToISO) {
+
+  const range = getPeriodRange(periodKey, customFromISO, customToISO);
+  if (!range) return;
+
+  const today = new Date();
+  const nextMonthEnd = new Date(today.getFullYear(), today.getMonth() + 2, 0);
+
+  const all = routineRequests.filter(req => {
+
+    if (periodKey === "this_month") {
+      return req.Status === "Current month due" &&
+             isDateInRange(req.Due_Date, today, nextMonthEnd);
+    }
+
+    return req.Status === "Current month due" &&
+           isDateInRange(req.Due_Date, range.start, range.end);
+  });
+
+  const closed = routineRequests.filter(req =>
+    req.Status === "Closed" &&
+    isDateInRange(req.Due_Date, range.start, range.end)
+  );
+
+  const overdue = routineRequests.filter(req =>
+    req.Status === "Overdue"
+  );
+
+  pmAll.textContent = all.length;
+  pmClosed.textContent = closed.length;
+  pmOverdue.textContent = overdue.length;
+}
+
+
+
+    // Other tiles:
+    // Other = NOT Breakdown and NOT Routine
+    // - Active => Due_Date in range AND Status != Closed
+    // - Closed => Closed_Date in range AND Status Closed
+    // function updateOtherTypeCounts(periodKey = "this_month", customFromISO = null, customToISO = null) {
+    //   const range = getPeriodRange(periodKey, customFromISO, customToISO);
+    //   if (!range) return;
+
+    //   const otherType = allServiceRequests.filter(req =>
+    //     req.Service_Request_Type !== "Breakdown" && req.Service_Request_Type !== "Routine"
+    //   );
+
+    //   const active = otherType.filter(req =>
+    //     req.Status !== "Closed" && isDateInRange(req.Due_Date, range.start, range.end)
+    //   );
+
+    //   const closed = otherType.filter(req =>
+    //     req.Status === "Closed" && isDateInRange(req.Closed_Date, range.start, range.end)
+    //   );
+
+    //   const otherActiveEl = document.getElementById("otherActive");
+    //   const otherClosedEl = document.getElementById("otherClosed");
+    //   if (otherActiveEl) otherActiveEl.textContent = active.length;
+    //   if (otherClosedEl) otherClosedEl.textContent = closed.length;
+    // }
+
+    function updateOtherTypeCounts(periodKey, customFromISO, customToISO) {
+
+  const range = getPeriodRange(periodKey, customFromISO, customToISO);
+  if (!range) return;
+
+  const validTypes = ["Inspection", "One-Time Calls", "Repair"];
+
+  const otherType = allServiceRequests.filter(req =>
+    validTypes.includes(req.Service_Request_Type)
+  );
+
+  const active = otherType.filter(req =>
+    req.Status === "Current month due" &&
+    isDateInRange(req.Due_Date, range.start, range.end)
+  );
+
+  const closed = otherType.filter(req =>
+    req.Status === "Closed" &&
+    isDateInRange(req.Due_Date, range.start, range.end)
+  );
+
+  otherActive.textContent = active.length;
+  otherClosed.textContent = closed.length;
+}
+
+    // ===================== URL PARAM BUILDERS (same period logic) =====================
+    function getDateRangeParams(periodKey, customFromISO, customToISO) {
+      const range = getPeriodRange(periodKey, customFromISO, customToISO);
+      if (!range) return "";
+      const from = formatDateForCreator(range.start);
+      const to = formatDateForCreator(range.end);
+      return `&Due_Date=${from};${to}&Due_Date_op=58`;
+    }
+
+    function getClosedDateRangeParams(periodKey, customFromISO, customToISO) {
+      const range = getPeriodRange(periodKey, customFromISO, customToISO);
+      if (!range) return "";
+      const from = formatDateForCreator(range.start);
+      const to = formatDateForCreator(range.end);
+      return `&Closed_Date=${from};${to}&Closed_Date_op=58`;
     }
 
     // ===================== FILTER UI (NO jQuery) =====================
@@ -907,12 +1109,15 @@
       document.querySelectorAll(".filter-dropdown.open").forEach(dd => dd.classList.remove("open"));
     }
 
+    function normalizeESNPeriodKey(period) {
+      return String(period || "").replace(/^ESN/i, "");
+    }
+
     function bindFilterUI() {
       document.addEventListener("click", (e) => {
         const btn = e.target.closest(".filter-btn");
         const option = e.target.closest(".filter-option");
 
-        // Option click
         if (option) {
           const rawPeriod = option.getAttribute("data-period");
           const container = option.closest(".filter-container");
@@ -920,8 +1125,6 @@
           const labelEl = container?.querySelector(".active-period");
 
           closeAllDropdowns();
-
-          if (section !== "other_calls" && section !== "esn" && section !== "me") return;
 
           // OTHER CALLS
           if (section === "other_calls") {
@@ -939,9 +1142,7 @@
             otherCallsCustomFrom = null;
             otherCallsCustomTo = null;
             if (labelEl) labelEl.textContent = periodLabel(period);
-            loadOtherCalls(otherCallsPeriod);
-            updateBreakdownCounts(otherCallsPeriod, otherCallsCustomFrom, otherCallsCustomTo);
-            updatePMCounts(otherCallsPeriod, otherCallsCustomFrom, otherCallsCustomTo);
+            loadOtherCalls(otherCallsPeriod, otherCallsCustomFrom, otherCallsCustomTo);
             return;
           }
 
@@ -999,23 +1200,16 @@
           return;
         }
 
-        // Outside click
         closeAllDropdowns();
       });
 
-      // Modal apply
+      // Modal apply (✅ store ISO yyyy-MM-dd)
       document.getElementById("applyDateRangeBtn").addEventListener("click", () => {
-        const fromRaw = document.getElementById("customFromDate").value;
-        const toRaw = document.getElementById("customToDate").value;
-        const from = formatToDDMMMYYYY(fromRaw);
-        const to = formatToDDMMMYYYY(toRaw);
+        const fromRaw = document.getElementById("customFromDate").value; // ISO
+        const toRaw   = document.getElementById("customToDate").value;   // ISO
 
-        if (!from || !to) {
-          Swal.fire({
-            icon: 'warning',
-            title: 'Missing Dates',
-            text: 'Please select both From and To dates.'
-          });
+        if (!fromRaw || !toRaw) {
+          Swal.fire({ icon: 'warning', title: 'Missing Dates', text: 'Please select both From and To dates.' });
           return;
         }
 
@@ -1024,325 +1218,47 @@
 
         if (activeCustomSection === "other_calls") {
           otherCallsPeriod = "custom";
-          otherCallsCustomFrom = from;
-          otherCallsCustomTo = to;
+          otherCallsCustomFrom = fromRaw;
+          otherCallsCustomTo = toRaw;
           loadOtherCalls("custom", otherCallsCustomFrom, otherCallsCustomTo);
-          updateBreakdownCounts("custom", otherCallsCustomFrom, otherCallsCustomTo);
-          updatePMCounts("custom", otherCallsCustomFrom, otherCallsCustomTo);
           return;
         }
 
         if (activeCustomSection === "esn") {
           esnPeriod = "custom";
-          esnCustomFrom = from;
-          esnCustomTo = to;
+          esnCustomFrom = fromRaw;
+          esnCustomTo = toRaw;
           ESNSectionRecordCount("custom", esnCustomFrom, esnCustomTo);
           return;
         }
 
         if (activeCustomSection === "me") {
           mePeriod = "custom";
-          meCustomFrom = from;
-          meCustomTo = to;
+          meCustomFrom = fromRaw;
+          meCustomTo = toRaw;
           loadMeSection("custom", meCustomFrom, meCustomTo);
           return;
         }
       });
     }
 
-    function formatToDDMMMYYYY(dateStr) {
-      // dateStr is in "yyyy-MM-dd"
-      if (!dateStr) return "";
-      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const [year, month, day] = dateStr.split("-");
-      return `${day}-${months[parseInt(month, 10) - 1]}-${year}`;
-    }
+    // ===================== FETCH HELPERS =====================
+    async function fetchAllRecordsPaged(config) {
+      const all = [];
+      let page = 1;
+      const pageSize = 200;
 
-    // --- Filter Function for Breakdown Calls based on period (example: this_month) ---
-        function isThisMonth(date) {
-          const d = new Date(date);
-          const now = new Date();
-          return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-        }
-
-        function isThisQuarter(date) {
-          const d = new Date(date);
-          const now = new Date();
-          const quarter = Math.floor(now.getMonth() / 3);
-          return d.getFullYear() === now.getFullYear() && Math.floor(d.getMonth() / 3) === quarter;
-        }
-
-        function isLastQuarter(date) {
-          const d = new Date(date);
-          const now = new Date();
-          let lastQuarter = Math.floor(now.getMonth() / 3) - 1;
-          let year = now.getFullYear();
-          if (lastQuarter < 0) {
-            lastQuarter = 3;
-            year -= 1;
-          }
-          return d.getFullYear() === year && Math.floor(d.getMonth() / 3) === lastQuarter;
-        }
-
-        function isThisYear(date) {
-          const d = new Date(date);
-          const now = new Date();
-          return d.getFullYear() === now.getFullYear();
-        }
-
-        function isInRange(date, from, to) {
-          const d = new Date(date);
-          return d >= new Date(from) && d <= new Date(to);
-        }
-
-        // Filtering function
-        function filterBreakdownRequests(breakdownRequests, filterType, customFrom, customTo, statusType) {
-          return breakdownRequests.filter(req => {
-            const dueDate = req.Due_Date;
-            if (!dueDate) return false;
-
-            let dateMatch = false;
-            switch (filterType) {
-              case "This Month":
-                dateMatch = isThisMonth(dueDate);
-                break;
-              case "This Quarter":
-                dateMatch = isThisQuarter(dueDate);
-                break;
-              case "Last Quarter":
-                dateMatch = isLastQuarter(dueDate);
-                break;
-              case "This Year":
-                dateMatch = isThisYear(dueDate);
-                break;
-              case "Custom":
-                dateMatch = isInRange(dueDate, customFrom, customTo);
-                break;
-              default:
-                dateMatch = true;
-            }
-
-            let statusMatch = false;
-            if (statusType === "All") {
-              statusMatch = req.Status === "Current month due";
-            } else if (statusType === "Closed") {
-              statusMatch = req.Status === "Closed";
-            }
-
-            if (dateMatch && statusMatch) {
-              // console.log("Matched record:", req);
-            }
-
-            return dateMatch && statusMatch;
-          });
-        }
-
-        function updateBreakdownCounts(periodKey = "this_month", customFrom = null, customTo = null) {
-          let filterType;
-          switch (periodKey) {
-            case "this_month": filterType = "This Month"; break;
-            case "this_quarter": filterType = "This Quarter"; break;
-            case "last_quarter": filterType = "Last Quarter"; break;
-            case "this_year": filterType = "This Year"; break;
-            case "custom": filterType = "Custom"; break;
-            default: filterType = "This Month";
-          }
-
-          const filteredBreakdownAll = filterBreakdownRequests(
-            breakdownRequests,
-            filterType,
-            customFrom,
-            customTo,
-            "All"
-          );
-          const filteredBreakdownClosed = filterBreakdownRequests(
-            breakdownRequests,
-            filterType,
-            customFrom,
-            customTo,
-            "Closed"
-          );
-
-          const breakdownAllEl = document.getElementById("breakdownAll");
-          const breakdownClosedEl = document.getElementById("breakdownClosed");
-
-          if (breakdownAllEl) breakdownAllEl.textContent = filteredBreakdownAll.length;
-          if (breakdownClosedEl) breakdownClosedEl.textContent = filteredBreakdownClosed.length;
-        }
-
-// Filtering function for PM (Routine) Requests
-function filterRoutineRequests(routineRequests, filterType, customFrom, customTo, statusType) {
-  return routineRequests.filter(req => {
-    const dueDate = req.Due_Date;
-    if (!dueDate) return false;
-    
-    const dueDateObj = new Date(dueDate);
-    
-    // Apply date filter based on selected period
-    let dateMatch = false;
-    switch (filterType) {
-      case "This Month":
-        dateMatch = isThisMonth(dueDate);
-        break;
-      case "This Quarter":
-        dateMatch = isThisQuarter(dueDate);
-        break;
-      case "Last Quarter":
-        dateMatch = isLastQuarter(dueDate);
-        break;
-      case "This Year":
-        dateMatch = isThisYear(dueDate);
-        break;
-      case "Custom":
-        dateMatch = isInRange(dueDate, customFrom, customTo);
-        break;
-      default:
-        dateMatch = true;
-    }
-    
-    let statusMatch = false;
-    if (statusType === "All") {
-      // Show Current month due + Upcoming due within the selected date range
-      statusMatch = (req.Status === "Current month due" || req.Status === "Upcoming due") && dateMatch;
-    } else if (statusType === "Closed") {
-      statusMatch = req.Status === "Closed" && dateMatch;
-    } else if (statusType === "Overdue") {
-      // Show all overdue regardless of date filter
-      statusMatch = req.Status === "Overdue";
-    }
-    
-    return statusMatch;
-  });
-}
-
-
-
-        function updatePMCounts(periodKey = "this_month", customFrom = null, customTo = null) {
-          let filterType;
-          switch (periodKey) {
-            case "this_month": filterType = "This Month"; break;
-            case "this_quarter": filterType = "This Quarter"; break;
-            case "last_quarter": filterType = "Last Quarter"; break;
-            case "this_year": filterType = "This Year"; break;
-            case "custom": filterType = "Custom"; break;
-            default: filterType = "This Month";
-          }
-
-          const filteredPMAll = filterRoutineRequests(routineRequests, filterType, customFrom, customTo, "All");
-          const filteredPMClosed = filterRoutineRequests(routineRequests, filterType, customFrom, customTo, "Closed");
-          const filteredPMOverdue = filterRoutineRequests(routineRequests, filterType, customFrom, customTo, "Overdue");
-
-          const pmAllEl = document.getElementById("pmAll");
-          const pmClosedEl = document.getElementById("pmClosed");
-          const pmOverdueEl = document.getElementById("pmOverdue");
-
-          if (pmAllEl) pmAllEl.textContent = filteredPMAll.length;
-          if (pmClosedEl) pmClosedEl.textContent = filteredPMClosed.length;
-          if (pmOverdueEl) pmOverdueEl.textContent = filteredPMOverdue.length;
-        }
-
-
-
-
-
-    // ADD THIS FUNCTION HERE
-    function getDateRangeParams(filterType, customFrom, customTo) {
-      let fromDate, toDate;
-      const now = new Date();
-      
-      switch (filterType) {
-        case "This Month":
-          fromDate = new Date(now.getFullYear(), now.getMonth(), 1);
-          toDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-          break;
-        case "This Quarter":
-          const currentQuarter = Math.floor(now.getMonth() / 3);
-          fromDate = new Date(now.getFullYear(), currentQuarter * 3, 1);
-          toDate = new Date(now.getFullYear(), (currentQuarter + 1) * 3, 0);
-          break;
-        case "Last Quarter":
-          let lastQuarter = Math.floor(now.getMonth() / 3) - 1;
-          let year = now.getFullYear();
-          if (lastQuarter < 0) {
-            lastQuarter = 3;
-            year -= 1;
-          }
-          fromDate = new Date(year, lastQuarter * 3, 1);
-          toDate = new Date(year, (lastQuarter + 1) * 3, 0);
-          break;
-        case "This Year":
-          fromDate = new Date(now.getFullYear(), 0, 1);
-          toDate = new Date(now.getFullYear(), 11, 31);
-          break;
-        case "Custom":
-          fromDate = new Date(customFrom);
-          toDate = new Date(customTo);
-          break;
-        default:
-          return "";
+      while (true) {
+        const res = await ZOHO.CREATOR.API.getAllRecords({ ...config, page, pageSize });
+        if (res?.code !== 3000 || !Array.isArray(res.data)) break;
+        all.push(...res.data);
+        if (res.data.length < pageSize) break;
+        page++;
       }
-      
-      const formatDate = (d) => {
-        const day = String(d.getDate()).padStart(2, '0');
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const month = months[d.getMonth()];
-        const year = d.getFullYear();
-        return `${day}-${month}-${year}`;
-      };
-      
-      return `&Due_Date=${formatDate(fromDate)};${formatDate(toDate)}&Due_Date_op=58`;
+      return all;
     }
 
-    function getClosedDateRangeParams(filterType, customFrom, customTo) {
-    let fromDate, toDate;
-    const now = new Date();
-    
-    switch (filterType) {
-      case "This Month":
-        fromDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        toDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-        break;
-      case "This Quarter":
-        const currentQuarter = Math.floor(now.getMonth() / 3);
-        fromDate = new Date(now.getFullYear(), currentQuarter * 3, 1);
-        toDate = new Date(now.getFullYear(), (currentQuarter + 1) * 3, 0);
-        break;
-      case "Last Quarter":
-        let lastQuarter = Math.floor(now.getMonth() / 3) - 1;
-        let year = now.getFullYear();
-        if (lastQuarter < 0) {
-          lastQuarter = 3;
-          year -= 1;
-        }
-        fromDate = new Date(year, lastQuarter * 3, 1);
-        toDate = new Date(year, (lastQuarter + 1) * 3, 0);
-        break;
-      case "This Year":
-        fromDate = new Date(now.getFullYear(), 0, 1);
-        toDate = new Date(now.getFullYear(), 11, 31);
-        break;
-      case "Custom":
-        fromDate = new Date(customFrom);
-        toDate = new Date(customTo);
-        break;
-      default:
-        return "";
-    }
-    
-    const formatDate = (d) => {
-      const day = String(d.getDate()).padStart(2, '0');
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const month = months[d.getMonth()];
-      const year = d.getFullYear();
-      return `${day}-${month}-${year}`;
-    };
-    
-    return `&Closed_Date=${formatDate(fromDate)};${formatDate(toDate)}&Closed_Date_op=58`;
-  }
-
-
-
-    // ===================== INIT (mobile-safe) =====================
+    // ===================== INIT =====================
     async function initWidget() {
       try {
         if (!window.ZOHO || !ZOHO.CREATOR) {
@@ -1354,23 +1270,21 @@ function filterRoutineRequests(routineRequests, filterType, customFrom, customTo
         bindFilterUI();
 
         const queryParams = ZOHO.CREATOR.UTIL.getInitParams() || {};
-        console.log
         loginuser = queryParams.loginUser || "";
-        console.log("loginuser: ", loginuser);
 
-        const config = {
-          appName: "service-management",
-          reportName: "My_Users",
+        // -------- fetch current user --------
+        const userConfig = {
+          appName: applicationName,
+          reportName: MyUser,
           criteria: `(Email == "${loginuser}")`,
           page: 1,
           pageSize: 1
         };
+        const userRes = await ZOHO.CREATOR.API.getAllRecords(userConfig);
 
-        const response = await ZOHO.CREATOR.API.getAllRecords(config);
-
-        if (response?.code === 3000 && response?.data?.length) {
-          const data = response.data[0];
-          console.log("User data: ", data);
+        let userRoute = "";
+        if (userRes?.code === 3000 && userRes?.data?.length) {
+          const data = userRes.data[0];
           UserName = data.Name || "User";
           const routeList = data.New_Route_Name;
 
@@ -1381,8 +1295,7 @@ function filterRoutineRequests(routineRequests, filterType, customFrom, customTo
           } else {
             Admin = false;
 
-            var userRoute = Array.isArray(routeList) ? routeList[0] : routeList;
-            console.log("User route from data: ", userRoute);
+            userRoute = Array.isArray(routeList) ? routeList[0] : routeList;
             Route = [];
             switch (userRoute) {
               case "Pune All": Route = ["Pune 1", "Pune 2", "Pune 3"]; break;
@@ -1402,12 +1315,11 @@ function filterRoutineRequests(routineRequests, filterType, customFrom, customTo
           setHeaderUI("User", "--");
         }
 
-        // ------------- build criteria for fetching service requests based on user route -------
+        // -------- build route criteria for API fetch --------
         function buildRouteCriteriaForAPI() {
-          if (Admin) return ""; // Admin gets all data
+          if (Admin) return "";
           if (!Route || Route.length === 0) return "";
 
-          // Map region names to their sub-routes
           const regionRouteMap = {
             "Pune All": ["Pune 1", "Pune 2", "Pune 3"],
             "All North Region": ["North 1", "North 2", "North 3", "North 4", "North 5", "North 6"],
@@ -1417,215 +1329,55 @@ function filterRoutineRequests(routineRequests, filterType, customFrom, customTo
             "All Ahmedabad": ["Ahmedabad 1", "Ahmedabad 2"]
           };
 
-          // If the user's route is a region, expand it to sub-routes
           let expandedRoutes = [];
-          Route.forEach(r => {
-            if (regionRouteMap[r]) {
-              expandedRoutes.push(...regionRouteMap[r]);
-            } else {
-              expandedRoutes.push(r);
-            }
-          });
-
-          // Remove duplicates
+          Route.forEach(r => regionRouteMap[r] ? expandedRoutes.push(...regionRouteMap[r]) : expandedRoutes.push(r));
           expandedRoutes = [...new Set(expandedRoutes)];
 
-          if (expandedRoutes.length === 1) {
-            return `(Route_Name == "${expandedRoutes[0]}")`;
-          }
+          if (expandedRoutes.length === 1) return `(Route_Name == "${expandedRoutes[0]}")`;
           return "(" + expandedRoutes.map(r => `(Route_Name == "${r}")`).join(" || ") + ")";
         }
-        // --------------------------------------------------------------------------------------------------
 
-        //  ----------fetch all Service Requests -----
-        async function fetchAllServiceRequests(config) {
-          const allRecords = [];
-          let page = 1;
-          const pageSize = 200; // Max allowed by Zoho Creator
+        const routeCriteria = buildRouteCriteriaForAPI();
 
-          while (true) {
-            const response = await ZOHO.CREATOR.API.getAllRecords({
-              ...config,
-              page,
-              pageSize
-            });
-            if (response?.code !== 3000 || !Array.isArray(response.data)) break;
-            allRecords.push(...response.data);
-            if (response.data.length < pageSize) break; // Last page reached
-            page++;
-          }
-          return allRecords;
-        }
-
-
-        // =============== BreakDown Calls =======================
-        const serviceRequestConfig = {
-          appName: "service-management",
-          reportName: "Scan_QR_Service_Request",
-          criteria: buildRouteCriteriaForAPI(),
-          // page: 1,
-          // pageSize: 1
+        // -------- fetch all Service Requests for tile computations --------
+        const srConfig = {
+          appName: applicationName,
+          reportName: ServiceRequest,
+          criteria: routeCriteria
         };
-        const allServiceRequests = await fetchAllServiceRequests(serviceRequestConfig);
-        console.log("All Service Request Records: ", allServiceRequests);
+        allServiceRequests = await fetchAllRecordsPaged(srConfig);
 
-        // ---- Fetch Breakdown Calls -----
-        breakdownRequests = allServiceRequests.filter(
-          req => req.Service_Request_Type === "Breakdown"
-        );
-        console.log("Breakdown Service Requests:", breakdownRequests);
-        updateBreakdownCounts(otherCallsPeriod, otherCallsCustomFrom, otherCallsCustomTo);
+        // Breakdown list
+        breakdownRequests = allServiceRequests.filter(req => req.Service_Request_Type === "Breakdown");
 
-        // Example usage:
-        const filteredBreakdownAll = filterBreakdownRequests(breakdownRequests, "This Month", null, null, "All");
-        const filteredBreakdownClosed = filterBreakdownRequests(breakdownRequests, "This Month", null, null, "Closed");
+        // Routine list (include Upcoming due too)
+        routineRequests = allServiceRequests.filter(req => req.Service_Request_Type === "Routine");
 
-        console.log("Breakdown - All:", filteredBreakdownAll);
-        console.log("Breakdown - Closed:", filteredBreakdownClosed);
-
-        // After calculating filteredBreakdownAll and filteredBreakdownClosed
-        const breakdownAllEl = document.getElementById("breakdownAll");
-        const breakdownClosedEl = document.getElementById("breakdownClosed");
-
-        if (breakdownAllEl) breakdownAllEl.textContent = filteredBreakdownAll.length;
-        if (breakdownClosedEl) breakdownClosedEl.textContent = filteredBreakdownClosed.length;
-
-        // Attach click event for Breakdown All
+        // -------- click-through for Breakdown tiles --------
         document.addEventListener("click", function (e) {
           const metricItem = e.target.closest(".metric-item");
-          if (metricItem && metricItem.querySelector("#breakdownAll")) {
+          if (!metricItem) return;
+
+          // Breakdown All
+          if (metricItem.querySelector("#breakdownAll")) {
             const routeName = userRoute || "";
-            console.log("Breakdown All clicked!", routeName);
-            let filterType;
-            switch (otherCallsPeriod) {
-              case "this_month": filterType = "This Month"; break;
-              case "this_quarter": filterType = "This Quarter"; break;
-              case "last_quarter": filterType = "Last Quarter"; break;
-              case "this_year": filterType = "This Year"; break;
-              case "custom": filterType = "Custom"; break;
-              default: filterType = "This Month";
-            }
-            const dateParams = getDateRangeParams(filterType, otherCallsCustomFrom, otherCallsCustomTo);
+            const dateParams = getDateRangeParams(otherCallsPeriod, otherCallsCustomFrom, otherCallsCustomTo);
             const targetUrl = `https://creatorapp.zoho.in/wohr_parking/environment/development/service-management/#Report:Open_User_Service_Request?Status=Current month due&zc_MoreAction=false&Route_Name=${routeName}&Service_Request_Type=Breakdown${dateParams}`;
-            ZOHO.CREATOR.UTIL.navigateParentURL({
-              action: "open",
-              url: targetUrl,
-              window: "same"
-            });
+            ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url: targetUrl, window: "same" });
           }
-        });
 
-        // Attach click event for Breakdown Closed
-        document.addEventListener("click", function (e) {
-          const metricItem = e.target.closest(".metric-item");
-          if (metricItem && metricItem.querySelector("#breakdownClosed")) {
+          // Breakdown Closed
+          if (metricItem.querySelector("#breakdownClosed")) {
             const routeName = userRoute || "";
-            console.log("Breakdown Closed clicked!", routeName);
-            
-            let filterType;
-            switch (otherCallsPeriod) {
-              case "this_month": filterType = "This Month"; break;
-              case "this_quarter": filterType = "This Quarter"; break;
-              case "last_quarter": filterType = "Last Quarter"; break;
-              case "this_year": filterType = "This Year"; break;
-              case "custom": filterType = "Custom"; break;
-              default: filterType = "This Month";
-            }
-            
-            const dateParams = getClosedDateRangeParams(filterType, otherCallsCustomFrom, otherCallsCustomTo);
+            const dateParams = getClosedDateRangeParams(otherCallsPeriod, otherCallsCustomFrom, otherCallsCustomTo);
             const targetUrl = `https://creatorapp.zoho.in/wohr_parking/environment/development/service-management/#Report:Closed_User_Service_Request?Status=Closed&zc_MoreAction=false&Route_Name=${routeName}&Service_Request_Type=Breakdown${dateParams}`;
-            
-            ZOHO.CREATOR.UTIL.navigateParentURL({
-              action: "open",
-              url: targetUrl,
-              window: "same"
-            });
+            ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url: targetUrl, window: "same" });
           }
         });
-        // ================================================================================================
-        
-        // ======================= PM Call =============================
-        // ======================= PM Call =============================
-const routineCriteria = buildRouteCriteriaForAPI();
 
-// Fetch Current Month Due
-const routineRequestConfig = {
-  appName: "service-management",
-  reportName: "Scan_QR_Service_Request",
-  criteria: routineCriteria 
-    ? `${routineCriteria} && (Service_Request_Type == "Routine" && Status == "Current month due")`
-    : `(Service_Request_Type == "Routine" && Status == "Current month due")`,
-};
-const currentMonthRequests = await fetchAllServiceRequests(routineRequestConfig);
-console.log("Current Month Due Routine Requests:", currentMonthRequests.length);
-
-// Fetch Closed
-const closedRequestConfig = {
-  appName: "service-management",
-  reportName: "Scan_QR_Service_Request",
-  criteria: routineCriteria 
-    ? `${routineCriteria} && (Service_Request_Type == "Routine" && Status == "Closed")`
-    : `(Service_Request_Type == "Routine" && Status == "Closed")`,
-};
-const closedRequests = await fetchAllServiceRequests(closedRequestConfig);
-console.log("Closed Routine Requests:", closedRequests.length);
-
-// Fetch Overdue
-const overdueRequestConfig = {
-  appName: "service-management",
-  reportName: "Scan_QR_Service_Request",
-  criteria: routineCriteria 
-    ? `${routineCriteria} && (Service_Request_Type == "Routine" && Status == "Overdue")`
-    : `(Service_Request_Type == "Routine" && Status == "Overdue")`,
-};
-const overdueRequests = await fetchAllServiceRequests(overdueRequestConfig);
-console.log("Overdue Routine Requests:", overdueRequests.length);
-
-// Fetch Upcomming 
-const UpcomingdueConfig = {
-  appName: "service-management",
-  reportName: "Scan_QR_Service_Request",
-  criteria: routineCriteria 
-    ? `${routineCriteria} && (Service_Request_Type == "Routine" && Status == "Upcoming due")`
-    : `(Service_Request_Type == "Routine" && Status == "Upcoming due")`,
-};
-const Upcomingdue = await fetchAllServiceRequests(UpcomingdueConfig);
-console.log("Upcomming Routine Requests:", Upcomingdue.length);
-
-
-// Combine all routine requests
-routineRequests = [...currentMonthRequests, ...closedRequests, ...overdueRequests];
-console.log("Total Routine Requests:", routineRequests.length);
-console.log("Total Routine Requests:", routineRequests);
-updatePMCounts(otherCallsPeriod, otherCallsCustomFrom, otherCallsCustomTo);
-// ================================================================================================
-
-
-
-// ======================= ESN Data =============================
-const esnCriteria = buildRouteCriteriaForAPI();
-const esnRequestConfig = {
-  appName: "service-management",
-  reportName: "ESN_Scan_QR_Widget",
-  criteria: esnCriteria || "",
-};
-const esnData = await fetchAllServiceRequests(esnRequestConfig);
-console.log("ESN Data:", esnData);
-// ================================================================================================
-
-
-
-
-
-
-
-
-
-        // Initial load
+        // -------- initial loads --------
         await loadOtherCalls(otherCallsPeriod, otherCallsCustomFrom, otherCallsCustomTo);
         await ESNSectionRecordCount(esnPeriod, esnCustomFrom, esnCustomTo);
-
-        // ✅ Populate "Me" card
         await loadMeSection(mePeriod, meCustomFrom, meCustomTo);
 
       } catch (e) {

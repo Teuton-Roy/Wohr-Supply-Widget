@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+  <script defer src="https://js.zohostatic.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
+
+  <style>
+    :root { --brand: #1f66ff; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+
+    .cd-fullscreen { position: fixed; inset: 0; overflow: auto; background: #C0C0C0; padding: 16px; }
+    .cd-top{ display:flex; justify-content:flex-end; margin-bottom: 10px; }
+    .cd-user{ display:flex; flex-direction:column; align-items:flex-end; gap: 4px; }
+
+    .cd-avatar{
+      width: 32px; height: 32px; border-radius: 999px; border: 2px solid #111;
+      display:flex; align-items:center; justify-content:center; font-weight: 800; font-size: 12px; background: #eef2ff;
+    }
+    .cd-region{ font-size: 12px; color:#222; }
+    .cd-panel{
+      border: 2px solid #aeb3b8; border-radius: 12px;
+      padding: 13px 12px 12px; margin: 24px 0;
+      position: relative; background: #fff; overflow: visible;
+    }
+
+    .cd-panel-head{ position: absolute; top: -14px; left: 12px; z-index: 6; background: transparent; padding: 0; }
+    .cd-panel-head--with-actions{ left: 12px; right: 12px; width: auto; justify-content: space-between; }
+
+    .cd-badge{
+      background: #1f66ff; color: #fff; padding: 6px 12px; border-radius: 7px;
+      font-weight: 800; font-size: 14px; line-height: 1; display: inline-flex; align-items: center;
+      box-shadow: 0 0 0 6px #fff, 0 2px 0 rgba(0,0,0,0.08);
+    }
+
+    .cd-actions{ position: absolute; top: 10px; right: 12px; display:flex; align-items:center; gap: 8px; z-index: 5; }
+    .cd-muted{ font-size: 12px; font-style: italic; color:#444; white-space: nowrap; }
+
+    .cd-filter{
+      border: 0; background: transparent; padding: 4px; cursor: pointer;
+      display:flex; align-items:center; justify-content:center; border-radius: 8px;
+    }
+    .cd-filter:hover{ background: rgba(31,102,255,0.08); }
+    .cd-filter svg path{ fill:#1a2a7a; }
+
+    .cd-row{ display:grid; gap: 10px; margin-top: 8px; }
+    .cd-row-2{ grid-template-columns: repeat(2, 1fr); }
+    .cd-row-3{ grid-template-columns: repeat(3, 1fr); }
+    .cd-row-4{ grid-template-columns: repeat(4, 1fr); }
+
+    .cd-stat{
+      border: 1px solid rgba(0,0,0,0.18); border-radius: 10px; padding: 10px 10px;
+      display:flex; align-items:center; justify-content: space-between; gap: 8px; min-height: 50px;
+    }
+    .cd-stat-label{ font-weight: 800; font-size: 12px; line-height: 1.05; color: blueviolet;}
+    .cd-stat-label_Priority_Call_sla{ font-weight: 800; font-size: 12px; line-height: 1.05; color: #1f66ff;}
+    .cd-stat-label_Priority_Callsla{ font-weight: 800; font-size: 12px; line-height: 1.05; color: #ffffff;}
+    .cd-stat-labelexnpending{ font-weight: 800; font-size: 12px; line-height: 1.05; color: red;}
+    .cd-stat-labelesncompleted{ font-weight: 800; font-size: 12px; line-height: 1.05; color: green;}
+    .cd-stat-value{ font-weight: 900; font-size: 22px; line-height: 1; }
+    .cd-stat-value_priority_within_sla{ font-weight: 900; font-size: 22px; line-height: 1; color: #373d36;}
+    .cd-stat-value_sla{ font-weight: 900; font-size: 22px; line-height: 1; color: #ffffff;}
+
+    .cd-yellow{ background:#ffe65b; }
+    .cd-orange{ background:#ff4b1f; color:#111; }
+    .cd-green{ background:#d7f1d3; }
+    .cd-blue{ background:#cfe0ff; }
+
+    .cd-pill{
+      border: 1px solid rgba(0,0,0,0.18); border-radius: 10px; background: #fff;
+      padding: 8px 10px; display:flex; align-items:center; justify-content: space-between; gap: 10px; min-height: 44px;
+    }
+    .cd-pill--block{ width: 100%; }
+    .cd-pill-k{ font-size: 12px; font-weight: 700; color:#222; white-space: nowrap; }
+    .cd-pill-v{ font-size: 22px; font-weight: 900; line-height: 1; color: cornflowerblue;}
+
+    .cd-breakdown{ margin-top: 6px; }
+    .cd-breakdown-row{ display:grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 10px; align-items: center; }
+    .cd-label{ font-weight: 700; color:#222; padding-left: 2px; }
+    .cd-label--center{ display:flex; align-items:center; justify-content:center; font-weight: 800; color:#333; }
+
+    .cd-divider{ height: 2px; background: rgba(0,0,0,0.20); margin: 12px 0; border-radius: 999px; }
+    .cd-matrix{ display:grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 10px; align-items:center; }
+
+    .cd-pie-wrap{ display:flex; justify-content:center; align-items:center; width: 78px; height: 78px; }
+    #pmPieCanvas{ width: 78px; height: 78px; display:block; }
+
+    .cd-stack{ display:flex; flex-direction:column; gap: 10px; }
+
+    @media (max-width: 720px){
+      .cd-row-3{ grid-template-columns: 1fr; }
+      .cd-row-4{ grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 420px){
+      .cd-breakdown-row,.cd-matrix{ grid-template-columns: 1fr; text-align:left; }
+      .cd-label--center{ justify-content:flex-start; }
+      .cd-stack{ width: 100%; }
+    }
+
+/* ===== Loader (Gooey dots) ===== */
+#loader{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.45);
+  text-align:center;
+}
+
+/* IMPORTANT: Bootstrap also has .container, so we scope it under #loader */
+#loader .container{
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: auto;
+
+  /* override bootstrap container behavior */
+  padding: 0;
+  max-width: none;
+
+  filter: url(#goo);
+  animation: rotate-move 2s ease-in-out infinite;
+}
+
+#loader .dot{
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
+  margin: auto;
+}
+
+#loader .dot-3{
+  background-color: #f74d75;
+  animation: dot-3-move 2s ease infinite, index 6s ease infinite;
+}
+
+#loader .dot-2{
+  background-color: #10beae;
+  animation: dot-2-move 2s ease infinite, index 6s -4s ease infinite;
+}
+
+#loader .dot-1{
+  background-color: #ffe386;
+  animation: dot-1-move 2s ease infinite, index 6s -2s ease infinite;
+}
+
+/* keep svg defs hidden */
+#loader svg{
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+@keyframes dot-3-move {
+  20% {transform: scale(1)}
+  45% {transform: translateY(-18px) scale(.45)}
+  60% {transform: translateY(-90px) scale(.45)}
+  80% {transform: translateY(-90px) scale(.45)}
+  100% {transform: translateY(0px) scale(1)}
+}
+
+@keyframes dot-2-move {
+  20% {transform: scale(1)}
+  45% {transform: translate(-16px, 12px) scale(.45)}
+  60% {transform: translate(-80px, 60px) scale(.45)}
+  80% {transform: translate(-80px, 60px) scale(.45)}
+  100% {transform: translateY(0px) scale(1)}
+}
+
+@keyframes dot-1-move {
+  20% {transform: scale(1)}
+  45% {transform: translate(16px, 12px) scale(.45)}
+  60% {transform: translate(80px, 60px) scale(.45)}
+  80% {transform: translate(80px, 60px) scale(.45)}
+  100% {transform: translateY(0px) scale(1)}
+}
+
+@keyframes rotate-move {
+  55% {transform: translate(-50%, -50%) rotate(0deg)}
+  80% {transform: translate(-50%, -50%) rotate(360deg)}
+  100% {transform: translate(-50%, -50%) rotate(360deg)}
+}
+
+@keyframes index {
+  0%, 100% {z-index: 3}
+  33.3% {z-index: 2}
+  66.6% {z-index: 1}
+}
+
+    /* clickable values */
+    .cd-pill-v, .cd-stat-value { cursor: pointer; }
+
+    /* modal fields stacked */
+    .filter-stack{ display:flex; flex-direction:column; gap: 12px; }
+    .date-range-field{ display:none; }
+  </style>
+</head>
+
+<body>
+  <div id="loader" aria-hidden="true">
+    <div class="container" role="status" aria-label="Loading">
+      <div class="dot dot-1"></div>
+      <div class="dot dot-2"></div>
+      <div class="dot dot-3"></div>
+    </div>
+  
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" aria-hidden="true" focusable="false" width="0" height="0">
+      <defs>
+        <filter id="goo">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+          <feColorMatrix in="blur" mode="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 21 -7"/>
+        </filter>
+      </defs>
+    </svg>
+  </div>
+
+  <div class="cd-fullscreen">
+    <div class="call-dashboard" id="callDashboard">
+
+      <div class="cd-top">
+        <div class="cd-user">
+          <div class="cd-avatar" id="user_Role">NA</div>
+          <div class="cd-region" id="User_Route">NA</div>
+        </div>
+      </div>
+
+      <!-- Priority Calls -->
+      <section class="cd-panel">
+        <div class="cd-panel-head">
+          <span class="cd-badge">Priority Calls</span>
+        </div>
+
+        <div class="cd-row cd-row-3">
+          <div class="cd-stat cd-yellow">
+            <div class="cd-stat-label_Priority_Call_sla">Within<br/>SLA</div>
+            <div class="cd-stat-value_priority_within_sla" id="priorityWithinSla">0</div>
+          </div>
+
+          <div class="cd-stat cd-orange">
+            <div class="cd-stat-label_Priority_Callsla">SLA</div>
+            <div class="cd-stat-value_sla" id="prioritySla">0</div>
+          </div>
+
+          <div class="cd-stat cd-green">
+            <div class="cd-stat-labelPriorityCall">Closed</div>
+            <div class="cd-stat-value" id="priorityClosed">0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Other Calls -->
+      <section class="cd-panel">
+        <div class="cd-panel-head cd-panel-head--with-actions">
+          <span class="cd-badge">Other Calls</span>
+
+          <div class="cd-actions">
+            <span class="cd-muted" id="otherPeriodLabel">This month</span>
+            <button class="cd-filter" type="button" id="OtherCalls" aria-label="Filter Other Calls">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="cd-breakdown">
+          <div class="cd-breakdown-row">
+            <div class="cd-label">Breakdown</div>
+            <div class="cd-pill">
+              <span class="cd-pill-k">All</span>
+              <span class="cd-pill-v" id="BreakdownAll">0</span>
+            </div>
+            <div class="cd-pill">
+              <span class="cd-pill-k">Closed</span>
+              <span class="cd-pill-v" id="BreakdownClosed">0</span>
+            </div>
+          </div>
+          <div class="cd-divider"></div>
+          <div class="cd-matrix">
+            <div class="cd-label cd-label--center">PM</div>
+
+            <div class="cd-pie-wrap">
+              <canvas id="pmPieCanvas" width="133" height="133" aria-label="PM pie chart"></canvas>
+            </div>
+
+            <div class="cd-stack">
+              <div class="cd-pill cd-pill--block">
+                <span class="cd-pill-k">All</span>
+                <span class="cd-pill-v" id="PmAll">0</span>
+              </div>
+              <div class="cd-pill cd-pill--block">
+                <span class="cd-pill-k">Closed</span>
+                <span class="cd-pill-v" id="PmClosed">0</span>
+              </div>
+              <div class="cd-pill cd-pill--block">
+                <span class="cd-pill-k">Overdue</span>
+                <span class="cd-pill-v" id="PmOverdue">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cd-divider"></div>
+
+          <div class="cd-breakdown-row">
+            <div class="cd-label cd-label--center">Other</div>
+            <div class="cd-pill">
+              <span class="cd-pill-k">Active</span>
+              <span class="cd-pill-v" id="otherActive">0</span>
+            </div>
+            <div class="cd-pill">
+              <span class="cd-pill-k">Closed</span>
+              <span class="cd-pill-v" id="otherClosed">0</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ESN -->
+      <section class="cd-panel">
+        <div class="cd-panel-head cd-panel-head--with-actions">
+          <span class="cd-badge">ESN</span>
+
+          <div class="cd-actions">
+            <span class="cd-muted" id="esnPeriodLabel">This month</span>
+            <button class="cd-filter" type="button" id="esn" aria-label="Filter ESN">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="cd-row cd-row-2">
+          <div class="cd-stat cd-blue">
+            <div class="cd-stat-labelexnpending">Pending</div>
+            <div class="cd-stat-value" id="esnPending">0</div>
+          </div>
+
+          <div class="cd-stat cd-green">
+            <div class="cd-stat-labelesncompleted">Completed</div>
+            <div class="cd-stat-value" id="esnCompleted">0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Me -->
+      <section class="cd-panel">
+        <div class="cd-panel-head cd-panel-head--with-actions">
+          <span class="cd-badge">Me</span>
+
+          <div class="cd-actions">
+            <span class="cd-muted" id="mePeriodLabel">This month</span>
+            <button class="cd-filter" type="button" id="me" aria-label="Filter Me">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="cd-row cd-row-4">
+          <div class="cd-pill">
+            <span class="cd-pill-k">Breakdown</span>
+            <span class="cd-pill-v" id="meBrkdwn">0</span>
+          </div>
+          <div class="cd-pill">
+            <span class="cd-pill-k">PM</span>
+            <span class="cd-pill-v" id="mePm">0</span>
+          </div>
+          <div class="cd-pill">
+            <span class="cd-pill-k">Other</span>
+            <span class="cd-pill-v" id="meOther">0</span>
+          </div>
+          <div class="cd-pill">
+            <span class="cd-pill-k">ESN</span>
+            <span class="cd-pill-v" id="meEsn">0</span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!--small modal -->
+  <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-scrollable modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="filterModalLabel">Filters</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="filter-stack">
+            <div class="filter-field">
+              <label class="form-label fw-bold">Period</label>
+              <select class="form-select" id="periodSelect">
+                <option value="this_month">This month</option>
+                <option value="this_quarter">This quarter</option>
+                <option value="last_quarter">Last quarter</option>
+                <option value="this_year">This year</option>
+                <option value="custom">Custom range</option>
+              </select>
+            </div>
+
+            <div class="filter-field date-range-field">
+              <label class="form-label fw-bold">From</label>
+              <input type="date" class="form-control" id="dateFrom" />
+            </div>
+
+            <div class="filter-field date-range-field">
+              <label class="form-label fw-bold">To</label>
+              <input type="date" class="form-control" id="dateTo" />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" id="filterClear">Cancel</button>
+          <button type="button" class="btn btn-primary" id="filterApply">Apply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Bootstrap bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    let UserName = "";
+    let userID = "";
+    let applicationName = "service-management";
+    let userReport = "My_Users";
+    let serviceReport = "Scan_QR_Service_Request";
+    let ESNReport = "ESN_Scan_QR_Widget";
+
+    const REPORT_BASE_URL = "https://creatorapp.zoho.in/wohr_parking/environment/development/service-management/#Report:";
+
+    const periodOther = { period: "this_month", from: null, to: null };
+    const periodEsn   = { period: "this_month", from: null, to: null };
+    const periodMe    = { period: "this_month", from: null, to: null };
+    let activeFilterTarget = "other";
+
+    let currentRole = "";
+    let currentRoute = "";
+
+    $(document).ready(function () {
+
+      const modalEl = document.getElementById("filterModal");
+      const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+      function getState(target){
+        if(target === "esn") return periodEsn;
+        if(target === "me") return periodMe;
+        return periodOther;
+      }
+
+      function toInputDate(d){
+        if(!d) return "";
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth()+1).padStart(2,"0");
+        const dd = String(d.getDate()).padStart(2,"0");
+        return `${yyyy}-${mm}-${dd}`;
+      }
+      function parseInputDate(val){
+        if(!val) return null;
+        const [y,m,d] = val.split("-").map(Number);
+        return new Date(y, m-1, d);
+      }
+
+      function toggleCustomFields(isCustom){
+        if(isCustom){
+          $(".date-range-field").show();
+        }else{
+          $(".date-range-field").hide();
+          $("#dateFrom").val("");
+          $("#dateTo").val("");
+        }
+      }
+
+      function syncModalFromState(state){
+        $("#periodSelect").val(state.period);
+        const isCustom = state.period === "custom";
+        toggleCustomFields(isCustom);
+        $("#dateFrom").val(isCustom ? toInputDate(state.from) : "");
+        $("#dateTo").val(isCustom ? toInputDate(state.to) : "");
+      }
+
+      $("#periodSelect").off("change").on("change", function () {
+        toggleCustomFields($(this).val() === "custom");
+      });
+
+      $(document).off("click", "#OtherCalls, #esn, #me").on("click", "#OtherCalls, #esn, #me", function (e) {
+        e.preventDefault();
+        if(this.id === "esn") activeFilterTarget = "esn";
+        else if(this.id === "me") activeFilterTarget = "me";
+        else activeFilterTarget = "other";
+
+        syncModalFromState(getState(activeFilterTarget));
+        bsModal.show();
+      });
+
+      $("#filterClear").off("click").on("click", function(){
+        const st = getState(activeFilterTarget);
+        st.period = "this_month";
+        st.from = null;
+        st.to = null;
+        syncModalFromState(st);
+        bsModal.hide();
+        if(userID) refreshOnly(activeFilterTarget);
+      });
+
+      $("#filterApply").off("click").on("click", function(){
+        const st = getState(activeFilterTarget);
+        const p = $("#periodSelect").val();
+        st.period = p;
+
+        if(p === "custom"){
+          const f = parseInputDate($("#dateFrom").val());
+          const t = parseInputDate($("#dateTo").val());
+          if(!f || !t){ alert("Please select both From and To dates."); return; }
+          st.from = (f <= t) ? f : t;
+          st.to   = (f <= t) ? t : f;
+        }else{
+          st.from = null; st.to = null;
+        }
+
+        bsModal.hide();
+        if(userID) refreshOnly(activeFilterTarget);
+      });
+
+      function esc(str) { return String(str || "").replace(/"/g, '\\"'); }
+      function baseTechRouteCriteria(userID, userRoute) {
+        return '(Service_Technician_Name.ID == ' + userID +
+          ' && Route_Name == "' + esc(userRoute) + '")';
+      }
+      function buildCriteria(userID, userRoute, extra) {
+        extra = extra ? ' && ' + extra : '';
+        return '(' + baseTechRouteCriteria(userID, userRoute) + extra + ')';
+      }
+      function setCount(selector, val) { $(selector).text(val == null ? "0" : String(val)); }
+
+      const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      function formatZohoDate(d){
+        const dd = String(d.getDate()).padStart(2,"0");
+        const mmm = MONTHS[d.getMonth()];
+        const yyyy = d.getFullYear();
+        return `${dd}-${mmm}-${yyyy}`;
+      }
+      function formatZohoDateTime(d){
+        const dd = String(d.getDate()).padStart(2,"0");
+        const mmm = MONTHS[d.getMonth()];
+        const yyyy = d.getFullYear();
+        const HH = String(d.getHours()).padStart(2,"0");
+        const MM = String(d.getMinutes()).padStart(2,"0");
+        const SS = String(d.getSeconds()).padStart(2,"0");
+        return `${dd}-${mmm}-${yyyy} ${HH}:${MM}:${SS}`;
+      }
+      function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0,0,0); }
+      function endOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23,59,59); }
+      function getFYStartYear(ref){ return (ref.getMonth() >= 3) ? ref.getFullYear() : (ref.getFullYear() - 1); }
+
+      function getRangeFromState(state){
+        const now = new Date();
+
+        if(state.period === "custom" && state.from && state.to){
+          return { from: startOfDay(state.from), to: endOfDay(state.to) };
+        }
+
+        if(state.period === "this_month"){
+          const from = new Date(now.getFullYear(), now.getMonth(), 1);
+          const to = new Date(now.getFullYear(), now.getMonth()+1, 0);
+          return { from: startOfDay(from), to: endOfDay(to) };
+        }
+
+        if(state.period === "this_year"){
+          const fy = getFYStartYear(now);
+          const from = new Date(fy, 3, 1);
+          const to = new Date(fy + 1, 3, 0);
+          return { from: startOfDay(from), to: endOfDay(to) };
+        }
+
+        function quarterStart(ref){
+          const m = ref.getMonth();
+          let qs = 0;
+          if(m >= 3 && m <= 5) qs = 3;
+          else if(m >= 6 && m <= 8) qs = 6;
+          else if(m >= 9 && m <= 11) qs = 9;
+          else qs = 0;
+          return new Date(ref.getFullYear(), qs, 1);
+        }
+
+        if(state.period === "this_quarter" || state.period === "last_quarter"){
+          const qStart = quarterStart(now);
+          const offset = (state.period === "last_quarter") ? -3 : 0;
+          const from = new Date(qStart.getFullYear(), qStart.getMonth() + offset, 1);
+          const to = new Date(from.getFullYear(), from.getMonth() + 3, 0);
+          return { from: startOfDay(from), to: endOfDay(to) };
+        }
+
+        const f = new Date(now.getFullYear(), now.getMonth(), 1);
+        const t = new Date(now.getFullYear(), now.getMonth()+1, 0);
+        return { from: startOfDay(f), to: endOfDay(t) };
+      }
+
+      function dueDateRangeCriteria(state){
+        const r = getRangeFromState(state);
+        return `Due_Date >= "${formatZohoDate(r.from)}" && Due_Date <= "${formatZohoDate(r.to)}"`;
+      }
+      function addedTimeRangeCriteria(state){
+        const r = getRangeFromState(state);
+        return `Added_Time >= "${formatZohoDateTime(r.from)}" && Added_Time <= "${formatZohoDateTime(r.to)}"`;
+      }
+
+      /* NEW: Closed_Date range criteria for ME (Brkdwn/PM/Other) */
+      function closedDateRangeCriteria(state){
+        const r = getRangeFromState(state);
+        // Using datetime strings is safest if Closed_Date is Date-Time in Creator
+        return `Closed_Date >= "${formatZohoDateTime(r.from)}" && Closed_Date <= "${formatZohoDateTime(r.to)}"`;
+      }
+
+      function labelForState(state){
+        if(state.period === "this_month") return "This month";
+        if(state.period === "this_quarter") return "This quarter";
+        if(state.period === "last_quarter") return "Last quarter";
+        if(state.period === "this_year") return "This year";
+        if(state.period === "custom"){
+          const r = getRangeFromState(state);
+          return `${formatZohoDate(r.from)} - ${formatZohoDate(r.to)}`;
+        }
+        return "This month";
+      }
+
+      function setLabelForSection(target){
+        const st = getState(target);
+        const txt = labelForState(st);
+        if(target === "other") $("#otherPeriodLabel").text(txt);
+        if(target === "esn")   $("#esnPeriodLabel").text(txt);
+        if(target === "me")    $("#mePeriodLabel").text(txt);
+      }
+
+      const OP_BETWEEN = 58;
+      const OP_NOT_EQ  = 19;
+
+      function fullyDecode(str) {
+        let out = String(str ?? "");
+        for (let i = 0; i < 10; i++) {
+          if (!/%[0-9A-Fa-f]{2}/.test(out)) break;
+          try {
+            const dec = decodeURIComponent(out);
+            if (dec === out) break;
+            out = dec;
+          } catch (e) { break; }
+        }
+        return out;
+      }
+
+      function normalizeParams(params) {
+        const out = {};
+        Object.keys(params || {}).forEach((k) => {
+          const v = params[k];
+          if (v === undefined || v === null || v === "") return;
+          out[k] = (typeof v === "string") ? fullyDecode(v) : v;
+        });
+        return out;
+      }
+
+      function buildQueryRaw(params) {
+        const parts = [];
+        Object.keys(params || {}).forEach((k) => {
+          const v = params[k];
+          if (v === undefined || v === null || v === "") return;
+          parts.push(k + "=" + String(v));
+        });
+        return parts.join("&");
+      }
+
+      function openReport(reportName, params) {
+        const clean = normalizeParams(params);
+        const qs = buildQueryRaw(clean);
+        const targetUrl = REPORT_BASE_URL + reportName + (qs ? ("?" + qs) : "");
+        ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url: targetUrl, window: "same" });
+      }
+
+      function addBetween(params, field, fromStr, toStr){
+        params[field] = `${fromStr};${toStr}`;
+        params[field + "_op"] = OP_BETWEEN;
+      }
+      function addDueBetween(params, state){
+        const r = getRangeFromState(state);
+        addBetween(params, "Due_Date", formatZohoDate(r.from), formatZohoDate(r.to));
+      }
+      function addAddedBetween(params, state){
+        const r = getRangeFromState(state);
+        addBetween(params, "Added_Time", formatZohoDateTime(r.from), formatZohoDateTime(r.to));
+      }
+
+      /* NEW: Closed_Date between URL filter for ME (Brkdwn/PM/Other) */
+      function addClosedBetween(params, state){
+        const r = getRangeFromState(state);
+        addBetween(params, "Closed_Date", formatZohoDateTime(r.from), formatZohoDateTime(r.to));
+      }
+
+      function baseParams(){
+        return {
+          Route_Name: fullyDecode(currentRoute),
+          "Service_Technician_Name": `[${UserName}]`
+        };
+      }
+      function baseParamsMeService() {
+  // Me -> Breakdown / PM / Other should NOT send Service_Technician_Name in URL
+        return {
+          Route_Name: fullyDecode(currentRoute)
+        };
+      }
+      function bindCountRedirects(){
+        // (unchanged redirects for other sections)
+        $("#BreakdownAll").off("click.redirect").on("click.redirect", function(){
+          const p = baseParams();
+          p.Service_Request_Type = "Breakdown";
+          p.Status = "Closed";
+          p.Status_op = OP_NOT_EQ;
+          addDueBetween(p, periodOther);
+          openReport("Breakdown_Calls", p);
+        });
+
+        $("#BreakdownClosed").off("click.redirect").on("click.redirect", function(){
+          const p = baseParams();
+          p.Service_Request_Type = "Breakdown";
+          p.Status = "Closed";
+          addDueBetween(p, periodOther);
+          openReport("Breakdown_Calls", p);
+        });
+
+        $("#PmAll").off("click.redirect").on("click.redirect", function(){
+          const p = baseParams();
+          p.Service_Request_Type = "Routine";
+          p.Status = "Current month due";
+          addDueBetween(p, periodOther);
+          openReport("Open_User_Service_Request", p);
+        });
+        $("#PmClosed").off("click.redirect").on("click.redirect", function(){
+          const p = baseParams();
+          p.Service_Request_Type = "Routine";
+          p.Status = "Closed";
+          addDueBetween(p, periodOther);
+          openReport("Closed_User_Service_Request", p);
+        });
+        $("#PmOverdue").off("click.redirect").on("click.redirect", function(){
+          const p = baseParams();
+          p.Service_Request_Type = "Routine";
+          p.Status = "Overdue";
+          openReport("Open_User_Service_Request", p);
+        });
+
+        $("#otherActive").off("click.redirect").on("click.redirect", function () {
+          const p = baseParams();
+          p.Status = "Closed";
+          p.Status_op = OP_NOT_EQ;
+          p.Service_Request_Type = "[One Time Service,Repair,Inspection]";
+          p.Service_Request_Type_op = 26;
+          addDueBetween(p, periodOther);
+          openReport("Open_User_Service_Request", p);
+        });
+
+        $("#otherClosed").off("click.redirect").on("click.redirect", function () {
+          const p = baseParams();
+          p.Status = "Closed";
+          p.Service_Request_Type = "[One Time Service,Repair,Inspection]";
+          p.Service_Request_Type_op = 26;
+          addDueBetween(p, periodOther);
+          openReport("Closed_User_Service_Request", p);
+        });
+
+        $("#esnPending").off("click.redirect").on("click.redirect", function(){
+          const p = baseParams();
+          p.ESN_Status = "Pending";
+          openReport("My_ESN", p);
+        });
+
+        $("#esnCompleted").off("click.redirect").on("click.redirect", function(){
+          const p = baseParams();
+          p.ESN_Status = "Completed";
+          addAddedBetween(p, periodEsn);
+          openReport("My_ESN", p);
+        });
+
+        /* ============================
+           ME redirects (UPDATED)
+           - Brkdwn/PM/Other: Closed_Date between + Closed_Owner=[UserName]
+           - ESN: Added_Time between + Service_Technician_Name=[UserName]
+        ============================ */
+
+        $("#meBrkdwn").off("click.redirect").on("click.redirect", function () {
+        const p = baseParamsMeService();
+        p.Service_Request_Type = "Breakdown";
+        p.Status = "Closed";
+        p.Closed_Owner = `[${UserName}]`;
+        addClosedBetween_ME(p, periodMe); 
+        openReport("Breakdown_Calls", p);
+      });
+
+      $("#mePm").off("click.redirect").on("click.redirect", function () {
+        const p = baseParamsMeService();
+        p.Service_Request_Type = "Routine";
+        p.Status = "Closed";
+        p.Closed_Owner = `[${UserName}]`;
+        addClosedBetween_ME(p, periodMe);
+        openReport("Closed_User_Service_Request", p);
+      });
+
+      $("#meOther").off("click.redirect").on("click.redirect", function () {
+        const p = baseParamsMeService();
+        p.Service_Request_Type = "[One Time Service,Repair,Inspection]";
+        p.Service_Request_Type_op = 26;
+        p.Status = "Closed";
+        p.Closed_Owner = `[${UserName}]`;
+        addClosedBetween_ME(p, periodMe);
+        openReport("Closed_User_Service_Request", p);
+      });
+
+        $("#meEsn").off("click.redirect").on("click.redirect", function () {
+          const p = baseParams();
+          p.ESN_Status = "Completed";
+          // Service_Technician_Name is already [UserName] in baseParams
+          addAddedBetween(p, periodMe);
+          openReport("My_ESN", p);
+        });
+      }
+
+      /* ============================
+         PM PIE (unchanged)
+      ============================ */
+      let pmAll = 0;
+      let pmClosed = 0;
+      let pmOverdue = 0;
+      let pmChart = null;
+
+      Chart.register(ChartDataLabels);
+
+      const PM_EMPTY_DRAW = [0, 0, 1];
+
+      // Plugin to mark chart as "no data" BEFORE the first render
+      const pmNoDataFlagPlugin = {
+        id: "pmNoDataFlag",
+        beforeInit(chart) {
+          chart.$noData = true;
+        }
+      };
+      function initPMPieChart() {
+      const canvas = document.getElementById("pmPieCanvas");
+      if (!canvas) return;
+
+      const ctx = canvas.getContext("2d");
+      if (pmChart) { pmChart.destroy(); pmChart = null; }
+
+      pmChart = new Chart(ctx, {
+        type: "doughnut",
+        plugins: [pmNoDataFlagPlugin],
+        data: {
+          labels: ["Closed", "Overdue", "All"],
+          datasets: [{
+            data: PM_EMPTY_DRAW.slice(),
+            backgroundColor: ["#e5e7eb", "#e5e7eb", "#e5e7eb"], // start grey
+            borderWidth: 2,
+            borderColor: "#ffffff",
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: false,
+          maintainAspectRatio: false,
+          cutout: "58%",
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              enabled: true,
+              callbacks: {
+                label: function (ctx) {
+                  // When using placeholder ring, display 0 instead of 1
+                  if (ctx.chart.$noData) {
+                    return ` ${ctx.label}: 0 (0%)`;
+                  }
+
+                  const total = ctx.dataset.data.reduce((a, b) => a + b, 0) || 0;
+                  const val = Number(ctx.raw || 0);
+                  const pct = total ? Math.round((val / total) * 100) : 0;
+                  return ` ${ctx.label}: ${val} (${pct}%)`;
+                }
+              }
+            },
+            datalabels: {
+              display: function (ctx) {
+                if (ctx.chart.$noData) {
+                  // Show ONLY "All 0" on the grey ring in no-data mode
+                  return ctx.dataIndex === 2;
+                }
+                const v = ctx.dataset.data[ctx.dataIndex] || 0;
+                return v > 0;
+              },
+              color: "#fff",
+              font: { weight: "800", size: 9 },
+              textStrokeColor: "rgba(0,0,0,0.35)",
+              textStrokeWidth: 2,
+              formatter: function (value, ctx) {
+                if (ctx.chart.$noData) {
+                  return ctx.chart.data.labels[ctx.dataIndex] + "\n0";
+                }
+                return ctx.chart.data.labels[ctx.dataIndex] + "\n" + value;
+              }
+            }
+          }
+        }
+      });
+    }
+      function updatePMPieChart(allDue, closed, overdue) {
+        allDue = Number(allDue || 0);
+        closed = Number(closed || 0);
+        overdue = Number(overdue || 0);
+
+        if (!pmChart) initPMPieChart();
+        if (!pmChart) return;
+
+        const hasAny = (allDue || closed || overdue);
+        pmChart.data.datasets[0].data = hasAny ? [closed, overdue, allDue] : [0, 0, 1];
+        pmChart.data.datasets[0].backgroundColor = hasAny
+          ? ["#22c55e", "#ef4444", "#8b5cf6"]
+          : ["#e5e7eb", "#e5e7eb", "#e5e7eb"];
+
+        pmChart.update();
+      }
+            function updatePMPieChart(allDue, closed, overdue) {
+            allDue = Number(allDue || 0);
+            closed = Number(closed || 0);
+            overdue = Number(overdue || 0);
+
+            if (!pmChart) initPMPieChart();
+            if (!pmChart) return;
+
+            const hasAny = (allDue || closed || overdue);
+
+            // Flag controls whether we display placeholder "All=0"
+            pmChart.$noData = !hasAny;
+
+            // Draw ring if no data; otherwise draw real values
+            pmChart.data.datasets[0].data = hasAny ? [closed, overdue, allDue] : PM_EMPTY_DRAW.slice();
+
+            // Color real vs no-data
+            pmChart.data.datasets[0].backgroundColor = hasAny
+              ? ["#22c55e", "#ef4444", "#8b5cf6"]
+              : ["#e5e7eb", "#e5e7eb", "#e5e7eb"];
+
+            pmChart.update();
+          }
+      /* ============================
+         Sequential loaders (ONLY ME updated)
+      ============================ */
+      function refreshOnly(target){
+        $("#loader").show();
+        if(target === "other"){
+          refreshOtherCalls(() => { bindCountRedirects(); $("#loader").hide(); });
+        }else if(target === "esn"){
+          refreshESN(() => { bindCountRedirects(); $("#loader").hide(); });
+        }else{
+          refreshMe(() => { bindCountRedirects(); $("#loader").hide(); });
+        }
+      }
+
+      function refreshOtherCalls(done){
+        setLabelForSection("other");
+        Other_BreakdownActive(done);
+      }
+
+      function Other_BreakdownActive(done){
+        const dueCrit = dueDateRangeCriteria(periodOther);
+        const criteria = buildCriteria(userID, currentRoute,
+          `Service_Request_Type == "Breakdown" && Status != "Closed" && ${dueCrit}`
+        );
+        ZOHO.CREATOR.API.getRecordCount({ appName: applicationName, reportName: serviceReport, criteria })
+          .then(res => { setCount("#BreakdownAll", res.result.records_count); Other_BreakdownClosed(done); })
+          .catch(err => { console.error(err, criteria); Other_BreakdownClosed(done); });
+      }
+
+      function Other_BreakdownClosed(done){
+        const dueCrit = dueDateRangeCriteria(periodOther);
+        const criteria = buildCriteria(userID, currentRoute,
+          `Service_Request_Type == "Breakdown" && Status == "Closed" && ${dueCrit}`
+        );
+        ZOHO.CREATOR.API.getRecordCount({ appName: applicationName, reportName: serviceReport, criteria })
+          .then(res => { setCount("#BreakdownClosed", res.result.records_count); Other_PMAll_CurrentMonthDue(done); })
+          .catch(err => { console.error(err, criteria); Other_PMAll_CurrentMonthDue(done); });
+      }
+
+      function Other_PMAll_CurrentMonthDue(done){
+        const dueCrit = dueDateRangeCriteria(periodOther);
+        const criteria = buildCriteria(userID, currentRoute,
+          `Service_Request_Type == "Routine" && Status == "Current month due" && ${dueCrit}`
+        );
+        ZOHO.CREATOR.API.getRecordCount({ appName: applicationName, reportName: serviceReport, criteria })
+          .then(res => { pmAll = Number(res.result.records_count||0); setCount("#PmAll", pmAll); Other_PMOverdue_NoPeriod(done); })
+          .catch(err => { console.error(err, criteria); pmAll = 0; setCount("#PmAll", 0); Other_PMOverdue_NoPeriod(done); });
+      }
+
+      function Other_PMOverdue_NoPeriod(done){
+        const criteria = buildCriteria(userID, currentRoute,
+          `Service_Request_Type == "Routine" && Status == "Overdue"`
+        );
+        ZOHO.CREATOR.API.getRecordCount({ appName: applicationName, reportName: serviceReport, criteria })
+          .then(res => { pmOverdue = Number(res.result.records_count||0); setCount("#PmOverdue", pmOverdue); Other_PMClosed_Period(done); })
+          .catch(err => { console.error(err, criteria); pmOverdue = 0; setCount("#PmOverdue", 0); Other_PMClosed_Period(done); });
+      }
+
+      function Other_PMClosed_Period(done){
+        const dueCrit = dueDateRangeCriteria(periodOther);
+        const criteria = buildCriteria(userID, currentRoute,
+          `Service_Request_Type == "Routine" && Status == "Closed" && ${dueCrit}`
+        );
+        ZOHO.CREATOR.API.getRecordCount({ appName: applicationName, reportName: serviceReport, criteria })
+          .then(res => {
+            pmClosed = Number(res.result.records_count||0);
+            setCount("#PmClosed", pmClosed);
+            updatePMPieChart(pmAll, pmClosed, pmOverdue);
+            Other_OtherActive(done);
+          })
+          .catch(err => {
+            console.error(err, criteria);
+            pmClosed = 0; setCount("#PmClosed", 0);
+            updatePMPieChart(pmAll, pmClosed, pmOverdue);
+            Other_OtherActive(done);
+          });
+      }
+
+      function Other_OtherActive(done){
+        const dueCrit = dueDateRangeCriteria(periodOther);
+        const criteria = buildCriteria(userID, currentRoute,
+          `Service_Request_Type != "Routine" && Service_Request_Type != "Breakdown" && Status != "Closed" && ${dueCrit}`
+        );
+        ZOHO.CREATOR.API.getRecordCount({ appName: applicationName, reportName: serviceReport, criteria })
+          .then(res => { setCount("#otherActive", res.result.records_count); Other_OtherClosed(done); })
+          .catch(err => { console.error(err, criteria); Other_OtherClosed(done); });
+      }
+
+      function Other_OtherClosed(done){
+        const dueCrit = dueDateRangeCriteria(periodOther);
+        const criteria = buildCriteria(userID, currentRoute,
+          `Service_Request_Type != "Routine" && Service_Request_Type != "Breakdown" && Status == "Closed" && ${dueCrit}`
+        );
+        ZOHO.CREATOR.API.getRecordCount({ appName: applicationName, reportName: serviceReport, criteria })
+          .then(res => { setCount("#otherClosed", res.result.records_count); if(done) done(); })
+          .catch(err => { console.error(err, criteria); if(done) done(); });
+      }
+
+      function refreshESN(done){
+        setLabelForSection("esn");
+        ESN_Pending_NoPeriod(done);
+      }
+
+      function ESN_Pending_NoPeriod(done){
+        const criteria = buildCriteria(userID, currentRoute, `ESN_Status == "Pending"`);
+        ZOHO.CREATOR.API.getRecordCount({ appName: applicationName, reportName: ESNReport, criteria })
+          .then(res => { setCount("#esnPending", res.result.records_count); ESN_Completed_Period(done); })
+          .catch(err => { console.error(err, criteria); ESN_Completed_Period(done); });
+      }
+
+      function ESN_Completed_Period(done){
+        const addedCrit = addedTimeRangeCriteria(periodEsn);
+        const criteria = buildCriteria(userID, currentRoute, `ESN_Status == "Completed" && ${addedCrit}`);
+        ZOHO.CREATOR.API.getRecordCount({ appName: applicationName, reportName: ESNReport, criteria })
+          .then(res => { setCount("#esnCompleted", res.result.records_count); if(done) done(); })
+          .catch(err => { console.error(err, criteria); if(done) done(); });
+      }
+
+      /* ============================
+         ME SECTION UPDATED (as per your points)
+         1) Default this_month is still periodMe, but filters are based on Closed_Date (Brkdwn/PM/Other)
+         2) Period filters => Closed_Date between (Brkdwn/PM/Other), ESN => Added_Time between
+         3) Closed_Owner == UserName (Brkdwn/PM/Other)
+            ESN Service_Technician_Name == UserName
+      ============================ */
+      // ME: Closed_Date range criteria (DATE ONLY, no time)
+        function closedDateRangeCriteria_ME(state){
+          const r = getRangeFromState(state);
+          return `Closed_Date >= "${formatZohoDate(r.from)}" && Closed_Date <= "${formatZohoDate(r.to)}"`;
+        }
+
+        // ME: Closed_Date between URL filter (DATE ONLY, no time)
+        function addClosedBetween_ME(params, state){
+          const r = getRangeFromState(state);
+          addBetween(params, "Closed_Date", formatZohoDate(r.from), formatZohoDate(r.to));
+        }
+      function refreshMe(done){
+        setLabelForSection("me");
+        Me_Breakdown(done);
+      }
+
+      // Route-only criteria builder (NO Service_Technician_Name filter)
+      function buildRouteOnlyCriteria(userRoute, extra) {
+        extra = extra ? " && " + extra : "";
+        return `(Route_Name == "${esc(userRoute)}"${extra})`;
+      }
+
+      function Me_Breakdown(done){
+        const closedCrit = closedDateRangeCriteria_ME(periodMe);
+
+        const criteria = buildRouteOnlyCriteria(
+          currentRoute,
+          `Service_Request_Type == "Breakdown" && Status == "Closed" && Closed_Owner.ID == ${userID} && ${closedCrit}`
+        );
+
+        ZOHO.CREATOR.API.getRecordCount({ appName: applicationName, reportName: serviceReport, criteria })
+          .then(res => { setCount("#meBrkdwn", res.result.records_count); Me_PM(done); })
+          .catch(err => { console.error("Me_Breakdown:", err, criteria); setCount("#meBrkdwn", 0); Me_PM(done); });
+      }
+
+      function Me_PM(done){
+        const closedCrit = closedDateRangeCriteria_ME(periodMe);
+
+        const criteria = buildRouteOnlyCriteria(
+          currentRoute,
+          `Service_Request_Type == "Routine" && Status == "Closed" && Closed_Owner.ID == ${userID} && ${closedCrit}`
+        );
+
+        ZOHO.CREATOR.API.getRecordCount({ appName: applicationName, reportName: serviceReport, criteria })
+          .then(res => { setCount("#mePm", res.result.records_count); Me_Other(done); })
+          .catch(err => { console.error("Me_PM:", err, criteria); setCount("#mePm", 0); Me_Other(done); });
+      }
+
+      function Me_Other(done){
+        const closedCrit = closedDateRangeCriteria_ME(periodMe);
+
+        const criteria = buildRouteOnlyCriteria(
+          currentRoute,
+          `(Service_Request_Type == "One Time Service" || Service_Request_Type == "Repair" || Service_Request_Type == "Inspection")
+          && Status == "Closed" && Closed_Owner.ID == ${userID} && ${closedCrit}`
+        );
+
+        ZOHO.CREATOR.API.getRecordCount({ appName: applicationName, reportName: serviceReport, criteria })
+          .then(res => { setCount("#meOther", res.result.records_count); Me_ESN(done); })
+          .catch(err => { console.error("Me_Other:", err, criteria); setCount("#meOther", 0); Me_ESN(done); });
+      }
+            function Me_ESN(done){
+        const addedCrit = addedTimeRangeCriteria(periodMe);
+
+        // per your requirement: Service_Technician_Name = userID (ESN)
+        const criteria =
+          `(Route_Name == "${esc(currentRoute)}"
+            && Service_Technician_Name.ID == ${userID}
+            && ESN_Status == "Completed"
+            && ${addedCrit})`;
+
+        ZOHO.CREATOR.API.getRecordCount({ appName: applicationName, reportName: ESNReport, criteria })
+          .then(r => { setCount("#meEsn", Number(r.result.records_count || 0)); if(done) done(); })
+          .catch(err => { console.error("Me_ESN error:", err, criteria); setCount("#meEsn", 0); if(done) done(); });
+      }
+
+      /* ---------------------------
+        Zoho init (load user)
+      --------------------------- */
+      ZOHO.CREATOR.init().then(() => {
+        $("#loader").show();
+        initPMPieChart();
+        toggleCustomFields(false);
+
+        const params = ZOHO.CREATOR.UTIL.getInitParams() || {};
+        const loginuser = params.loginUser || "";
+
+        const config = {
+          appName: applicationName,
+          reportName: userReport,
+          criteria: `(Email == "${loginuser}")`,
+          page: 1,
+          pageSize: 1
+        };
+
+        ZOHO.CREATOR.API.getAllRecords(config)
+          .then(function (response) {
+            if (response.data && response.data.length > 0) {
+              const record = response.data[0];
+
+              UserName = record.Name || "";
+              userID = record.ID || "";
+              currentRole = record.Role || "";
+              currentRoute = fullyDecode(record.New_Route_Name || record.Route || record.Region || "");
+
+              $("#user_Role").text(currentRole ? currentRole.substring(0, 2).toUpperCase() : "NA");
+              $("#User_Route").text(currentRoute || "NA");
+
+              if (currentRole === "Service Technician") {
+                refreshOtherCalls(() => {
+                  refreshESN(() => {
+                    refreshMe(() => {
+                      bindCountRedirects();
+                      $("#loader").hide();
+                    });
+                  });
+                });
+              } else {
+                $("#loader").hide();
+              }
+            } else {
+              $("#loader").hide();
+            }
+          })
+          .catch(function (err) {
+            console.error("Error fetching user record:", err);
+            $("#loader").hide();
+          });
+      });
+
+    });
+  </script>
+</body>
+</html>
