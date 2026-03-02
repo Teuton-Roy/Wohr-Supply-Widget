@@ -191,9 +191,9 @@
 <body>
     <!-- ===== Optional top header (like screenshot) ===== -->
     <div class="top-user">
-      <div class="avatar" id="userInitials">AD</div>
+      <div class="avatar" id="userInitials">Null</div>
       <div class="loc">
-        <div id="userRegion">West</div>
+        <div id="userRegion">Null</div>
       </div>
     </div>
 
@@ -277,6 +277,8 @@
     <script>
       let UserName = "";
       let userID = "";
+      let userRegion = "";
+      let userCity = "";
       let applicationName = "service-management";
       let userReport = "My_Users";
       let QualityReport = "Widget_Quality_Inspection";
@@ -289,9 +291,9 @@
       ZOHO.CREATOR.init().then(() => {
         console.log("Dashboard Running....");
         const params = ZOHO.CREATOR.UTIL.getInitParams() || {};
-        console.log(params);
+        // console.log(params);
         const loginuser = params.loginUser || "";
-        console.log("Login User:- ", loginuser);
+        // console.log("Login User:- ", loginuser);
 
         const config = {
           appName: applicationName,
@@ -305,18 +307,120 @@
         ZOHO.CREATOR.API.getAllRecords(config).then((response) => {
           if(response && response.data && response.data.length > 0){
             const userData = response.data[0];
-             console.log("User Details:- ", userData);
+            console.log("User Details:- ", userData);
             UserName = userData.Name || "";
             userID = userData.ID || "";
-            const region = userData.Region || {};
+            userRegion = userData.Region || "";
+            userCity = userData.Engineer_City[0] || "";
+            console.log(userCity);
+            
             document.getElementById("userInitials").textContent = UserName.split(" ").map(n => n[0]).join("").toUpperCase();
-            document.getElementById("userRegion").textContent = region;
+            document.getElementById("userRegion").textContent = userRegion;
           }
         }).catch(err => {
           console.error("Error fetching user details: ", err)
         });
 
-        
+        const qualityConfig = {
+          appName: applicationName,
+          reportName: QualityReport,
+          criteria: `(QC_Engineer_Email == "${loginuser}")`,
+          page: 1,
+          pageSize: 200
+        };
+
+        // Fetch all records with pagination
+        async function fetchAllQualityRecords() {
+          let allData = [];
+          let page = 1;
+          let hasMore = true;
+          
+          while (hasMore) {
+            const config = {
+              ...qualityConfig,
+              page: page
+            };
+            
+            const response = await ZOHO.CREATOR.API.getAllRecords(config);
+            if (response && response.data && response.data.length > 0) {
+              allData = allData.concat(response.data);
+              hasMore = response.data.length === qualityConfig.pageSize;
+              page++;
+            } else {
+              hasMore = false;
+            }
+          }
+          
+          return allData;
+        }
+
+        // Replace the existing getAllRecords call with:
+        fetchAllQualityRecords().then((data) => {
+          console.log("Quality Inspection Data:- ", data);
+          // Process the data and update dashboard
+        }).catch(err => {
+          console.error("Error fetching quality inspection data: ", err);
+        });
+
+
+
+        // Get counts and quantities for each status
+        const statuses = ['Open', 'Closed', 'Partially Closed'];
+
+        statuses.forEach(status => {
+          const countConfig = {
+            ...qualityConfig,
+            criteria: `${qualityConfig.criteria} && (Quality_Inspection_Status == "${status}")`
+          };
+          
+          ZOHO.CREATOR.API.getRecordCount(countConfig).then((response) => {
+            const count = response.result.records_count;
+            console.log(`${status}: ${count}`);
+            
+            // Update Calls count
+            if (status === 'Open') {
+              document.getElementById('qiOpenCalls').textContent = count;
+            } else if (status === 'Closed') {
+              document.getElementById('qiClosedCalls').textContent = count;
+            } else if (status === 'Partially Closed') {
+              document.getElementById('qiPartialCalls').textContent = count;
+            }
+          });
+
+          // Fetch records to sum quantities
+          ZOHO.CREATOR.API.getAllRecords(countConfig).then(async (response) => {
+            let allRecords = response.data || [];
+            let page = 2;
+            
+            // Paginate if needed
+            while (response.data && response.data.length === 200) {
+              response = await ZOHO.CREATOR.API.getAllRecords({...countConfig, page});
+              if (response.data) allRecords = allRecords.concat(response.data);
+              page++;
+            }
+            
+            const totalQty = allRecords.reduce((sum, r) => sum + (parseInt(r.Total_Quantity) || 0), 0);
+            const inspectedQty = allRecords.reduce((sum, r) => sum + (parseInt(r.Inspected_Quantity) || 0), 0);
+
+
+            console.log(`${status} - Total: ${totalQty}, Inspected: ${inspectedQty}`);
+
+            
+            // Update Spaces with Total or Inspected quantity as needed
+            if (status === 'Open') {
+              document.getElementById('qiOpenSpaces').textContent = totalQty;
+            } else if (status === 'Closed') {
+              document.getElementById('qiClosedSpaces').textContent = inspectedQty;
+            } else if (status === 'Partially Closed') {
+              document.getElementById('qiPartialSpaces').textContent = inspectedQty;
+            }
+          });
+        });
+
+
+
+
+
 
       });
 
