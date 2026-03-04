@@ -1,456 +1,922 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8"> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-<script src=" https://static.zohocdn.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
-<style>
-  :root{
-    --tag-blue:#0088ff;
-    --border:#bdbdbd;
-    --funnel:#00078d;
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <script src=" https://static.zohocdn.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
+  <style>
+    /* ── Variables ─────────────────────────────────────────── */
+    :root {
+      --tag-blue: #0088ff;
+      --tag-blue-dk: #006fcc;
+      --border: #e0e4ea;
+      --funnel: #2fa7ed;
 
-    --open:#ffdf08;
-    --under:#f9cdcc;
-    --partial:#fff3cc;
-    --closed:#d5e9d4;
+      --open: #71bbec;
+      --open-border: #1280a5;
+      --partial: #ebbf77;
+      --partial-border: #d3a612;
+      --closed: #e6f5e4;
+      --closed-border: #5cb85c;
 
-    --text:#111;
-  }
+      --text: #111;
+      --text-muted: #6b7280;
+      --bg: #f4f6fb;
+      --card-bg: #ffffff;
+      --shadow: 0 4px 24px rgba(0, 0, 0, .08);
+      --shadow-hover: 0 8px 32px rgba(0, 136, 255, .13);
+    }
 
-  *{ box-sizing:border-box; }
-  body{
-    margin:0;
-    padding:18px 14px 30px;
-    background:#fff;
-    font-family:"Segoe UI", system-ui, -apple-system, Aexrial, sans-serif;
-    color:var(--text);
-  }
-  /* ===== Top user bubble (optional, like screenshot) ===== */
-  .top-user{
-    display:flex;
-    justify-content:flex-end;
-    gap:10px;
-    align-items:center;
-    margin-bottom:12px;
-  }
-  .avatar{
-    width:44px;height:44px;
-    border-radius:999px;
-    background:#cfe4ff;
-    border:2px solid #4d86c6;
-    display:grid;place-items:center;
-    font-weight:800;
-  }
-  .loc{
-    font-weight:600;
-    line-height:1.05;
-  }
+    /* ── Reset ─────────────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      background: var(--bg);
+      font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+      color: var(--text);
+      padding: 20px 16px 40px;
+      min-height: 100vh;
+    }
 
-  /* ===== Card ===== */
-  .status-card{
-    position:relative;
-    border:2px solid var(--border);
-    border-radius:16px;
-    background:#fff;
-    padding:18px 16px 16px;
-    margin:14px 0;
-  }
+    /* ── Top user bubble ────────────────────────────────────── */
+    .top-user {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
 
-  /* blue tag on top-left */
-  .card-tag{
-    position:absolute;
-    top:-16px;
-    left:14px;
-    background:var(--tag-blue);
-    color:#fff;
-    padding:10px 16px;
-    border-radius:10px;
-    font-size:24px;
-    font-weight:800;
-    line-height:1;
-    box-shadow:0 4px 14px rgba(0,136,255,.25);
-  }
+    .avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #cfe4ff 0%, #a8d0ff 100%);
+      border: 2.5px solid #4d86c6;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 15px;
+      color: #1a5fa8;
+      box-shadow: 0 2px 8px rgba(77, 134, 198, .25);
+      flex-shrink: 0;
+    }
 
-  /* top-right period + funnel */
-  .card-top-right{
-    display:flex;
-    justify-content:flex-end;
-    align-items:center;
-    gap:10px;
-    padding-top:4px;
-  }
+    .loc {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.2;
+    }
 
-  /* FILTER (dropdown) */
-  .filter-container{ position:relative; display:inline-flex; align-items:center; }
-  .filter-btn{
-    border:none;
-    background:transparent;
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
-    cursor:pointer;
-    padding:0;
-    -webkit-tap-highlight-color:transparent;
-  }
-  .active-period{
-    font-style:italic;
-    font-size:18px;
-    color:#444;
-  }
-  .funnel{
-    font-size:30px;
-    color:var(--funnel);
-    transform: translateY(2px);
-  }
-  .filter-dropdown{
-    position:absolute;
-    right:0;
-    top:34px;
-    background:#fff;
-    border-radius:12px;
-    box-shadow:0 8px 24px rgba(0,0,0,.18);
-    display:none;
-    min-width:220px;
-    z-index:1000;
-    padding:6px;
-    border:1px solid rgba(0,0,0,.08);
-  }
-  .filter-dropdown.open{ display:block; }
-  .filter-option{
-    width:100%;
-    text-align:left;
-    border:none;
-    background:transparent;
-    padding:10px 12px;
-    font-size:14px;
-    cursor:pointer;
-    border-radius:10px;
-    white-space:nowrap;
-  }
-  .filter-option:hover{ background:#f1f3f5; }
-  .table-head{
-    margin-top:6px;
-    display:grid;
-    grid-template-columns: 1.3fr .7fr .9fr;
-    align-items:center;
-    padding:6px 18px 2px;
-    font-size:22px;
-    font-weight:500;
-    color:#222;
-  }
-  .table-head div:nth-child(2),
-  .table-head div:nth-child(3){
-    text-align:center;
-  }
+    /* ── Card ───────────────────────────────────────────────── */
+    .status-card {
+      position: relative;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 22px 18px 18px;
+      margin: 28px 0 20px;
+      box-shadow: var(--shadow);
+      transition: box-shadow .25s ease;
+    }
 
-  /* status rows */
-  .status-row{
-    margin:16px 18px;
-    border-radius:14px;
-    padding:16px 18px;
-    display:grid;
-    grid-template-columns: 1.3fr .7fr .9fr;
-    align-items:center;
-    border:2px solid rgba(0,0,0,.14);
-  }
+    .status-card:hover {
+      box-shadow: var(--shadow-hover);
+    }
 
-  .status-label{
-    font-size:22px;
-    font-weight:500;
-    text-align:left;
-    line-height:1.05;
-    white-space:normal;
-  }
+    /* blue floating tag */
+    .card-tag {
+      position: absolute;
+      top: -18px;
+      left: 16px;
+      background: linear-gradient(135deg, #0099ff 0%, #005fcc 100%);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 22px;
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: .3px;
+      box-shadow: 0 6px 18px rgba(0, 136, 255, .35);
+    }
 
-  .status-calls,
-  .status-spaces{
-    text-align:center;
-    font-weight:900;
-    font-size:34px;
-    letter-spacing:.5px;
-  }
+    /* ── Filter button & dropdown ───────────────────────────── */
+    .card-top-right {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding-top: 6px;
+      margin-bottom: 4px;
+    }
 
-  /* Colors */
-  .open{ background:var(--open); }
-  .under{ background:var(--under); }
-  .partial{ background:var(--partial); }
-  .closed{ background:var(--closed); }
+    .filter-container {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
 
-  /* small tweaks for mobile */
-  @media (max-width:420px){
-    .card-tag{ font-size:20px; padding:8px 12px; top:-14px; }
-    .active-period{ font-size:16px; }
-    .funnel{ font-size:26px; }
-    .table-head{ font-size:18px; padding:6px 10px 2px; }
-    .status-row{ margin:12px 10px; padding:14px 14px; }
-    .status-label{ font-size:18px; }
-    .status-calls,.status-spaces{ font-size:28px; }
-  }
-</style>
+    .filter-btn {
+      border: none;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 10px;
+      transition: background .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .filter-btn:hover {
+      background: #f0f4ff;
+    }
+
+    .active-period {
+      font-style: italic;
+      font-size: 18px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .funnel {
+      font-size: 28px;
+      color: var(--funnel);
+      transform: translateY(2px);
+    }
+
+    .filter-dropdown {
+      position: absolute;
+      right: 0;
+      top: 38px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 10px 36px rgba(0, 0, 0, .16);
+      display: none;
+      min-width: 245px;
+      z-index: 1000;
+      padding: 8px;
+      border: 1px solid rgba(0, 0, 0, .07);
+    }
+
+    .filter-dropdown.open {
+      display: block;
+    }
+
+    .filter-option {
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      border-radius: 10px;
+      white-space: nowrap;
+      color: var(--text);
+      transition: background .12s, color .12s;
+    }
+
+    .filter-option:hover {
+      background: #f0f6ff;
+      color: var(--tag-blue);
+    }
+
+    /* Custom date range */
+    .custom-range {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      padding: 10px 10px 6px;
+      border-top: 1px solid #eee;
+      margin-top: 4px;
+    }
+
+    .custom-range.visible {
+      display: flex;
+    }
+
+    .custom-range label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      margin-bottom: 1px;
+    }
+
+    .custom-range input[type="date"] {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1.5px solid #dde3ed;
+      border-radius: 9px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--text);
+      background: #f8faff;
+      transition: border-color .15s;
+    }
+
+    .custom-range input[type="date"]:focus {
+      outline: none;
+      border-color: var(--tag-blue);
+      background: #fff;
+    }
+
+    /* ✅ NEW */
+    .custom-range .apply-btn-wrap {
+      /* new wrapper for right-align */
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+
+    .custom-range .apply-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 20px;
+      background: linear-gradient(135deg, #0099ff, #005fcc);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      /* pill shape */
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      letter-spacing: .4px;
+      box-shadow: 0 3px 10px rgba(0, 136, 255, .35);
+      transition: transform .15s, box-shadow .15s, opacity .15s;
+    }
+
+    .custom-range .apply-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 16px rgba(0, 136, 255, .45);
+    }
+
+    .custom-range .apply-btn:active {
+      transform: translateY(0);
+      opacity: .85;
+    }
+
+    /* ── Table head ─────────────────────────────────────────── */
+    .table-head {
+      display: grid;
+      grid-template-columns: 1.3fr .7fr .9fr;
+      align-items: center;
+      padding: 4px 16px 2px;
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .table-head div:nth-child(2),
+    .table-head div:nth-child(3) {
+      text-align: center;
+    }
+
+    /* ── Status rows ────────────────────────────────────────── */
+    .status-row {
+      display: grid;
+      grid-template-columns: 1.3fr .7fr .9fr;
+      align-items: center;
+      margin: 10px 4px;
+      border-radius: 14px;
+      padding: 16px 20px;
+      border: 2px solid transparent;
+      transition: transform .15s, box-shadow .15s;
+    }
+
+    .status-row:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .10);
+    }
+
+    .status-label {
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.15;
+    }
+
+    .status-calls,
+    .status-spaces {
+      text-align: center;
+      font-weight: 500;
+      font-size: 30px;
+      letter-spacing: .5px;
+      border-left: 1.5px solid rgba(0, 0, 0, .10);
+    }
+
+    /* Row colour themes */
+    .open {
+      background: var(--open);
+      border-color: var(--open-border);
+    }
+
+    .partial {
+      background: var(--partial);
+      border-color: var(--partial-border);
+    }
+
+    .closed {
+      background: var(--closed);
+      border-color: var(--closed-border);
+    }
+
+    /* Loading pulse */
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: .3
+      }
+
+      50% {
+        opacity: 1
+      }
+    }
+
+    .loading-val {
+      animation: pulse 1.4s ease-in-out infinite;
+      color: #aaa;
+    }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 420px) {
+      .card-tag {
+        font-size: 20px;
+        padding: 8px 14px;
+        top: -15px;
+      }
+
+      .active-period {
+        font-size: 16px;
+      }
+
+      .funnel {
+        font-size: 24px;
+      }
+
+      .table-head {
+        font-size: 18px;
+        padding: 4px 10px 2px;
+      }
+
+      .status-row {
+        margin: 8px 2px;
+        padding: 13px 14px;
+      }
+
+      .status-label {
+        font-size: 18px;
+      }
+
+      .status-calls,
+      .status-spaces {
+        font-size: 28px;
+      }
+    }
+
+    /* Loader */
+    .loader {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loader.hidden {
+      display: none;
+    }
+
+    .jimu-primary-loading:before,
+    .jimu-primary-loading:after {
+      position: absolute;
+      top: 0;
+      content: '';
+    }
+
+    .jimu-primary-loading:before {
+      left: -19.992px;
+    }
+
+    .jimu-primary-loading:after {
+      left: 19.992px;
+      animation-delay: 0.32s !important;
+    }
+
+    .jimu-primary-loading:before,
+    .jimu-primary-loading:after,
+    .jimu-primary-loading {
+      background: #076fe5;
+      animation: loading-keys-app-loading 0.8s infinite ease-in-out;
+      width: 13.6px;
+      height: 32px;
+    }
+
+    .jimu-primary-loading {
+      text-indent: -9999em;
+      margin: auto;
+      position: relative;
+      animation-delay: 0.16s !important;
+    }
+
+    @keyframes loading-keys-app-loading {
+      0%, 80%, 100% {
+        opacity: .75;
+        box-shadow: 0 0 #076fe5;
+        height: 32px;
+      }
+      40% {
+        opacity: 1;
+        box-shadow: 0 -8px #076fe5;
+        height: 40px;
+      }
+    }
+
+    /* iOS fixes */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+
+    body {
+      -webkit-overflow-scrolling: touch;
+    }
+
+    button, input, select {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .status-row {
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+  </style>
 </head>
+
 <body>
-    <!-- ===== Optional top header (like screenshot) ===== -->
-    <div class="top-user">
-      <div class="avatar" id="userInitials">Null</div>
-      <div class="loc">
-        <div id="userRegion">Null</div>
+
+  <!-- Loader -->
+  <div class="loader" id="pageLoader">
+    <div class="justify-content-center jimu-primary-loading"></div>
+  </div>
+
+  <!-- Top user bubble -->
+  <div class="top-user">
+    <div class="avatar" id="userInitials">--</div>
+    <div class="loc">
+      <div id="userRegion">--</div>
+    </div>
+  </div>
+
+  <!-- ===== QI Calls Card ===== -->
+  <section class="status-card">
+    <div class="card-tag">QI Calls</div>
+
+    <div class="card-top-right">
+      <div class="filter-container" data-section="qi">
+        <button type="button" class="filter-btn">
+          <span class="active-period" id="qiPeriodLabel">This month</span>
+          <i class="bi bi-funnel-fill funnel"></i>
+        </button>
+
+        <div class="filter-dropdown" id="qiFilterDropdown">
+          <button type="button" class="filter-option" data-period="this_month">This month</button>
+          <button type="button" class="filter-option" data-period="this_quarter">This quarter</button>
+          <button type="button" class="filter-option" data-period="last_quarter">Last quarter</button>
+          <button type="button" class="filter-option" data-period="this_year">This year (YTD financial year)</button>
+          <button type="button" class="filter-option" data-period="custom">Custom date range</button>
+          <!-- Custom date range picker (only shown when "custom" selected) -->
+          <div class="custom-range" id="qiCustomRange">
+            <label>From</label>
+            <input type="date" id="qiFromDate">
+            <label>To</label>
+            <input type="date" id="qiToDate">
+            <!-- ✅ NEW -->
+            <div class="apply-btn-wrap">
+              <button type="button" class="apply-btn" onclick="applyCustomRange('qi')">
+                <i class="bi bi-check2"></i> Apply
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- ===== QI Calls Card ===== -->
-    <section class="status-card">
-      <div class="card-tag">QI Calls</div>
+    <div class="table-head">
+      <div></div>
+      <div>Calls</div>
+      <div>Spaces</div>
+    </div>
 
-      <!--MODIFIED FILTER DROPDOWN (period-based) -->
-      <div class="card-top-right">
-        <div class="filter-container" data-section="qi">
-          <button type="button" class="filter-btn">
-            <span class="active-period" id="qiPeriodLabel">This month</span>
-            <i class="bi bi-funnel-fill funnel"></i>
-          </button>
+    <div class="status-row open" onclick="navigateToReport('Open', currentQiFrom, currentQiTo)">
+      <div class="status-label" style="cursor:pointer;">Open</div>
+      <div class="status-calls" id="qiOpenCalls">--</div>
+      <div class="status-spaces" id="qiOpenSpaces">--</div>
+    </div>
 
-          <div class="filter-dropdown" id="qiFilterDropdown">
-            <button type="button" class="filter-option" data-period="this_month">This month</button>
-            <button type="button" class="filter-option" data-period="this_quarter">This quarter</button>
-            <button type="button" class="filter-option" data-period="last_quarter">Last quarter</button>
-            <button type="button" class="filter-option" data-period="this_year">This year (YTD financial year)</button>
-            <button type="button" class="filter-option" data-period="custom">Custom date range</button>
+    <div class="status-row partial" onclick="navigateToReport('Partially Closed', currentQiFrom, currentQiTo)">
+      <div class="status-label" style="cursor:pointer;">Partially<br>Closed</div>
+      <div class="status-calls" id="qiPartialCalls">--</div>
+      <div class="status-spaces" id="qiPartialSpaces">--</div>
+    </div>
+
+    <div class="status-row closed" onclick="navigateToReport('Closed', currentQiFrom, currentQiTo)">
+      <div class="status-label" style="cursor:pointer;">Closed</div>
+      <div class="status-calls" id="qiClosedCalls">--</div>
+      <div class="status-spaces" id="qiClosedSpaces">--</div>
+    </div>
+  </section>
+
+  <!-- ===== Me Card ===== -->
+  <section class="status-card">
+    <div class="card-tag">Me</div>
+    <div class="card-top-right">
+      <div class="filter-container" data-section="me">
+        <button type="button" class="filter-btn">
+          <span class="active-period" id="mePeriodLabel">This month</span>
+          <i class="bi bi-funnel-fill funnel"></i>
+        </button>
+        <div class="filter-dropdown" id="meFilterDropdown">
+          <button type="button" class="filter-option" data-period="this_month">This month</button>
+          <button type="button" class="filter-option" data-period="this_quarter">This quarter</button>
+          <button type="button" class="filter-option" data-period="last_quarter">Last quarter</button>
+          <button type="button" class="filter-option" data-period="this_year">This year (YTD financial year)</button>
+          <button type="button" class="filter-option" data-period="custom">Custom date range</button>
+          <div class="custom-range" id="meCustomRange">
+            <label>From</label>
+            <input type="date" id="meFromDate">
+            <label>To</label>
+            <input type="date" id="meToDate">
+            <!-- ✅ NEW -->
+            <div class="apply-btn-wrap">
+              <button type="button" class="apply-btn" onclick="applyCustomRange('qi')">
+                <i class="bi bi-check2"></i> Apply
+              </button>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+    <div class="status-row closed" style="margin-top:22px;"
+      onclick="navigateToReport('Closed', currentMeFrom, currentMeTo)">
+      <div class="status-label" style="cursor:pointer;">Closed</div>
+      <div class="status-calls" id="meClosedCalls">--</div>
+      <div class="status-spaces" id="meClosedSpaces">--</div>
+    </div>
+  </section>
 
-      <div class="table-head">
-        <div></div>
-        <div>Calls</div>
-        <div>Spaces</div>
-      </div>
+  <script>
+    /* ═══════════════════════════════════════════════
+     CONFIGURATION
+  ═══════════════════════════════════════════════ */
+    const applicationName = "service-management";
+    const userReport = "My_Users";
+    const QualityReport = "Widget_Quality_Inspection";
+    const REPORT_BASE_URL = "https://creatorapp.zoho.in/wohr_parking/environment/development/service-management/#Report:";
 
-      <div class="status-row open">
-        <div class="status-label">Open</div>
-        <div class="status-calls" id="qiOpenCalls">3</div>
-        <div class="status-spaces" id="qiOpenSpaces">120</div>
-      </div>
+    /* ═══════════════════════════════════════════════
+       STATE
+    ═══════════════════════════════════════════════ */
+    let allQualityRecords = [];
+    let currentQiPeriod = "this_month";
+    let currentMePeriod = "this_month";
+    let loginUser = "";
+    let userName = "";
+    let currentQiFrom = null;
+    let currentQiTo = null;
+    let currentMeFrom = null;
+    let currentMeTo = null;
 
-      <!-- <div class="status-row under">
-        <div class="status-label">Under<br>QI</div>
-        <div class="status-calls" id="qiUnderCalls">5</div>
-        <div class="status-spaces" id="qiUnderSpaces">234</div>
-      </div> -->
+    /* ═══════════════════════════════════════════════
+       DATE HELPERS  –  Added_Time: "02-Mar-2026 16:29:06"
+    ═══════════════════════════════════════════════ */
+    function parseZohoDate(str) {
+      if (!str) return null;
+      const months = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+      const [datePart, timePart] = str.split(" ");
+      const [dd, mon, yyyy] = datePart.split("-");
+      const [hh, mm, ss] = (timePart || "0:0:0").split(":");
+      return new Date(+yyyy, months[mon], +dd, +hh, +mm, +ss);
+    }
 
-      <div class="status-row partial">
-        <div class="status-label">Partially<br>Closed</div>
-        <div class="status-calls" id="qiPartialCalls">3</div>
-        <div class="status-spaces" id="qiPartialSpaces">232</div>
-      </div>
+    /** Format JS Date -> "dd-Mon-yyyy HH:mm:ss" for Zoho report URL */
+    function formatZohoDateStr(date) {
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const dd = String(date.getDate()).padStart(2, "0");
+      const mon = months[date.getMonth()];
+      const yyyy = date.getFullYear();
+      const hh = String(date.getHours()).padStart(2, "0");
+      const mm = String(date.getMinutes()).padStart(2, "0");
+      const ss = String(date.getSeconds()).padStart(2, "0");
+      return `${dd}-${mon}-${yyyy} ${hh}:${mm}:${ss}`;
+    }
 
-      <div class="status-row closed">
-        <div class="status-label">Closed</div>
-        <div class="status-calls" id="qiClosedCalls">1</div>
-        <div class="status-spaces" id="qiClosedSpaces">25</div>
-      </div>
-    </section>
+    // /** Build & navigate to Zoho report URL with filters */
+    // function navigateToReport(status, from, to) {
+    //   const fromStr = formatZohoDateStr(from);
+    //   const toStr   = formatZohoDateStr(to);
 
-    <!-- ===== Me Card ===== -->
-    <section class="status-card">
-      <div class="card-tag">Me</div>
-      <div class="card-top-right">
-        <div class="filter-container" data-section="me">
-          <button type="button" class="filter-btn">
-            <span class="active-period" id="mePeriodLabel">This month</span>
-            <i class="bi bi-funnel-fill funnel"></i>
-          </button>
-          <div class="filter-dropdown" id="meFilterDropdown">
-            <button type="button" class="filter-option" data-period="this_month">This month</button>
-            <button type="button" class="filter-option" data-period="this_quarter">This quarter</button>
-            <button type="button" class="filter-option" data-period="last_quarter">Last quarter</button>
-            <button type="button" class="filter-option" data-period="this_year">This year (YTD financial year)</button>
-            <button type="button" class="filter-option" data-period="custom">Custom date range</button>
-          </div>
-        </div>
-      </div>
-      <div class="status-row closed" style="margin-top:22px;">
-        <div class="status-label">Closed</div>
-        <div class="status-calls" id="meClosedCalls">1</div>
-        <div class="status-spaces" id="meClosedSpaces">25</div>
-      </div>
-    </section>
-    <script>
-      let UserName = "";
-      let userID = "";
-      let userRegion = "";
-      let userCity = "";
-      let applicationName = "service-management";
-      let userReport = "My_Users";
-      let QualityReport = "Widget_Quality_Inspection";
+    //   // Build URL with proper encoding - spaces become %20, semicolons stay as-is
+    //   const dateRange = `${fromStr};${toStr}`.replace(/ /g, '%20');
+    //   const nameEncoded = userName.replace(/ /g, '%20');
+    //   const statusEncoded = status.replace(/ /g, '%20');
 
+    //   const url = `${REPORT_BASE_URL}Widget_Quality_Inspection?Added_Time=${dateRange}&Added_Time_op=58&Quality_Inspection_Engineer_Name=${nameEncoded}&Quality_Inspection_Status=${statusEncoded}`;
 
-      // ---------------------
-      // *Initialization Zoho*
-      // ---------------------
+    //   console.log("Navigating to:", url);
+    //   ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url: url, window: "same" });
+    // }
 
-      ZOHO.CREATOR.init().then(() => {
-        console.log("Dashboard Running....");
-        const params = ZOHO.CREATOR.UTIL.getInitParams() || {};
-        // console.log(params);
-        const loginuser = params.loginUser || "";
-        // console.log("Login User:- ", loginuser);
+    /** Build & navigate to Zoho report URL with filters */
+    function navigateToReport(status, from, to) {
+      const fromStr = formatZohoDateStr(from);
+      const toStr = formatZohoDateStr(to);
 
-        const config = {
-          appName: applicationName,
-          reportName: userReport,
-          criteria: `(Email == "${loginuser}")`,
-          page: 1,
-          pageSize: 1
-        };
-        console.log(config);
-        
-        ZOHO.CREATOR.API.getAllRecords(config).then((response) => {
-          if(response && response.data && response.data.length > 0){
-            const userData = response.data[0];
-            console.log("User Details:- ", userData);
-            UserName = userData.Name || "";
-            userID = userData.ID || "";
-            userRegion = userData.Region || "";
-            userCity = userData.Engineer_City[0] || "";
-            console.log(userCity);
-            
-            document.getElementById("userInitials").textContent = UserName.split(" ").map(n => n[0]).join("").toUpperCase();
-            document.getElementById("userRegion").textContent = userRegion;
-          }
-        }).catch(err => {
-          console.error("Error fetching user details: ", err)
-        });
+      // Don't encode - navigateParentURL will handle it
+      const url = `${REPORT_BASE_URL}Widget_Quality_Inspection?Added_Time=${fromStr};${toStr}&Added_Time_op=58&Quality_Inspection_Engineer_Name=${userName}&Quality_Inspection_Status=${status}`;
 
-        const qualityConfig = {
-          appName: applicationName,
-          reportName: QualityReport,
-          criteria: `(QC_Engineer_Email == "${loginuser}")`,
-          page: 1,
-          pageSize: 200
-        };
-
-        // Fetch all records with pagination
-        async function fetchAllQualityRecords() {
-          let allData = [];
-          let page = 1;
-          let hasMore = true;
-          
-          while (hasMore) {
-            const config = {
-              ...qualityConfig,
-              page: page
-            };
-            
-            const response = await ZOHO.CREATOR.API.getAllRecords(config);
-            if (response && response.data && response.data.length > 0) {
-              allData = allData.concat(response.data);
-              hasMore = response.data.length === qualityConfig.pageSize;
-              page++;
-            } else {
-              hasMore = false;
-            }
-          }
-          
-          return allData;
-        }
-
-        // Replace the existing getAllRecords call with:
-        fetchAllQualityRecords().then((data) => {
-          console.log("Quality Inspection Data:- ", data);
-          // Process the data and update dashboard
-        }).catch(err => {
-          console.error("Error fetching quality inspection data: ", err);
-        });
+      console.log("Navigating to:", url);
+      ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url: url, window: "same" });
+    }
 
 
 
-        // Get counts and quantities for each status
-        const statuses = ['Open', 'Closed', 'Partially Closed'];
+    function parseDateInput(val, endOfDay = false) {
+      if (!val) return null;
+      const [y, m, d] = val.split("-").map(Number);
+      return endOfDay
+        ? new Date(y, m - 1, d, 23, 59, 59)
+        : new Date(y, m - 1, d, 0, 0, 0);
+    }
 
-        statuses.forEach(status => {
-          const countConfig = {
-            ...qualityConfig,
-            criteria: `${qualityConfig.criteria} && (Quality_Inspection_Status == "${status}")`
+    function getFinancialYear(date) {
+      return date.getMonth() >= 3 ? date.getFullYear() : date.getFullYear() - 1;
+    }
+
+    function getCurrentFYQuarter(date) {
+      const m = date.getMonth();
+      const fy = getFinancialYear(date);
+      let q, qStart, qEnd;
+      if (m >= 3 && m <= 5) { q = 1; qStart = new Date(fy, 3, 1); qEnd = new Date(fy, 5, 30, 23, 59, 59); }
+      else if (m >= 6 && m <= 8) { q = 2; qStart = new Date(fy, 6, 1); qEnd = new Date(fy, 8, 30, 23, 59, 59); }
+      else if (m >= 9 && m <= 11) { q = 3; qStart = new Date(fy, 9, 1); qEnd = new Date(fy, 11, 31, 23, 59, 59); }
+      else { q = 4; qStart = new Date(fy + 1, 0, 1); qEnd = new Date(fy + 1, 2, 31, 23, 59, 59); }
+      return { q, qStart, qEnd };
+    }
+
+    function getLastFYQuarter(date) {
+      const { q } = getCurrentFYQuarter(date);
+      const fy = getFinancialYear(date);
+      let qStart, qEnd;
+      if (q === 1) { qStart = new Date(fy - 1, 9, 1); qEnd = new Date(fy - 1, 11, 31, 23, 59, 59); }
+      else if (q === 2) { qStart = new Date(fy, 3, 1); qEnd = new Date(fy, 5, 30, 23, 59, 59); }
+      else if (q === 3) { qStart = new Date(fy, 6, 1); qEnd = new Date(fy, 8, 30, 23, 59, 59); }
+      else { qStart = new Date(fy, 9, 1); qEnd = new Date(fy, 11, 31, 23, 59, 59); }
+      return { qStart, qEnd };
+    }
+
+    function getDateRange(period, customFrom, customTo) {
+      const now = new Date();
+      switch (period) {
+        case "this_month":
+          return {
+            from: new Date(now.getFullYear(), now.getMonth(), 1),
+            to: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
           };
-          
-          ZOHO.CREATOR.API.getRecordCount(countConfig).then((response) => {
-            const count = response.result.records_count;
-            console.log(`${status}: ${count}`);
-            
-            // Update Calls count
-            if (status === 'Open') {
-              document.getElementById('qiOpenCalls').textContent = count;
-            } else if (status === 'Closed') {
-              document.getElementById('qiClosedCalls').textContent = count;
-            } else if (status === 'Partially Closed') {
-              document.getElementById('qiPartialCalls').textContent = count;
-            }
-          });
-
-          // Fetch records to sum quantities
-          ZOHO.CREATOR.API.getAllRecords(countConfig).then(async (response) => {
-            let allRecords = response.data || [];
-            let page = 2;
-            
-            // Paginate if needed
-            while (response.data && response.data.length === 200) {
-              response = await ZOHO.CREATOR.API.getAllRecords({...countConfig, page});
-              if (response.data) allRecords = allRecords.concat(response.data);
-              page++;
-            }
-            
-            const totalQty = allRecords.reduce((sum, r) => sum + (parseInt(r.Total_Quantity) || 0), 0);
-            const inspectedQty = allRecords.reduce((sum, r) => sum + (parseInt(r.Inspected_Quantity) || 0), 0);
-
-
-            console.log(`${status} - Total: ${totalQty}, Inspected: ${inspectedQty}`);
-
-            
-            // Update Spaces with Total or Inspected quantity as needed
-            if (status === 'Open') {
-              document.getElementById('qiOpenSpaces').textContent = totalQty;
-            } else if (status === 'Closed') {
-              document.getElementById('qiClosedSpaces').textContent = inspectedQty;
-            } else if (status === 'Partially Closed') {
-              document.getElementById('qiPartialSpaces').textContent = inspectedQty;
-            }
-          });
-        });
-
-
-
-
-
-
-      });
-
-
-      function closeAllDropdowns(){
-        document.querySelectorAll(".filter-dropdown.open").forEach(dd => dd.classList.remove("open"));
+        case "this_quarter": {
+          const { qStart, qEnd } = getCurrentFYQuarter(now);
+          return { from: qStart, to: qEnd };
+        }
+        case "last_quarter": {
+          const { qStart, qEnd } = getLastFYQuarter(now);
+          return { from: qStart, to: qEnd };
+        }
+        case "this_year": {
+          const fy = getFinancialYear(now);
+          return { from: new Date(fy, 3, 1), to: new Date(fy + 1, 2, 31, 23, 59, 59) };
+        }
+        case "custom":
+          return { from: customFrom || new Date(0), to: customTo || new Date(9999, 11, 31) };
+        default:
+          return { from: new Date(0), to: new Date() };
       }
-      document.addEventListener("click", (e) => {
-        const btn = e.target.closest(".filter-btn");
-        const option = e.target.closest(".filter-option");
-        if(option){
-          const container = option.closest(".filter-container");
-          const label = container?.querySelector(".active-period");
-          const periodText = option.textContent?.trim() || "This month";
-          if(label) label.textContent = periodText;
-          closeAllDropdowns();
-          return;
-        }
-        if(btn){
-          e.stopPropagation();
-          const container = btn.closest(".filter-container");
-          const dd = container?.querySelector(".filter-dropdown");
-          if(!dd) return;
-          const isOpen = dd.classList.contains("open");
-          closeAllDropdowns();
-          if(!isOpen) dd.classList.add("open");
-          return;
-        }
-        closeAllDropdowns();
+    }
+
+    /* ═══════════════════════════════════════════════
+       AGGREGATE
+    ═══════════════════════════════════════════════ */
+    function aggregateRecords(records, from, to) {
+      const buckets = {
+        "Open": { calls: 0, totalQty: 0, inspectedQty: 0 },
+        "Partially Closed": { calls: 0, totalQty: 0, inspectedQty: 0 },
+        "Closed": { calls: 0, totalQty: 0, inspectedQty: 0 }
+      };
+      records.forEach(r => {
+        const d = parseZohoDate(r.Added_Time);
+        if (!d || d < from || d > to) return;
+        const status = r.Quality_Inspection_Status;
+        if (!buckets[status]) return;
+        buckets[status].calls++;
+        buckets[status].totalQty += parseInt(r.Total_Quantity) || 0;
+        buckets[status].inspectedQty += parseInt(r.Inspected_Quantity) || 0;
       });
-    </script>
+      return buckets;
+    }
+
+    /* ═══════════════════════════════════════════════
+       DOM UPDATERS
+    ═══════════════════════════════════════════════ */
+    function setVal(id, val) {
+      const el = document.getElementById(id);
+      el.textContent = val;
+      el.classList.remove("loading-val");
+    }
+
+    function updateQiCard(b) {
+      setVal("qiOpenCalls", b["Open"].calls);
+      setVal("qiOpenSpaces", b["Open"].totalQty);
+      setVal("qiPartialCalls", b["Partially Closed"].calls);
+      setVal("qiPartialSpaces", b["Partially Closed"].inspectedQty);
+      setVal("qiClosedCalls", b["Closed"].calls);
+      setVal("qiClosedSpaces", b["Closed"].inspectedQty);
+    }
+
+    function updateMeCard(b) {
+      setVal("meClosedCalls", b["Closed"].calls);
+      setVal("meClosedSpaces", b["Closed"].inspectedQty);
+    }
+
+    /* ═══════════════════════════════════════════════
+       REFRESH
+    ═══════════════════════════════════════════════ */
+    function refreshQiCard(customFrom, customTo) {
+      const { from, to } = getDateRange(currentQiPeriod, customFrom, customTo);
+      currentQiFrom = from;
+      currentQiTo = to;
+      updateQiCard(aggregateRecords(allQualityRecords, from, to));
+    }
+
+    function refreshMeCard(customFrom, customTo) {
+      const { from, to } = getDateRange(currentMePeriod, customFrom, customTo);
+      currentMeFrom = from;
+      currentMeTo = to;
+      updateMeCard(aggregateRecords(allQualityRecords, from, to));
+    }
+
+    /* ═══════════════════════════════════════════════
+       CUSTOM RANGE APPLY
+    ═══════════════════════════════════════════════ */
+    function applyCustomRange(section) {
+      if (section === "qi") {
+        const from = parseDateInput(document.getElementById("qiFromDate").value);
+        const to = parseDateInput(document.getElementById("qiToDate").value, true);
+        if (!from || !to || isNaN(from) || isNaN(to)) { alert("Please select valid dates."); return; }
+        currentQiPeriod = "custom";
+        document.getElementById("qiPeriodLabel").textContent = "Custom range";
+        refreshQiCard(from, to);
+      } else {
+        const from = parseDateInput(document.getElementById("meFromDate").value);
+        const to = parseDateInput(document.getElementById("meToDate").value, true);
+        if (!from || !to || isNaN(from) || isNaN(to)) { alert("Please select valid dates."); return; }
+        currentMePeriod = "custom";
+        document.getElementById("mePeriodLabel").textContent = "Custom range";
+        refreshMeCard(from, to);
+      }
+      closeAllDropdowns();
+    }
+
+    /* ═══════════════════════════════════════════════
+       ZOHO INIT + FETCH
+    ═══════════════════════════════════════════════ */
+    ZOHO.CREATOR.init().then(async () => {
+      console.log("Dashboard Running....");
+      try{
+      const params = ZOHO.CREATOR.UTIL.getInitParams() || {};
+      loginUser = params.loginUser || "";
+
+      try {
+        const userResp = await ZOHO.CREATOR.API.getAllRecords({
+          appName: applicationName, reportName: userReport,
+          criteria: `(Email == "${loginUser}")`, page: 1, pageSize: 1
+        });
+        if (userResp?.data?.length > 0) {
+          const u = userResp.data[0];
+          userName = u.Name || "";
+          document.getElementById("userInitials").textContent =
+            userName.split(" ").map(n => n[0]).join("").toUpperCase() || "--";
+          document.getElementById("userRegion").textContent = u.Region || "";
+        }
+      } catch (e) { console.error("User fetch error:", e); }
+
+      const pageSize = 200;
+      let page = 1, hasMore = true;
+
+      while (hasMore) {
+        try {
+          const resp = await ZOHO.CREATOR.API.getAllRecords({
+            appName: applicationName, reportName: QualityReport,
+            criteria: `(QC_Engineer_Email == "${loginUser}")`,
+            page, pageSize
+          });
+          const batch = resp?.data || [];
+          allQualityRecords = allQualityRecords.concat(batch);
+          hasMore = batch.length === pageSize;
+          page++;
+        } catch (e) { console.error("Quality records fetch error:", e); hasMore = false; }
+      }
+
+      console.log(`Fetched ${allQualityRecords.length} quality records total.`);
+
+      refreshQiCard();
+      refreshMeCard();
+
+      // Hide loader
+      document.getElementById('pageLoader').classList.add('hidden');
+    } catch (e) {
+      console.error("ZOHO Init error:", e);
+      alert("Failed to load dashboard. Please try again later.");
+    }
+    }).catch(e => {
+      console.error("ZOHO Init error:", e);
+      alert("Failed to load dashboard. Please try again later.");
+    });
+
+
+    /* ═══════════════════════════════════════════════
+       DROPDOWN INTERACTION
+    ═══════════════════════════════════════════════ */
+    const PERIOD_LABELS = {
+      this_month: "This month",
+      this_quarter: "This quarter",
+      last_quarter: "Last quarter",
+      this_year: "This year (YTD)",
+      custom: "Custom range"
+    };
+
+    function closeAllDropdowns() {
+      document.querySelectorAll(".filter-dropdown.open").forEach(dd => dd.classList.remove("open"));
+      document.querySelectorAll(".custom-range.visible").forEach(cr => cr.classList.remove("visible"));
+    }
+
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".filter-btn");
+      const option = e.target.closest(".filter-option");
+
+      if (option) {
+        e.stopPropagation();
+        const container = option.closest(".filter-container");
+        const section = container?.dataset.section;
+        const period = option.dataset.period;
+        const label = container?.querySelector(".active-period");
+
+        if (period === "custom") {
+          const cr = document.getElementById(`${section}CustomRange`);
+          cr?.classList.toggle("visible");
+          if (label) label.textContent = PERIOD_LABELS["custom"];
+          return;
+        }
+
+        if (label) label.textContent = PERIOD_LABELS[period] || period;
+        if (section === "qi") { currentQiPeriod = period; refreshQiCard(); }
+        else { currentMePeriod = period; refreshMeCard(); }
+        closeAllDropdowns();
+        return;
+      }
+
+      if (btn) {
+        e.stopPropagation();
+        const container = btn.closest(".filter-container");
+        const dd = container?.querySelector(".filter-dropdown");
+        if (!dd) return;
+        const isOpen = dd.classList.contains("open");
+        closeAllDropdowns();
+        if (!isOpen) dd.classList.add("open");
+        return;
+      }
+
+      if (!e.target.closest(".filter-dropdown")) closeAllDropdowns();
+    });
+  </script>
 </body>
+
 </html>
