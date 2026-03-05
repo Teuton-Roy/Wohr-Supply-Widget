@@ -38,13 +38,117 @@
       min-height: 100vh;
     }
 
+    /* ── Loader ─────────────────────────────────────────────── */
+    @import url('https://fonts.googleapis.com/css?family=Exo:300');
+
+    .wrap-loader {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #000;
+      z-index: 9999;
+    }
+    .wrap-loader.active { display: flex; }
+
+    .loader {
+      position: relative;
+      width: 20rem;
+      height: 20rem;
+    }
+    .loader::before {
+      z-index: 1;
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8.7rem;
+      height: 8.7rem;
+      background: #000;
+      border-radius: 50%;
+    }
+
+    .loader .box {
+      position: absolute;
+      width: 10rem;
+      height: 10rem;
+      overflow: hidden;
+    }
+    .loader .box::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      opacity: 0.1;
+    }
+    .loader .box:nth-child(1) { top: 0; left: 0; }
+    .loader .box:nth-child(1)::before { top: 50%; left: 50%; background: #4185F3; animation: lightMe1 4s ease-out infinite; }
+    .loader .box:nth-child(2) { top: 0; right: 0; }
+    .loader .box:nth-child(2)::before { top: 50%; right: 50%; background: #33A753; animation: lightMe2 4s ease-out infinite; }
+    .loader .box:nth-child(3) { bottom: 0; right: 0; }
+    .loader .box:nth-child(3)::before { bottom: 50%; right: 50%; background: #FABB04; animation: lightMe3 4s ease-out infinite; }
+    .loader .box:nth-child(4) { bottom: 0; left: 0; }
+    .loader .box:nth-child(4)::before { bottom: 50%; left: 50%; background: #E94234; animation: lightMe4 4s linear infinite; }
+
+    .loader .wrap-text {
+      z-index: 2;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      overflow: hidden;
+    }
+    .loader .text {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      animation: slider 8s ease-in infinite;
+    }
+    .loader .text span {
+      display: block;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      font-size: 2em;
+      color: #fff;
+      font-family: 'Exo', sans-serif;
+    }
+
+    .loader-text {
+      color: #fff;
+      transform: translateY(-2rem);
+      letter-spacing: 6px;
+      opacity: 0.2;
+      animation: blink 1s ease-out infinite alternate;
+      font-family: 'Exo', sans-serif;
+    }
+
+    @keyframes lightMe1 { 0%{opacity:0.1} 25%{opacity:1} 100%{opacity:1} }
+    @keyframes lightMe2 { 0%{opacity:0.1} 25%{opacity:0.1} 50%{opacity:1} 100%{opacity:1} }
+    @keyframes lightMe3 { 0%{opacity:0.1} 50%{opacity:0.1} 75%{opacity:1} 100%{opacity:1} }
+    @keyframes lightMe4 { 0%{opacity:0.1} 75%{opacity:0.1} 100%{opacity:1} }
+
+    @keyframes slider {
+      0%{transform:translateY(0)} 10.5%{transform:translateY(0)} 12.5%{transform:translateY(-40px)} 23%{transform:translateY(-40px)} 25%{transform:translateY(-80px)} 35%{transform:translateY(-80px)} 37.5%{transform:translateY(-120px)} 47.5%{transform:translateY(-120px)} 50%{transform:translateY(-160px)} 60%{transform:translateY(-160px)} 62.5%{transform:translateY(-200px)} 72.5%{transform:translateY(-200px)} 75%{transform:translateY(-240px)} 85%{transform:translateY(-240px)} 87.5%{transform:translateY(-280px)} 100%{transform:translateY(-280px)}
+    }
+
+    @keyframes blink { from{opacity:0.2} to{opacity:0.75} }
+
+
     /* ── Top user ───────────────────────────────────────────── */
     .top-user {
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
+      gap: 10px;
+      margin-bottom: 15px;
     }
     .avatar {
       width: 46px; height: 46px;
@@ -184,10 +288,10 @@
     }
     .status-row:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.10); }
 
-    .status-label { font-size: 22px; font-weight: 600; line-height: 1.15; }
+    .status-label { font-size: 20px; font-weight: 500; line-height: 1.15; }
     .status-calls, .status-spaces {
-      text-align: center; font-weight: 900;
-      font-size: 34px; letter-spacing: .5px;
+      text-align: center; font-weight: 500;
+      font-size: 30px; letter-spacing: .5px;
       border-left: 1.5px solid rgba(0,0,0,.10);
     }
 
@@ -218,10 +322,33 @@
 </head>
 <body>
 
+  <div class="wrap-loader" id="loader">
+    <div class="loader">
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="wrap-text">
+        <div class="text">
+          <span>L</span>
+          <span>O</span>
+          <span>A</span>
+          <span>D</span>
+          <span>I</span>
+          <span>N</span>
+          <span>G</span>
+          <span>...</span>
+        </div>
+      </div>
+     </div>
+    <div class="loader-text">wait please</div>
+  </div>
+
+
   <!-- Top user -->
   <div class="top-user">
-    <div class="loc" id="userRegion">--</div>
     <div class="avatar" id="userInitials">--</div>
+    <div class="loc" id="userRegion">--</div>
   </div>
 
   <!-- ══════════ Handovers Card ══════════ -->
@@ -324,6 +451,8 @@
     </div>
   </section>
 
+
+
   <script>
     /* ═══════════════════════════════════════════════
        CONFIGURATION
@@ -373,6 +502,13 @@
       const mm   = String(date.getMinutes()).padStart(2,"0");
       const ss   = String(date.getSeconds()).padStart(2,"0");
       return `${dd}-${mon}-${yyyy} ${hh}:${mm}:${ss}`;
+    }
+
+    function formatZohoDateOnly(date) {
+      const dd   = String(date.getDate()).padStart(2,"0");
+      const mon  = MONTH_NAMES[date.getMonth()];
+      const yyyy = date.getFullYear();
+      return `${dd}-${mon}-${yyyy}`;
     }
 
     function parseDateInput(val, endOfDay = false) {
@@ -498,17 +634,18 @@
         }
       });
 
-      // ── ESN Completed: ESN_Status == Completed ──
-      // Calls = count of completed ESN records
-      // Spaces = count of unique APS_PS_Parking_Numbers that are fully completed
+      // ✅ NEW — directly filter allEsnRecords by its own Added_Time
       const esnCompletedParkings = new Set();
       esnRecords.forEach(r => {
+        const d = parseZohoDate(r.Added_Time);
+        if (!d || d < from || d > to) return;  // date filter on ESN's own Added_Time
+
         if (r.ESN_Status === "Completed") {
           esnCompleted.calls++;
           if (r.APS_PS_Parking_Number) esnCompletedParkings.add(r.APS_PS_Parking_Number);
         }
       });
-      esnCompleted.spaces = esnCompletedParkings.size; // unique parking locations completed
+      esnCompleted.spaces = esnCompletedParkings.size;
 
       return { pending, handoverCompleted, esnCompleted };
     }
@@ -581,47 +718,57 @@
     /* ═══════════════════════════════════════════════
        NAVIGATE TO REPORT
     ═══════════════════════════════════════════════ */
+    function formatZohoDateOnly(date) {
+      const dd   = String(date.getDate()).padStart(2,"0");
+      const mon  = MONTH_NAMES[date.getMonth()];
+      const yyyy = date.getFullYear();
+      return `${dd}-${mon}-${yyyy}`;
+    }
+
     function navigateToReport(type, from, to) {
       if (!from || !to) return;
-      const fromStr = formatZohoDateStr(from);
-      const toStr   = formatZohoDateStr(to);
-      const dateParam = `${fromStr};${toStr}`.replace(/ /g, "%20");
       const nameParam = userName.replace(/ /g, "%20");
 
       let url = "";
 
-      if (type === "pending") {
-        // Pending Handovers → Partially closed records
+      if (type === "pending" || type === "handover_completed") {
+        // For Quality_Inspection_Handover_Engineers: use date only
+        const fromStr = formatZohoDateOnly(from);
+        const toStr   = formatZohoDateOnly(to);
+        const dateParam = `${fromStr};${toStr}`.replace(/ /g, "%20");
+        const status = type === "pending" ? "Partially closed" : "Closed";
+        
         url = REPORT_BASE_URL +
           `Quality_Inspection_Handover_Engineers` +
           `?Added_Time=${dateParam}&Added_Time_op=58` +
           `&Handover_Engineer_Name=${nameParam}` +
-          `&Quality_Inspection_Status=Partially%20closed`;
-
-      } else if (type === "handover_completed") {
-        // Handover Completed → Closed records
-        url = REPORT_BASE_URL +
-          `Quality_Inspection_Handover_Engineers` +
-          `?Added_Time=${dateParam}&Added_Time_op=58` +
-          `&Handover_Engineer_Name=${nameParam}` +
-          `&Quality_Inspection_Status=Closed`;
+          `&Quality_Inspection_Status=${status}`;
 
       } else if (type === "esn_completed") {
-        // ESN Completed → ESN report filtered by route
+        // For My_ESN: use full datetime
+        const fromStr = formatZohoDateStr(from);
+        const toStr   = formatZohoDateStr(to);
+        const dateParam = `${fromStr};${toStr}`.replace(/ /g, "%20");
+        
         url = REPORT_BASE_URL +
-          `ESN_Scan_QR_Widget` +
-          `?ESN_Status=Completed`;
+          `My_ESN` +
+          `?Added_Time=${dateParam}&Added_Time_op=58` +
+          `&ESN_Status=Completed`;
       }
 
       console.log("Navigating to:", url);
       ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url: url, window: "same" });
     }
 
+
     /* ═══════════════════════════════════════════════
        ZOHO INIT + FETCH
     ═══════════════════════════════════════════════ */
     ZOHO.CREATOR.init().then(async () => {
       console.log("Handover Dashboard Running....");
+      const loaderEl = document.getElementById("loader");
+      loaderEl.classList.add("active");
+
 
       try {
         const params = ZOHO.CREATOR.UTIL.getInitParams() || {};
@@ -646,7 +793,7 @@
           HandoverReport,
           `(Handover_Engineer_Email == "${loginUser}")`
         );
-        console.log(`Fetched ${allHandovers.length} handover records.`);
+        // console.log(`Fetched ${allHandovers.length} handover records.`);
         // console.log("Sample records with status:", allHandovers.slice(0, 3).map(r => ({
         //   status: r.Quality_Inspection_Status,
         //   spaces: r.Inspected_Quantity
@@ -654,12 +801,14 @@
 
         /* ── Fetch ESN records ── */
         allEsnRecords = await fetchAllRecords(EsnReport, "");
-        console.log(`Fetched ${allEsnRecords.length} ESN records.`);
+        // console.log(`Fetched ${allEsnRecords.length} ESN records.`);
 
 
         /* ── Initial render ── */
         refreshHoCard();
         refreshMeCard();
+        loaderEl.classList.remove("active");
+
 
       } catch(e) {
         console.error("Dashboard init error:", e);
