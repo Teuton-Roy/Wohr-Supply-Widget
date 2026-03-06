@@ -125,7 +125,7 @@
         <div class="cd-panel-head"><span class="cd-badge">Priority Calls</span></div>
         <div class="cd-row cd-row-3">
           <div class="cd-stat cd-yellow">
-            <div class="cd-stat-label-within">Within<br/>SLA</div>
+            <div class="cd-stat-label-within" style="color: bl;">Within SLA</div>
             <div class="cd-stat-value-within" id="priorityWithinSla">0</div>
           </div>
           <div class="cd-stat cd-orange">
@@ -243,17 +243,17 @@
             </div>
             <div class="filter-field date-range-field"><label>From</label><input type="date" id="dateFrom"/></div>
             <div class="filter-field date-range-field"><label>To</label><input type="date" id="dateTo"/></div>
-            <!-- Service Technician — logic to be added later -->
-            <div class="filter-field field-wrap">
-              <label>Service Technician</label>
-              <input type="text" id="techSearch" placeholder="Type technician name..." autocomplete="off"/>
-              <div id="techSuggestions" class="suggestions"></div>
-            </div>
             <!-- Route — logic to be added later -->
             <div class="filter-field field-wrap">
               <label>Route</label>
               <input type="text" id="routeSearch" placeholder="Type route..." autocomplete="off"/>
               <div id="routeSuggestions" class="suggestions"></div>
+            </div>
+            <!-- Service Technician — logic to be added later -->
+            <div class="filter-field field-wrap">
+              <label>Service Technician</label>
+              <input type="text" id="techSearch" placeholder="Type technician name..." autocomplete="off"/>
+              <div id="techSuggestions" class="suggestions"></div>
             </div>
           </div>
         </div>
