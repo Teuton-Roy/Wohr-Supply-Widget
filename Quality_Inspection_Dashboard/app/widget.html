@@ -11,12 +11,12 @@
       --tag-blue: #0088ff;
       --tag-blue-dk: #006fcc;
       --border: #e0e4ea;
-      --funnel: #2fa7ed;
+      --funnel: #165579;
 
-      --open: #71bbec;
-      --open-border: #1280a5;
-      --partial: #ebbf77;
-      --partial-border: #d3a612;
+      --open: #FDDC13;
+      --open-border: #ceb50f;
+      --partial: #ede6c2;
+      --partial-border: #a17f0f;
       --closed: #e6f5e4;
       --closed-border: #5cb85c;
 
@@ -148,7 +148,7 @@
     }
 
     .funnel {
-      font-size: 28px;
+      font-size: 18px;
       color: var(--funnel);
       transform: translateY(2px);
     }
@@ -157,7 +157,7 @@
       position: absolute;
       right: 0;
       top: 38px;
-      background: #fff;
+      background:  #ffffff !important;
       border-radius: 14px;
       box-shadow: 0 10px 36px rgba(0, 0, 0, .16);
       display: none;
@@ -365,7 +365,7 @@
       }
 
       .funnel {
-        font-size: 24px;
+        font-size: 18px;
       }
 
       .table-head {
@@ -530,20 +530,20 @@
 
     <div class="status-row open" onclick="navigateToReport('Open', currentQiFrom, currentQiTo)">
       <div class="status-label" style="cursor:pointer;">Open</div>
-      <div class="status-calls" id="qiOpenCalls">--</div>
-      <div class="status-spaces" id="qiOpenSpaces">--</div>
+      <div class="status-calls" id="qiOpenCalls" style="cursor:pointer;">--</div>
+      <div class="status-spaces" id="qiOpenSpaces" style="cursor:pointer;">--</div>
     </div>
 
     <div class="status-row partial" onclick="navigateToReport('Partially Closed', currentQiFrom, currentQiTo)">
       <div class="status-label" style="cursor:pointer;">Partially<br>Closed</div>
-      <div class="status-calls" id="qiPartialCalls">--</div>
-      <div class="status-spaces" id="qiPartialSpaces">--</div>
+      <div class="status-calls" id="qiPartialCalls" style="cursor:pointer;">--</div>
+      <div class="status-spaces" id="qiPartialSpaces" style="cursor:pointer;">--</div>
     </div>
 
     <div class="status-row closed" onclick="navigateToReport('Closed', currentQiFrom, currentQiTo)">
       <div class="status-label" style="cursor:pointer;">Closed</div>
-      <div class="status-calls" id="qiClosedCalls">--</div>
-      <div class="status-spaces" id="qiClosedSpaces">--</div>
+      <div class="status-calls" id="qiClosedCalls" style="cursor:pointer;">--</div>
+      <div class="status-spaces" id="qiClosedSpaces" style="cursor:pointer;">--</div>
     </div>
   </section>
 
@@ -580,8 +580,8 @@
     <div class="status-row closed" style="margin-top:22px;"
       onclick="navigateToReport('Closed', currentMeFrom, currentMeTo)">
       <div class="status-label" style="cursor:pointer;">Closed</div>
-      <div class="status-calls" id="meClosedCalls">--</div>
-      <div class="status-spaces" id="meClosedSpaces">--</div>
+      <div class="status-calls" id="meClosedCalls" style="cursor:pointer;">--</div>
+      <div class="status-spaces" id="meClosedSpaces" style="cursor:pointer;">--</div>
     </div>
   </section>
 
@@ -910,7 +910,7 @@
         if (!dd) return;
         const isOpen = dd.classList.contains("open");
         closeAllDropdowns();
-        if (!isOpen) dd.classList.add("open");
+        if (!isOpen) dd.classList.add("open"); 
         return;
       }
 
