@@ -46,9 +46,11 @@
     .cd-label--center{display:flex;align-items:center;justify-content:center;font-weight:800;color:#333;}
     .cd-divider{height:2px;background:rgba(0,0,0,.20);margin:12px 0;border-radius:999px;}
     .cd-matrix{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;align-items:center;}
-    .cd-pie-wrap{display:flex;justify-content:center;align-items:center;width:78px;height:78px;} */
+    .cd-pie-wrap{display:flex;justify-content:center;align-items:center;width:78px;height:78px;}
     #pmPieCanvas{width:78px;height:78px;display:block;}
     .cd-stack{display:flex;flex-direction:column;gap:10px;}
+    /* Filter active badge on section */
+    .cd-filter-active{display:inline-flex;align-items:center;gap:4px;background:#eef2ff;border:1px solid #c7d4ff;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:700;color:#1f66ff;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis;}
     /* Loader */
     #loader{display:none;position:fixed;inset:0;z-index:9999;background-color:rgba(0,0,0,.45);text-align:center;}
     #loader .loader-wrap{width:200px;height:200px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);filter:url(#goo);animation:rotate-move 2s ease-in-out infinite;}
@@ -75,7 +77,8 @@
     #filterModal .modal-title{font-weight:700;font-size:15px;}
     .filter-stack{display:flex;flex-direction:column;gap:12px;}
     .filter-field label{display:block;font-weight:700;font-size:13px;margin-bottom:5px;}
-    .filter-field select,.filter-field input{width:100%;padding:9px 10px;border:1px solid rgba(0,0,0,.2);border-radius:8px;outline:none;background:#fff;font-size:13px;font-family:inherit;}
+    .filter-field select,.filter-field input[type=text],.filter-field input[type=date]{width:100%;padding:9px 10px;border:1px solid rgba(0,0,0,.2);border-radius:8px;outline:none;background:#fff;font-size:13px;font-family:inherit;}
+    .filter-field select:disabled,.filter-field input:disabled{background:#f3f4f6;color:#999;cursor:not-allowed;}
     .date-range-field{display:none;}
     .btn{padding:9px 14px;border-radius:8px;border:1px solid rgba(0,0,0,.15);cursor:pointer;font-size:13px;font-weight:600;background:#f2f2f2;font-family:inherit;}
     .btn-primary{background:#1f66ff;border-color:#1f66ff;color:#fff;}
@@ -84,6 +87,11 @@
     .btn-close::before{transform:translate(-50%,-50%) rotate(45deg);}
     .btn-close::after{transform:translate(-50%,-50%) rotate(-45deg);}
     body.modal-open{overflow:hidden !important;}
+    /* Tech field with clear button */
+    .tech-input-wrap{position:relative;display:flex;align-items:center;}
+    .tech-input-wrap input{padding-right:32px;}
+    .tech-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:transparent;cursor:pointer;font-size:15px;color:#888;line-height:1;padding:2px 4px;display:none;}
+    .tech-clear:hover{color:#e33;}
     /* Suggestions */
     .field-wrap{position:relative;}
     .suggestions{border:1px solid rgba(0,0,0,.15);border-radius:10px;background:#fff;margin-top:6px;max-height:200px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.10);z-index:2000;position:absolute;left:0;right:0;display:none;}
@@ -125,7 +133,7 @@
         <div class="cd-panel-head"><span class="cd-badge">Priority Calls</span></div>
         <div class="cd-row cd-row-3">
           <div class="cd-stat cd-yellow">
-            <div class="cd-stat-label-within" style="color: bl;">Within SLA</div>
+            <div class="cd-stat-label-within">Within SLA</div>
             <div class="cd-stat-value-within" id="priorityWithinSla">0</div>
           </div>
           <div class="cd-stat cd-orange">
@@ -144,6 +152,7 @@
         <div class="cd-panel-head cd-panel-head--with-actions">
           <span class="cd-badge">Other Calls</span>
           <div class="cd-actions">
+            <span class="cd-filter-active" id="otherFilterBadge" style="display:none;"></span>
             <span class="cd-muted" id="otherPeriodLabel">This month</span>
             <button class="cd-filter" type="button" id="OtherCalls" aria-label="Filter Other Calls">
               <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
@@ -180,6 +189,7 @@
         <div class="cd-panel-head cd-panel-head--with-actions">
           <span class="cd-badge">ESN</span>
           <div class="cd-actions">
+            <span class="cd-filter-active" id="esnFilterBadge" style="display:none;"></span>
             <span class="cd-muted" id="esnPeriodLabel">This month</span>
             <button class="cd-filter" type="button" id="esn" aria-label="Filter ESN">
               <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
@@ -203,6 +213,7 @@
         <div class="cd-panel-head cd-panel-head--with-actions">
           <span class="cd-badge">Me</span>
           <div class="cd-actions">
+            <span class="cd-filter-active" id="meFilterBadge" style="display:none;"></span>
             <span class="cd-muted" id="mePeriodLabel">This month</span>
             <button class="cd-filter" type="button" id="me" aria-label="Filter Me">
               <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
@@ -226,11 +237,13 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <span class="modal-title">Filters</span>
+          <span class="modal-title" id="filterModalTitle">Filters</span>
           <button type="button" class="btn-close" id="filterModalClose" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="filter-stack">
+
+            <!-- Period -->
             <div class="filter-field">
               <label>Period</label>
               <select id="periodSelect">
@@ -243,22 +256,30 @@
             </div>
             <div class="filter-field date-range-field"><label>From</label><input type="date" id="dateFrom"/></div>
             <div class="filter-field date-range-field"><label>To</label><input type="date" id="dateTo"/></div>
-            <!-- Route — logic to be added later -->
-            <div class="filter-field field-wrap">
+
+            <!-- Route — populated from ROUTE_EXPANSION on open -->
+            <div class="filter-field">
               <label>Route</label>
-              <input type="text" id="routeSearch" placeholder="Type route..." autocomplete="off"/>
-              <div id="routeSuggestions" class="suggestions"></div>
+              <select id="routeSelect">
+                <option value="">All Routes (Default)</option>
+              </select>
             </div>
-            <!-- Service Technician — logic to be added later -->
+
+            <!-- Service Technician — typeahead, scoped to selected route -->
             <div class="filter-field field-wrap">
-              <label>Service Technician</label>
-              <input type="text" id="techSearch" placeholder="Type technician name..." autocomplete="off"/>
+              <label>Service Technician <span id="techLoadingSpinner" style="display:none;font-weight:400;color:#888;font-size:12px;">Loading...</span></label>
+              <div class="tech-input-wrap">
+                <input type="text" id="techSearch" placeholder="Select a route first..." autocomplete="off" disabled/>
+                <button type="button" class="tech-clear" id="techClear" title="Clear technician">✕</button>
+              </div>
+              <input type="hidden" id="techID"/>
               <div id="techSuggestions" class="suggestions"></div>
             </div>
+
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn" id="filterClear">Cancel</button>
+          <button type="button" class="btn" id="filterClear">Reset</button>
           <button type="button" class="btn btn-primary" id="filterApply">Apply</button>
         </div>
       </div>
@@ -282,14 +303,6 @@
 
     /* ═══════════════════════════════════════════════════════════
        ROUTE EXPANSION MAP
-       ─────────────────────────────────────────────────────────
-       When a supervisor is assigned a region alias as their
-       route (e.g. "Pune All"), we must expand it to the real
-       individual Route_Name values that exist in the records.
-
-       Used in:
-         routeCrit()       → OR-expanded criteria string
-         routeParamValue() → bracket list for report URLs
     ═══════════════════════════════════════════════════════════ */
     const ROUTE_EXPANSION = {
       "Pune All"            : ["Pune 1", "Pune 2", "Pune 3"],
@@ -304,10 +317,15 @@
       "All Ahmedabad"       : ["Ahmedabad 1", "Ahmedabad 2"],
     };
 
-    /* Period state — one per section */
-    const periodOther = { period:"this_month", from:null, to:null };
-    const periodEsn   = { period:"this_month", from:null, to:null };
-    const periodMe    = { period:"this_month", from:null, to:null };
+    /* ═══════════════════════════════════════════════════════════
+       PERIOD STATE — each section has its own
+       filterRoute    : "" = all supervisor routes, "Pune 1" = specific
+       filterTechID   : "" = no tech filter, "274000..." = specific tech
+       filterTechName : display name for the badge
+    ═══════════════════════════════════════════════════════════ */
+    const periodOther = { period:"this_month", from:null, to:null, filterRoute:"", filterTechID:"", filterTechName:"" };
+    const periodEsn   = { period:"this_month", from:null, to:null, filterRoute:"", filterTechID:"", filterTechName:"" };
+    const periodMe    = { period:"this_month", from:null, to:null, filterRoute:"", filterTechID:"", filterTechName:"" };
     let activeFilterTarget = "other";
 
     $(document).ready(function () {
@@ -320,224 +338,184 @@
       function endOfDay(d)  { return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59); }
       function getFYStartYear(r){ return (r.getMonth() >= 3) ? r.getFullYear() : r.getFullYear() - 1; }
       function quarterStart(ref){
-        const m = ref.getMonth();
-        let qs = 0;
-        if (m >= 3 && m <= 5) qs = 3;
-        else if (m >= 6 && m <= 8) qs = 6;
-        else if (m >= 9 && m <= 11) qs = 9;
+        const m = ref.getMonth(); let qs = 0;
+        if (m>=3&&m<=5) qs=3; else if (m>=6&&m<=8) qs=6; else if (m>=9&&m<=11) qs=9;
         return new Date(ref.getFullYear(), qs, 1);
       }
       function getRangeFromState(state){
         const now = new Date();
-        if (state.period === "custom" && state.from && state.to)
-          return { from: startOfDay(state.from), to: endOfDay(state.to) };
-        if (state.period === "this_month")
-          return { from: startOfDay(new Date(now.getFullYear(), now.getMonth(), 1)),
-                   to:   endOfDay(new Date(now.getFullYear(), now.getMonth() + 1, 0)) };
-        if (state.period === "this_year") {
-          const fy = getFYStartYear(now);
-          return { from: startOfDay(new Date(fy, 3, 1)), to: endOfDay(new Date(fy + 1, 3, 0)) };
+        if (state.period==="custom"&&state.from&&state.to) return{from:startOfDay(state.from),to:endOfDay(state.to)};
+        if (state.period==="this_month") return{from:startOfDay(new Date(now.getFullYear(),now.getMonth(),1)),to:endOfDay(new Date(now.getFullYear(),now.getMonth()+1,0))};
+        if (state.period==="this_year"){const fy=getFYStartYear(now);return{from:startOfDay(new Date(fy,3,1)),to:endOfDay(new Date(fy+1,3,0))};}
+        if (state.period==="this_quarter"||state.period==="last_quarter"){
+          const qS=quarterStart(now); const off=(state.period==="last_quarter")?-3:0;
+          const from=new Date(qS.getFullYear(),qS.getMonth()+off,1);
+          const to=new Date(from.getFullYear(),from.getMonth()+3,0);
+          return{from:startOfDay(from),to:endOfDay(to)};
         }
-        if (state.period === "this_quarter" || state.period === "last_quarter") {
-          const qS = quarterStart(now);
-          const off = (state.period === "last_quarter") ? -3 : 0;
-          const from = new Date(qS.getFullYear(), qS.getMonth() + off, 1);
-          const to   = new Date(from.getFullYear(), from.getMonth() + 3, 0);
-          return { from: startOfDay(from), to: endOfDay(to) };
-        }
-        return { from: startOfDay(new Date(now.getFullYear(), now.getMonth(), 1)),
-                 to:   endOfDay(new Date(now.getFullYear(), now.getMonth() + 1, 0)) };
+        return{from:startOfDay(new Date(now.getFullYear(),now.getMonth(),1)),to:endOfDay(new Date(now.getFullYear(),now.getMonth()+1,0))};
       }
-      function fmtDate(d){
-        return `${String(d.getDate()).padStart(2,"0")}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`;
-      }
-      function fmtDateTime(d){
-        return `${fmtDate(d)} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
-      }
-      function toInputDate(d){
-        if (!d) return "";
-        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-      }
-      function parseInputDate(val){
-        if (!val) return null;
-        const [y,m,d] = val.split("-").map(Number);
-        return new Date(y, m-1, d);
-      }
-      function dueDateRangeCrit(s){
-        const r = getRangeFromState(s);
-        return `Due_Date >= "${fmtDate(r.from)}" && Due_Date <= "${fmtDate(r.to)}"`;
-      }
-      function addedTimeRangeCrit(s){
-        const r = getRangeFromState(s);
-        return `Added_Time >= "${fmtDateTime(r.from)}" && Added_Time <= "${fmtDateTime(r.to)}"`;
-      }
-      function closedDateRangeCrit_ME(s){
-        const r = getRangeFromState(s);
-        return `Closed_Date >= "${fmtDate(r.from)}" && Closed_Date <= "${fmtDate(r.to)}"`;
-      }
+      function fmtDate(d){ return `${String(d.getDate()).padStart(2,"0")}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`; }
+      function fmtDateTime(d){ return `${fmtDate(d)} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`; }
+      function toInputDate(d){ if(!d)return""; return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
+      function parseInputDate(val){ if(!val)return null; const[y,m,d]=val.split("-").map(Number); return new Date(y,m-1,d); }
+
+      function dueDateRangeCrit(s){ const r=getRangeFromState(s); return `Due_Date >= "${fmtDate(r.from)}" && Due_Date <= "${fmtDate(r.to)}"`; }
+      function addedTimeRangeCrit(s){ const r=getRangeFromState(s); return `Added_Time >= "${fmtDateTime(r.from)}" && Added_Time <= "${fmtDateTime(r.to)}"`; }
+      function closedDateRangeCrit_ME(s){ const r=getRangeFromState(s); return `Closed_Date >= "${fmtDate(r.from)}" && Closed_Date <= "${fmtDate(r.to)}"`; }
+
       function labelForState(state){
-        if (state.period === "custom" && state.from && state.to) {
-          const r = getRangeFromState(state);
-          return `${fmtDate(r.from)} – ${fmtDate(r.to)}`;
-        }
-        return { this_month:"This month", this_quarter:"This quarter",
-                 last_quarter:"Last quarter", this_year:"This year" }[state.period] || "This month";
+        if(state.period==="custom"&&state.from&&state.to){const r=getRangeFromState(state);return `${fmtDate(r.from)} – ${fmtDate(r.to)}`;}
+        return{this_month:"This month",this_quarter:"This quarter",last_quarter:"Last quarter",this_year:"This year"}[state.period]||"This month";
       }
-      function getState(t){ return t==="esn" ? periodEsn : t==="me" ? periodMe : periodOther; }
+      function getState(t){ return t==="esn"?periodEsn:t==="me"?periodMe:periodOther; }
       function setLabelForSection(t){
-        const txt = labelForState(getState(t));
-        if (t==="other") $("#otherPeriodLabel").text(txt);
-        if (t==="esn")   $("#esnPeriodLabel").text(txt);
-        if (t==="me")    $("#mePeriodLabel").text(txt);
+        const txt=labelForState(getState(t));
+        if(t==="other") $("#otherPeriodLabel").text(txt);
+        if(t==="esn")   $("#esnPeriodLabel").text(txt);
+        if(t==="me")    $("#mePeriodLabel").text(txt);
+      }
+
+      /* Update filter badge shown on each section header */
+      function updateFilterBadge(t){
+        const st=getState(t);
+        const badgeId = t==="esn"?"#esnFilterBadge":t==="me"?"#meFilterBadge":"#otherFilterBadge";
+        const hasFilter = st.filterRoute || st.filterTechID;
+        if(hasFilter){
+          const label = st.filterTechName ? st.filterTechName : st.filterRoute;
+          $(badgeId).text("🔍 "+label).show();
+        } else {
+          $(badgeId).hide().text("");
+        }
       }
 
       /* ─────────────────────────────────────────────────────────
-         ROUTE HELPERS
-         ─────────────────────────────────────────────────────────
-         routeCrit() expands group aliases into OR conditions:
-           "Pune All" → (Route_Name == "Pune 1" || Route_Name == "Pune 2" || Route_Name == "Pune 3")
-           "Pune 1"   → Route_Name == "Pune 1"   (unchanged)
-
-         routeParamValue() for report URLs:
-           "Pune All" → [Pune 1,Pune 2,Pune 3]
-           "Pune 1"   → Pune 1
+         ESCAPE HELPER
       ───────────────────────────────────────────────────────── */
-      function esc(s){ return String(s || "").replace(/"/g, '\\"'); }
+      function esc(s){ return String(s||"").replace(/"/g,'\\"'); }
 
+      /* ─────────────────────────────────────────────────────────
+         ROUTE HELPERS — default (no filter active)
+      ───────────────────────────────────────────────────────── */
       function routeCrit(){
         const routes = ROUTE_EXPANSION[currentRoute];
-        if (routes && routes.length) {
-          return "(" + routes.map(r => `Route_Name == "${esc(r)}"`).join(" || ") + ")";
-        }
+        if(routes&&routes.length) return "("+routes.map(r=>`Route_Name == "${esc(r)}"`).join(" || ")+")";
         return `Route_Name == "${esc(currentRoute)}"`;
       }
-
       function routeParamValue(){
         const routes = ROUTE_EXPANSION[currentRoute];
-        if (routes && routes.length) return `[${routes.join(",")}]`;
+        if(routes&&routes.length) return `[${routes.join(",")}]`;
         return fullyDecode(currentRoute);
       }
 
       /* ─────────────────────────────────────────────────────────
-         CRITERIA BUILDERS
-         KEY CHANGE vs ST: Supervisior_Name.ID  (not Service_Technician_Name.ID)
-         Route:            uses routeCrit() — OR-expanded when group alias
+         STATE-AWARE CRITERIA BUILDERS
+         ─────────────────────────────────────────────────────────
+         When a filter is active:
+           filterRoute  set  → use that single Route_Name
+           filterTechID set  → use Service_Technician_Name.ID (not Supervisior_Name.ID)
+           both set          → tech scoped to specific route
+           neither           → default supervisor scope
       ───────────────────────────────────────────────────────── */
-      // For Service Report (has Route_Name field)
-      function baseCrit(extra){
-        const base = `Supervisior_Name.ID == ${userID} && ${routeCrit()}`;
+
+      /* Route criteria — respects filterRoute override */
+      function activeRouteCrit(st){
+        if(st&&st.filterRoute) return `Route_Name == "${esc(st.filterRoute)}"`;
+        return routeCrit();
+      }
+
+      /* Base criteria for Service Report — respects tech + route filter */
+      function activeCrit(st, extra){
+        const rc   = activeRouteCrit(st);
+        const base = (st&&st.filterTechID)
+          ? `Service_Technician_Name.ID == ${st.filterTechID} && ${rc}`
+          : `Supervisior_Name.ID == ${userID} && ${rc}`;
         return extra ? `(${base} && ${extra})` : `(${base})`;
       }
 
-      // For ESN Report (no Route_Name field)
-      function baseCritESN(extra){
-        const base = `Supervisor_Name.ID == ${userID} && ${routeCrit()}`;
+      /* Base criteria for ESN Report — field is Supervisor_Name (single i) */
+      function activeCritESN(st, extra){
+        const rc   = activeRouteCrit(st);
+        const base = (st&&st.filterTechID)
+          ? `Service_Technician_Name.ID == ${st.filterTechID} && ${rc}`
+          : `Supervisor_Name.ID == ${userID} && ${rc}`;
         return extra ? `(${base} && ${extra})` : `(${base})`;
       }
 
-
-
-      // Me section — no Supervisior_Name, Closed_Owner used separately
-      function routeOnlyCrit(extra){
-        return extra ? `(${routeCrit()} && ${extra})` : `(${routeCrit()})`;
+      /* Route-only criteria for Me section
+         When tech filtered: swap Closed_Owner to filterTechID
+         When no filter:     use logged-in supervisor (userID) */
+      function activeRouteOnly(st, extra){
+        const rc       = activeRouteCrit(st);
+        const ownerID  = (st&&st.filterTechID) ? st.filterTechID : userID;
+        const ownerPart = `Closed_Owner.ID == ${ownerID}`;
+        return extra
+          ? `(${rc} && ${ownerPart} && ${extra})`
+          : `(${rc} && ${ownerPart})`;
       }
 
       /* ─────────────────────────────────────────────────────────
          URL / REPORT HELPERS
-         KEY CHANGE vs ST: Supervisior_Name param (not Service_Technician_Name)
       ───────────────────────────────────────────────────────── */
-      const OP_BETWEEN = 58, OP_NOT_EQ = 19;
+      const OP_BETWEEN=58, OP_NOT_EQ=19;
 
       function fullyDecode(str){
-        let out = String(str ?? "");
-        for (let i = 0; i < 10; i++){
-          if (!/%[0-9A-Fa-f]{2}/.test(out)) break;
-          try { const dec = decodeURIComponent(out); if (dec === out) break; out = dec; } catch(e){ break; }
+        let out=String(str??"");
+        for(let i=0;i<10;i++){
+          if(!/%[0-9A-Fa-f]{2}/.test(out))break;
+          try{const dec=decodeURIComponent(out);if(dec===out)break;out=dec;}catch(e){break;}
         }
         return out;
       }
       function buildQueryRaw(params){
-        return Object.keys(params || {})
-          .filter(k => params[k] !== undefined && params[k] !== null && params[k] !== "")
-          .map(k => k + "=" + String(params[k])).join("&");
+        return Object.keys(params||{}).filter(k=>params[k]!==undefined&&params[k]!==null&&params[k]!=="").map(k=>k+"="+String(params[k])).join("&");
       }
       function openReport(reportName, params){
-        const qs  = buildQueryRaw(params);
-        const url = REPORT_BASE_URL + reportName + (qs ? "?" + qs : "");
-        ZOHO.CREATOR.UTIL.navigateParentURL({ action:"open", url, window:"same" });
+        const qs=buildQueryRaw(params);
+        const url=REPORT_BASE_URL+reportName+(qs?"?"+qs:"");
+        ZOHO.CREATOR.UTIL.navigateParentURL({action:"open",url,window:"same"});
       }
-      function addBetween(p, field, f, t){ p[field] = `${f};${t}`; p[field+"_op"] = OP_BETWEEN; }
-      function addDueBetween(p, s)    { const r=getRangeFromState(s); addBetween(p,"Due_Date",    fmtDate(r.from),     fmtDate(r.to)); }
-      function addAddedBetween(p, s)  { const r=getRangeFromState(s); addBetween(p,"Added_Time",  fmtDateTime(r.from), fmtDateTime(r.to)); }
-      function addClosedBetween_ME(p,s){ const r=getRangeFromState(s); addBetween(p,"Closed_Date", fmtDate(r.from),     fmtDate(r.to)); }
+      function addBetween(p,field,f,t){ p[field]=`${f};${t}`; p[field+"_op"]=OP_BETWEEN; }
+      function addDueBetween(p,s){ const r=getRangeFromState(s); addBetween(p,"Due_Date",fmtDate(r.from),fmtDate(r.to)); }
+      function addAddedBetween(p,s){ const r=getRangeFromState(s); addBetween(p,"Added_Time",fmtDateTime(r.from),fmtDateTime(r.to)); }
+      function addClosedBetween_ME(p,s){ const r=getRangeFromState(s); addBetween(p,"Closed_Date",fmtDate(r.from),fmtDate(r.to)); }
 
-      // Other Calls / ESN → Supervisior_Name + expanded route list
-      function baseParams(){   return { Route_Name: routeParamValue(), Supervisior_Name: `[${UserName}]` }; }
-      // Me Brkdwn/PM/Other → route only (Closed_Owner applied separately)
-      function baseParamsMe(){ return { Route_Name: routeParamValue() }; }
+      /* URL params — respects active filter:
+           no filter  → Supervisior_Name=[UserName], Route_Name=all routes
+           route only → Supervisior_Name=[UserName], Route_Name=selectedRoute
+           tech+route → Service_Technician_Name=[TechName], Route_Name=selectedRoute  */
+      function paramsFor(st){
+        const route = st.filterRoute ? st.filterRoute : routeParamValue();
+        if(st.filterTechID&&st.filterTechName)
+          return { Route_Name:route, Service_Technician_Name:`[${st.filterTechName}]` };
+        return { Route_Name:route, Supervisior_Name:`[${UserName}]` };
+      }
+      function paramsForMe(st){
+        const route = st.filterRoute ? st.filterRoute : routeParamValue();
+        const p = { Route_Name:route };
+        p.Closed_Owner = st.filterTechID&&st.filterTechName ? `[${st.filterTechName}]` : `[${UserName}]`;
+        return p;
+      }
 
-      function setCount(sel, val){ $(sel).text(val == null ? "0" : String(val)); }
+      function setCount(sel,val){ $(sel).text(val==null?"0":String(val)); }
 
       /* ─────────────────────────────────────────────────────────
          CLICK REDIRECTS
       ───────────────────────────────────────────────────────── */
       function bindCountRedirects(){
-        $("#BreakdownAll").off("click.r").on("click.r", ()=>{
-          const p=baseParams(); p.Service_Request_Type="Breakdown"; p.Status="Closed"; p.Status_op=OP_NOT_EQ;
-          addDueBetween(p,periodOther); openReport("Breakdown_Calls",p);
-        });
-        $("#BreakdownClosed").off("click.r").on("click.r", ()=>{
-          const p=baseParams(); p.Service_Request_Type="Breakdown"; p.Status="Closed";
-          addDueBetween(p,periodOther); openReport("Breakdown_Calls",p);
-        });
-        $("#PmAll").off("click.r").on("click.r", ()=>{
-          const p=baseParams(); p.Service_Request_Type="Routine"; p.Status="Current month due";
-          addDueBetween(p,periodOther); openReport("Open_User_Service_Request",p);
-        });
-        $("#PmClosed").off("click.r").on("click.r", ()=>{
-          const p=baseParams(); p.Service_Request_Type="Routine"; p.Status="Closed";
-          addDueBetween(p,periodOther); openReport("Closed_User_Service_Request",p);
-        });
-        $("#PmOverdue").off("click.r").on("click.r", ()=>{
-          const p=baseParams(); p.Service_Request_Type="Routine"; p.Status="Overdue";
-          openReport("Open_User_Service_Request",p);
-        });
-        $("#otherActive").off("click.r").on("click.r", ()=>{
-          const p=baseParams(); p.Status="Closed"; p.Status_op=OP_NOT_EQ;
-          p.Service_Request_Type="[One Time Service,Repair,Inspection]"; p.Service_Request_Type_op=26;
-          addDueBetween(p,periodOther); openReport("Open_User_Service_Request",p);
-        });
-        $("#otherClosed").off("click.r").on("click.r", ()=>{
-          const p=baseParams(); p.Status="Closed";
-          p.Service_Request_Type="[One Time Service,Repair,Inspection]"; p.Service_Request_Type_op=26;
-          addDueBetween(p,periodOther); openReport("Closed_User_Service_Request",p);
-        });
-        $("#esnPending").off("click.r").on("click.r", ()=>{
-          const p=baseParams(); p.ESN_Status="Pending"; openReport("My_ESN",p);
-        });
-        $("#esnCompleted").off("click.r").on("click.r", ()=>{
-          const p=baseParams(); p.ESN_Status="Completed";
-          addAddedBetween(p,periodEsn); openReport("My_ESN",p);
-        });
-        // Me — Brkdwn/PM/Other use Closed_Owner, date-only Closed_Date
-        $("#meBrkdwn").off("click.r").on("click.r", ()=>{
-          const p=baseParamsMe(); p.Service_Request_Type="Breakdown"; p.Status="Closed";
-          p.Closed_Owner=`[${UserName}]`; addClosedBetween_ME(p,periodMe); openReport("Breakdown_Calls",p);
-        });
-        $("#mePm").off("click.r").on("click.r", ()=>{
-          const p=baseParamsMe(); p.Service_Request_Type="Routine"; p.Status="Closed";
-          p.Closed_Owner=`[${UserName}]`; addClosedBetween_ME(p,periodMe); openReport("Closed_User_Service_Request",p);
-        });
-        $("#meOther").off("click.r").on("click.r", ()=>{
-          const p=baseParamsMe(); p.Service_Request_Type="[One Time Service,Repair,Inspection]";
-          p.Service_Request_Type_op=26; p.Status="Closed";
-          p.Closed_Owner=`[${UserName}]`; addClosedBetween_ME(p,periodMe); openReport("Closed_User_Service_Request",p);
-        });
-        // Me ESN uses Supervisior_Name (via baseParams)
-        $("#meEsn").off("click.r").on("click.r", ()=>{
-          const p=baseParams(); p.ESN_Status="Completed";
-          addAddedBetween(p,periodMe); openReport("My_ESN",p);
-        });
+        $("#BreakdownAll").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Service_Request_Type="Breakdown"; p.Status="Closed"; p.Status_op=OP_NOT_EQ; addDueBetween(p,periodOther); openReport("Breakdown_Calls",p); });
+        $("#BreakdownClosed").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Service_Request_Type="Breakdown"; p.Status="Closed"; addDueBetween(p,periodOther); openReport("Breakdown_Calls",p); });
+        $("#PmAll").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Service_Request_Type="Routine"; p.Status="Current month due"; addDueBetween(p,periodOther); openReport("Open_User_Service_Request",p); });
+        $("#PmClosed").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Service_Request_Type="Routine"; p.Status="Closed"; addDueBetween(p,periodOther); openReport("Closed_User_Service_Request",p); });
+        $("#PmOverdue").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Service_Request_Type="Routine"; p.Status="Overdue"; openReport("Open_User_Service_Request",p); });
+        $("#otherActive").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Status="Closed"; p.Status_op=OP_NOT_EQ; p.Service_Request_Type="[One Time Service,Repair,Inspection]"; p.Service_Request_Type_op=26; addDueBetween(p,periodOther); openReport("Open_User_Service_Request",p); });
+        $("#otherClosed").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Status="Closed"; p.Service_Request_Type="[One Time Service,Repair,Inspection]"; p.Service_Request_Type_op=26; addDueBetween(p,periodOther); openReport("Closed_User_Service_Request",p); });
+        $("#esnPending").off("click.r").on("click.r",()=>{ const p=paramsFor(periodEsn); p.ESN_Status="Pending"; openReport("My_ESN",p); });
+        $("#esnCompleted").off("click.r").on("click.r",()=>{ const p=paramsFor(periodEsn); p.ESN_Status="Completed"; addAddedBetween(p,periodEsn); openReport("My_ESN",p); });
+        $("#meBrkdwn").off("click.r").on("click.r",()=>{ const p=paramsForMe(periodMe); p.Service_Request_Type="Breakdown"; p.Status="Closed"; addClosedBetween_ME(p,periodMe); openReport("Breakdown_Calls",p); });
+        $("#mePm").off("click.r").on("click.r",()=>{ const p=paramsForMe(periodMe); p.Service_Request_Type="Routine"; p.Status="Closed"; addClosedBetween_ME(p,periodMe); openReport("Closed_User_Service_Request",p); });
+        $("#meOther").off("click.r").on("click.r",()=>{ const p=paramsForMe(periodMe); p.Service_Request_Type="[One Time Service,Repair,Inspection]"; p.Service_Request_Type_op=26; p.Status="Closed"; addClosedBetween_ME(p,periodMe); openReport("Closed_User_Service_Request",p); });
+        $("#meEsn").off("click.r").on("click.r",()=>{ const p=paramsFor(periodMe); p.ESN_Status="Completed"; addAddedBetween(p,periodMe); openReport("My_ESN",p); });
       }
 
       /* ─────────────────────────────────────────────────────────
@@ -545,251 +523,327 @@
       ───────────────────────────────────────────────────────── */
       let pmAll=0, pmClosed=0, pmOverdue=0, pmChart=null;
       Chart.register(ChartDataLabels);
-      const PM_EMPTY = [0,0,1];
-      const pmNoDataPlugin = { id:"pmNoDataFlag", beforeInit(c){ c.$noData=true; } };
-
+      const PM_EMPTY=[0,0,1];
+      const pmNoDataPlugin={id:"pmNoDataFlag",beforeInit(c){c.$noData=true;}};
       function initPMPieChart(){
-        const canvas = document.getElementById("pmPieCanvas");
-        if (!canvas) return;
-        if (pmChart){ pmChart.destroy(); pmChart=null; }
-        pmChart = new Chart(canvas.getContext("2d"), {
-          type:"doughnut", plugins:[pmNoDataPlugin],
-          data:{ labels:["Closed","Overdue","All"],
-            datasets:[{ data:PM_EMPTY.slice(), backgroundColor:["#e5e7eb","#e5e7eb","#e5e7eb"], borderWidth:2, borderColor:"#fff", hoverOffset:6 }]
-          },
-          options:{ 
-            responsive:false, maintainAspectRatio:false, cutout:"58%",
-            plugins:{ legend:{ display:false },
-              tooltip:{ enabled:true, callbacks:{ label(ctx){
-                if(ctx.chart.$noData) return ` ${ctx.label}: 0 (0%)`;
-                const total = ctx.dataset.data.reduce((a,b)=>a+b,0)||0;
-                const v = Number(ctx.raw||0);
-                return ` ${ctx.label}: ${v} (${total ? Math.round(v/total*100) : 0}%)`;
-              }}},
-              datalabels:{ display(ctx){
-                if(ctx.chart.$noData) return ctx.dataIndex===2;
-                return (ctx.dataset.data[ctx.dataIndex]||0)>0;
-              }, color:"#fff", font:{weight:"800",size:9},
-              textStrokeColor:"rgba(0,0,0,.35)", textStrokeWidth:2,
-              formatter(v,ctx){
-                if(ctx.chart.$noData) return ctx.chart.data.labels[ctx.dataIndex]+"\n0";
-                return ctx.chart.data.labels[ctx.dataIndex]+"\n"+v;
-              }}
-            }
-          }
+        const canvas=document.getElementById("pmPieCanvas");
+        if(!canvas)return; if(pmChart){pmChart.destroy();pmChart=null;}
+        pmChart=new Chart(canvas.getContext("2d"),{
+          type:"doughnut",plugins:[pmNoDataPlugin],
+          data:{labels:["Closed","Overdue","All"],datasets:[{data:PM_EMPTY.slice(),backgroundColor:["#e5e7eb","#e5e7eb","#e5e7eb"],borderWidth:2,borderColor:"#fff",hoverOffset:6}]},
+          options:{responsive:false,maintainAspectRatio:false,cutout:"58%",
+            plugins:{legend:{display:false},
+              tooltip:{enabled:true,callbacks:{label(ctx){if(ctx.chart.$noData)return` ${ctx.label}: 0 (0%)`;const total=ctx.dataset.data.reduce((a,b)=>a+b,0)||0;const v=Number(ctx.raw||0);return` ${ctx.label}: ${v} (${total?Math.round(v/total*100):0}%)`}}},
+              datalabels:{display(ctx){if(ctx.chart.$noData)return ctx.dataIndex===2;return(ctx.dataset.data[ctx.dataIndex]||0)>0},color:"#fff",font:{weight:"800",size:9},textStrokeColor:"rgba(0,0,0,.35)",textStrokeWidth:2,
+                formatter(v,ctx){if(ctx.chart.$noData)return ctx.chart.data.labels[ctx.dataIndex]+"\n0";return ctx.chart.data.labels[ctx.dataIndex]+"\n"+v}}}}
         });
       }
-      function updatePMPieChart(all, closed, overdue){
-        all=Number(all||0); closed=Number(closed||0); overdue=Number(overdue||0);
-        if (!pmChart) initPMPieChart();
-        if (!pmChart) return;
-        const has = all||closed||overdue;
-        pmChart.$noData = !has;
-        pmChart.data.datasets[0].data = has ? [closed,overdue,all] : PM_EMPTY.slice();
-        pmChart.data.datasets[0].backgroundColor = has ? ["#22c55e","#ef4444","#8b5cf6"] : ["#e5e7eb","#e5e7eb","#e5e7eb"];
+      function updatePMPieChart(all,closed,overdue){
+        all=Number(all||0);closed=Number(closed||0);overdue=Number(overdue||0);
+        if(!pmChart)initPMPieChart();if(!pmChart)return;
+        const has=all||closed||overdue;
+        pmChart.$noData=!has;
+        pmChart.data.datasets[0].data=has?[closed,overdue,all]:PM_EMPTY.slice();
+        pmChart.data.datasets[0].backgroundColor=has?["#22c55e","#ef4444","#8b5cf6"]:["#e5e7eb","#e5e7eb","#e5e7eb"];
         pmChart.update();
       }
 
       /* ─────────────────────────────────────────────────────────
          SEQUENTIAL DATA LOADERS
-         All criteria use baseCrit() → Supervisior_Name.ID + routeCrit()
-         routeCrit() auto-expands group aliases to OR conditions
+         Each function now passes its section's period state
+         to activeCrit/activeCritESN/activeRouteOnly so that
+         Route + Tech filters are applied automatically.
       ───────────────────────────────────────────────────────── */
       function refreshOnly(target){
         $("#loader").show();
-        const done = ()=>{ bindCountRedirects(); $("#loader").hide(); };
-        if (target==="other")    refreshOtherCalls(done);
-        else if(target==="esn")  refreshESN(done);
-        else                     refreshMe(done);
+        const done=()=>{ bindCountRedirects(); $("#loader").hide(); };
+        if(target==="other")    refreshOtherCalls(done);
+        else if(target==="esn") refreshESN(done);
+        else                    refreshMe(done);
       }
 
-      /* Other Calls */
+      /* ── Other Calls ─────────────────────────────────────── */
       function refreshOtherCalls(done){ setLabelForSection("other"); Other_BreakdownAll(done); }
 
       function Other_BreakdownAll(done){
-        const c = baseCrit(`Service_Request_Type=="Breakdown" && Status!="Closed" && ${dueDateRangeCrit(periodOther)}`);
-        console.log("criteria:", c);
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName, reportName:serviceReport, criteria:c})
-          .then(r=>{setCount("#BreakdownAll",r.result.records_count); Other_BreakdownClosed(done); })
-          .catch(()=>Other_BreakdownClosed(done));
+        const c=activeCrit(periodOther,`Service_Request_Type=="Breakdown" && Status!="Closed" && ${dueDateRangeCrit(periodOther)}`);
+        // console.log("[Other] BreakdownAll criteria:", c);
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:c})
+          .then(r=>{setCount("#BreakdownAll",r.result.records_count);Other_BreakdownClosed(done);}).catch(()=>Other_BreakdownClosed(done));
       }
       function Other_BreakdownClosed(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName, reportName:serviceReport,
-          criteria:baseCrit(`Service_Request_Type=="Breakdown" && Status=="Closed" && ${dueDateRangeCrit(periodOther)}`)})
-          .then(r=>{ setCount("#BreakdownClosed",r.result.records_count); Other_PMAll(done); })
-          .catch(()=>Other_PMAll(done));
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeCrit(periodOther,`Service_Request_Type=="Breakdown" && Status=="Closed" && ${dueDateRangeCrit(periodOther)}`)})
+          .then(r=>{setCount("#BreakdownClosed",r.result.records_count);Other_PMAll(done);}).catch(()=>Other_PMAll(done));
       }
       function Other_PMAll(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName, reportName:serviceReport,
-          criteria:baseCrit(`Service_Request_Type=="Routine" && Status=="Current month due" && ${dueDateRangeCrit(periodOther)}`)})
-          .then(r=>{ pmAll=Number(r.result.records_count||0); setCount("#PmAll",pmAll); Other_PMOverdue(done); })
-          .catch(()=>{ pmAll=0; setCount("#PmAll",0); Other_PMOverdue(done); });
+        const cri = activeCrit(periodOther,`Service_Request_Type=="Routine" && Status=="Current month due" && ${dueDateRangeCrit(periodOther)}`);
+        console.log("[Other] PMAll criteria:", cri);
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeCrit(periodOther,`Service_Request_Type=="Routine" && Status=="Current month due" && ${dueDateRangeCrit(periodOther)}`)})
+          .then(r=>{pmAll=Number(r.result.records_count||0);setCount("#PmAll",pmAll);Other_PMOverdue(done);})
+          .catch(()=>{pmAll=0;setCount("#PmAll",0);Other_PMOverdue(done);});
       }
       function Other_PMOverdue(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName, reportName:serviceReport,
-          criteria:baseCrit(`Service_Request_Type=="Routine" && Status=="Overdue"`)})
-          .then(r=>{ pmOverdue=Number(r.result.records_count||0); setCount("#PmOverdue",pmOverdue); Other_PMClosed(done); })
-          .catch(()=>{ pmOverdue=0; setCount("#PmOverdue",0); Other_PMClosed(done); });
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeCrit(periodOther,`Service_Request_Type=="Routine" && Status=="Overdue"`)})
+          .then(r=>{pmOverdue=Number(r.result.records_count||0);setCount("#PmOverdue",pmOverdue);Other_PMClosed(done);})
+          .catch(()=>{pmOverdue=0;setCount("#PmOverdue",0);Other_PMClosed(done);});
       }
       function Other_PMClosed(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName, reportName:serviceReport,
-          criteria:baseCrit(`Service_Request_Type=="Routine" && Status=="Closed" && ${dueDateRangeCrit(periodOther)}`)})
-          .then(r=>{ pmClosed=Number(r.result.records_count||0); setCount("#PmClosed",pmClosed); updatePMPieChart(pmAll,pmClosed,pmOverdue); Other_OtherActive(done); })
-          .catch(()=>{ pmClosed=0; setCount("#PmClosed",0); updatePMPieChart(pmAll,pmClosed,pmOverdue); Other_OtherActive(done); });
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeCrit(periodOther,`Service_Request_Type=="Routine" && Status=="Closed" && ${dueDateRangeCrit(periodOther)}`)})
+          .then(r=>{pmClosed=Number(r.result.records_count||0);setCount("#PmClosed",pmClosed);updatePMPieChart(pmAll,pmClosed,pmOverdue);Other_OtherActive(done);})
+          .catch(()=>{pmClosed=0;setCount("#PmClosed",0);updatePMPieChart(pmAll,pmClosed,pmOverdue);Other_OtherActive(done);});
       }
       function Other_OtherActive(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName, reportName:serviceReport,
-          criteria:baseCrit(`Service_Request_Type!="Routine" && Service_Request_Type!="Breakdown" && Status!="Closed" && ${dueDateRangeCrit(periodOther)}`)})
-          .then(r=>{ setCount("#otherActive",r.result.records_count); Other_OtherClosed(done); })
-          .catch(()=>Other_OtherClosed(done));
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeCrit(periodOther,`Service_Request_Type!="Routine" && Service_Request_Type!="Breakdown" && Status!="Closed" && ${dueDateRangeCrit(periodOther)}`)})
+          .then(r=>{setCount("#otherActive",r.result.records_count);Other_OtherClosed(done);}).catch(()=>Other_OtherClosed(done));
       }
       function Other_OtherClosed(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName, reportName:serviceReport,
-          criteria:baseCrit(`Service_Request_Type!="Routine" && Service_Request_Type!="Breakdown" && Status=="Closed" && ${dueDateRangeCrit(periodOther)}`)})
-          .then(r=>{ setCount("#otherClosed",r.result.records_count); if(done)done(); })
-          .catch(()=>{ if(done)done(); });
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeCrit(periodOther,`Service_Request_Type!="Routine" && Service_Request_Type!="Breakdown" && Status=="Closed" && ${dueDateRangeCrit(periodOther)}`)})
+          .then(r=>{setCount("#otherClosed",r.result.records_count);if(done)done();}).catch(()=>{if(done)done();});
       }
 
-      /* ESN */
+      /* ── ESN ─────────────────────────────────────────────── */
       function refreshESN(done){ setLabelForSection("esn"); ESN_Pending(done); }
       function ESN_Pending(done){
-        const c = baseCritESN(`ESN_Status=="Pending"`);
-        console.log("criteria:", c);
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName, reportName:ESNReport,
-          criteria:baseCritESN(`ESN_Status=="Pending"`)})
-          .then(r=>{console.log("Count:", r.result.records_count); setCount("#esnPending",r.result.records_count); ESN_Completed(done); })
-          .catch(()=>ESN_Completed(done));
+        const c=activeCritESN(periodEsn,`ESN_Status=="Pending"`);
+        console.log("[ESN] Pending criteria:", c);
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,criteria:c})
+          .then(r=>{setCount("#esnPending",r.result.records_count);ESN_Completed(done);}).catch(()=>ESN_Completed(done));
       }
-
       function ESN_Completed(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName, reportName:ESNReport,
-          criteria:baseCritESN(`ESN_Status=="Completed" && ${addedTimeRangeCrit(periodEsn)}`)})
-          .then(r=>{ setCount("#esnCompleted",r.result.records_count); if(done)done(); })
-          .catch(()=>{ if(done)done(); });
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,
+          criteria:activeCritESN(periodEsn,`ESN_Status=="Completed" && ${addedTimeRangeCrit(periodEsn)}`)})
+          .then(r=>{setCount("#esnCompleted",r.result.records_count);if(done)done();}).catch(()=>{if(done)done();});
       }
 
-      /* Me */
+      /* ── Me ──────────────────────────────────────────────── */
       function refreshMe(done){ setLabelForSection("me"); Me_Breakdown(done); }
       function Me_Breakdown(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName, reportName:serviceReport,
-          criteria:routeOnlyCrit(`Service_Request_Type=="Breakdown" && Status=="Closed" && Closed_Owner.ID==${userID} && ${closedDateRangeCrit_ME(periodMe)}`)})
-          .then(r=>{ setCount("#meBrkdwn",r.result.records_count); Me_PM(done); })
-          .catch(()=>{ setCount("#meBrkdwn",0); Me_PM(done); });
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeRouteOnly(periodMe,`Service_Request_Type=="Breakdown" && Status=="Closed" && ${closedDateRangeCrit_ME(periodMe)}`)})
+          .then(r=>{setCount("#meBrkdwn",r.result.records_count);Me_PM(done);}).catch(()=>{setCount("#meBrkdwn",0);Me_PM(done);});
       }
       function Me_PM(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName, reportName:serviceReport,
-          criteria:routeOnlyCrit(`Service_Request_Type=="Routine" && Status=="Closed" && Closed_Owner.ID==${userID} && ${closedDateRangeCrit_ME(periodMe)}`)})
-          .then(r=>{ setCount("#mePm",r.result.records_count); Me_Other(done); })
-          .catch(()=>{ setCount("#mePm",0); Me_Other(done); });
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeRouteOnly(periodMe,`Service_Request_Type=="Routine" && Status=="Closed" && ${closedDateRangeCrit_ME(periodMe)}`)})
+          .then(r=>{setCount("#mePm",r.result.records_count);Me_Other(done);}).catch(()=>{setCount("#mePm",0);Me_Other(done);});
       }
       function Me_Other(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName, reportName:serviceReport,
-          criteria:routeOnlyCrit(`(Service_Request_Type=="One Time Service"||Service_Request_Type=="Repair"||Service_Request_Type=="Inspection") && Status=="Closed" && Closed_Owner.ID==${userID} && ${closedDateRangeCrit_ME(periodMe)}`)})
-          .then(r=>{ setCount("#meOther",r.result.records_count); Me_ESN(done); })
-          .catch(()=>{ setCount("#meOther",0); Me_ESN(done); });
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeRouteOnly(periodMe,`(Service_Request_Type=="One Time Service"||Service_Request_Type=="Repair"||Service_Request_Type=="Inspection") && Status=="Closed" && ${closedDateRangeCrit_ME(periodMe)}`)})
+          .then(r=>{setCount("#meOther",r.result.records_count);Me_ESN(done);}).catch(()=>{setCount("#meOther",0);Me_ESN(done);});
       }
-      // Me ESN — uses Supervisior_Name.ID via baseCrit
       function Me_ESN(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName, reportName:ESNReport,
-          criteria:baseCritESN(`ESN_Status=="Completed" && ${addedTimeRangeCrit(periodMe)}`)})
-          .then(r=>{ setCount("#meEsn",r.result.records_count); if(done)done(); })
-          .catch(()=>{ setCount("#meEsn",0); if(done)done(); });
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,
+          criteria:activeCritESN(periodMe,`ESN_Status=="Completed" && ${addedTimeRangeCrit(periodMe)}`)})
+          .then(r=>{setCount("#meEsn",r.result.records_count);if(done)done();}).catch(()=>{setCount("#meEsn",0);if(done)done();});
       }
 
       /* ─────────────────────────────────────────────────────────
-         MODAL
+         MODAL — open / close / populate
       ───────────────────────────────────────────────────────── */
+      function populateRouteSelect(st){
+        const routes = ROUTE_EXPANSION[currentRoute] || (currentRoute ? [currentRoute] : []);
+        //const $sel = $("#routeSelect").empty().append('<option value="">All Routes (Default)</option>');
+        const defaultText = currentRoute ? `${currentRoute}` : "All Routes (Default)";
+        const $sel = $("#routeSelect").empty().append(`<option value="">${defaultText}</option>`);
+        routes.forEach(r => $sel.append(`<option value="${r}">${r}</option>`));
+        $sel.val(st.filterRoute || "");
+      }
+
+      function updateTechFieldState(){
+        const routeVal = $("#routeSelect").val();
+        if(routeVal){
+          $("#techSearch").prop("disabled", false).attr("placeholder","Type technician name...");
+        } else {
+          $("#techSearch").prop("disabled", true).attr("placeholder","Select a route first...");
+          $("#techSearch").val("");
+          $("#techID").val("");
+          $("#techClear").hide();
+          $("#techSuggestions").hide().empty();
+        }
+      }
+
       function openModal(){
         const st = getState(activeFilterTarget);
+        const sectionLabels = {other:"Other Calls",esn:"ESN",me:"Me"};
+        $("#filterModalTitle").text("Filters — "+sectionLabels[activeFilterTarget]);
+
+        // Period
         $("#periodSelect").val(st.period);
-        const isCustom = st.period === "custom";
+        const isCustom = st.period==="custom";
         $(".date-range-field").toggle(isCustom);
-        $("#dateFrom").val(isCustom ? toInputDate(st.from) : "");
-        $("#dateTo").val(isCustom ? toInputDate(st.to) : "");
+        $("#dateFrom").val(isCustom?toInputDate(st.from):"");
+        $("#dateTo").val(isCustom?toInputDate(st.to):"");
+
+        // Route dropdown
+        populateRouteSelect(st);
+
+        // Tech field
+        $("#techSearch").val(st.filterTechName||"");
+        $("#techID").val(st.filterTechID||"");
+        $("#techClear").toggle(!!(st.filterTechName));
+        updateTechFieldState();
+
+        // Show modal
         $("#filterBackdrop").addClass("show");
         $("#filterModal").addClass("show").attr("aria-hidden","false");
         $("body").addClass("modal-open");
       }
+
       function closeModal(){
         $("#filterModal").removeClass("show").attr("aria-hidden","true");
         $("#filterBackdrop").removeClass("show");
         $("body").removeClass("modal-open");
-        $("#techSuggestions,#routeSuggestions").hide().empty();
+        $("#techSuggestions").hide().empty();
       }
 
+      /* ─────────────────────────────────────────────────────────
+         MODAL EVENT HANDLERS
+      ───────────────────────────────────────────────────────── */
       $(document).on("click","#OtherCalls,#esn,#me", function(e){
         e.preventDefault(); e.stopPropagation();
-        activeFilterTarget = this.id==="esn" ? "esn" : this.id==="me" ? "me" : "other";
+        activeFilterTarget = this.id==="esn"?"esn":this.id==="me"?"me":"other";
         openModal();
       });
       $(document).on("click","#filterModalClose,#filterBackdrop", closeModal);
+
       $("#periodSelect").on("change", function(){
-        const c = $(this).val()==="custom";
+        const c=$(this).val()==="custom";
         $(".date-range-field").toggle(c);
-        if (!c) $("#dateFrom,#dateTo").val("");
+        if(!c) $("#dateFrom,#dateTo").val("");
       });
+
+      /* Route changed → clear tech, enable/disable tech field */
+      $("#routeSelect").on("change", function(){
+        $("#techSearch").val("");
+        $("#techID").val("");
+        $("#techClear").hide();
+        $("#techSuggestions").hide().empty();
+        updateTechFieldState();
+      });
+
+      /* Clear tech button */
+      $("#techClear").on("click", function(){
+        $("#techSearch").val("");
+        $("#techID").val("");
+        $(this).hide();
+        $("#techSuggestions").hide().empty();
+      });
+
+      /* Reset button — clears ALL filters for this section */
       $("#filterClear").on("click", function(){
         const st = getState(activeFilterTarget);
         st.period="this_month"; st.from=null; st.to=null;
-        closeModal(); if(userID) refreshOnly(activeFilterTarget);
+        st.filterRoute=""; st.filterTechID=""; st.filterTechName="";
+        updateFilterBadge(activeFilterTarget);
+        closeModal();
+        if(userID) refreshOnly(activeFilterTarget);
       });
+
+      /* Apply button — save all filter state */
       $("#filterApply").on("click", function(){
         const st = getState(activeFilterTarget);
-        const p  = $("#periodSelect").val();
+
+        // Period
+        const p = $("#periodSelect").val();
         st.period = p;
-        if (p==="custom"){
+        if(p==="custom"){
           const f=parseInputDate($("#dateFrom").val());
           const t=parseInputDate($("#dateTo").val());
-          if (!f||!t){ alert("Please select both From and To dates."); return; }
-          st.from = f<=t?f:t; st.to = f<=t?t:f;
+          if(!f||!t){ alert("Please select both From and To dates."); return; }
+          st.from=f<=t?f:t; st.to=f<=t?t:f;
         } else { st.from=null; st.to=null; }
-        closeModal(); if(userID) refreshOnly(activeFilterTarget);
+
+        // Route
+        st.filterRoute = $("#routeSelect").val();
+
+        // Technician
+        const techName = $("#techSearch").val().trim();
+        const techID   = $("#techID").val().trim();
+        // Only save tech if we have both name and ID (selected from suggestions)
+        if(techID && techName){
+          st.filterTechID   = techID;
+          st.filterTechName = techName;
+        } else {
+          st.filterTechID   = "";
+          st.filterTechName = "";
+        }
+
+        updateFilterBadge(activeFilterTarget);
+        closeModal();
+        if(userID) refreshOnly(activeFilterTarget);
       });
 
       /* ─────────────────────────────────────────────────────────
-         TECH & ROUTE SEARCH  (UI wired up — logic for later)
+         TECH TYPEAHEAD
+         Searches Service Technicians scoped to selected route.
+         Stores ID in hidden #techID field on selection.
       ───────────────────────────────────────────────────────── */
       function esc2(s){ return String(s||"").replace(/"/g,'\\"'); }
-      let techTimer=null, routeTimer=null;
+      let techTimer = null;
 
       $("#techSearch").on("input", function(){
-        const val = $(this).val().trim(); clearTimeout(techTimer);
-        if (!val){ $("#techSuggestions").hide().empty(); return; }
+        const val = $(this).val().trim();
+        $("#techID").val("");            // clear stored ID while typing
+        $("#techClear").hide();
+        clearTimeout(techTimer);
+        if(!val){ $("#techSuggestions").hide().empty(); return; }
+
+        const selectedRoute = $("#routeSelect").val();
+        if(!selectedRoute) return; // safety — button should be disabled anyway
+
         techTimer = setTimeout(()=>{
           $("#techSuggestions").html('<div class="sugg-empty">Loading...</div>').show();
-          ZOHO.CREATOR.API.getAllRecords({ appName:applicationName, reportName:userReport,
-            criteria:`(Role=="Service Technician" && User_Status=="Active" && Name.contains("${esc2(val)}"))`, pageSize:50 })
-            .then(res=>{
-              const rows=res?.data||[];
-              if (!rows.length){ $("#techSuggestions").html('<div class="sugg-empty">Not found</div>'); return; }
-              $("#techSuggestions").html(rows.map(r=>`<div class="sugg-item" data-value="${esc2(r.Name||"")}">${r.Name||""}</div>`).join("")).show();
-            }).catch(()=>$("#techSuggestions").html('<div class="sugg-empty">Error</div>'));
+          $("#techLoadingSpinner").show();
+
+          // Criteria: active STs in the selected route, name contains search term
+          const crit = `Role=="Service Technician" && User_Status=="Active" && New_Route_Name=="${esc2(selectedRoute)}"${val?` && Name.contains("${esc2(val)}")` : ""}`;
+
+          ZOHO.CREATOR.API.getAllRecords({
+            appName:applicationName, reportName:userReport,
+            criteria:crit, pageSize:50
+          }).then(res=>{
+            $("#techLoadingSpinner").hide();
+            const rows = res?.data || [];
+            if(!rows.length){
+              $("#techSuggestions").html('<div class="sugg-empty">No technicians found</div>');
+              return;
+            }
+            const html = rows.map(r =>
+              `<div class="sugg-item"
+                    data-id="${esc2(r.ID||"")}"
+                    data-name="${esc2(r.Name||"")}">
+                ${r.Name||""}
+               </div>`
+            ).join("");
+            $("#techSuggestions").html(html).show();
+          }).catch(()=>{
+            $("#techLoadingSpinner").hide();
+            $("#techSuggestions").html('<div class="sugg-empty">Error loading technicians</div>');
+          });
         }, 350);
       });
 
-      $("#routeSearch").on("input", function(){
-        const val = $(this).val().trim(); clearTimeout(routeTimer);
-        if (!val){ $("#routeSuggestions").hide().empty(); return; }
-        routeTimer = setTimeout(()=>{
-          $("#routeSuggestions").html('<div class="sugg-empty">Loading...</div>').show();
-          ZOHO.CREATOR.API.getAllRecords({ appName:applicationName, reportName:userReport,
-            criteria:`(New_Route_Name.contains("${esc2(val)}"))`, pageSize:200 })
-            .then(res=>{
-              const rows=res?.data||[];
-              const map=new Map();
-              rows.forEach(r=>{ const v=(r.New_Route_Name||"").trim(); if(v) map.set(v.toLowerCase(),v); });
-              const list=Array.from(map.values()).slice(0,50);
-              if (!list.length){ $("#routeSuggestions").html('<div class="sugg-empty">Not found</div>'); return; }
-              $("#routeSuggestions").html(list.map(v=>`<div class="sugg-item" data-value="${esc2(v)}">${v}</div>`).join("")).show();
-            }).catch(()=>$("#routeSuggestions").html('<div class="sugg-empty">Error</div>'));
-        }, 300);
+      /* Select technician from suggestions */
+      $(document).on("click","#techSuggestions .sugg-item", function(){
+        const name = $(this).data("name") || "";
+        const id   = $(this).data("id")   || "";
+        $("#techSearch").val(name);
+        $("#techID").val(id);
+        $("#techClear").show();
+        $("#techSuggestions").hide().empty();
       });
 
-      $(document).on("click","#techSuggestions .sugg-item", function(){ $("#techSearch").val($(this).data("value")||""); $("#techSuggestions").hide().empty(); });
-      $(document).on("click","#routeSuggestions .sugg-item", function(){ $("#routeSearch").val($(this).data("value")||""); $("#routeSuggestions").hide().empty(); });
+      /* Hide suggestions on outside click */
       $(document).on("click.sugg", function(e){
-        if (!$(e.target).closest("#techSearch,#techSuggestions").length) $("#techSuggestions").hide().empty();
-        if (!$(e.target).closest("#routeSearch,#routeSuggestions").length) $("#routeSuggestions").hide().empty();
+        if(!$(e.target).closest("#techSearch,#techSuggestions").length)
+          $("#techSuggestions").hide().empty();
       });
 
       /* ─────────────────────────────────────────────────────────
@@ -804,21 +858,21 @@
         const loginuser = params.loginUser || "";
 
         ZOHO.CREATOR.API.getAllRecords({
-          appName: applicationName, reportName: userReport,
-          criteria: `(Email == "${loginuser}")`, page:1, pageSize:1
+          appName:applicationName, reportName:userReport,
+          criteria:`(Email == "${loginuser}")`, page:1, pageSize:1
         }).then(res=>{
-          if (res.data && res.data.length > 0){
+          if(res.data&&res.data.length>0){
             const rec    = res.data[0];
-            UserName     = rec.Name || "";
-            userID       = rec.ID   || "";
-            currentRole  = rec.Role || "";
-            currentRoute = fullyDecode(rec.New_Route_Name || rec.Route || rec.Region || "");
+            UserName     = rec.Name  || "";
+            userID       = rec.ID    || "";
+            currentRole  = rec.Role  || "";
+            currentRoute = fullyDecode(rec.New_Route_Name||rec.Route||rec.Region||"");
 
             console.log("userID:", userID, "| UserName:", UserName, "| Route:", currentRoute);
-            console.log("Expanded routes:", ROUTE_EXPANSION[currentRoute] || "no expansion (single route)");
+            console.log("Expanded routes:", ROUTE_EXPANSION[currentRoute] || "single route");
 
-            $("#user_Role").text(currentRole ? currentRole.substring(0,2).toUpperCase() : "NA");
-            $("#User_Route").text(currentRoute || "NA");
+            $("#user_Role").text(currentRole?currentRole.substring(0,2).toUpperCase():"NA");
+            $("#User_Route").text(currentRoute||"NA");
 
             refreshOtherCalls(()=>{
               refreshESN(()=>{
