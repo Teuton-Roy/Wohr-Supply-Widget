@@ -1,962 +1,461 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
   <script src=" https://static.zohocdn.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
   <style>
     :root {
-      --tag-blue: #0088ff;
-      --tag-blue-dk: #006fcc;
-      --border: #e0e4ea;
-      --funnel: #165579;
-      --open: #FDDC13;
-      --open-border: #ceb50f;
-      --partial: #ede6c2;
-      --partial-border: #a17f0f;
-      --closed: #e6f5e4;
-      --closed-border: #5cb85c;
-      --text: #111;
-      --text-muted: #6b7280;
-      --bg: #f4f6fb;
-      --card-bg: #ffffff;
-      --shadow: 0 4px 24px rgba(0, 0, 0, .08);
-      --shadow-hover: 0 8px 32px rgba(0, 136, 255, .13);
+      --tag-blue: #0088ff; --tag-blue-dk: #006fcc; --border: #e0e4ea; --funnel: #165579;
+      --open: #FDDC13; --open-border: #ceb50f; --partial: #ede6c2; --partial-border: #a17f0f;
+      --closed: #e6f5e4; --closed-border: #5cb85c; --text: #111; --text-muted: #6b7280;
+      --bg: #f4f6fb; --card-bg: #ffffff; --shadow: 0 4px 24px rgba(0,0,0,.08);
+      --shadow-hover: 0 8px 32px rgba(0,136,255,.13);
     }
-
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background: var(--bg);
-      font-size: 10px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      color: var(--text);
-      padding: 20px 16px 40px;
-      min-height: 100vh;
-    }
-
-    .top-user {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      align-items: flex-end;
-      gap: 8px;
-      margin-bottom: 18px;
-      margin-right: 10px;
-    }
-
-    .avatar {
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #cfe4ff 0%, #a8d0ff 100%);
-      border: 2.5px solid #4d86c6;
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      font-size: 15px;
-      color: #1a5fa8;
-      box-shadow: 0 2px 8px rgba(77, 134, 198, .25);
-      flex-shrink: 0;
-    }
-
-    .loc {
-      font-weight: 700;
-      font-size: 15px;
-      color: var(--text-muted);
-      line-height: 1.2;
-    }
-
-    .status-card {
-      position: relative;
-      background: var(--card-bg);
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      padding: 22px 18px 18px;
-      margin: 28px 0 20px;
-      box-shadow: var(--shadow);
-      transition: box-shadow .25s ease;
-    }
-
-    .status-card:hover {
-      box-shadow: var(--shadow-hover);
-    }
-
-    .card-tag {
-      position: absolute;
-      top: -18px;
-      left: 16px;
-      background: linear-gradient(135deg, #0099ff 0%, #005fcc 100%);
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 12px;
-      font-size: 18px;
-      font-weight: 500;
-      line-height: 1;
-      letter-spacing: .3px;
-      box-shadow: 0 6px 18px rgba(0, 136, 255, .35);
-    }
-
-    .card-top-right {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      padding-top: 6px;
-      margin-bottom: 4px;
-    }
-
-    .filter-btn {
-      border: none;
-      background: transparent !important;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      padding: 6px 10px;
-      border-radius: 10px;
-      transition: background .15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .filter-btn:hover {
-      background: #f0f4ff;
-    }
-
-    .active-period {
-      font-style: italic;
-      font-size: 18px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .funnel {
-      font-size: 18px;
-      color: var(--funnel);
-      transform: translateY(2px);
-    }
-
-    /* ── Modal ────────────────────────────────────────────── */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.45) !important;
-      z-index: 2000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-overlay.open {
-      display: flex !important;
-    }
-
-    .modal-dialog {
-      background: #fff !important;
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
-      width: 320px;
-      max-width: calc(100vw - 32px);
-      padding: 0;
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 20px 14px;
-      border-bottom: 1px solid #eef0f4;
-    }
-
-    .modal-title {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .modal-close {
-      width: 30px;
-      height: 30px;
-      border: none;
-      background: #f3f4f6;
-      border-radius: 50%;
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      font-size: 15px;
-      color: #555;
-      transition: background .15s;
-    }
-
-    .modal-close:hover {
-      background: #e5e7eb;
-    }
-
-    .modal-body {
-      padding: 20px 20px 8px;
-    }
-
-    .modal-field-label {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: .6px;
-      margin-bottom: 8px;
-      display: block;
-    }
-
-    .period-select {
-      width: 100%;
-      padding: 10px 36px 10px 13px;
-      border: 1.5px solid #dde3ed;
-      border-radius: 10px;
-      font-size: 14px;
-      font-family: inherit;
-      color: var(--text);
-      background: #f8faff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 13px center;
-      -webkit-appearance: none;
-      appearance: none;
-      cursor: pointer;
-      transition: border-color .15s;
-    }
-
-    .period-select:focus {
-      outline: none;
-      border-color: var(--tag-blue);
-      background-color: #fff;
-    }
-
-    .custom-dates {
-      display: none;
-      flex-direction: column;
-      gap: 14px;
-      margin-top: 16px;
-    }
-
-    .custom-dates.visible {
-      display: flex;
-    }
-
-    .date-field label {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: .6px;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .date-field input[type="date"] {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1.5px solid #dde3ed;
-      border-radius: 10px;
-      font-size: 13px;
-      font-family: inherit;
-      color: var(--text);
-      background: #f8faff;
-      -webkit-appearance: none;
-      appearance: none;
-      transition: border-color .15s;
-    }
-
-    .date-field input[type="date"]:focus {
-      outline: none;
-      border-color: var(--tag-blue);
-      background: #fff;
-    }
-
-    .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      padding: 16px 20px 20px;
-    }
-
-    .btn-cancel {
-      padding: 9px 20px;
-      border: 1.5px solid #dde3ed;
-      border-radius: 20px;
-      background: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: background .15s, color .15s;
-    }
-
-    .btn-cancel:hover {
-      background: #f3f4f6;
-      color: var(--text);
-    }
-
-    .btn-apply {
-      padding: 9px 24px;
-      border: none;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #0099ff, #005fcc);
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      box-shadow: 0 3px 10px rgba(0, 136, 255, .35);
-      transition: transform .15s, box-shadow .15s, opacity .15s;
-    }
-
-    .btn-apply:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 5px 16px rgba(0, 136, 255, .45);
-    }
-
-    .btn-apply:active {
-      transform: translateY(0);
-      opacity: .85;
-    }
-
-    /* ── Table / rows ─────────────────────────────────────── */
-    .table-head {
-      display: grid;
-      grid-template-columns: 1.3fr .7fr .9fr;
-      align-items: center;
-      padding: 4px 16px 2px;
-      font-size: 20px;
-      font-weight: 400;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .table-head div:nth-child(2),
-    .table-head div:nth-child(3) {
-      text-align: center;
-    }
-
-    .status-row {
-      display: grid;
-      grid-template-columns: 1.3fr .7fr .9fr;
-      align-items: center;
-      margin: 10px 4px;
-      border-radius: 14px;
-      padding: 16px 20px;
-      border: 2px solid transparent;
-      transition: transform .15s, box-shadow .15s;
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-    }
-
-    .status-row:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, .10);
-    }
-
-    .status-label {
-      font-size: 20px;
-      font-weight: 500;
-      line-height: 1.15;
-    }
-
-    .status-calls,
-    .status-spaces {
-      text-align: center;
-      font-weight: 500;
-      font-size: 30px;
-      letter-spacing: .5px;
-      border-left: 1.5px solid rgba(0, 0, 0, .10);
-    }
-
-    .open {
-      background: var(--open);
-      border-color: var(--open-border);
-    }
-
-    .partial {
-      background: var(--partial);
-      border-color: var(--partial-border);
-    }
-
-    .closed {
-      background: var(--closed);
-      border-color: var(--closed-border);
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: .3
-      }
-
-      50% {
-        opacity: 1
-      }
-    }
-
-    .loading-val {
-      animation: pulse 1.4s ease-in-out infinite;
-      color: #aaa;
-    }
-
-    /* ── "Partially Closed" responsive break ──────────────── */
-    /* Desktop/tablet → single line, <br> invisible          */
-    .partial-br {
-      display: none;
-    }
-
-    /* Mobile (≤ 400px) → show break → two lines             */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); font-size: 10px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: var(--text); padding: 20px 16px 40px; min-height: 100vh; }
+    .top-user { display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; gap: 8px; margin-bottom: 18px; margin-right: 10px; }
+    .avatar { width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #cfe4ff 0%, #a8d0ff 100%); border: 2.5px solid #4d86c6; display: grid; place-items: center; font-weight: 800; font-size: 15px; color: #1a5fa8; box-shadow: 0 2px 8px rgba(77,134,198,.25); flex-shrink: 0; }
+    .loc { font-weight: 700; font-size: 15px; color: var(--text-muted); line-height: 1.2; }
+    .status-card { position: relative; background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 20px; padding: 22px 18px 18px; margin: 28px 0 20px; box-shadow: var(--shadow); transition: box-shadow .25s ease; }
+    .status-card:hover { box-shadow: var(--shadow-hover); }
+    .card-tag { position: absolute; top: -18px; left: 16px; background: linear-gradient(135deg, #0099ff 0%, #005fcc 100%); color: #fff; padding: 10px 20px; border-radius: 12px; font-size: 18px; font-weight: 500; line-height: 1; letter-spacing: .3px; box-shadow: 0 6px 18px rgba(0,136,255,.35); }
+    .card-top-right { display: flex; justify-content: flex-end; align-items: center; padding-top: 6px; margin-bottom: 4px; }
+    .filter-btn { border: none; background: transparent !important; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 10px; border-radius: 10px; transition: background .15s; -webkit-tap-highlight-color: transparent; }
+    .filter-btn:hover { background: #f0f4ff; }
+    .active-period { font-style: italic; font-size: 18px; color: var(--text-muted); font-weight: 500; }
+    .funnel { font-size: 18px; color: var(--funnel); transform: translateY(2px); }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45) !important; z-index: 2000; display: none; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex !important; }
+    .modal-dialog { background: #fff !important; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.2); width: 320px; max-width: calc(100vw - 32px); padding: 0; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 14px; border-bottom: 1px solid #eef0f4; }
+    .modal-title { font-size: 17px; font-weight: 700; color: var(--text); }
+    .modal-close { width: 30px; height: 30px; border: none; background: #f3f4f6; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 15px; color: #555; transition: background .15s; }
+    .modal-close:hover { background: #e5e7eb; }
+    .modal-body { padding: 20px 20px 8px; }
+    .modal-field-label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 8px; display: block; }
+    .period-select { width: 100%; padding: 10px 36px 10px 13px; border: 1.5px solid #dde3ed; border-radius: 10px; font-size: 14px; font-family: inherit; color: var(--text); background: #f8faff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 13px center; -webkit-appearance: none; appearance: none; cursor: pointer; transition: border-color .15s; }
+    .period-select:focus { outline: none; border-color: var(--tag-blue); background-color: #fff; }
+    .custom-dates { display: none; flex-direction: column; gap: 14px; margin-top: 16px; }
+    .custom-dates.visible { display: flex; }
+    .date-field label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .6px; display: block; margin-bottom: 6px; }
+    .date-field input[type="date"] { width: 100%; padding: 10px 12px; border: 1.5px solid #dde3ed; border-radius: 10px; font-size: 13px; font-family: inherit; color: var(--text); background: #f8faff; -webkit-appearance: none; appearance: none; transition: border-color .15s; }
+    .date-field input[type="date"]:focus { outline: none; border-color: var(--tag-blue); background: #fff; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 20px 20px; }
+    .btn-cancel { padding: 9px 20px; border: 1.5px solid #dde3ed; border-radius: 20px; background: #fff; font-size: 13px; font-weight: 600; font-family: inherit; color: var(--text-muted); cursor: pointer; transition: background .15s, color .15s; }
+    .btn-cancel:hover { background: #f3f4f6; color: var(--text); }
+    .btn-apply { padding: 9px 24px; border: none; border-radius: 20px; background: linear-gradient(135deg, #0099ff, #005fcc); color: #fff; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; box-shadow: 0 3px 10px rgba(0,136,255,.35); transition: transform .15s, box-shadow .15s, opacity .15s; }
+    .btn-apply:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(0,136,255,.45); }
+    .btn-apply:active { transform: translateY(0); opacity: .85; }
+    .table-head { display: grid; grid-template-columns: 1.3fr .7fr .9fr; align-items: center; padding: 4px 16px 2px; font-size: 20px; font-weight: 400; color: var(--text-muted); margin-top: 4px; }
+    .table-head div:nth-child(2), .table-head div:nth-child(3) { text-align: center; }
+    .status-row { display: grid; grid-template-columns: 1.3fr .7fr .9fr; align-items: center; margin: 10px 4px; border-radius: 14px; padding: 16px 20px; border: 2px solid transparent; transition: transform .15s, box-shadow .15s; -webkit-transform: translateZ(0); transform: translateZ(0); }
+    .status-row:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.10); }
+    .status-label { font-size: 20px; font-weight: 500; line-height: 1.15; }
+    .status-calls, .status-spaces { text-align: center; font-weight: 500; font-size: 30px; letter-spacing: .5px; border-left: 1.5px solid rgba(0,0,0,.10); }
+    .open { background: var(--open); border-color: var(--open-border); }
+    .partial { background: var(--partial); border-color: var(--partial-border); }
+    .closed { background: var(--closed); border-color: var(--closed-border); }
+    @keyframes pulse { 0%, 100% { opacity: .3 } 50% { opacity: 1 } }
+    .loading-val { animation: pulse 1.4s ease-in-out infinite; color: #aaa; }
+    .partial-br { display: none; }
+    @media (max-width: 500px) { .partial-br { display: block; } }
     @media (max-width: 500px) {
-      .partial-br {
-        display: block;
-      }
+      .card-tag { font-size: 16px; padding: 8px 14px; top: -15px; }
+      .active-period { font-size: 16px; }
+      .funnel { font-size: 18px; }
+      .table-head { font-size: 18px; padding: 4px 10px 2px; }
+      .status-row { margin: 8px 2px; padding: 13px 14px; }
+      .status-label { font-size: 17px; }
+      .status-calls, .status-spaces { font-size: 20px; }
     }
-
-    /* ── Other mobile tweaks ──────────────────────────────── */
-    @media (max-width: 500px) {
-      .card-tag {
-        font-size: 16px;
-        padding: 8px 14px;
-        top: -15px;
-      }
-
-      .active-period {
-        font-size: 16px;
-      }
-
-      .funnel {
-        font-size: 18px;
-      }
-
-      .table-head {
-        font-size: 18px;
-        padding: 4px 10px 2px;
-      }
-
-      .status-row {
-        margin: 8px 2px;
-        padding: 13px 14px;
-      }
-
-      .status-label {
-        font-size: 17px;
-      }
-
-      .status-calls,
-      .status-spaces {
-        font-size: 20px;
-      }
-    }
-
-    /* Loader */
-    /* .loader {
-      position:fixed; top:0; bottom:0; left:0; right:0;
-      background:rgba(255,255,255,0.95); z-index:9999;
-      display:flex; align-items:center; justify-content:center;
-    }
-    .loader.hidden { display:none; }
-
-    .jimu-primary-loading:before,.jimu-primary-loading:after { position:absolute; top:0; content:''; }
-    .jimu-primary-loading:before { left:-19.992px; }
-    .jimu-primary-loading:after  { left:19.992px; animation-delay:0.32s !important; }
-    .jimu-primary-loading:before,.jimu-primary-loading:after,.jimu-primary-loading {
-      background:#076fe5; animation:loading-keys-app-loading 0.8s infinite ease-in-out;
-      width:13.6px; height:32px;
-    }
-    .jimu-primary-loading { text-indent:-9999em; margin:auto; position:relative; animation-delay:0.16s !important; }
-
-    @keyframes loading-keys-app-loading {
-      0%,80%,100% { opacity:.75; box-shadow:0 0 #076fe5; height:32px; }
-      40%          { opacity:1;   box-shadow:0 -8px #076fe5; height:40px; }
-    }
-
-    * { -webkit-tap-highlight-color:transparent; -webkit-touch-callout:none; }
-    body { -webkit-overflow-scrolling:touch; }
-    button,input,select { -webkit-appearance:none; appearance:none; } */
-
-    /* ===== Loader (Gooey dots) ===== */
-    #loader {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background-color: rgba(0, 0, 0, 0.45);
-      text-align: center;
-    }
-
-    #loader.show {
-      display: block;
-    }
-
-    #loader .container {
-      width: 200px;
-      height: 200px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      margin: auto;
-      padding: 0;
-      max-width: none;
-      filter: url(#goo);
-      animation: rotate-move 2s ease-in-out infinite;
-    }
-
-    #loader .dot {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      margin: auto;
-    }
-
-    #loader .dot-3 {
-      background-color: #f74d75;
-      animation: dot-3-move 2s ease infinite, index 6s ease infinite;
-    }
-
-    #loader .dot-2 {
-      background-color: #10beae;
-      animation: dot-2-move 2s ease infinite, index 6s -4s ease infinite;
-    }
-
-    #loader .dot-1 {
-      background-color: #ffe386;
-      animation: dot-1-move 2s ease infinite, index 6s -2s ease infinite;
-    }
-
-    #loader svg {
-      position: absolute;
-      width: 0;
-      height: 0;
-    }
-
-    @keyframes dot-3-move {
-      20% {
-        transform: scale(1)
-      }
-
-      45% {
-        transform: translateY(-18px) scale(.45)
-      }
-
-      60% {
-        transform: translateY(-90px) scale(.45)
-      }
-
-      80% {
-        transform: translateY(-90px) scale(.45)
-      }
-
-      100% {
-        transform: translateY(0px) scale(1)
-      }
-    }
-
-    @keyframes dot-2-move {
-      20% {
-        transform: scale(1)
-      }
-
-      45% {
-        transform: translate(-16px, 12px) scale(.45)
-      }
-
-      60% {
-        transform: translate(-80px, 60px) scale(.45)
-      }
-
-      80% {
-        transform: translate(-80px, 60px) scale(.45)
-      }
-
-      100% {
-        transform: translateY(0px) scale(1)
-      }
-    }
-
-    @keyframes dot-1-move {
-      20% {
-        transform: scale(1)
-      }
-
-      45% {
-        transform: translate(16px, 12px) scale(.45)
-      }
-
-      60% {
-        transform: translate(80px, 60px) scale(.45)
-      }
-
-      80% {
-        transform: translate(80px, 60px) scale(.45)
-      }
-
-      100% {
-        transform: translateY(0px) scale(1)
-      }
-    }
-
-    @keyframes rotate-move {
-      55% {
-        transform: translate(-50%, -50%) rotate(0deg)
-      }
-
-      80% {
-        transform: translate(-50%, -50%) rotate(360deg)
-      }
-
-      100% {
-        transform: translate(-50%, -50%) rotate(360deg)
-      }
-    }
-
-    @keyframes index {
-
-      0%,
-      100% {
-        z-index: 3
-      }
-
-      33.3% {
-        z-index: 2
-      }
-
-      66.6% {
-        z-index: 1
-      }
-    }
+    #loader { display: none; position: fixed; inset: 0; z-index: 9999; background-color: rgba(0,0,0,0.45); text-align: center; }
+    #loader.show { display: block; }
+    #loader .container { width: 200px; height: 200px; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); margin: auto; padding: 0; max-width: none; filter: url(#goo); animation: rotate-move 2s ease-in-out infinite; }
+    #loader .dot { width: 70px; height: 70px; border-radius: 50%; position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; }
+    #loader .dot-3 { background-color: #f74d75; animation: dot-3-move 2s ease infinite, index 6s ease infinite; }
+    #loader .dot-2 { background-color: #10beae; animation: dot-2-move 2s ease infinite, index 6s -4s ease infinite; }
+    #loader .dot-1 { background-color: #ffe386; animation: dot-1-move 2s ease infinite, index 6s -2s ease infinite; }
+    #loader svg { position: absolute; width: 0; height: 0; }
+    @keyframes dot-3-move { 20%{transform:scale(1)} 45%{transform:translateY(-18px) scale(.45)} 60%{transform:translateY(-90px) scale(.45)} 80%{transform:translateY(-90px) scale(.45)} 100%{transform:translateY(0px) scale(1)} }
+    @keyframes dot-2-move { 20%{transform:scale(1)} 45%{transform:translate(-16px,12px) scale(.45)} 60%{transform:translate(-80px,60px) scale(.45)} 80%{transform:translate(-80px,60px) scale(.45)} 100%{transform:translateY(0px) scale(1)} }
+    @keyframes dot-1-move { 20%{transform:scale(1)} 45%{transform:translate(16px,12px) scale(.45)} 60%{transform:translate(80px,60px) scale(.45)} 80%{transform:translate(80px,60px) scale(.45)} 100%{transform:translateY(0px) scale(1)} }
+    @keyframes rotate-move { 55%{transform:translate(-50%,-50%) rotate(0deg)} 80%{transform:translate(-50%,-50%) rotate(360deg)} 100%{transform:translate(-50%,-50%) rotate(360deg)} }
+    @keyframes index { 0%,100%{z-index:3} 33.3%{z-index:2} 66.6%{z-index:1} }
   </style>
 </head>
-
 <body>
 
   <!-- Loader -->
-
-  <div class="loader" id="pageLoader">
-    <div id="loader" aria-hidden="true">
-      <div class="container" role="status" aria-label="Loading">
-        <div class="dot dot-1"></div>
-        <div class="dot dot-2"></div>
-        <div class="dot dot-3"></div>
-      </div>
-      <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
-        <defs>
-          <filter id="goo">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 21 -7" />
-          </filter>
-        </defs>
-      </svg>
+  <div id="loader" aria-hidden="true">
+    <div class="container" role="status" aria-label="Loading">
+      <div class="dot dot-1"></div>
+      <div class="dot dot-2"></div>
+      <div class="dot dot-3"></div>
     </div>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+      <defs>
+        <filter id="goo">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+          <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 21 -7" />
+        </filter>
+      </defs>
+    </svg>
+  </div>
 
-    <!-- Top User -->
-
-    <div class="top-user">
-      <div class="avatar" id="userInitials">--</div>
-      <div class="loc">
-        <div id="userRegion">--</div>
-      </div>
+  <!-- Top User -->
+  <div class="top-user">
+    <div class="avatar" id="userInitials">--</div>
+    <div class="loc">
+      <div id="userRegion">--</div>
     </div>
+  </div>
 
-    <!-- QI Calls Card -->
-    <section class="status-card">
-      <div class="card-tag">QI Calls</div>
-      <div class="card-top-right">
-        <button type="button" class="filter-btn" onclick="openModal('qi')">
-          <span class="active-period" id="qiPeriodLabel">This month</span>
-          <i class="bi bi-funnel-fill funnel"></i>
-        </button>
-      </div>
-      <div class="table-head">
-        <div></div>
-        <div>Calls</div>
-        <div>Spaces</div>
-      </div>
+  <!-- QI Calls Card -->
+  <section class="status-card">
+    <div class="card-tag">QI Calls</div>
+    <div class="card-top-right">
+      <button type="button" class="filter-btn" onclick="openModal('qi')">
+        <span class="active-period" id="qiPeriodLabel">This month</span>
+        <i class="bi bi-funnel-fill funnel"></i>
+      </button>
+    </div>
+    <div class="table-head">
+      <div></div>
+      <div>Calls</div>
+      <div>Spaces</div>
+    </div>
+    <div class="status-row open" onclick="navigateToReport('Open', currentQiFrom, currentQiTo)">
+      <div class="status-label" style="cursor:pointer;">Open</div>
+      <div class="status-calls" id="qiOpenCalls" style="cursor:pointer;">--</div>
+      <div class="status-spaces" id="qiOpenSpaces" style="cursor:pointer;">--</div>
+    </div>
+    <div class="status-row partial" onclick="navigateToReport('Partially Closed', currentQiFrom, currentQiTo)">
+      <div class="status-label" style="cursor:pointer;">Partially <br class="partial-br">Closed</div>
+      <div class="status-calls" id="qiPartialCalls" style="cursor:pointer;">--</div>
+      <div class="status-spaces" id="qiPartialSpaces" style="cursor:pointer;">--</div>
+    </div>
+    <div class="status-row closed" onclick="navigateToReport('Closed', currentQiFrom, currentQiTo)">
+      <div class="status-label" style="cursor:pointer;">Closed</div>
+      <div class="status-calls" id="qiClosedCalls" style="cursor:pointer;">--</div>
+      <div class="status-spaces" id="qiClosedSpaces" style="cursor:pointer;">--</div>
+    </div>
+  </section>
 
-      <div class="status-row open" onclick="navigateToReport('Open', currentQiFrom, currentQiTo)">
-        <div class="status-label" style="cursor:pointer;">Open</div>
-        <div class="status-calls" id="qiOpenCalls" style="cursor:pointer;">--</div>
-        <div class="status-spaces" id="qiOpenSpaces" style="cursor:pointer;">--</div>
-      </div>
+  <!-- Me Card -->
+  <section class="status-card">
+    <div class="card-tag">Me</div>
+    <div class="card-top-right">
+      <button type="button" class="filter-btn" onclick="openModal('me')">
+        <span class="active-period" id="mePeriodLabel">This month</span>
+        <i class="bi bi-funnel-fill funnel"></i>
+      </button>
+    </div>
+    <div class="status-row closed" style="margin-top:22px;" onclick="navigateToReport('Closed', currentMeFrom, currentMeTo)">
+      <div class="status-label" style="cursor:pointer;">Closed</div>
+      <div class="status-calls" id="meClosedCalls" style="cursor:pointer;">--</div>
+      <div class="status-spaces" id="meClosedSpaces" style="cursor:pointer;">--</div>
+    </div>
+  </section>
 
-      <div class="status-row partial" onclick="navigateToReport('Partially Closed', currentQiFrom, currentQiTo)">
-        <div class="status-label" style="cursor:pointer;">
-          Partially <br class="partial-br">Closed
-        </div>
-        <div class="status-calls" id="qiPartialCalls" style="cursor:pointer;">--</div>
-        <div class="status-spaces" id="qiPartialSpaces" style="cursor:pointer;">--</div>
+  <!-- Filter Modal -->
+  <div class="modal-overlay" id="filterModal" onclick="handleOverlayClick(event)">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">Filters</span>
+        <button type="button" class="modal-close" onclick="closeModal()"><i class="bi bi-x"></i></button>
       </div>
-
-      <div class="status-row closed" onclick="navigateToReport('Closed', currentQiFrom, currentQiTo)">
-        <div class="status-label" style="cursor:pointer;">Closed</div>
-        <div class="status-calls" id="qiClosedCalls" style="cursor:pointer;">--</div>
-        <div class="status-spaces" id="qiClosedSpaces" style="cursor:pointer;">--</div>
-      </div>
-    </section>
-
-    <!-- Me Card -->
-    <section class="status-card">
-      <div class="card-tag">Me</div>
-      <div class="card-top-right">
-        <button type="button" class="filter-btn" onclick="openModal('me')">
-          <span class="active-period" id="mePeriodLabel">This month</span>
-          <i class="bi bi-funnel-fill funnel"></i>
-        </button>
-      </div>
-      <div class="status-row closed" style="margin-top:22px;"
-        onclick="navigateToReport('Closed', currentMeFrom, currentMeTo)">
-        <div class="status-label" style="cursor:pointer;">Closed</div>
-        <div class="status-calls" id="meClosedCalls" style="cursor:pointer;">--</div>
-        <div class="status-spaces" id="meClosedSpaces" style="cursor:pointer;">--</div>
-      </div>
-    </section>
-
-    <!-- Filter Modal -->
-    <div class="modal-overlay" id="filterModal" onclick="handleOverlayClick(event)">
-      <div class="modal-dialog">
-        <div class="modal-header">
-          <span class="modal-title">Filters</span>
-          <button type="button" class="modal-close" onclick="closeModal()">
-            <i class="bi bi-x"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <label class="modal-field-label" for="modalPeriodSelect">Period</label>
-          <select class="period-select" id="modalPeriodSelect" onchange="onModalPeriodChange()">
-            <option value="this_month">This month</option>
-            <option value="this_quarter">This quarter</option>
-            <option value="last_quarter">Last quarter</option>
-            <option value="this_year">This year (YTD financial year)</option>
-            <option value="custom">Custom range</option>
-          </select>
-          <div class="custom-dates" id="modalCustomDates">
-            <div class="date-field">
-              <label for="modalFromDate">From</label>
-              <input type="date" id="modalFromDate">
-            </div>
-            <div class="date-field">
-              <label for="modalToDate">To</label>
-              <input type="date" id="modalToDate">
-            </div>
+      <div class="modal-body">
+        <label class="modal-field-label" for="modalPeriodSelect">Period</label>
+        <select class="period-select" id="modalPeriodSelect" onchange="onModalPeriodChange()">
+          <option value="this_month">This month</option>
+          <option value="this_quarter">This quarter</option>
+          <option value="last_quarter">Last quarter</option>
+          <option value="this_year">This year (YTD financial year)</option>
+          <option value="custom">Custom range</option>
+        </select>
+        <div class="custom-dates" id="modalCustomDates">
+          <div class="date-field">
+            <label for="modalFromDate">From</label>
+            <input type="date" id="modalFromDate">
+          </div>
+          <div class="date-field">
+            <label for="modalToDate">To</label>
+            <input type="date" id="modalToDate">
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-          <button type="button" class="btn-apply" onclick="applyModal()">Apply</button>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button type="button" class="btn-apply" onclick="applyModal()">Apply</button>
       </div>
     </div>
+  </div>
 
-    <script>
-      const applicationName = "service-management";
-      const userReport = "My_Users";
-      const QualityReport = "Widget_Quality_Inspection";
-      const REPORT_BASE_URL = "https://creatorapp.zoho.in/wohr_parking/environment/development/service-management/#Report:";
+  <script>
+    const applicationName = "service-management";
+    const userReport      = "My_Users";
+    const QualityReport   = "Widget_Quality_Inspection";
+    const REPORT_BASE_URL = "https://creatorapp.zoho.in/wohr_parking/environment/development/service-management/#Report:";
 
-      let allQualityRecords = [];
-      let currentQiPeriod = "this_month";
-      let currentMePeriod = "this_month";
-      let loginUser = "", userName = "";
-      let currentQiFrom = null, currentQiTo = null;
-      let currentMeFrom = null, currentMeTo = null;
-      let activeModalSection = null;
+    /* ── Route → Engineer_City mapping for OI ── */
+    const ROUTE_TO_CITY = {
+      "Pune All"            : "Pune",
+      "All Mumbai Region"   : "Mumbai",
+      "All Ahmedabad"       : "Ahmedabad",
+      "All North Region"    : "North",
+      "All Hyderabad"       : "Hyderabad",
+      "All Chennai"         : "Chennai",
+      "All Bangalore Region": "Bangalore",
+    };
 
-      /* ── Modal ── */
-      function openModal(section) {
-        activeModalSection = section;
-        document.getElementById("modalPeriodSelect").value = section === "qi" ? currentQiPeriod : currentMePeriod;
-        onModalPeriodChange();
-        document.getElementById("filterModal").classList.add("open");
-      }
-      function closeModal() {
-        document.getElementById("filterModal").classList.remove("open");
-        activeModalSection = null;
-      }
-      function handleOverlayClick(e) {
-        if (e.target === document.getElementById("filterModal")) closeModal();
-      }
-      function onModalPeriodChange() {
-        const val = document.getElementById("modalPeriodSelect").value;
-        document.getElementById("modalCustomDates").classList.toggle("visible", val === "custom");
-      }
+    /* ── State ── */
+    let allQualityRecords = [];
+    let currentQiPeriod = "this_month";
+    let currentMePeriod = "this_month";
+    let loginUser = "", userName = "";
+    let currentQiFrom = null, currentQiTo = null;
+    let currentMeFrom = null, currentMeTo = null;
+    let activeModalSection = null;
+    let currentRole  = "";   // "Quality Inspection Engineer" | "Operation Incharge"
+    let currentRoute = "";   // OI's route alias e.g. "Pune All"
+    let currentCity  = "";   // derived city for OI e.g. "Pune"
 
-      const PERIOD_LABELS = {
-        this_month: "This month", this_quarter: "This quarter",
-        last_quarter: "Last quarter", this_year: "This year (YTD)", custom: "Custom range"
+    /* ── Modal ── */
+    function openModal(section) {
+      activeModalSection = section;
+      document.getElementById("modalPeriodSelect").value = section === "qi" ? currentQiPeriod : currentMePeriod;
+      onModalPeriodChange();
+      document.getElementById("filterModal").classList.add("open");
+    }
+    function closeModal() {
+      document.getElementById("filterModal").classList.remove("open");
+      activeModalSection = null;
+    }
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById("filterModal")) closeModal();
+    }
+    function onModalPeriodChange() {
+      const val = document.getElementById("modalPeriodSelect").value;
+      document.getElementById("modalCustomDates").classList.toggle("visible", val === "custom");
+    }
+
+    const PERIOD_LABELS = {
+      this_month: "This month", this_quarter: "This quarter",
+      last_quarter: "Last quarter", this_year: "This year (YTD)", custom: "Custom range"
+    };
+
+    function applyModal() {
+      const period = document.getElementById("modalPeriodSelect").value;
+      let customFrom = null, customTo = null;
+      if (period === "custom") {
+        customFrom = parseDateInput(document.getElementById("modalFromDate").value);
+        customTo   = parseDateInput(document.getElementById("modalToDate").value, true);
+        if (!customFrom || !customTo || isNaN(customFrom) || isNaN(customTo)) {
+          alert("Please select valid From and To dates."); return;
+        }
+      }
+      const label = PERIOD_LABELS[period] || period;
+      if (activeModalSection === "qi") {
+        currentQiPeriod = period;
+        document.getElementById("qiPeriodLabel").textContent = label;
+        refreshQiCard(customFrom, customTo);
+      } else {
+        currentMePeriod = period;
+        document.getElementById("mePeriodLabel").textContent = label;
+        refreshMeCard(customFrom, customTo);
+      }
+      closeModal();
+    }
+
+    /* ── Date helpers ── */
+    function parseZohoDate(str) {
+      if (!str) return null;
+      const months = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11 };
+      const [datePart, timePart] = str.split(" ");
+      const [dd, mon, yyyy] = datePart.split("-");
+      const [hh, mm, ss] = (timePart || "0:0:0").split(":");
+      return new Date(+yyyy, months[mon], +dd, +hh, +mm, +ss);
+    }
+    function formatZohoDateStr(date) {
+      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      const dd   = String(date.getDate()).padStart(2, "0");
+      const mon  = months[date.getMonth()];
+      const yyyy = date.getFullYear();
+      const hh   = String(date.getHours()).padStart(2, "0");
+      const mm   = String(date.getMinutes()).padStart(2, "0");
+      const ss   = String(date.getSeconds()).padStart(2, "0");
+      return `${dd}-${mon}-${yyyy} ${hh}:${mm}:${ss}`;
+    }
+
+    /* ── Navigate to report — role-aware ── */
+    function navigateToReport(status, from, to) {
+      const encode     = (s) => String(s).replace(/ /g, "%20");
+      const dateParam  = `${encode(formatZohoDateStr(from))};${encode(formatZohoDateStr(to))}`;
+
+      /* OI → filter by city; QI Engineer → filter by own name */
+      const personFilter = (currentRole === "Operation Incharge")
+        ? `&Engineer_City=${encode(currentCity)}`
+        : `&Quality_Inspection_Engineer_Name=${encode(userName)}`;
+
+      const url = `${REPORT_BASE_URL}Widget_Quality_Inspection` +
+                  `?Added_Time=${dateParam}&Added_Time_op=58` +
+                  personFilter +
+                  `&Quality_Inspection_Status=${encode(status)}`;
+      console.log("Navigating to:", url);
+      ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" });
+    }
+
+    function parseDateInput(val, endOfDay = false) {
+      if (!val) return null;
+      const [y, m, d] = val.split("-").map(Number);
+      return endOfDay ? new Date(y, m-1, d, 23, 59, 59) : new Date(y, m-1, d, 0, 0, 0);
+    }
+    function getFinancialYear(date) { return date.getMonth() >= 3 ? date.getFullYear() : date.getFullYear() - 1; }
+    function getCurrentFYQuarter(date) {
+      const m = date.getMonth(), fy = getFinancialYear(date); let q, qStart, qEnd;
+      if      (m >= 3 && m <= 5)  { q=1; qStart=new Date(fy,  3,1); qEnd=new Date(fy,  5,30,23,59,59); }
+      else if (m >= 6 && m <= 8)  { q=2; qStart=new Date(fy,  6,1); qEnd=new Date(fy,  8,30,23,59,59); }
+      else if (m >= 9 && m <= 11) { q=3; qStart=new Date(fy,  9,1); qEnd=new Date(fy, 11,31,23,59,59); }
+      else                         { q=4; qStart=new Date(fy+1,0,1); qEnd=new Date(fy+1,2,31,23,59,59); }
+      return { q, qStart, qEnd };
+    }
+    function getLastFYQuarter(date) {
+      const { q } = getCurrentFYQuarter(date), fy = getFinancialYear(date); let qStart, qEnd;
+      if      (q===1) { qStart=new Date(fy-1,9,1); qEnd=new Date(fy-1,11,31,23,59,59); }
+      else if (q===2) { qStart=new Date(fy,  3,1); qEnd=new Date(fy,   5,30,23,59,59); }
+      else if (q===3) { qStart=new Date(fy,  6,1); qEnd=new Date(fy,   8,30,23,59,59); }
+      else            { qStart=new Date(fy,  9,1); qEnd=new Date(fy,  11,31,23,59,59); }
+      return { qStart, qEnd };
+    }
+    function getDateRange(period, customFrom, customTo) {
+      const now = new Date();
+      switch (period) {
+        case "this_month":   return { from: new Date(now.getFullYear(), now.getMonth(), 1), to: new Date(now.getFullYear(), now.getMonth()+1, 0, 23,59,59) };
+        case "this_quarter": { const { qStart, qEnd } = getCurrentFYQuarter(now); return { from: qStart, to: qEnd }; }
+        case "last_quarter": { const { qStart, qEnd } = getLastFYQuarter(now);    return { from: qStart, to: qEnd }; }
+        case "this_year":    { const fy = getFinancialYear(now); return { from: new Date(fy,3,1), to: new Date(fy+1,2,31,23,59,59) }; }
+        case "custom":       return { from: customFrom || new Date(0), to: customTo || new Date(9999,11,31) };
+        default:             return { from: new Date(0), to: new Date() };
+      }
+    }
+
+    /* ── Aggregate ── */
+    function aggregateRecords(records, from, to) {
+      const b = {
+        "Open":             { calls:0, totalQty:0, inspectedQty:0 },
+        "Partially Closed": { calls:0, totalQty:0, inspectedQty:0 },
+        "Closed":           { calls:0, totalQty:0, inspectedQty:0 }
       };
+      records.forEach(r => {
+        const d = parseZohoDate(r.Added_Time);
+        if (!d || d < from || d > to) return;
+        const s = r.Quality_Inspection_Status;
+        if (!b[s]) return;
+        b[s].calls++;
+        b[s].totalQty     += parseInt(r.Total_Quantity)     || 0;
+        b[s].inspectedQty += parseInt(r.Inspected_Quantity) || 0;
+      });
+      return b;
+    }
 
-      function applyModal() {
-        const period = document.getElementById("modalPeriodSelect").value;
-        let customFrom = null, customTo = null;
-        if (period === "custom") {
-          customFrom = parseDateInput(document.getElementById("modalFromDate").value);
-          customTo = parseDateInput(document.getElementById("modalToDate").value, true);
-          if (!customFrom || !customTo || isNaN(customFrom) || isNaN(customTo)) {
-            alert("Please select valid From and To dates."); return;
-          }
-        }
-        const label = PERIOD_LABELS[period] || period;
-        if (activeModalSection === "qi") {
-          currentQiPeriod = period;
-          document.getElementById("qiPeriodLabel").textContent = label;
-          refreshQiCard(customFrom, customTo);
-        } else {
-          currentMePeriod = period;
-          document.getElementById("mePeriodLabel").textContent = label;
-          refreshMeCard(customFrom, customTo);
-        }
-        closeModal();
-      }
+    /* ── DOM updaters ── */
+    function setVal(id, val) { const el = document.getElementById(id); el.textContent = val; el.classList.remove("loading-val"); }
+    function updateQiCard(b) {
+      setVal("qiOpenCalls",     b["Open"].calls);
+      setVal("qiOpenSpaces",    b["Open"].totalQty);
+      setVal("qiPartialCalls",  b["Partially Closed"].calls);
+      setVal("qiPartialSpaces", b["Partially Closed"].inspectedQty);
+      setVal("qiClosedCalls",   b["Closed"].calls);
+      setVal("qiClosedSpaces",  b["Closed"].inspectedQty);
+    }
+    function updateMeCard(b) {
+      setVal("meClosedCalls",  b["Closed"].calls);
+      setVal("meClosedSpaces", b["Closed"].inspectedQty);
+    }
+    function refreshQiCard(customFrom, customTo) {
+      const { from, to } = getDateRange(currentQiPeriod, customFrom, customTo);
+      currentQiFrom = from; currentQiTo = to;
+      updateQiCard(aggregateRecords(allQualityRecords, from, to));
+    }
+    function refreshMeCard(customFrom, customTo) {
+      const { from, to } = getDateRange(currentMePeriod, customFrom, customTo);
+      currentMeFrom = from; currentMeTo = to;
+      updateMeCard(aggregateRecords(allQualityRecords, from, to));
+    }
 
-      /* ── Date helpers ── */
-      function parseZohoDate(str) {
-        if (!str) return null;
-        const months = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
-        const [datePart, timePart] = str.split(" ");
-        const [dd, mon, yyyy] = datePart.split("-");
-        const [hh, mm, ss] = (timePart || "0:0:0").split(":");
-        return new Date(+yyyy, months[mon], +dd, +hh, +mm, +ss);
-      }
-      function formatZohoDateStr(date) {
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const dd = String(date.getDate()).padStart(2, "0");
-        const mon = months[date.getMonth()];
-        const yyyy = date.getFullYear();
-        const hh = String(date.getHours()).padStart(2, "0");
-        const mm = String(date.getMinutes()).padStart(2, "0");
-        const ss = String(date.getSeconds()).padStart(2, "0");
-        return `${dd}-${mon}-${yyyy} ${hh}:${mm}:${ss}`;
-      }
-      function navigateToReport(status, from, to) {
-        const url = `${REPORT_BASE_URL}Widget_Quality_Inspection?Added_Time=${formatZohoDateStr(from)};${formatZohoDateStr(to)}&Added_Time_op=58&Quality_Inspection_Engineer_Name=${userName}&Quality_Inspection_Status=${status}`;
-        console.log("Navigating to:", url);
-        ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" });
-      }
-      function parseDateInput(val, endOfDay = false) {
-        if (!val) return null;
-        const [y, m, d] = val.split("-").map(Number);
-        return endOfDay ? new Date(y, m - 1, d, 23, 59, 59) : new Date(y, m - 1, d, 0, 0, 0);
-      }
-      function getFinancialYear(date) { return date.getMonth() >= 3 ? date.getFullYear() : date.getFullYear() - 1; }
-      function getCurrentFYQuarter(date) {
-        const m = date.getMonth(), fy = getFinancialYear(date); let q, qStart, qEnd;
-        if (m >= 3 && m <= 5) { q = 1; qStart = new Date(fy, 3, 1); qEnd = new Date(fy, 5, 30, 23, 59, 59); }
-        else if (m >= 6 && m <= 8) { q = 2; qStart = new Date(fy, 6, 1); qEnd = new Date(fy, 8, 30, 23, 59, 59); }
-        else if (m >= 9 && m <= 11) { q = 3; qStart = new Date(fy, 9, 1); qEnd = new Date(fy, 11, 31, 23, 59, 59); }
-        else { q = 4; qStart = new Date(fy + 1, 0, 1); qEnd = new Date(fy + 1, 2, 31, 23, 59, 59); }
-        return { q, qStart, qEnd };
-      }
-      function getLastFYQuarter(date) {
-        const { q } = getCurrentFYQuarter(date), fy = getFinancialYear(date); let qStart, qEnd;
-        if (q === 1) { qStart = new Date(fy - 1, 9, 1); qEnd = new Date(fy - 1, 11, 31, 23, 59, 59); }
-        else if (q === 2) { qStart = new Date(fy, 3, 1); qEnd = new Date(fy, 5, 30, 23, 59, 59); }
-        else if (q === 3) { qStart = new Date(fy, 6, 1); qEnd = new Date(fy, 8, 30, 23, 59, 59); }
-        else { qStart = new Date(fy, 9, 1); qEnd = new Date(fy, 11, 31, 23, 59, 59); }
-        return { qStart, qEnd };
-      }
-      function getDateRange(period, customFrom, customTo) {
-        const now = new Date();
-        switch (period) {
-          case "this_month": return { from: new Date(now.getFullYear(), now.getMonth(), 1), to: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59) };
-          case "this_quarter": { const { qStart, qEnd } = getCurrentFYQuarter(now); return { from: qStart, to: qEnd }; }
-          case "last_quarter": { const { qStart, qEnd } = getLastFYQuarter(now); return { from: qStart, to: qEnd }; }
-          case "this_year": { const fy = getFinancialYear(now); return { from: new Date(fy, 3, 1), to: new Date(fy + 1, 2, 31, 23, 59, 59) }; }
-          case "custom": return { from: customFrom || new Date(0), to: customTo || new Date(9999, 11, 31) };
-          default: return { from: new Date(0), to: new Date() };
-        }
-      }
+    /* ── Zoho init ── */
+    ZOHO.CREATOR.init().then(async () => {
+      document.getElementById('loader').classList.add('show');
+      try {
+        const params = ZOHO.CREATOR.UTIL.getInitParams() || {};
+        loginUser = params.loginUser || "";
 
-      /* ── Aggregate ── */
-      function aggregateRecords(records, from, to) {
-        const b = { "Open": { calls: 0, totalQty: 0, inspectedQty: 0 }, "Partially Closed": { calls: 0, totalQty: 0, inspectedQty: 0 }, "Closed": { calls: 0, totalQty: 0, inspectedQty: 0 } };
-        records.forEach(r => {
-          const d = parseZohoDate(r.Added_Time);
-          if (!d || d < from || d > to) return;
-          const s = r.Quality_Inspection_Status;
-          if (!b[s]) return;
-          b[s].calls++;
-          b[s].totalQty += parseInt(r.Total_Quantity) || 0;
-          b[s].inspectedQty += parseInt(r.Inspected_Quantity) || 0;
-        });
-        return b;
-      }
-
-      /* ── DOM updaters ── */
-      function setVal(id, val) { const el = document.getElementById(id); el.textContent = val; el.classList.remove("loading-val"); }
-      function updateQiCard(b) {
-        setVal("qiOpenCalls", b["Open"].calls); setVal("qiOpenSpaces", b["Open"].totalQty);
-        setVal("qiPartialCalls", b["Partially Closed"].calls); setVal("qiPartialSpaces", b["Partially Closed"].inspectedQty);
-        setVal("qiClosedCalls", b["Closed"].calls); setVal("qiClosedSpaces", b["Closed"].inspectedQty);
-      }
-      function updateMeCard(b) { setVal("meClosedCalls", b["Closed"].calls); setVal("meClosedSpaces", b["Closed"].inspectedQty); }
-
-      function refreshQiCard(customFrom, customTo) {
-        const { from, to } = getDateRange(currentQiPeriod, customFrom, customTo);
-        currentQiFrom = from; currentQiTo = to;
-        updateQiCard(aggregateRecords(allQualityRecords, from, to));
-      }
-      function refreshMeCard(customFrom, customTo) {
-        const { from, to } = getDateRange(currentMePeriod, customFrom, customTo);
-        currentMeFrom = from; currentMeTo = to;
-        updateMeCard(aggregateRecords(allQualityRecords, from, to));
-      }
-
-      /* ── Zoho init ── */
-      ZOHO.CREATOR.init().then(async () => {
-        document.getElementById('loader').classList.add('show');
+        /* Step 1: fetch user record → determine role + city */
         try {
-          const params = ZOHO.CREATOR.UTIL.getInitParams() || {};
-          loginUser = params.loginUser || "";
-          try {
-            const userResp = await ZOHO.CREATOR.API.getAllRecords({ appName: applicationName, reportName: userReport, criteria: `(Email == "${loginUser}")`, page: 1, pageSize: 1 });
-            if (userResp?.data?.length > 0) {
-              const u = userResp.data[0];
-              console.log(u);
-              Role = u.Role || "";
-              userName = u.Name || "";
-              // Set initials based on role
-              let initials = "--";
-              if (Role === "Quality Inspection Engineer" || Role === "Operation Incharge") {
-                initials = "QI";
-              } else {
-                initials = Role.split(" ").map(n => n[0]).join("").toUpperCase() || "--";
-              }
-              document.getElementById("userInitials").textContent = initials;
-              document.getElementById("userRegion").textContent = u.Region || "";
+          const userResp = await ZOHO.CREATOR.API.getAllRecords({
+            appName: applicationName, reportName: userReport,
+            criteria: `(Email == "${loginUser}")`, page: 1, pageSize: 1
+          });
+          if (userResp?.data?.length > 0) {
+            const u      = userResp.data[0];
+            console.log(u);
+            userName     = u.Name  || "";
+            currentRole  = u.Role  || "";
+            currentRoute = u.New_Route_Name || u.Route || "";
+            currentCity  = (currentRole === "Operation Incharge")
+                           ? (ROUTE_TO_CITY[currentRoute] || "")
+                           : "";
+            
+                           console.log("Current City:", currentCity);
+
+            /* Avatar: QIE and OI both show "QI" */
+            let initials = "--";
+            if (currentRole === "Quality Inspection Engineer" || currentRole === "Operation Incharge") {
+              initials = "QI";
+            } else {
+              initials = userName.split(" ").map(n => n[0]).join("").toUpperCase() || "--";
             }
-          } catch (e) { console.error("User fetch error:", e); }
+            document.getElementById("userInitials").textContent = initials;
+            document.getElementById("userRegion").textContent =
+              (currentRole === "Operation Incharge")
+                ? (u.Region || currentRoute || "")
+                : (u.Region || "");
 
-          const pageSize = 200; let page = 1, hasMore = true;
-          while (hasMore) {
-            try {
-              const resp = await ZOHO.CREATOR.API.getAllRecords({ appName: applicationName, reportName: QualityReport, criteria: `(QC_Engineer_Email == "${loginUser}")`, page, pageSize });
-              const batch = resp?.data || [];
-              allQualityRecords = allQualityRecords.concat(batch);
-              hasMore = batch.length === pageSize;
-              page++;
-            } catch (e) { console.error("Quality records fetch error:", e); hasMore = false; }
+            console.log("Role:", currentRole, "| Route:", currentRoute, "| City:", currentCity);
           }
-          console.log(`Fetched ${allQualityRecords.length} quality records total.`);
-          refreshQiCard(); refreshMeCard();
-          // document.getElementById('pageLoader').classList.add('Show');
-          document.getElementById('loader').classList.remove('show');
-        } catch (e) { console.error("ZOHO Init error:", e); alert("Failed to load dashboard. Please try again later."); }
-      }).catch(e => { console.error("ZOHO Init error:", e); alert("Failed to load dashboard. Please try again later."); });
-    </script>
-</body>
+        } catch(e) { console.error("User fetch error:", e); }
 
+        /* Step 2: fetch quality records
+             QI Engineer   → own records only  (QC_Engineer_Email)
+             Operation Incharge → all records from their city (Engineer_City) */
+        const fetchCriteria = (currentRole === "Operation Incharge" && currentCity)
+          ? `(City == "${currentCity}")`
+          : `(QC_Engineer_Email == "${loginUser}")`;
+
+        console.log("QI fetch criteria:", fetchCriteria);
+
+        const pageSize = 200; let page = 1, hasMore = true;
+        while (hasMore) {
+          try {
+            const resp = await ZOHO.CREATOR.API.getAllRecords({
+              appName: applicationName, reportName: QualityReport,
+              criteria: fetchCriteria, page, pageSize
+            });
+            const batch = resp?.data || [];
+            allQualityRecords = allQualityRecords.concat(batch);
+            hasMore = batch.length === pageSize;
+            page++;
+          } catch(e) { console.error("Quality records fetch error:", e); hasMore = false; }
+        }
+
+        console.log(`Fetched ${allQualityRecords.length} quality records total.`);
+        refreshQiCard();
+        refreshMeCard();
+        document.getElementById('loader').classList.remove('show');
+
+      } catch(e) { console.error("ZOHO Init error:", e); alert("Failed to load dashboard. Please try again later."); }
+    }).catch(e => { console.error("ZOHO Init error:", e); alert("Failed to load dashboard. Please try again later."); });
+  </script>
+</body>
 </html>
