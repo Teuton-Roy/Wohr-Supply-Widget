@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=DM+Mono:wght@500&display=swap" rel="stylesheet"/>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+  <script defer src="https://js.zohostatic.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
+  <style>
+    /* ── Variables ─────────────────────────────────── */
+    :root {
+      --brand      : #1f66ff;
+      --brand-dk   : #1450cc;
+      --bg         : #f0f2f8;
+      --card       : #ffffff;
+      --border     : #dde1ea;
+      --text       : #111827;
+      --muted      : #6b7280;
+      --won        : #ffd84d;
+      --won-border : #e6b800;
+      --lost       : #ffd6d6;
+      --lost-border: #f4a0a0;
+      --live       : #ffd84d;
+      --expired    : #ffd6d6;
+      --term       : #f0f2f8;
+      --shadow     : 0 2px 16px rgba(0,0,0,.07);
+      --shadow-h   : 0 8px 28px rgba(31,102,255,.13);
+      --radius     : 14px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: 'DM Sans', system-ui, sans-serif; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Layout ─────────────────────────────────────── */
+    .sr-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+    }
+
+    /* ── Top bar ─────────────────────────────────────── */
+    .sr-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .sr-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -.3px;
+    }
+    .sr-user {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+    }
+    .sr-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 2.5px solid var(--text);
+      background: #eef2ff;
+      display: grid; place-items: center;
+      font-weight: 800; font-size: 13px;
+      color: var(--brand);
+    }
+    .sr-region {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    /* ── Desktop grid ───────────────────────────────── */
+    .sr-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .sr-grid--full { grid-column: 1 / -1; }
+
+    /* ── Panel card ─────────────────────────────────── */
+    .sr-panel {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 14px 12px;
+      position: relative;
+      box-shadow: var(--shadow);
+      overflow: visible;
+      transition: box-shadow .2s;
+    }
+    .sr-panel:hover { box-shadow: var(--shadow-h); }
+
+    .sr-panel-head {
+      position: absolute;
+      top: -15px; left: 14px;
+      z-index: 6;
+    }
+    .sr-panel-head--wide {
+      left: 14px; right: 14px; width: auto;
+    }
+    .sr-badge {
+      background: var(--brand);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      box-shadow: 0 0 0 5px #fff, 0 2px 6px rgba(0,0,0,.12);
+    }
+    .sr-actions {
+      position: absolute;
+      top: 10px; right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 5;
+    }
+    .sr-period {
+      font-size: 12px;
+      font-style: italic;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+    }
+    .sr-filter-btn {
+      border: 0;
+      background: transparent;
+      padding: 4px;
+      cursor: pointer;
+      border-radius: 7px;
+      display: flex; align-items: center;
+    }
+    .sr-filter-btn:hover { background: rgba(31,102,255,.08); }
+    .sr-filter-btn svg path { fill: var(--brand-dk); }
+
+    /* ── Column headers ────────────────────────────── */
+    .sr-col-heads {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0;
+      padding: 0 4px;
+      margin-top: 6px;
+      margin-bottom: 4px;
+    }
+    .sr-col-head {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-align: center;
+      min-width: 60px;
+    }
+    .sr-col-head--wide { min-width: 74px; }
+
+    /* ── Quotation rows ─────────────────────────────── */
+    .sr-rows { display: flex; flex-direction: column; gap: 6px; }
+
+    .sr-row {
+      display: grid;
+      align-items: center;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,.1);
+      padding: 8px 10px;
+      min-height: 44px;
+      gap: 4px;
+    }
+    /* 2-col row: label | count | amount */
+    .sr-row--2 { grid-template-columns: 1fr 60px 74px; }
+    /* 3-col row: label | count | spaces | amount */
+    .sr-row--3 { grid-template-columns: 1fr 60px 60px 74px; }
+
+    .sr-row-label {
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .sr-row-val {
+      font-size: 20px;
+      font-weight: 900;
+      font-family: 'DM Mono', monospace;
+      line-height: 1;
+      text-align: center;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .sr-row-val:hover { opacity: .7; }
+    .sr-row-val--sm {
+      font-size: 16px;
+    }
+
+    /* Colour variants */
+    .sr-row--won    { background: var(--won);   border-color: var(--won-border); }
+    .sr-row--lost   { background: var(--lost);  border-color: var(--lost-border); }
+    .sr-row--live   { background: var(--live);  border-color: var(--won-border); }
+    .sr-row--expired{ background: var(--expired); border-color: var(--lost-border); }
+    .sr-row--term   { background: var(--term);  border-color: var(--border); }
+    .sr-row--plain  { background: #fff;         border-color: var(--border); }
+
+    .sr-row--won .sr-row-label    { color: #7a5a00; }
+    .sr-row--lost .sr-row-label   { color: #c0392b; }
+    .sr-row--live .sr-row-label   { color: #7a5a00; }
+    .sr-row--expired .sr-row-label{ color: #c0392b; }
+
+    /* ── PM section ─────────────────────────────────── */
+    .sr-pm-wrap {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .sr-pm-label {
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--text);
+      padding-left: 2px;
+    }
+    .sr-pm-inner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .sr-pm-pie {
+      flex-shrink: 0;
+      width: 180px; height: 180px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: visible;
+    }
+    #pmPieCanvas { width: 180px !important; height: 180px !important; display: block; }
+    .sr-pm-pills {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sr-pill {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      padding: 7px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .sr-pill-k {
+      font-size: 12px; font-weight: 700; color: var(--text);
+    }
+    .sr-pill-v {
+      font-size: 20px; font-weight: 900;
+      font-family: 'DM Mono', monospace;
+      color: cornflowerblue; cursor: pointer;
+      line-height: 1;
+    }
+
+    /* ── Potential pie ───────────────────────────────── */
+    .sr-pie-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .sr-pie-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+    }
+    .sr-potential-wrap {
+      width: 200px; height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: visible;
+    }
+    #potentialPieCanvas { width: 200px !important; height: 200px !important; display: block; }
+
+    /* ── Divider ─────────────────────────────────────── */
+    .sr-divider {
+      height: 1.5px;
+      background: var(--border);
+      border-radius: 99px;
+      margin: 10px 0;
+    }
+
+    /* ── Filter badge ────────────────────────────────── */
+    .sr-filter-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #eef2ff; border: 1px solid #c7d4ff;
+      border-radius: 6px; padding: 2px 7px;
+      font-size: 11px; font-weight: 700; color: var(--brand);
+      white-space: nowrap; max-width: 120px;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* ── Loader ─────────────────────────────────────── */
+    #loader { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.45); text-align:center; }
+    #loader .loader-wrap { width:200px; height:200px; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); filter:url(#goo); animation:rotate-move 2s ease-in-out infinite; }
+    #loader .dot { width:70px; height:70px; border-radius:50%; position:absolute; top:0;bottom:0;left:0;right:0; margin:auto; }
+    #loader .dot-3 { background:#f74d75; animation:dot-3-move 2s ease infinite,z-idx 6s ease infinite; }
+    #loader .dot-2 { background:#10beae; animation:dot-2-move 2s ease infinite,z-idx 6s -4s ease infinite; }
+    #loader .dot-1 { background:#ffe386; animation:dot-1-move 2s ease infinite,z-idx 6s -2s ease infinite; }
+    #loader svg { position:absolute; width:0; height:0; }
+    @keyframes dot-3-move{20%{transform:scale(1)}45%{transform:translateY(-18px) scale(.45)}60%{transform:translateY(-90px) scale(.45)}80%{transform:translateY(-90px) scale(.45)}100%{transform:translateY(0) scale(1)}}
+    @keyframes dot-2-move{20%{transform:scale(1)}45%{transform:translate(-16px,12px) scale(.45)}60%{transform:translate(-80px,60px) scale(.45)}80%{transform:translate(-80px,60px) scale(.45)}100%{transform:translateY(0) scale(1)}}
+    @keyframes dot-1-move{20%{transform:scale(1)}45%{transform:translate(16px,12px) scale(.45)}60%{transform:translate(80px,60px) scale(.45)}80%{transform:translate(80px,60px) scale(.45)}100%{transform:translateY(0) scale(1)}}
+    @keyframes rotate-move{55%{transform:translate(-50%,-50%) rotate(0deg)}80%{transform:translate(-50%,-50%) rotate(360deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+    @keyframes z-idx{0%,100%{z-index:3}33.3%{z-index:2}66.6%{z-index:1}}
+
+    /* ── Modal ───────────────────────────────────────── */
+    #filterBackdrop { display:none; position:fixed; inset:0; z-index:1050; background:#000; opacity:.5; }
+    #filterBackdrop.show { display:block; }
+    #filterModal { display:none; position:fixed; inset:0; z-index:1055; overflow:auto; padding:18px 12px; }
+    #filterModal.show { display:block; }
+    #filterModal .modal-dialog { max-width:440px; margin:48px auto; }
+    #filterModal .modal-content { background:#fff; border-radius:14px; border:1px solid var(--border); box-shadow:0 12px 40px rgba(0,0,0,.22); overflow:hidden; }
+    #filterModal .modal-header,#filterModal .modal-footer { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 16px; border-bottom:1px solid var(--border); }
+    #filterModal .modal-footer { border-top:1px solid var(--border); border-bottom:none; justify-content:flex-end; }
+    #filterModal .modal-body { padding:16px; }
+    #filterModal .modal-title { font-weight:700; font-size:15px; }
+    .filter-stack { display:flex; flex-direction:column; gap:12px; }
+    .filter-field label { display:block; font-weight:700; font-size:13px; margin-bottom:5px; }
+    .filter-field select,.filter-field input[type=date] { width:100%; padding:9px 10px; border:1px solid rgba(0,0,0,.18); border-radius:8px; outline:none; background:#fff; font-size:13px; font-family:inherit; }
+    .date-range-field { display:none; }
+    .btn { padding:9px 16px; border-radius:8px; border:1px solid rgba(0,0,0,.15); cursor:pointer; font-size:13px; font-weight:600; background:#f2f2f2; font-family:inherit; }
+    .btn-primary { background:var(--brand); border-color:var(--brand); color:#fff; }
+    .btn-close { width:34px; height:34px; border:none; background:transparent; cursor:pointer; position:relative; }
+    .btn-close::before,.btn-close::after { content:""; position:absolute; top:50%; left:50%; width:18px; height:2px; background:#333; transform-origin:center; }
+    .btn-close::before { transform:translate(-50%,-50%) rotate(45deg); }
+    .btn-close::after  { transform:translate(-50%,-50%) rotate(-45deg); }
+    body.modal-open { overflow:hidden !important; }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media(max-width:680px){
+      .sr-grid { grid-template-columns:1fr; }
+      .sr-grid--full { grid-column:1; }
+      .sr-row--2 { grid-template-columns: 1fr 56px 66px; }
+      .sr-row--3 { grid-template-columns: 1fr 52px 52px 64px; }
+      .sr-row-val { font-size: 16px; }
+      .sr-pm-wrap { grid-template-columns: 1fr; }
+      .sr-pm-inner { flex-direction: column; align-items: center; }
+      .sr-pm-pie { width:220px; height:220px; }
+      #pmPieCanvas { width:220px !important; height:220px !important; }
+      .sr-pm-pills { width: 100%; }
+      .sr-title { font-size: 17px; }
+    }
+    @media(max-width:400px){
+      .sr-row--3 { grid-template-columns: 1fr 46px 46px 56px; }
+      .sr-col-head { min-width: 46px; font-size: 10px; }
+      .sr-col-head--wide { min-width: 56px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader" aria-hidden="true">
+  <div class="loader-wrap" role="status" aria-label="Loading">
+    <div class="dot dot-1"></div><div class="dot dot-2"></div><div class="dot dot-3"></div>
+  </div>
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="0" height="0">
+    <defs>
+      <filter id="goo">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 21 -7"/>
+      </filter>
+    </defs>
+  </svg>
+</div>
+
+<div class="sr-page">
+
+  <!-- Top bar -->
+  <div class="sr-top">
+    <div class="sr-title">Sales Representative Dashboard</div>
+    <div class="sr-user">
+      <div class="sr-avatar" id="srAvatar">SR</div>
+      <div class="sr-region" id="srRegion">—</div>
+    </div>
+  </div>
+
+  <div class="sr-grid">
+
+    <!-- ── Spares Quotation ───────────────────────── -->
+    <div class="sr-panel">
+      <div class="sr-panel-head sr-panel-head--wide">
+        <span class="sr-badge">Spares Quotation</span>
+        <div class="sr-actions">
+          <span class="sr-filter-badge" id="sparesFilterBadge" style="display:none"></span>
+          <span class="sr-period" id="sparesPeriodLabel">This month</span>
+          <button class="sr-filter-btn" id="btn_spares" type="button" aria-label="Filter Spares">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="sr-col-heads" style="margin-top:22px;">
+        <span class="sr-col-head">Count</span>
+        <span class="sr-col-head sr-col-head--wide">Amount<br><span style="font-weight:500">Rs.('000)</span></span>
+      </div>
+
+      <div class="sr-rows">
+        <div class="sr-row sr-row--2 sr-row--won">
+          <div class="sr-row-label">WON</div>
+          <div class="sr-row-val" id="sparesWonCount">0</div>
+          <div class="sr-row-val" id="sparesWonAmt">0</div>
+        </div>
+        <div class="sr-row sr-row--2 sr-row--lost">
+          <div class="sr-row-label">Lost</div>
+          <div class="sr-row-val sr-row-val--sm" id="sparesLostCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="sparesLostAmt">0</div>
+        </div>
+        <div class="sr-row sr-row--2 sr-row--plain">
+          <div class="sr-row-label">Created</div>
+          <div class="sr-row-val sr-row-val--sm" id="sparesCreatedCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="sparesCreatedAmt">0</div>
+        </div>
+        <div class="sr-row sr-row--2 sr-row--plain" style="background:#fff8e6;border-color:#ffe099;">
+          <div class="sr-row-label" style="color:#7a5a00;">Under<br>Discussions</div>
+          <div class="sr-row-val sr-row-val--sm" id="sparesUndiscCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="sparesUndiscAmt">0</div>
+        </div>
+        <div class="sr-row sr-row--2 sr-row--plain" style="background:#f0eeff;border-color:#c9b8ff;">
+          <div class="sr-row-label" style="color:#4c2eaa;">Awaiting<br>CustPO</div>
+          <div class="sr-row-val sr-row-val--sm" id="sparesAwaitCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="sparesAwaitAmt">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Service Contracts ─────────────────────── -->
+    <div class="sr-panel">
+      <div class="sr-panel-head sr-panel-head--wide">
+        <span class="sr-badge">Service Contracts</span>
+        <div class="sr-actions">
+          <span class="sr-filter-badge" id="contractsFilterBadge" style="display:none"></span>
+          <span class="sr-period" id="contractsPeriodLabel">This month</span>
+          <button class="sr-filter-btn" id="btn_contracts" type="button" aria-label="Filter Contracts">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="sr-col-heads" style="margin-top:22px;">
+        <span class="sr-col-head">Count</span>
+        <span class="sr-col-head">Spaces</span>
+        <span class="sr-col-head sr-col-head--wide">Amount<br><span style="font-weight:500">Rs.('000)</span></span>
+      </div>
+
+      <div class="sr-rows">
+        <div class="sr-row sr-row--3 sr-row--live">
+          <div class="sr-row-label">Live</div>
+          <div class="sr-row-val" id="contractsLiveCount">0</div>
+          <div class="sr-row-val" id="contractsLiveSpaces">0</div>
+          <div class="sr-row-val" id="contractsLiveAmt">0</div>
+        </div>
+        <div class="sr-row sr-row--3 sr-row--expired">
+          <div class="sr-row-label">Expired</div>
+          <div class="sr-row-val sr-row-val--sm" id="contractsExpiredCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="contractsExpiredSpaces">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="contractsExpiredAmt">0</div>
+        </div>
+        <div class="sr-row sr-row--3 sr-row--term">
+          <div class="sr-row-label">Terminated</div>
+          <div class="sr-row-val sr-row-val--sm" id="contractsTermCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="contractsTermSpaces">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="contractsTermAmt">0</div>
+        </div>
+      </div>
+
+      <!-- PM mini section inside contracts panel -->
+      <div class="sr-divider" style="margin-top:14px;"></div>
+      <div class="sr-pm-wrap">
+        <div class="sr-pm-label">PM</div>
+        <div class="sr-pm-inner">
+          <div class="sr-pm-pie">
+            <canvas id="pmPieCanvas" width="180" height="180" aria-label="PM pie chart"></canvas>
+          </div>
+          <div class="sr-pm-pills">
+            <div class="sr-pill">
+              <span class="sr-pill-k">All</span>
+              <span class="sr-pill-v" id="pmAll">0</span>
+            </div>
+            <div class="sr-pill">
+              <span class="sr-pill-k">Closed</span>
+              <span class="sr-pill-v" id="pmClosed">0</span>
+            </div>
+            <div class="sr-pill">
+              <span class="sr-pill-k">Overdue</span>
+              <span class="sr-pill-v" id="pmOverdue">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Service Quotations (full width) ─────────── -->
+    <div class="sr-panel sr-grid--full">
+      <div class="sr-panel-head sr-panel-head--wide">
+        <span class="sr-badge">Service Quotations</span>
+        <div class="sr-actions">
+          <span class="sr-filter-badge" id="serviceqFilterBadge" style="display:none"></span>
+          <span class="sr-period" id="serviceqPeriodLabel">This month</span>
+          <button class="sr-filter-btn" id="btn_serviceq" type="button" aria-label="Filter Service Quotations">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="sr-col-heads" style="margin-top:22px;">
+        <span class="sr-col-head">Count</span>
+        <span class="sr-col-head">Spaces</span>
+        <span class="sr-col-head sr-col-head--wide">Amount<br><span style="font-weight:500">Rs.('000)</span></span>
+      </div>
+
+      <div class="sr-rows">
+        <div class="sr-row sr-row--3 sr-row--won">
+          <div class="sr-row-label">WON</div>
+          <div class="sr-row-val" id="serviceqWonCount">0</div>
+          <div class="sr-row-val" id="serviceqWonSpaces">0</div>
+          <div class="sr-row-val" id="serviceqWonAmt">0</div>
+        </div>
+        <div class="sr-row sr-row--3 sr-row--lost">
+          <div class="sr-row-label">Lost</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqLostCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqLostSpaces">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqLostAmt">0</div>
+        </div>
+        <div class="sr-row sr-row--3 sr-row--plain">
+          <div class="sr-row-label">Created</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqCreatedCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqCreatedSpaces">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqCreatedAmt">0</div>
+        </div>
+        <div class="sr-row sr-row--3 sr-row--plain" style="background:#fff8e6;border-color:#ffe099;">
+          <div class="sr-row-label" style="color:#7a5a00;">Under<br>Discussions</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqUndiscCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqUndiscSpaces">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqUndiscAmt">0</div>
+        </div>
+        <div class="sr-row sr-row--3 sr-row--plain" style="background:#f0eeff;border-color:#c9b8ff;">
+          <div class="sr-row-label" style="color:#4c2eaa;">Awaiting<br>CustPO</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqAwaitCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqAwaitSpaces">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqAwaitAmt">0</div>
+        </div>
+      </div>
+
+      <!-- Potential pie chart -->
+      <div class="sr-divider" style="margin-top:16px;"></div>
+      <div class="sr-pie-section">
+        <div class="sr-pie-title">Potential for this quarter (Spaces)</div>
+        <div class="sr-potential-wrap">
+          <canvas id="potentialPieCanvas" width="200" height="200" aria-label="Potential pie chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.sr-grid -->
+</div><!-- /.sr-page -->
+
+<!-- Filter Modal -->
+<div id="filterBackdrop"></div>
+<div id="filterModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-title" id="filterModalTitle">Filters</span>
+        <button type="button" class="btn-close" id="filterModalClose" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="filter-stack">
+          <div class="filter-field">
+            <label>Period</label>
+            <select id="periodSelect">
+              <option value="this_month">This month</option>
+              <option value="this_quarter">This quarter</option>
+              <option value="last_quarter">Last quarter</option>
+              <option value="this_year">This year</option>
+              <option value="custom">Custom range</option>
+            </select>
+          </div>
+          <div class="filter-field date-range-field"><label>From</label><input type="date" id="dateFrom"/></div>
+          <div class="filter-field date-range-field"><label>To</label><input type="date" id="dateTo"/></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" id="filterClear">Reset</button>
+        <button type="button" class="btn btn-primary" id="filterApply">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   CONFIGURATION  — update these when connecting Zoho
+═══════════════════════════════════════════════════ */
+const APP_NAME       = "service-management";
+const USER_REPORT    = "My_Users";
+const SPARES_REPORT  = "Spares_Quotation_Report";      // placeholder
+const SERVICEQ_REPORT= "Service_Quotation_Report";     // placeholder
+const CONTRACTS_REPORT="Service_Contracts_Report";     // placeholder
+const PM_REPORT      = "Scan_QR_Service_Request";      // placeholder
+const REPORT_BASE    = "https://creatorapp.zoho.in/wohr_parking/environment/development/service-management/#Report:";
+
+/* ── User state ── */
+let UserName = "", userID = "", currentRole = "", currentRegion = "";
+
+/* ── Period state per section ── */
+const mkState = () => ({ period:"this_month", from:null, to:null });
+const periodSpares    = mkState();
+const periodServiceQ  = mkState();
+const periodContracts = mkState();
+let activeTarget = "spares";
+
+/* ═══════════════════════════════════════════════════
+   DATE HELPERS
+═══════════════════════════════════════════════════ */
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function startOfDay(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,0,0);}
+function endOfDay(d)  {return new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,59,59);}
+function getFYStartYear(r){return r.getMonth()>=3?r.getFullYear():r.getFullYear()-1;}
+function quarterStart(ref){
+  const m=ref.getMonth();let q=0;
+  if(m>=3&&m<=5)q=3;else if(m>=6&&m<=8)q=6;else if(m>=9&&m<=11)q=9;
+  return new Date(ref.getFullYear(),q,1);
+}
+function getRangeFromState(s){
+  const now=new Date();
+  if(s.period==="custom"&&s.from&&s.to)return{from:startOfDay(s.from),to:endOfDay(s.to)};
+  if(s.period==="this_month")return{from:startOfDay(new Date(now.getFullYear(),now.getMonth(),1)),to:endOfDay(new Date(now.getFullYear(),now.getMonth()+1,0))};
+  if(s.period==="this_year"){const fy=getFYStartYear(now);return{from:startOfDay(new Date(fy,3,1)),to:endOfDay(new Date(fy+1,3,0))};}
+  if(s.period==="this_quarter"||s.period==="last_quarter"){
+    const qS=quarterStart(now),off=(s.period==="last_quarter")?-3:0;
+    const from=new Date(qS.getFullYear(),qS.getMonth()+off,1);
+    const to=new Date(from.getFullYear(),from.getMonth()+3,0);
+    return{from:startOfDay(from),to:endOfDay(to)};
+  }
+  return{from:startOfDay(new Date(now.getFullYear(),now.getMonth(),1)),to:endOfDay(new Date(now.getFullYear(),now.getMonth()+1,0))};
+}
+function fmtDate(d){return`${String(d.getDate()).padStart(2,"0")}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`;}
+function fmtDateTime(d){return`${fmtDate(d)} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;}
+function toInputDate(d){if(!d)return"";return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
+function parseInputDate(v){if(!v)return null;const[y,m,d]=v.split("-").map(Number);return new Date(y,m-1,d);}
+function labelFor(s){
+  if(s.period==="custom"&&s.from&&s.to){const r=getRangeFromState(s);return`${fmtDate(r.from)} – ${fmtDate(r.to)}`;}
+  return{this_month:"This month",this_quarter:"This quarter",last_quarter:"Last quarter",this_year:"This year"}[s.period]||"This month";
+}
+function getState(t){return t==="serviceq"?periodServiceQ:t==="contracts"?periodContracts:periodSpares;}
+
+/* ═══════════════════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════════════════ */
+function setVal(sel,v){$(sel).text(v==null?"0":String(v));}
+
+function updatePeriodLabels(){
+  $("#sparesPeriodLabel").text(labelFor(periodSpares));
+  $("#serviceqPeriodLabel").text(labelFor(periodServiceQ));
+  $("#contractsPeriodLabel").text(labelFor(periodContracts));
+}
+
+/* ═══════════════════════════════════════════════════
+   PM PIE CHART  (outside-label style)
+═══════════════════════════════════════════════════ */
+let pmAll=0, pmClosed=0, pmOverdue=0, pmChart=null;
+Chart.register(ChartDataLabels);
+
+const outsideLabelsPlugin = {
+  id: "outsideLabels",
+  afterDatasetsDraw(chart) {
+    if(chart.$noData) return;
+    const {ctx, canvas} = chart;
+    const dataset = chart.data.datasets[0];
+    const meta    = chart.getDatasetMeta(0);
+    const total   = dataset.data.reduce((a,b)=>Number(a)+Number(b),0)||1;
+    const isMob   = canvas.width <= 200;
+    ctx.save();
+    meta.data.forEach((arc,i)=>{
+      const value = Number(dataset.data[i]||0);
+      if(!value) return;
+      const label    = chart.data.labels[i];
+      const color    = dataset.backgroundColor[i];
+      const pct      = Math.round(value/total*100);
+      const midAngle = (arc.startAngle+arc.endAngle)/2;
+      const outerR   = arc.outerRadius;
+      const cx=arc.x, cy=arc.y;
+      const isRight  = Math.cos(midAngle)>=0;
+      const R1=outerR+(isMob?5:8), R2=outerR+(isMob?16:24), TICK=isMob?12:18;
+      const x1=cx+R1*Math.cos(midAngle), y1=cy+R1*Math.sin(midAngle);
+      const x2=cx+R2*Math.cos(midAngle), y2=cy+R2*Math.sin(midAngle);
+      const x3=x2+(isRight?TICK:-TICK), y3=y2;
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.lineTo(x3,y3);
+      ctx.strokeStyle="#adb5bd"; ctx.lineWidth=1; ctx.lineJoin="round"; ctx.stroke();
+      ctx.beginPath(); ctx.arc(x2,y2,2.5,0,Math.PI*2); ctx.fillStyle=color; ctx.fill();
+      const tx=x3+(isRight?4:-4), fs=isMob?9:11, vs=isMob?10:12;
+      ctx.font=`700 ${fs}px "DM Sans",system-ui,sans-serif`; ctx.fillStyle="#374151";
+      ctx.textAlign=isRight?"left":"right"; ctx.textBaseline="bottom";
+      ctx.fillText(label, tx, y3-1);
+      ctx.font=`800 ${vs}px "DM Sans",system-ui,sans-serif`;
+      ctx.fillStyle=color==="#e5e7eb"?"#9ca3af":color;
+      ctx.textBaseline="top"; ctx.fillText(`${value} (${pct}%)`, tx, y3+2);
+    });
+    ctx.restore();
+  }
+};
+
+function initPMPieChart(){
+  const canvas=document.getElementById("pmPieCanvas");
+  if(!canvas) return;
+  if(pmChart){pmChart.destroy();pmChart=null;}
+  const size=canvas.width;
+  const pad=Math.round(size*0.28);
+  pmChart=new Chart(canvas.getContext("2d"),{
+    type:"doughnut",
+    plugins:[outsideLabelsPlugin],
+    data:{
+      labels:["Closed","Overdue","All"],
+      datasets:[{data:[0,0,1],backgroundColor:["#e5e7eb","#e5e7eb","#e5e7eb"],borderWidth:4,borderColor:"#fff",hoverOffset:6,borderRadius:4,spacing:1}]
+    },
+    options:{
+      responsive:false, maintainAspectRatio:false, cutout:"65%",
+      layout:{padding:{top:pad,right:pad+8,bottom:pad,left:pad+8}},
+      animation:{duration:600,easing:"easeInOutQuart"},
+      plugins:{
+        legend:{display:false},
+        tooltip:{enabled:true,backgroundColor:"rgba(17,24,39,.88)",padding:10,cornerRadius:8,callbacks:{label(ctx){const tot=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;return`  ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw)/tot*100)}%)`;}}},
+        datalabels:{display:false}
+      }
+    }
+  });
+  pmChart.$noData=true;
+}
+
+function updatePMPieChart(all,closed,overdue){
+  all=Number(all||0);closed=Number(closed||0);overdue=Number(overdue||0);
+  if(!pmChart)initPMPieChart();if(!pmChart)return;
+  const has=all||closed||overdue;
+  pmChart.$noData=!has;
+  pmChart.data.datasets[0].data=has?[closed,overdue,all]:[0,0,1];
+  pmChart.data.datasets[0].backgroundColor=has?["#22c55e","#ef4444","#8b5cf6"]:["#e5e7eb","#e5e7eb","#e5e7eb"];
+  pmChart.update();
+}
+
+/* ═══════════════════════════════════════════════════
+   POTENTIAL PIE CHART
+═══════════════════════════════════════════════════ */
+let potentialChart=null;
+
+function initPotentialChart(){
+  const canvas=document.getElementById("potentialPieCanvas");
+  if(!canvas)return;
+  if(potentialChart){potentialChart.destroy();potentialChart=null;}
+  potentialChart=new Chart(canvas.getContext("2d"),{
+    type:"pie",
+    plugins:[ChartDataLabels],
+    data:{
+      labels:["Live","Suspended","On Hold"],
+      datasets:[{
+        data:[0,0,1],
+        backgroundColor:["#60a5fa","#d1d5db","#94a3b8"],
+        borderWidth:2,borderColor:"#fff",hoverOffset:6
+      }]
+    },
+    options:{
+      responsive:false,maintainAspectRatio:false,
+      layout:{padding:40},
+      plugins:{
+        legend:{display:false},
+        tooltip:{enabled:true,backgroundColor:"rgba(17,24,39,.88)",padding:10,cornerRadius:8},
+        datalabels:{
+          display(ctx){const tot=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;return(Number(ctx.dataset.data[ctx.dataIndex])/tot)>0.03;},
+          color:"#fff",font:{weight:"800",size:11},
+          textShadowBlur:4,textShadowColor:"rgba(0,0,0,.3)",
+          formatter(v,ctx){const tot=ctx.dataset.data.reduce((a,b)=>Number(a)+Number(b),0)||1;return ctx.chart.data.labels[ctx.dataIndex]+"\n"+v;}
+        }
+      }
+    }
+  });
+}
+
+function updatePotentialChart(live,suspended,onHold){
+  live=Number(live||0);suspended=Number(suspended||0);onHold=Number(onHold||0);
+  if(!potentialChart)initPotentialChart();if(!potentialChart)return;
+  const has=live||suspended||onHold;
+  potentialChart.data.datasets[0].data=has?[live,suspended,onHold]:[0,0,1];
+  potentialChart.data.datasets[0].backgroundColor=has?["#60a5fa","#d1d5db","#94a3b8"]:["#e5e7eb","#e5e7eb","#e5e7eb"];
+  potentialChart.update();
+}
+
+/* ═══════════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════════ */
+function openModal(){
+  const st=getState(activeTarget);
+  const labels={spares:"Spares Quotation",serviceq:"Service Quotations",contracts:"Service Contracts"};
+  $("#filterModalTitle").text("Filters — "+labels[activeTarget]);
+  $("#periodSelect").val(st.period);
+  const isC=st.period==="custom";
+  $(".date-range-field").toggle(isC);
+  $("#dateFrom").val(isC?toInputDate(st.from):"");
+  $("#dateTo").val(isC?toInputDate(st.to):"");
+  $("#filterBackdrop").addClass("show");
+  $("#filterModal").addClass("show").attr("aria-hidden","false");
+  $("body").addClass("modal-open");
+}
+function closeModal(){
+  $("#filterModal").removeClass("show").attr("aria-hidden","true");
+  $("#filterBackdrop").removeClass("show");
+  $("body").removeClass("modal-open");
+}
+
+$(document).on("click","#btn_spares,#btn_serviceq,#btn_contracts",function(e){
+  e.preventDefault();e.stopPropagation();
+  activeTarget=this.id.replace("btn_","");
+  openModal();
+});
+$(document).on("click","#filterModalClose,#filterBackdrop",closeModal);
+$("#periodSelect").on("change",function(){
+  const c=$(this).val()==="custom";
+  $(".date-range-field").toggle(c);
+  if(!c)$("#dateFrom,#dateTo").val("");
+});
+$("#filterClear").on("click",function(){
+  const st=getState(activeTarget);
+  st.period="this_month";st.from=null;st.to=null;
+  closeModal();updatePeriodLabels();
+  if(userID)loadSection(activeTarget);
+});
+$("#filterApply").on("click",function(){
+  const st=getState(activeTarget);
+  st.period=$("#periodSelect").val();
+  if(st.period==="custom"){
+    const f=parseInputDate($("#dateFrom").val());
+    const t=parseInputDate($("#dateTo").val());
+    if(!f||!t){alert("Please select both dates.");return;}
+    st.from=f<=t?f:t;st.to=f<=t?t:f;
+  }else{st.from=null;st.to=null;}
+  closeModal();updatePeriodLabels();
+  if(userID)loadSection(activeTarget);
+});
+
+/* ═══════════════════════════════════════════════════
+   DATA LOADING — ZOHO API CALLS
+   All criteria use userID / currentRegion.
+   Replace report names & field names to match your schema.
+═══════════════════════════════════════════════════ */
+function esc(s){return String(s||"").replace(/"/g,'\\"');}
+
+function loadSection(t){
+  $("#loader").show();
+  if(t==="spares")     loadSpares(()=>$("#loader").hide());
+  else if(t==="serviceq") loadServiceQ(()=>$("#loader").hide());
+  else if(t==="contracts") loadContracts(()=>$("#loader").hide());
+}
+
+/* ── Helper: date criteria for a state ── */
+function addedCrit(s){const r=getRangeFromState(s);return`Added_Time>="${fmtDateTime(r.from)}"&&Added_Time<="${fmtDateTime(r.to)}"`;}
+
+/* ── Spares Quotation ── */
+function loadSpares(done){
+  // TODO: Replace with actual Zoho API calls
+  // Example structure:
+  // ZOHO.CREATOR.API.getRecordCount({ appName:APP_NAME, reportName:SPARES_REPORT,
+  //   criteria:`Sales_Rep.ID==${userID}&&Status=="WON"&&${addedCrit(periodSpares)}` })
+  //   .then(r=>{ setVal("#sparesWonCount", r.result.records_count); ... })
+  //
+  // For now showing placeholder zeros — wire up each status below:
+  setVal("#sparesWonCount",  0); setVal("#sparesWonAmt",   0);
+  setVal("#sparesLostCount", 0); setVal("#sparesLostAmt",  0);
+  setVal("#sparesCreatedCount",0);setVal("#sparesCreatedAmt",0);
+  setVal("#sparesUndiscCount",0); setVal("#sparesUndiscAmt", 0);
+  setVal("#sparesAwaitCount", 0); setVal("#sparesAwaitAmt",  0);
+  if(done)done();
+}
+
+/* ── Service Quotations ── */
+function loadServiceQ(done){
+  setVal("#serviceqWonCount",   0); setVal("#serviceqWonSpaces",   0); setVal("#serviceqWonAmt",   0);
+  setVal("#serviceqLostCount",  0); setVal("#serviceqLostSpaces",  0); setVal("#serviceqLostAmt",  0);
+  setVal("#serviceqCreatedCount",0);setVal("#serviceqCreatedSpaces",0);setVal("#serviceqCreatedAmt",0);
+  setVal("#serviceqUndiscCount", 0);setVal("#serviceqUndiscSpaces", 0);setVal("#serviceqUndiscAmt", 0);
+  setVal("#serviceqAwaitCount",  0);setVal("#serviceqAwaitSpaces",  0);setVal("#serviceqAwaitAmt",  0);
+  if(done)done();
+}
+
+/* ── Service Contracts ── */
+function loadContracts(done){
+  setVal("#contractsLiveCount",    0);setVal("#contractsLiveSpaces",    0);setVal("#contractsLiveAmt",    0);
+  setVal("#contractsExpiredCount", 0);setVal("#contractsExpiredSpaces", 0);setVal("#contractsExpiredAmt", 0);
+  setVal("#contractsTermCount",    0);setVal("#contractsTermSpaces",    0);setVal("#contractsTermAmt",    0);
+  if(done)done();
+}
+
+/* ── PM ── */
+function loadPM(done){
+  setVal("#pmAll",0); setVal("#pmClosed",0); setVal("#pmOverdue",0);
+  updatePMPieChart(0,0,0);
+  if(done)done();
+}
+
+/* ── Potential ── */
+function loadPotential(done){
+  updatePotentialChart(0,0,0);
+  if(done)done();
+}
+
+/* ── Load all ── */
+function loadAll(){
+  $("#loader").show();
+  loadSpares(()=>{
+    loadServiceQ(()=>{
+      loadContracts(()=>{
+        loadPM(()=>{
+          loadPotential(()=>{
+            updatePeriodLabels();
+            $("#loader").hide();
+          });
+        });
+      });
+    });
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+$(document).ready(function(){
+  initPMPieChart();
+  initPotentialChart();
+  $(".date-range-field").hide();
+
+  // Try Zoho init — falls back to demo mode if not in Zoho env
+  if(typeof ZOHO !== "undefined" && ZOHO.CREATOR){
+    ZOHO.CREATOR.init().then(()=>{
+      const params=ZOHO.CREATOR.UTIL.getInitParams()||{};
+      const loginUser=params.loginUser||"";
+      ZOHO.CREATOR.API.getAllRecords({
+        appName:APP_NAME, reportName:USER_REPORT,
+        criteria:`(Email=="${loginUser}")`, page:1, pageSize:1
+      }).then(res=>{
+        if(res.data&&res.data.length>0){
+          const rec=res.data[0];
+          UserName=rec.Name||""; userID=rec.ID||"";
+          currentRole=rec.Role||""; currentRegion=rec.Region||rec.New_Route_Name||"";
+          $("#srAvatar").text(currentRole?currentRole.substring(0,2).toUpperCase():"SR");
+          $("#srRegion").text(currentRegion||"—");
+          loadAll();
+        }else{
+          $("#loader").hide();
+        }
+      }).catch(()=>{ demoMode(); });
+    }).catch(()=>{ demoMode(); });
+  } else {
+    demoMode();
+  }
+});
+
+/* ── Demo mode — populate with sample data ── */
+function demoMode(){
+  $("#srAvatar").text("MK");
+  $("#srRegion").text("South");
+  // Spares
+  setVal("#sparesWonCount",12);   setVal("#sparesWonAmt",325);
+  setVal("#sparesLostCount",5);   setVal("#sparesLostAmt",11);
+  setVal("#sparesCreatedCount",32);setVal("#sparesCreatedAmt",525);
+  setVal("#sparesUndiscCount",5); setVal("#sparesUndiscAmt",41);
+  setVal("#sparesAwaitCount",10); setVal("#sparesAwaitAmt",121);
+  // Service Quotations
+  setVal("#serviceqWonCount",12);  setVal("#serviceqWonSpaces",103);  setVal("#serviceqWonAmt",325);
+  setVal("#serviceqLostCount",5);  setVal("#serviceqLostSpaces",67);   setVal("#serviceqLostAmt",11);
+  setVal("#serviceqCreatedCount",32);setVal("#serviceqCreatedSpaces",624);setVal("#serviceqCreatedAmt",525);
+  setVal("#serviceqUndiscCount",5);setVal("#serviceqUndiscSpaces",322);setVal("#serviceqUndiscAmt",41);
+  setVal("#serviceqAwaitCount",10);setVal("#serviceqAwaitSpaces",187); setVal("#serviceqAwaitAmt",121);
+  // Contracts
+  setVal("#contractsLiveCount",162);  setVal("#contractsLiveSpaces",5103); setVal("#contractsLiveAmt",3025);
+  setVal("#contractsExpiredCount",15);setVal("#contractsExpiredSpaces",167);setVal("#contractsExpiredAmt",101);
+  setVal("#contractsTermCount",0);    setVal("#contractsTermSpaces",0);    setVal("#contractsTermAmt",0);
+  // PM
+  setVal("#pmAll",250); setVal("#pmClosed",8); setVal("#pmOverdue",32);
+  updatePMPieChart(250,8,32);
+  // Potential
+  updatePotentialChart(4329,425,1205);
+  updatePeriodLabels();
+}
+</script>
+</body>
+</html>
