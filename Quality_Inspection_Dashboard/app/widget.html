@@ -930,10 +930,10 @@
               userName = u.Name || "";
               // Set initials based on role
               let initials = "--";
-              if (Role === "Quality Inspection Engineer") {
+              if (Role === "Quality Inspection Engineer" || Role === "Operation Incharge") {
                 initials = "QI";
               } else {
-                initials = userName.split(" ").map(n => n[0]).join("").toUpperCase() || "--";
+                initials = Role.split(" ").map(n => n[0]).join("").toUpperCase() || "--";
               }
               document.getElementById("userInitials").textContent = initials;
               document.getElementById("userRegion").textContent = u.Region || "";
