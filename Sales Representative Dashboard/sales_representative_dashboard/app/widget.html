@@ -50,7 +50,7 @@
     /* ── Top bar ─────────────────────────────────────── */
     .sr-top {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
       margin-bottom: 18px;
     }
@@ -76,18 +76,18 @@
       color: var(--brand);
     }
     .sr-region {
-      font-size: 12px;
+      font-size: 15px;
       font-weight: 600;
       color: var(--muted);
     }
 
-    /* ── Desktop grid ───────────────────────────────── */
+    /* ── Desktop grid — all panels full width ───────── */
     .sr-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 20px;
     }
-    .sr-grid--full { grid-column: 1 / -1; }
+    .sr-grid--full { /* no longer needed, kept for compatibility */ }
 
     /* ── Panel card ─────────────────────────────────── */
     .sr-panel {
@@ -177,8 +177,8 @@
       min-height: 44px;
       gap: 4px;
     }
-    /* 2-col row: label | count | amount */
-    .sr-row--2 { grid-template-columns: 1fr 60px 74px; }
+    /* 2-col row: label | value */
+    .sr-row--2 { grid-template-columns: 1fr 80px; }
     /* 3-col row: label | count | spaces | amount */
     .sr-row--3 { grid-template-columns: 1fr 60px 60px 74px; }
 
@@ -235,11 +235,11 @@
     }
     .sr-pm-pie {
       flex-shrink: 0;
-      width: 180px; height: 180px;
+      width: 260px; height: 260px;
       display: flex; align-items: center; justify-content: center;
       overflow: visible;
     }
-    #pmPieCanvas { width: 180px !important; height: 180px !important; display: block; }
+    #pmPieCanvas { width: 260px !important; height: 260px !important; display: block; }
     .sr-pm-pills {
       flex: 1;
       display: flex;
@@ -344,22 +344,23 @@
 
     /* ── Responsive ──────────────────────────────────── */
     @media(max-width:680px){
-      .sr-grid { grid-template-columns:1fr; }
-      .sr-grid--full { grid-column:1; }
-      .sr-row--2 { grid-template-columns: 1fr 56px 66px; }
       .sr-row--3 { grid-template-columns: 1fr 52px 52px 64px; }
       .sr-row-val { font-size: 16px; }
-      .sr-pm-wrap { grid-template-columns: 1fr; }
-      .sr-pm-inner { flex-direction: column; align-items: center; }
-      .sr-pm-pie { width:220px; height:220px; }
-      #pmPieCanvas { width:220px !important; height:220px !important; }
-      .sr-pm-pills { width: 100%; }
       .sr-title { font-size: 17px; }
+      /* PM: stack pie on top, rows below full width */
+      .sr-pm-flex { flex-direction: column !important; align-items: stretch !important; }
+      .sr-pm-pie  { width: 240px !important; height: 240px !important; align-self: center; }
+      #pmPieCanvas{ width: 240px !important; height: 240px !important; }
     }
-    @media(max-width:400px){
-      .sr-row--3 { grid-template-columns: 1fr 46px 46px 56px; }
-      .sr-col-head { min-width: 46px; font-size: 10px; }
-      .sr-col-head--wide { min-width: 56px; }
+    @media(max-width:420px){
+      .sr-row--3 { grid-template-columns: 1fr 44px 44px 54px; }
+      .sr-col-head { min-width: 44px; font-size: 10px; }
+      .sr-col-head--wide { min-width: 54px; }
+      .sr-row--2 { grid-template-columns: 1fr 70px; }
+      .sr-row-val { font-size: 15px; }
+      .sr-pm-pie  { width: 200px !important; height: 200px !important; }
+      #pmPieCanvas{ width: 200px !important; height: 200px !important; }
+      .sr-page    { padding: 14px 10px 40px; }
     }
   </style>
 </head>
@@ -384,10 +385,10 @@
 
   <!-- Top bar -->
   <div class="sr-top">
-    <div class="sr-title">Sales Representative Dashboard</div>
+    <!-- <div class="sr-title">Sales Representative Dashboard</div> -->
     <div class="sr-user">
       <div class="sr-avatar" id="srAvatar">SR</div>
-      <div class="sr-region" id="srRegion">—</div>
+      <div class="sr-region" id="srRegion">West</div>
     </div>
   </div>
 
@@ -408,34 +409,84 @@
 
       <div class="sr-col-heads" style="margin-top:22px;">
         <span class="sr-col-head">Count</span>
-        <span class="sr-col-head sr-col-head--wide">Amount<br><span style="font-weight:500">Rs.('000)</span></span>
+        <span class="sr-col-head">Spaces</span>
+        <span class="sr-col-head sr-col-head--wide">Amount<br><span style="font-weight:500">Rs.(000)</span></span>
       </div>
 
       <div class="sr-rows">
-        <div class="sr-row sr-row--2 sr-row--won">
+        <div class="sr-row sr-row--3 sr-row--won">
           <div class="sr-row-label">WON</div>
           <div class="sr-row-val" id="sparesWonCount">0</div>
+          <div class="sr-row-val" id="sparesWonSpaces">0</div>
           <div class="sr-row-val" id="sparesWonAmt">0</div>
         </div>
-        <div class="sr-row sr-row--2 sr-row--lost">
+        <div class="sr-row sr-row--3 sr-row--lost">
           <div class="sr-row-label">Lost</div>
           <div class="sr-row-val sr-row-val--sm" id="sparesLostCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="sparesLostSpaces">0</div>
           <div class="sr-row-val sr-row-val--sm" id="sparesLostAmt">0</div>
         </div>
-        <div class="sr-row sr-row--2 sr-row--plain">
+        <div class="sr-row sr-row--3 sr-row--plain">
           <div class="sr-row-label">Created</div>
           <div class="sr-row-val sr-row-val--sm" id="sparesCreatedCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="sparesCreatedSpaces">0</div>
           <div class="sr-row-val sr-row-val--sm" id="sparesCreatedAmt">0</div>
         </div>
-        <div class="sr-row sr-row--2 sr-row--plain" style="background:#fff8e6;border-color:#ffe099;">
+        <div class="sr-row sr-row--3 sr-row--plain" style="background:#fff8e6;border-color:#ffe099;">
           <div class="sr-row-label" style="color:#7a5a00;">Under<br>Discussions</div>
           <div class="sr-row-val sr-row-val--sm" id="sparesUndiscCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="sparesUndiscSpaces">0</div>
           <div class="sr-row-val sr-row-val--sm" id="sparesUndiscAmt">0</div>
         </div>
-        <div class="sr-row sr-row--2 sr-row--plain" style="background:#f0eeff;border-color:#c9b8ff;">
-          <div class="sr-row-label" style="color:#4c2eaa;">Awaiting<br>CustPO</div>
-          <div class="sr-row-val sr-row-val--sm" id="sparesAwaitCount">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="sparesAwaitAmt">0</div>
+      </div>
+    </div>
+
+    <!-- ── Service Quotations (full width) ─────────── -->
+    <div class="sr-panel sr-grid--full">
+      <div class="sr-panel-head sr-panel-head--wide">
+        <span class="sr-badge">Service Quotations</span>
+        <div class="sr-actions">
+          <span class="sr-filter-badge" id="serviceqFilterBadge" style="display:none"></span>
+          <span class="sr-period" id="serviceqPeriodLabel">This month</span>
+          <button class="sr-filter-btn" id="btn_serviceq" type="button" aria-label="Filter Service Quotations">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="sr-col-heads" style="margin-top:22px;">
+        <span class="sr-col-head">Count</span>
+        <span class="sr-col-head">Spaces</span>
+        <span class="sr-col-head sr-col-head--wide">Amount<br><span style="font-weight:500">Rs.(000)</span></span>
+      </div>
+
+      <div class="sr-rows">
+        <div class="sr-row sr-row--3 sr-row--won">
+          <div class="sr-row-label">Pending</div>
+          <div class="sr-row-val" id="serviceqWonCount">0</div>
+          <div class="sr-row-val" id="serviceqWonSpaces">0</div>
+          <div class="sr-row-val" id="serviceqWonAmt">0</div>
+        </div>
+        <div class="sr-row sr-row--3 sr-row--lost">
+          <div class="sr-row-label">Closed Won</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqLostCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqLostSpaces">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqLostAmt">0</div>
+        </div>
+        <div class="sr-row sr-row--3 sr-row--plain" style="background:#f0eeff;border-color:#c9b8ff;">
+          <div class="sr-row-label" style="color:#4c2eaa;">Lost</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqAwaitCount">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqAwaitSpaces">0</div>
+          <div class="sr-row-val sr-row-val--sm" id="serviceqAwaitAmt">0</div>
+        </div>
+      </div>
+
+      <!-- Potential pie chart -->
+      <div class="sr-divider" style="margin-top:16px;"></div>
+      <div class="sr-pie-section">
+        <div class="sr-pie-title">Potential for this quarter (Spaces)</div>
+        <div class="sr-potential-wrap">
+          <canvas id="potentialPieCanvas" width="200" height="200" aria-label="Potential pie chart"></canvas>
         </div>
       </div>
     </div>
@@ -456,7 +507,7 @@
       <div class="sr-col-heads" style="margin-top:22px;">
         <span class="sr-col-head">Count</span>
         <span class="sr-col-head">Spaces</span>
-        <span class="sr-col-head sr-col-head--wide">Amount<br><span style="font-weight:500">Rs.('000)</span></span>
+        <span class="sr-col-head sr-col-head--wide">Amount<br><span style="font-weight:500">Rs.(000)</span></span>
       </div>
 
       <div class="sr-rows">
@@ -479,95 +530,48 @@
           <div class="sr-row-val sr-row-val--sm" id="contractsTermAmt">0</div>
         </div>
       </div>
-
-      <!-- PM mini section inside contracts panel -->
-      <div class="sr-divider" style="margin-top:14px;"></div>
-      <div class="sr-pm-wrap">
-        <div class="sr-pm-label">PM</div>
-        <div class="sr-pm-inner">
-          <div class="sr-pm-pie">
-            <canvas id="pmPieCanvas" width="180" height="180" aria-label="PM pie chart"></canvas>
-          </div>
-          <div class="sr-pm-pills">
-            <div class="sr-pill">
-              <span class="sr-pill-k">All</span>
-              <span class="sr-pill-v" id="pmAll">0</span>
-            </div>
-            <div class="sr-pill">
-              <span class="sr-pill-k">Closed</span>
-              <span class="sr-pill-v" id="pmClosed">0</span>
-            </div>
-            <div class="sr-pill">
-              <span class="sr-pill-k">Overdue</span>
-              <span class="sr-pill-v" id="pmOverdue">0</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <!-- ── Service Quotations (full width) ─────────── -->
-    <div class="sr-panel sr-grid--full">
+    <!-- ── PM (standalone panel) ─────────────────── -->
+    <div class="sr-panel">
       <div class="sr-panel-head sr-panel-head--wide">
-        <span class="sr-badge">Service Quotations</span>
+        <span class="sr-badge">PM</span>
         <div class="sr-actions">
-          <span class="sr-filter-badge" id="serviceqFilterBadge" style="display:none"></span>
-          <span class="sr-period" id="serviceqPeriodLabel">This month</span>
-          <button class="sr-filter-btn" id="btn_serviceq" type="button" aria-label="Filter Service Quotations">
+          <span class="sr-filter-badge" id="pmFilterBadge" style="display:none"></span>
+          <span class="sr-period" id="pmPeriodLabel">This month</span>
+          <button class="sr-filter-btn" id="btn_pm" type="button" aria-label="Filter PM">
             <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
           </button>
         </div>
       </div>
 
-      <div class="sr-col-heads" style="margin-top:22px;">
-        <span class="sr-col-head">Count</span>
-        <span class="sr-col-head">Spaces</span>
-        <span class="sr-col-head sr-col-head--wide">Amount<br><span style="font-weight:500">Rs.('000)</span></span>
-      </div>
-
-      <div class="sr-rows">
-        <div class="sr-row sr-row--3 sr-row--won">
-          <div class="sr-row-label">WON</div>
-          <div class="sr-row-val" id="serviceqWonCount">0</div>
-          <div class="sr-row-val" id="serviceqWonSpaces">0</div>
-          <div class="sr-row-val" id="serviceqWonAmt">0</div>
+      <div class="sr-pm-flex" style="display:flex;align-items:center;gap:20px;margin-top:22px;">
+        <!-- Pie left -->
+        <div class="sr-pm-pie" style="flex-shrink:0;">
+          <canvas id="pmPieCanvas" width="260" height="260" aria-label="PM pie chart"></canvas>
         </div>
-        <div class="sr-row sr-row--3 sr-row--lost">
-          <div class="sr-row-label">Lost</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqLostCount">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqLostSpaces">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqLostAmt">0</div>
-        </div>
-        <div class="sr-row sr-row--3 sr-row--plain">
-          <div class="sr-row-label">Created</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqCreatedCount">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqCreatedSpaces">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqCreatedAmt">0</div>
-        </div>
-        <div class="sr-row sr-row--3 sr-row--plain" style="background:#fff8e6;border-color:#ffe099;">
-          <div class="sr-row-label" style="color:#7a5a00;">Under<br>Discussions</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqUndiscCount">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqUndiscSpaces">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqUndiscAmt">0</div>
-        </div>
-        <div class="sr-row sr-row--3 sr-row--plain" style="background:#f0eeff;border-color:#c9b8ff;">
-          <div class="sr-row-label" style="color:#4c2eaa;">Awaiting<br>CustPO</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqAwaitCount">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqAwaitSpaces">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqAwaitAmt">0</div>
-        </div>
-      </div>
-
-      <!-- Potential pie chart -->
-      <div class="sr-divider" style="margin-top:16px;"></div>
-      <div class="sr-pie-section">
-        <div class="sr-pie-title">Potential for this quarter (Spaces)</div>
-        <div class="sr-potential-wrap">
-          <canvas id="potentialPieCanvas" width="200" height="200" aria-label="Potential pie chart"></canvas>
+        <!-- Rows right — same style as Service Contracts -->
+        <div style="flex:1;width:100%;min-width:0;">
+          <div class="sr-col-heads">
+            <span class="sr-col-head">Count</span>
+          </div>
+          <div class="sr-rows">
+            <div class="sr-row sr-row--2" style="background:#ffd84d;border-color:#e6c200;">
+              <div class="sr-row-label">All</div>
+              <div class="sr-row-val" id="pmAll">0</div>
+            </div>
+            <div class="sr-row sr-row--2" style="background:#e8f9f0;border-color:#5cb85c;">
+              <div class="sr-row-label" style="color:#1a6b3a;">Closed</div>
+              <div class="sr-row-val sr-row-val--sm" id="pmClosed">0</div>
+            </div>
+            <div class="sr-row sr-row--2" style="background:#ffd6d6;border-color:#f4a0a0;">
+              <div class="sr-row-label" style="color:#c0392b;">Overdue</div>
+              <div class="sr-row-val sr-row-val--sm" id="pmOverdue">0</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
   </div><!-- /.sr-grid -->
 </div><!-- /.sr-page -->
 
@@ -624,6 +628,7 @@ const mkState = () => ({ period:"this_month", from:null, to:null });
 const periodSpares    = mkState();
 const periodServiceQ  = mkState();
 const periodContracts = mkState();
+const periodPM        = mkState();
 let activeTarget = "spares";
 
 /* ═══════════════════════════════════════════════════
@@ -659,7 +664,7 @@ function labelFor(s){
   if(s.period==="custom"&&s.from&&s.to){const r=getRangeFromState(s);return`${fmtDate(r.from)} – ${fmtDate(r.to)}`;}
   return{this_month:"This month",this_quarter:"This quarter",last_quarter:"Last quarter",this_year:"This year"}[s.period]||"This month";
 }
-function getState(t){return t==="serviceq"?periodServiceQ:t==="contracts"?periodContracts:periodSpares;}
+function getState(t){return t==="serviceq"?periodServiceQ:t==="contracts"?periodContracts:t==="pm"?periodPM:periodSpares;}
 
 /* ═══════════════════════════════════════════════════
    UI HELPERS
@@ -670,6 +675,7 @@ function updatePeriodLabels(){
   $("#sparesPeriodLabel").text(labelFor(periodSpares));
   $("#serviceqPeriodLabel").text(labelFor(periodServiceQ));
   $("#contractsPeriodLabel").text(labelFor(periodContracts));
+  $("#pmPeriodLabel").text(labelFor(periodPM));
 }
 
 /* ═══════════════════════════════════════════════════
@@ -686,32 +692,77 @@ const outsideLabelsPlugin = {
     const dataset = chart.data.datasets[0];
     const meta    = chart.getDatasetMeta(0);
     const total   = dataset.data.reduce((a,b)=>Number(a)+Number(b),0)||1;
-    const isMob   = canvas.width <= 200;
-    ctx.save();
-    meta.data.forEach((arc,i)=>{
+    const isMob   = canvas.width <= 220;
+    const RADIAL  = isMob ? 18 : 28;
+    const TICK    = isMob ? 14 : 22;
+    const FS      = isMob ? 10 : 12;
+    const VS      = isMob ? 11 : 13;
+    const LINE_H  = FS + VS + 8;
+
+    /* ── Pass 1: build item list with natural side ── */
+    const items = [];
+    meta.data.forEach((arc, i) => {
       const value = Number(dataset.data[i]||0);
       if(!value) return;
-      const label    = chart.data.labels[i];
-      const color    = dataset.backgroundColor[i];
-      const pct      = Math.round(value/total*100);
-      const midAngle = (arc.startAngle+arc.endAngle)/2;
+      const midAngle = (arc.startAngle + arc.endAngle) / 2;
       const outerR   = arc.outerRadius;
-      const cx=arc.x, cy=arc.y;
-      const isRight  = Math.cos(midAngle)>=0;
-      const R1=outerR+(isMob?5:8), R2=outerR+(isMob?16:24), TICK=isMob?12:18;
-      const x1=cx+R1*Math.cos(midAngle), y1=cy+R1*Math.sin(midAngle);
-      const x2=cx+R2*Math.cos(midAngle), y2=cy+R2*Math.sin(midAngle);
-      const x3=x2+(isRight?TICK:-TICK), y3=y2;
-      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.lineTo(x3,y3);
-      ctx.strokeStyle="#adb5bd"; ctx.lineWidth=1; ctx.lineJoin="round"; ctx.stroke();
-      ctx.beginPath(); ctx.arc(x2,y2,2.5,0,Math.PI*2); ctx.fillStyle=color; ctx.fill();
-      const tx=x3+(isRight?4:-4), fs=isMob?9:11, vs=isMob?10:12;
-      ctx.font=`700 ${fs}px "DM Sans",system-ui,sans-serif`; ctx.fillStyle="#374151";
-      ctx.textAlign=isRight?"left":"right"; ctx.textBaseline="bottom";
-      ctx.fillText(label, tx, y3-1);
-      ctx.font=`800 ${vs}px "DM Sans",system-ui,sans-serif`;
-      ctx.fillStyle=color==="#e5e7eb"?"#9ca3af":color;
-      ctx.textBaseline="top"; ctx.fillText(`${value} (${pct}%)`, tx, y3+2);
+      const ex = arc.x + (outerR + RADIAL) * Math.cos(midAngle); // elbow X
+      const ey = arc.y + (outerR + RADIAL) * Math.sin(midAngle); // elbow Y
+      items.push({
+        i, arc, value,
+        label: chart.data.labels[i],
+        color: dataset.backgroundColor[i],
+        pct:   Math.round(value/total*100),
+        midAngle, outerR, ex, ey,
+        side: Math.cos(midAngle) >= 0 ? "right" : "left"
+      });
+    });
+
+    /* ── Pass 2: if two items share a side and are too close vertically,
+          flip whichever is closer to vertical (|cos| smallest) ── */
+    for(let a = 0; a < items.length; a++){
+      for(let b = a+1; b < items.length; b++){
+        if(items[a].side !== items[b].side) continue;
+        if(Math.abs(items[a].ey - items[b].ey) < LINE_H * 1.6){
+          const ca = Math.abs(Math.cos(items[a].midAngle));
+          const cb = Math.abs(Math.cos(items[b].midAngle));
+          const flip = ca < cb ? a : b;
+          items[flip].side = items[flip].side === "right" ? "left" : "right";
+        }
+      }
+    }
+
+    /* ── Pass 3: draw ── */
+    ctx.save();
+    items.forEach(({ arc, value, label, color, pct, midAngle, outerR, ex, ey, side }) => {
+      const cx = arc.x, cy = arc.y;
+      const isRight = side === "right";
+      const x1 = cx + (outerR + 4) * Math.cos(midAngle);
+      const y1 = cy + (outerR + 4) * Math.sin(midAngle);
+      const x3 = ex + (isRight ? TICK : -TICK);
+
+      /* leader line */
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(ex, ey);
+      ctx.lineTo(x3, ey);
+      ctx.strokeStyle = "#9ca3af"; ctx.lineWidth = 1.2; ctx.lineJoin = "round";
+      ctx.stroke();
+
+      /* elbow dot */
+      ctx.beginPath(); ctx.arc(ex, ey, 3, 0, Math.PI*2);
+      ctx.fillStyle = color; ctx.fill();
+
+      /* label */
+      const tx = x3 + (isRight ? 5 : -5);
+      ctx.textAlign = isRight ? "left" : "right";
+      ctx.font = `700 ${FS}px "DM Sans",system-ui,sans-serif`;
+      ctx.fillStyle = "#374151"; ctx.textBaseline = "bottom";
+      ctx.fillText(label, tx, ey - 1);
+      ctx.font = `800 ${VS}px "DM Sans",system-ui,sans-serif`;
+      ctx.fillStyle = color === "#e5e7eb" ? "#9ca3af" : color;
+      ctx.textBaseline = "top";
+      ctx.fillText(`${value} (${pct}%)`, tx, ey + 2);
     });
     ctx.restore();
   }
@@ -722,7 +773,7 @@ function initPMPieChart(){
   if(!canvas) return;
   if(pmChart){pmChart.destroy();pmChart=null;}
   const size=canvas.width;
-  const pad=Math.round(size*0.28);
+  const pad=Math.round(size*0.30);
   pmChart=new Chart(canvas.getContext("2d"),{
     type:"doughnut",
     plugins:[outsideLabelsPlugin],
@@ -805,7 +856,7 @@ function updatePotentialChart(live,suspended,onHold){
 ═══════════════════════════════════════════════════ */
 function openModal(){
   const st=getState(activeTarget);
-  const labels={spares:"Spares Quotation",serviceq:"Service Quotations",contracts:"Service Contracts"};
+  const labels={spares:"Spares Quotation",serviceq:"Service Quotations",contracts:"Service Contracts",pm:"PM"};
   $("#filterModalTitle").text("Filters — "+labels[activeTarget]);
   $("#periodSelect").val(st.period);
   const isC=st.period==="custom";
@@ -822,7 +873,7 @@ function closeModal(){
   $("body").removeClass("modal-open");
 }
 
-$(document).on("click","#btn_spares,#btn_serviceq,#btn_contracts",function(e){
+$(document).on("click","#btn_spares,#btn_serviceq,#btn_contracts,#btn_pm",function(e){
   e.preventDefault();e.stopPropagation();
   activeTarget=this.id.replace("btn_","");
   openModal();
@@ -861,9 +912,10 @@ function esc(s){return String(s||"").replace(/"/g,'\\"');}
 
 function loadSection(t){
   $("#loader").show();
-  if(t==="spares")     loadSpares(()=>$("#loader").hide());
-  else if(t==="serviceq") loadServiceQ(()=>$("#loader").hide());
+  if(t==="spares")         loadSpares(()=>$("#loader").hide());
+  else if(t==="serviceq")  loadServiceQ(()=>$("#loader").hide());
   else if(t==="contracts") loadContracts(()=>$("#loader").hide());
+  else if(t==="pm")        loadPM(()=>$("#loader").hide());
 }
 
 /* ── Helper: date criteria for a state ── */
@@ -878,11 +930,11 @@ function loadSpares(done){
   //   .then(r=>{ setVal("#sparesWonCount", r.result.records_count); ... })
   //
   // For now showing placeholder zeros — wire up each status below:
-  setVal("#sparesWonCount",  0); setVal("#sparesWonAmt",   0);
-  setVal("#sparesLostCount", 0); setVal("#sparesLostAmt",  0);
-  setVal("#sparesCreatedCount",0);setVal("#sparesCreatedAmt",0);
-  setVal("#sparesUndiscCount",0); setVal("#sparesUndiscAmt", 0);
-  setVal("#sparesAwaitCount", 0); setVal("#sparesAwaitAmt",  0);
+  setVal("#sparesWonCount",  0); setVal("#sparesWonSpaces",  0); setVal("#sparesWonAmt",   0);
+  setVal("#sparesLostCount", 0); setVal("#sparesLostSpaces", 0); setVal("#sparesLostAmt",  0);
+  setVal("#sparesCreatedCount",0);setVal("#sparesCreatedSpaces",0);setVal("#sparesCreatedAmt",0);
+  setVal("#sparesUndiscCount",0); setVal("#sparesUndiscSpaces",0);setVal("#sparesUndiscAmt", 0);
+  setVal("#sparesAwaitCount", 0); setVal("#sparesAwaitSpaces", 0);setVal("#sparesAwaitAmt",  0);
   if(done)done();
 }
 
@@ -973,11 +1025,11 @@ function demoMode(){
   $("#srAvatar").text("MK");
   $("#srRegion").text("South");
   // Spares
-  setVal("#sparesWonCount",12);   setVal("#sparesWonAmt",325);
-  setVal("#sparesLostCount",5);   setVal("#sparesLostAmt",11);
-  setVal("#sparesCreatedCount",32);setVal("#sparesCreatedAmt",525);
-  setVal("#sparesUndiscCount",5); setVal("#sparesUndiscAmt",41);
-  setVal("#sparesAwaitCount",10); setVal("#sparesAwaitAmt",121);
+  setVal("#sparesWonCount",12);    setVal("#sparesWonSpaces",103);  setVal("#sparesWonAmt",325);
+  setVal("#sparesLostCount",5);    setVal("#sparesLostSpaces",67);  setVal("#sparesLostAmt",11);
+  setVal("#sparesCreatedCount",32);setVal("#sparesCreatedSpaces",624);setVal("#sparesCreatedAmt",525);
+  setVal("#sparesUndiscCount",5);  setVal("#sparesUndiscSpaces",322);setVal("#sparesUndiscAmt",41);
+  setVal("#sparesAwaitCount",10);  setVal("#sparesAwaitSpaces",187);setVal("#sparesAwaitAmt",121);
   // Service Quotations
   setVal("#serviceqWonCount",12);  setVal("#serviceqWonSpaces",103);  setVal("#serviceqWonAmt",325);
   setVal("#serviceqLostCount",5);  setVal("#serviceqLostSpaces",67);   setVal("#serviceqLostAmt",11);

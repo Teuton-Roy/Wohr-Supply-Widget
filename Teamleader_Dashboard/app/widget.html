@@ -789,8 +789,10 @@
           .then(res=>{
             if(res.data&&res.data.length>0){
               const rec=res.data[0];
+              console.log("User record:", rec);
               UserName=rec.Name||"";userID=rec.ID||"";currentRole=rec.Role||"";
-              currentRoute=fullyDecode(rec.New_Route_Name||rec.Route||rec.Region||"");
+              currentRoute=fullyDecode(rec.New_Route_Name||rec.Route||rec.Region||""); 
+              console.log("User role:", currentRole);
               $("#user_Role").text(currentRole?currentRole.substring(0,2).toUpperCase():"NA");
               $("#User_Route").text(currentRoute||"NA");
               refreshOtherCalls(()=>{refreshESN(()=>{refreshMe(()=>{bindCountRedirects();$("#loader").hide();});});});
