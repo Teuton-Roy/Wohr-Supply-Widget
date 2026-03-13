@@ -1,1052 +1,1188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=DM+Mono:wght@500&display=swap" rel="stylesheet"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=DM+Mono:wght@500&display=swap" rel="stylesheet" />
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
   <script defer src="https://js.zohostatic.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
   <style>
-    /* ── Variables ─────────────────────────────────── */
     :root {
-      --brand      : #1f66ff;
-      --brand-dk   : #1450cc;
-      --bg         : #f0f2f8;
-      --card       : #ffffff;
-      --border     : #dde1ea;
-      --text       : #111827;
-      --muted      : #6b7280;
-      --won        : #ffd84d;
-      --won-border : #e6b800;
-      --lost       : #ffd6d6;
-      --lost-border: #f4a0a0;
-      --live       : #ffd84d;
-      --expired    : #ffd6d6;
-      --term       : #f0f2f8;
-      --shadow     : 0 2px 16px rgba(0,0,0,.07);
-      --shadow-h   : 0 8px 28px rgba(31,102,255,.13);
-      --radius     : 14px;
+      --brand: #1f66ff; --brand-dk: #1450cc; --bg: #f0f2f8; --card: #ffffff; --border: #dde1ea;
+      --text: #111827; --muted: #6b7280; --won: #ffd84d; --won-border: #e6b800;
+      --lost: #ffd6d6; --lost-border: #f4a0a0; --live: #ffd84d; --expired: #ffd6d6;
+      --term: #f0f2f8; --shadow: 0 2px 16px rgba(0,0,0,.07); --shadow-h: 0 8px 28px rgba(31,102,255,.13); --radius: 14px;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; font-family: 'DM Sans', system-ui, sans-serif; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    /* ── Layout ─────────────────────────────────────── */
-    .sr-page {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 20px 16px 48px;
-    }
-
-    /* ── Top bar ─────────────────────────────────────── */
-    .sr-top {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-    .sr-title {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--text);
-      letter-spacing: -.3px;
-    }
-    .sr-user {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 3px;
-    }
-    .sr-avatar {
-      width: 38px; height: 38px;
-      border-radius: 50%;
-      border: 2.5px solid var(--text);
-      background: #eef2ff;
-      display: grid; place-items: center;
-      font-weight: 800; font-size: 13px;
-      color: var(--brand);
-    }
-    .sr-region {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--muted);
-    }
-
-    /* ── Desktop grid — all panels full width ───────── */
-    .sr-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .sr-grid--full { /* no longer needed, kept for compatibility */ }
-
-    /* ── Panel card ─────────────────────────────────── */
-    .sr-panel {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 14px 12px;
-      position: relative;
-      box-shadow: var(--shadow);
-      overflow: visible;
-      transition: box-shadow .2s;
-    }
+    body { background: var(--bg); color: var(--text); min-height: 100%; overflow-x: hidden; }
+    .sr-page { max-width: 1100px; margin: 0 auto; padding: 20px 16px 48px; }
+    .sr-top { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 18px; }
+    .sr-user { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+    .sr-avatar { width: 38px; height: 38px; border-radius: 50%; border: 2.5px solid var(--text); background: #eef2ff; display: grid; place-items: center; font-weight: 800; font-size: 13px; color: var(--brand); }
+    .sr-region { font-size: 15px; font-weight: 600; color: var(--muted); }
+    .sr-grid { display: flex; flex-direction: column; gap: 20px; }
+    .sr-panel { background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 14px 14px 12px; position: relative; box-shadow: var(--shadow); overflow: visible; transition: box-shadow .2s; }
     .sr-panel:hover { box-shadow: var(--shadow-h); }
-
-    .sr-panel-head {
-      position: absolute;
-      top: -15px; left: 14px;
-      z-index: 6;
-    }
-    .sr-panel-head--wide {
-      left: 14px; right: 14px; width: auto;
-    }
-    .sr-badge {
-      background: var(--brand);
-      color: #fff;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-weight: 800;
-      font-size: 14px;
-      line-height: 1;
-      display: inline-flex;
-      align-items: center;
-      box-shadow: 0 0 0 5px #fff, 0 2px 6px rgba(0,0,0,.12);
-    }
-    .sr-actions {
-      position: absolute;
-      top: 10px; right: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      z-index: 5;
-    }
-    .sr-period {
-      font-size: 12px;
-      font-style: italic;
-      color: var(--muted);
-      font-family: 'DM Sans', sans-serif;
-    }
-    .sr-filter-btn {
-      border: 0;
-      background: transparent;
-      padding: 4px;
-      cursor: pointer;
-      border-radius: 7px;
-      display: flex; align-items: center;
-    }
+    .sr-panel-head { position: absolute; top: -15px; left: 14px; z-index: 6; }
+    .sr-panel-head--wide { left: 14px; right: 14px; width: auto; }
+    .sr-badge { background: var(--brand); color: #fff; padding: 6px 14px; border-radius: 8px; font-weight: 800; font-size: 14px; line-height: 1; display: inline-flex; align-items: center; box-shadow: 0 0 0 5px #fff, 0 2px 6px rgba(0,0,0,.12); }
+    .sr-actions { position: absolute; top: 10px; right: 12px; display: flex; align-items: center; gap: 8px; z-index: 5; }
+    .sr-period { font-size: 12px; font-style: italic; color: var(--muted); }
+    .sr-filter-btn { border: 0; background: transparent; padding: 4px; cursor: pointer; border-radius: 7px; display: flex; align-items: center; }
     .sr-filter-btn:hover { background: rgba(31,102,255,.08); }
     .sr-filter-btn svg path { fill: var(--brand-dk); }
+    /* Section wrappers — header + rows share the SAME grid columns */
+    /*
+     * COLUMN ALIGNMENT — CSS custom properties ensure header & rows
+     * share IDENTICAL grid-template-columns, padding (0 10px), gap (4px).
+     */
+    :root { --cols-2: 1fr 90px 140px; --cols-3: 1fr 76px 76px 140px; --col-gap: 0px; }
 
-    /* ── Column headers ────────────────────────────── */
-    .sr-col-heads {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0;
-      padding: 0 4px;
-      margin-top: 6px;
-      margin-bottom: 4px;
-    }
-    .sr-col-head {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--muted);
-      text-align: center;
-      min-width: 60px;
-    }
-    .sr-col-head--wide { min-width: 74px; }
+    .sr-section-2col,
+    .sr-section-3col { display: flex; flex-direction: column; gap: 6px; margin-top: 22px; }
 
-    /* ── Quotation rows ─────────────────────────────── */
-    .sr-rows { display: flex; flex-direction: column; gap: 6px; }
+    /* Header — mirrors row geometry exactly */
+    .sr-col-heads { display: grid; gap: var(--col-gap); padding: 0 10px; margin-bottom: 2px; }
+    .sr-section-2col .sr-col-heads { grid-template-columns: var(--cols-2); }
+    .sr-section-3col .sr-col-heads { grid-template-columns: var(--cols-3); }
 
-    .sr-row {
-      display: grid;
-      align-items: center;
-      border-radius: 10px;
-      border: 1px solid rgba(0,0,0,.1);
-      padding: 8px 10px;
-      min-height: 44px;
-      gap: 4px;
+    .sr-col-head { font-size: 11px; font-weight: 700; color: var(--muted); text-align: center; white-space: nowrap; }
+    .sr-col-head:first-child { text-align: left; }
+    .sr-col-head:last-child  { text-align: right; padding-right: 10px; }
+    @media(max-width:680px) {
+      :root { --cols-2: 1fr 76px 130px; --cols-3: 1fr 62px 62px 130px; }
     }
-    /* 2-col row: label | value */
-    .sr-row--2 { grid-template-columns: 1fr 80px; }
-    /* 3-col row: label | count | spaces | amount */
-    .sr-row--3 { grid-template-columns: 1fr 60px 60px 74px; }
-
-    .sr-row-label {
-      font-size: 12px;
-      font-weight: 700;
-      line-height: 1.2;
+    @media(max-width:420px) {
+      :root { --cols-2: 1fr 58px 100px; --cols-3: 1fr 48px 48px 100px; }
+      .sr-col-head { font-size: 10px; }
     }
-    .sr-row-val {
-      font-size: 20px;
-      font-weight: 900;
+    /* Amount value cell — sized to content, never wraps, never overflows */
+    .sr-amt {
+      font-size: 13px;
+      font-weight: 800;
       font-family: 'DM Mono', monospace;
-      line-height: 1;
-      text-align: center;
+      line-height: 1.2;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       cursor: pointer;
       transition: opacity .15s;
+      border-left: 1.5px solid rgba(30, 27, 27, 0.788);
+      padding: 0 8px 0 6px;
+      min-width: 0;
     }
+    .sr-amt:hover { opacity: .7; }
+    /* Count / Spaces cells get a subtle right divider before Amount */
+    .sr-row-val {
+      position: relative;
+    }
+    .sr-row--2col .sr-row-val:last-of-type,
+    .sr-row--3 .sr-row-val:last-of-type {
+      padding-right: 6px;
+    }
+    @media(max-width:720px) { .sr-amt { font-size: 12px; padding: 0 6px 0 5px; } }
+    @media(max-width:420px) { .sr-amt { font-size: 11px; padding: 0 4px 0 4px; } }
+    /* Data rows — identical horizontal geometry to header */
+    .sr-rows { display: flex; flex-direction: column; gap: 6px; }
+    .sr-row { display: grid; align-items: center; border-radius: 10px; border: 1px solid rgba(0,0,0,.1); padding: 8px 10px; min-height: 44px; gap: var(--col-gap); }
+    .sr-row--2col { grid-template-columns: var(--cols-2); }
+    .sr-row--3    { grid-template-columns: var(--cols-3); }
+    .sr-row--2    { grid-template-columns: 1fr 80px; }
+
+    .sr-row-label { font-size: 12px; font-weight: 700; line-height: 1.2; }
+    .sr-row-val { font-size: 16px; font-weight: 900; font-family: 'DM Mono', monospace; line-height: 1; text-align: center; cursor: pointer; transition: opacity .15s; }
     .sr-row-val:hover { opacity: .7; }
-    .sr-row-val--sm {
-      font-size: 16px;
-    }
-
-    /* Colour variants */
-    .sr-row--won    { background: var(--won);   border-color: var(--won-border); }
-    .sr-row--lost   { background: var(--lost);  border-color: var(--lost-border); }
-    .sr-row--live   { background: var(--live);  border-color: var(--won-border); }
-    .sr-row--expired{ background: var(--expired); border-color: var(--lost-border); }
-    .sr-row--term   { background: var(--term);  border-color: var(--border); }
-    .sr-row--plain  { background: #fff;         border-color: var(--border); }
-
-    .sr-row--won .sr-row-label    { color: #7a5a00; }
-    .sr-row--lost .sr-row-label   { color: #c0392b; }
-    .sr-row--live .sr-row-label   { color: #7a5a00; }
-    .sr-row--expired .sr-row-label{ color: #c0392b; }
-
-    /* ── PM section ─────────────────────────────────── */
-    .sr-pm-wrap {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 12px;
-      align-items: center;
-      margin-top: 10px;
-    }
-    .sr-pm-label {
-      font-weight: 800;
-      font-size: 15px;
-      color: var(--text);
-      padding-left: 2px;
-    }
-    .sr-pm-inner {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .sr-pm-pie {
-      flex-shrink: 0;
-      width: 260px; height: 260px;
-      display: flex; align-items: center; justify-content: center;
-      overflow: visible;
-    }
-    #pmPieCanvas { width: 260px !important; height: 260px !important; display: block; }
-    .sr-pm-pills {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .sr-pill {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #fff;
-      padding: 7px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-    .sr-pill-k {
-      font-size: 12px; font-weight: 700; color: var(--text);
-    }
-    .sr-pill-v {
-      font-size: 20px; font-weight: 900;
-      font-family: 'DM Mono', monospace;
-      color: cornflowerblue; cursor: pointer;
-      line-height: 1;
-    }
-
-    /* ── Potential pie ───────────────────────────────── */
-    .sr-pie-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      margin-top: 10px;
-    }
-    .sr-pie-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-      text-align: center;
-    }
-    .sr-potential-wrap {
-      width: 200px; height: 200px;
-      display: flex; align-items: center; justify-content: center;
-      overflow: visible;
-    }
-    #potentialPieCanvas { width: 200px !important; height: 200px !important; display: block; }
-
-    /* ── Divider ─────────────────────────────────────── */
-    .sr-divider {
-      height: 1.5px;
-      background: var(--border);
-      border-radius: 99px;
-      margin: 10px 0;
-    }
-
-    /* ── Filter badge ────────────────────────────────── */
-    .sr-filter-badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      background: #eef2ff; border: 1px solid #c7d4ff;
-      border-radius: 6px; padding: 2px 7px;
-      font-size: 11px; font-weight: 700; color: var(--brand);
-      white-space: nowrap; max-width: 120px;
-      overflow: hidden; text-overflow: ellipsis;
-    }
-
-    /* ── Loader ─────────────────────────────────────── */
-    #loader { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.45); text-align:center; }
-    #loader .loader-wrap { width:200px; height:200px; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); filter:url(#goo); animation:rotate-move 2s ease-in-out infinite; }
-    #loader .dot { width:70px; height:70px; border-radius:50%; position:absolute; top:0;bottom:0;left:0;right:0; margin:auto; }
-    #loader .dot-3 { background:#f74d75; animation:dot-3-move 2s ease infinite,z-idx 6s ease infinite; }
-    #loader .dot-2 { background:#10beae; animation:dot-2-move 2s ease infinite,z-idx 6s -4s ease infinite; }
-    #loader .dot-1 { background:#ffe386; animation:dot-1-move 2s ease infinite,z-idx 6s -2s ease infinite; }
-    #loader svg { position:absolute; width:0; height:0; }
-    @keyframes dot-3-move{20%{transform:scale(1)}45%{transform:translateY(-18px) scale(.45)}60%{transform:translateY(-90px) scale(.45)}80%{transform:translateY(-90px) scale(.45)}100%{transform:translateY(0) scale(1)}}
-    @keyframes dot-2-move{20%{transform:scale(1)}45%{transform:translate(-16px,12px) scale(.45)}60%{transform:translate(-80px,60px) scale(.45)}80%{transform:translate(-80px,60px) scale(.45)}100%{transform:translateY(0) scale(1)}}
-    @keyframes dot-1-move{20%{transform:scale(1)}45%{transform:translate(16px,12px) scale(.45)}60%{transform:translate(80px,60px) scale(.45)}80%{transform:translate(80px,60px) scale(.45)}100%{transform:translateY(0) scale(1)}}
-    @keyframes rotate-move{55%{transform:translate(-50%,-50%) rotate(0deg)}80%{transform:translate(-50%,-50%) rotate(360deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
-    @keyframes z-idx{0%,100%{z-index:3}33.3%{z-index:2}66.6%{z-index:1}}
-
-    /* ── Modal ───────────────────────────────────────── */
-    #filterBackdrop { display:none; position:fixed; inset:0; z-index:1050; background:#000; opacity:.5; }
-    #filterBackdrop.show { display:block; }
-    #filterModal { display:none; position:fixed; inset:0; z-index:1055; overflow:auto; padding:18px 12px; }
-    #filterModal.show { display:block; }
-    #filterModal .modal-dialog { max-width:440px; margin:48px auto; }
-    #filterModal .modal-content { background:#fff; border-radius:14px; border:1px solid var(--border); box-shadow:0 12px 40px rgba(0,0,0,.22); overflow:hidden; }
-    #filterModal .modal-header,#filterModal .modal-footer { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 16px; border-bottom:1px solid var(--border); }
-    #filterModal .modal-footer { border-top:1px solid var(--border); border-bottom:none; justify-content:flex-end; }
-    #filterModal .modal-body { padding:16px; }
-    #filterModal .modal-title { font-weight:700; font-size:15px; }
-    .filter-stack { display:flex; flex-direction:column; gap:12px; }
-    .filter-field label { display:block; font-weight:700; font-size:13px; margin-bottom:5px; }
-    .filter-field select,.filter-field input[type=date] { width:100%; padding:9px 10px; border:1px solid rgba(0,0,0,.18); border-radius:8px; outline:none; background:#fff; font-size:13px; font-family:inherit; }
-    .date-range-field { display:none; }
-    .btn { padding:9px 16px; border-radius:8px; border:1px solid rgba(0,0,0,.15); cursor:pointer; font-size:13px; font-weight:600; background:#f2f2f2; font-family:inherit; }
-    .btn-primary { background:var(--brand); border-color:var(--brand); color:#fff; }
-    .btn-close { width:34px; height:34px; border:none; background:transparent; cursor:pointer; position:relative; }
-    .btn-close::before,.btn-close::after { content:""; position:absolute; top:50%; left:50%; width:18px; height:2px; background:#333; transform-origin:center; }
-    .btn-close::before { transform:translate(-50%,-50%) rotate(45deg); }
-    .btn-close::after  { transform:translate(-50%,-50%) rotate(-45deg); }
-    body.modal-open { overflow:hidden !important; }
-
-    /* ── Responsive ──────────────────────────────────── */
-    @media(max-width:680px){
-      .sr-row--3 { grid-template-columns: 1fr 52px 52px 64px; }
-      .sr-row-val { font-size: 16px; }
-      .sr-title { font-size: 17px; }
-      /* PM: stack pie on top, rows below full width */
-      .sr-pm-flex { flex-direction: column !important; align-items: stretch !important; }
-      .sr-pm-pie  { width: 240px !important; height: 240px !important; align-self: center; }
-      #pmPieCanvas{ width: 240px !important; height: 240px !important; }
-    }
-    @media(max-width:420px){
-      .sr-row--3 { grid-template-columns: 1fr 44px 44px 54px; }
-      .sr-col-head { min-width: 44px; font-size: 10px; }
-      .sr-col-head--wide { min-width: 54px; }
-      .sr-row--2 { grid-template-columns: 1fr 70px; }
-      .sr-row-val { font-size: 15px; }
-      .sr-pm-pie  { width: 200px !important; height: 200px !important; }
-      #pmPieCanvas{ width: 200px !important; height: 200px !important; }
-      .sr-page    { padding: 14px 10px 40px; }
-    }
+    .sr-row-val--sm { font-size: 16px; }
+    .sr-row--won { background: var(--won); border-color: var(--won-border); }
+    .sr-row--lost { background: var(--lost); border-color: var(--lost-border); }
+    .sr-row--live     { background: var(--live);    border-color: var(--won-border); }
+    .sr-row--onhold   { background: #e0f2fe;          border-color: #7dd3fc; }          /* light blue */
+    .sr-row--suspended{ background: #fef3c7;          border-color: #fcd34d; }          /* amber */
+    .sr-row--expiring { background: #f0fdf4;          border-color: #86efac; cursor:pointer; } /* green-tint */
+    .sr-row--onhold   .sr-row-label { color: #075985; }
+    .sr-row--suspended .sr-row-label { color: #92400e; }
+    .sr-row--expiring .sr-row-label { color: #166534; }
+    .sr-row--expired { background: var(--expired); border-color: var(--lost-border); }
+    .sr-row--term { background: var(--term); border-color: var(--border); }
+    .sr-row--plain { background: #fff; border-color: var(--border); }
+    .sr-row--won .sr-row-label { color: #7a5a00; }
+    .sr-row--lost .sr-row-label { color: #c0392b; }
+    .sr-row--live .sr-row-label { color: #7a5a00; }
+    .sr-row--expired .sr-row-label { color: #c0392b; }
+    .sr-pm-pie { flex-shrink: 0; width: 340px; height: 340px; display: flex; align-items: center; justify-content: center; overflow: visible; }
+    #pmPieCanvas { width: 340px !important; height: 340px !important; display: block; }
+    .sr-pill { border: 1px solid var(--border); border-radius: 10px; background: #fff; padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .sr-pill-k { font-size: 12px; font-weight: 700; color: var(--text); }
+    .sr-pill-v { font-size: 20px; font-weight: 900; font-family: 'DM Mono', monospace; color: cornflowerblue; cursor: pointer; line-height: 1; }
+    .sr-pie-section { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 10px; }
+    .sr-pie-title { font-size: 13px; font-weight: 700; color: var(--text); text-align: center; }
+    .sr-potential-wrap { width: 360px; height: 360px; display: flex; align-items: center; justify-content: center; overflow: visible; }
+    #potentialPieCanvas { width: 360px !important; height: 360px !important; display: block; }
+    .sr-divider { height: 1.5px; background: var(--border); border-radius: 99px; margin: 10px 0; }
+    .sr-filter-badge { display: inline-flex; align-items: center; gap: 4px; background: #eef2ff; border: 1px solid #c7d4ff; border-radius: 6px; padding: 2px 7px; font-size: 11px; font-weight: 700; color: var(--brand); white-space: nowrap; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+    #loader { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.45); text-align: center; }
+    #loader .loader-wrap { width: 200px; height: 200px; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); filter: url(#goo); animation: rotate-move 2s ease-in-out infinite; }
+    #loader .dot { width: 70px; height: 70px; border-radius: 50%; position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; }
+    #loader .dot-3 { background: #f74d75; animation: dot-3-move 2s ease infinite, z-idx 6s ease infinite; }
+    #loader .dot-2 { background: #10beae; animation: dot-2-move 2s ease infinite, z-idx 6s -4s ease infinite; }
+    #loader .dot-1 { background: #ffe386; animation: dot-1-move 2s ease infinite, z-idx 6s -2s ease infinite; }
+    #loader svg { position: absolute; width: 0; height: 0; }
+    @keyframes dot-3-move { 20%{transform:scale(1)} 45%{transform:translateY(-18px) scale(.45)} 60%{transform:translateY(-90px) scale(.45)} 80%{transform:translateY(-90px) scale(.45)} 100%{transform:translateY(0) scale(1)} }
+    @keyframes dot-2-move { 20%{transform:scale(1)} 45%{transform:translate(-16px,12px) scale(.45)} 60%{transform:translate(-80px,60px) scale(.45)} 80%{transform:translate(-80px,60px) scale(.45)} 100%{transform:translateY(0) scale(1)} }
+    @keyframes dot-1-move { 20%{transform:scale(1)} 45%{transform:translate(16px,12px) scale(.45)} 60%{transform:translate(80px,60px) scale(.45)} 80%{transform:translate(80px,60px) scale(.45)} 100%{transform:translateY(0) scale(1)} }
+    @keyframes rotate-move { 55%{transform:translate(-50%,-50%) rotate(0deg)} 80%{transform:translate(-50%,-50%) rotate(360deg)} 100%{transform:translate(-50%,-50%) rotate(360deg)} }
+    @keyframes z-idx { 0%,100%{z-index:3} 33.3%{z-index:2} 66.6%{z-index:1} }
+    #filterBackdrop { display: none; position: fixed; inset: 0; z-index: 1050; background: #000; opacity: .5; }
+    #filterBackdrop.show { display: block; }
+    #filterModal { display: none; position: fixed; inset: 0; z-index: 1055; overflow: auto; padding: 18px 12px; }
+    #filterModal.show { display: block; }
+    #filterModal .modal-dialog { max-width: 440px; margin: 48px auto; }
+    #filterModal .modal-content { background: #fff; border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 12px 40px rgba(0,0,0,.22); overflow: hidden; }
+    #filterModal .modal-header, #filterModal .modal-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 13px 16px; border-bottom: 1px solid var(--border); }
+    #filterModal .modal-footer { border-top: 1px solid var(--border); border-bottom: none; justify-content: flex-end; }
+    #filterModal .modal-body { padding: 16px; }
+    #filterModal .modal-title { font-weight: 700; font-size: 15px; }
+    .filter-stack { display: flex; flex-direction: column; gap: 12px; }
+    .filter-field label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 5px; }
+    .filter-field select, .filter-field input[type=date] { width: 100%; padding: 9px 10px; border: 1px solid rgba(0,0,0,.18); border-radius: 8px; outline: none; background: #fff; font-size: 13px; font-family: inherit; }
+    .date-range-field { display: none; }
+    .btn { padding: 9px 16px; border-radius: 8px; border: 1px solid rgba(0,0,0,.15); cursor: pointer; font-size: 13px; font-weight: 600; background: #f2f2f2; font-family: inherit; }
+    .btn-primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+    .btn-close { width: 34px; height: 34px; border: none; background: transparent; cursor: pointer; position: relative; }
+    .btn-close::before, .btn-close::after { content: ""; position: absolute; top: 50%; left: 50%; width: 18px; height: 2px; background: #333; transform-origin: center; }
+    .btn-close::before { transform: translate(-50%,-50%) rotate(45deg); }
+    .btn-close::after { transform: translate(-50%,-50%) rotate(-45deg); }
+    body.modal-open { overflow: hidden !important; }
+    @media(max-width:720px) { .sr-row-val{font-size:16px;} .sr-pm-flex{flex-direction:column !important;align-items:stretch !important;} .sr-pm-pie{width:240px !important;height:240px !important;align-self:center;} #pmPieCanvas{width:240px !important;height:240px !important;} }
+    @media(max-width:420px) { .sr-col-head{font-size:10px;} .sr-row-val{font-size:15px;} .sr-pm-pie{width:200px !important;height:200px !important;} #pmPieCanvas{width:200px !important;height:200px !important;} .sr-page{padding:14px 10px 40px;} }
   </style>
 </head>
 <body>
 
-<!-- Loader -->
-<div id="loader" aria-hidden="true">
-  <div class="loader-wrap" role="status" aria-label="Loading">
-    <div class="dot dot-1"></div><div class="dot dot-2"></div><div class="dot dot-3"></div>
-  </div>
-  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="0" height="0">
-    <defs>
-      <filter id="goo">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
-        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 21 -7"/>
-      </filter>
-    </defs>
-  </svg>
-</div>
-
-<div class="sr-page">
-
-  <!-- Top bar -->
-  <div class="sr-top">
-    <!-- <div class="sr-title">Sales Representative Dashboard</div> -->
-    <div class="sr-user">
-      <div class="sr-avatar" id="srAvatar">SR</div>
-      <div class="sr-region" id="srRegion">West</div>
+  <div id="loader" aria-hidden="true">
+    <div class="loader-wrap" role="status" aria-label="Loading">
+      <div class="dot dot-1"></div><div class="dot dot-2"></div><div class="dot dot-3"></div>
     </div>
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="0" height="0">
+      <defs>
+        <filter id="goo">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
+          <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 21 -7"/>
+        </filter>
+      </defs>
+    </svg>
   </div>
 
-  <div class="sr-grid">
-
-    <!-- ── Spares Quotation ───────────────────────── -->
-    <div class="sr-panel">
-      <div class="sr-panel-head sr-panel-head--wide">
-        <span class="sr-badge">Spares Quotation</span>
-        <div class="sr-actions">
-          <span class="sr-filter-badge" id="sparesFilterBadge" style="display:none"></span>
-          <span class="sr-period" id="sparesPeriodLabel">This month</span>
-          <button class="sr-filter-btn" id="btn_spares" type="button" aria-label="Filter Spares">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="sr-col-heads" style="margin-top:22px;">
-        <span class="sr-col-head">Count</span>
-        <span class="sr-col-head">Spaces</span>
-        <span class="sr-col-head sr-col-head--wide">Amount<br><span style="font-weight:500">Rs.(000)</span></span>
-      </div>
-
-      <div class="sr-rows">
-        <div class="sr-row sr-row--3 sr-row--won">
-          <div class="sr-row-label">WON</div>
-          <div class="sr-row-val" id="sparesWonCount">0</div>
-          <div class="sr-row-val" id="sparesWonSpaces">0</div>
-          <div class="sr-row-val" id="sparesWonAmt">0</div>
-        </div>
-        <div class="sr-row sr-row--3 sr-row--lost">
-          <div class="sr-row-label">Lost</div>
-          <div class="sr-row-val sr-row-val--sm" id="sparesLostCount">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="sparesLostSpaces">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="sparesLostAmt">0</div>
-        </div>
-        <div class="sr-row sr-row--3 sr-row--plain">
-          <div class="sr-row-label">Created</div>
-          <div class="sr-row-val sr-row-val--sm" id="sparesCreatedCount">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="sparesCreatedSpaces">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="sparesCreatedAmt">0</div>
-        </div>
-        <div class="sr-row sr-row--3 sr-row--plain" style="background:#fff8e6;border-color:#ffe099;">
-          <div class="sr-row-label" style="color:#7a5a00;">Under<br>Discussions</div>
-          <div class="sr-row-val sr-row-val--sm" id="sparesUndiscCount">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="sparesUndiscSpaces">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="sparesUndiscAmt">0</div>
-        </div>
+  <div class="sr-page">
+    <div class="sr-top">
+      <div class="sr-user">
+        <div class="sr-avatar" id="srAvatar">SR</div>
+        <div class="sr-region" id="srRegion">—</div>
       </div>
     </div>
 
-    <!-- ── Service Quotations (full width) ─────────── -->
-    <div class="sr-panel sr-grid--full">
-      <div class="sr-panel-head sr-panel-head--wide">
-        <span class="sr-badge">Service Quotations</span>
-        <div class="sr-actions">
-          <span class="sr-filter-badge" id="serviceqFilterBadge" style="display:none"></span>
-          <span class="sr-period" id="serviceqPeriodLabel">This month</span>
-          <button class="sr-filter-btn" id="btn_serviceq" type="button" aria-label="Filter Service Quotations">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
-          </button>
-        </div>
-      </div>
+    <div class="sr-grid">
 
-      <div class="sr-col-heads" style="margin-top:22px;">
-        <span class="sr-col-head">Count</span>
-        <span class="sr-col-head">Spaces</span>
-        <span class="sr-col-head sr-col-head--wide">Amount<br><span style="font-weight:500">Rs.(000)</span></span>
-      </div>
-
-      <div class="sr-rows">
-        <div class="sr-row sr-row--3 sr-row--won">
-          <div class="sr-row-label">Pending</div>
-          <div class="sr-row-val" id="serviceqWonCount">0</div>
-          <div class="sr-row-val" id="serviceqWonSpaces">0</div>
-          <div class="sr-row-val" id="serviceqWonAmt">0</div>
+      <!-- ── Spares Quotation ── -->
+      <div class="sr-panel">
+        <div class="sr-panel-head sr-panel-head--wide">
+          <span class="sr-badge">Spares Quotation</span>
+          <div class="sr-actions">
+            <span class="sr-filter-badge" id="sparesFilterBadge" style="display:none"></span>
+            <span class="sr-period" id="sparesPeriodLabel">This month</span>
+            <button class="sr-filter-btn" id="btn_spares" type="button" aria-label="Filter Spares">
+              <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
+            </button>
+          </div>
         </div>
-        <div class="sr-row sr-row--3 sr-row--lost">
-          <div class="sr-row-label">Closed Won</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqLostCount">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqLostSpaces">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqLostAmt">0</div>
-        </div>
-        <div class="sr-row sr-row--3 sr-row--plain" style="background:#f0eeff;border-color:#c9b8ff;">
-          <div class="sr-row-label" style="color:#4c2eaa;">Lost</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqAwaitCount">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqAwaitSpaces">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="serviceqAwaitAmt">0</div>
-        </div>
-      </div>
-
-      <!-- Potential pie chart -->
-      <div class="sr-divider" style="margin-top:16px;"></div>
-      <div class="sr-pie-section">
-        <div class="sr-pie-title">Potential for this quarter (Spaces)</div>
-        <div class="sr-potential-wrap">
-          <canvas id="potentialPieCanvas" width="200" height="200" aria-label="Potential pie chart"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Service Contracts ─────────────────────── -->
-    <div class="sr-panel">
-      <div class="sr-panel-head sr-panel-head--wide">
-        <span class="sr-badge">Service Contracts</span>
-        <div class="sr-actions">
-          <span class="sr-filter-badge" id="contractsFilterBadge" style="display:none"></span>
-          <span class="sr-period" id="contractsPeriodLabel">This month</span>
-          <button class="sr-filter-btn" id="btn_contracts" type="button" aria-label="Filter Contracts">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="sr-col-heads" style="margin-top:22px;">
-        <span class="sr-col-head">Count</span>
-        <span class="sr-col-head">Spaces</span>
-        <span class="sr-col-head sr-col-head--wide">Amount<br><span style="font-weight:500">Rs.(000)</span></span>
-      </div>
-
-      <div class="sr-rows">
-        <div class="sr-row sr-row--3 sr-row--live">
-          <div class="sr-row-label">Live</div>
-          <div class="sr-row-val" id="contractsLiveCount">0</div>
-          <div class="sr-row-val" id="contractsLiveSpaces">0</div>
-          <div class="sr-row-val" id="contractsLiveAmt">0</div>
-        </div>
-        <div class="sr-row sr-row--3 sr-row--expired">
-          <div class="sr-row-label">Expired</div>
-          <div class="sr-row-val sr-row-val--sm" id="contractsExpiredCount">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="contractsExpiredSpaces">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="contractsExpiredAmt">0</div>
-        </div>
-        <div class="sr-row sr-row--3 sr-row--term">
-          <div class="sr-row-label">Terminated</div>
-          <div class="sr-row-val sr-row-val--sm" id="contractsTermCount">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="contractsTermSpaces">0</div>
-          <div class="sr-row-val sr-row-val--sm" id="contractsTermAmt">0</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── PM (standalone panel) ─────────────────── -->
-    <div class="sr-panel">
-      <div class="sr-panel-head sr-panel-head--wide">
-        <span class="sr-badge">PM</span>
-        <div class="sr-actions">
-          <span class="sr-filter-badge" id="pmFilterBadge" style="display:none"></span>
-          <span class="sr-period" id="pmPeriodLabel">This month</span>
-          <button class="sr-filter-btn" id="btn_pm" type="button" aria-label="Filter PM">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="sr-pm-flex" style="display:flex;align-items:center;gap:20px;margin-top:22px;">
-        <!-- Pie left -->
-        <div class="sr-pm-pie" style="flex-shrink:0;">
-          <canvas id="pmPieCanvas" width="260" height="260" aria-label="PM pie chart"></canvas>
-        </div>
-        <!-- Rows right — same style as Service Contracts -->
-        <div style="flex:1;width:100%;min-width:0;">
+        <div class="sr-section-2col">
           <div class="sr-col-heads">
+            <span class="sr-col-head"></span>
             <span class="sr-col-head">Count</span>
+            <span class="sr-col-head sr-col-head--wide">Amount</span>
           </div>
-          <div class="sr-rows">
-            <div class="sr-row sr-row--2" style="background:#ffd84d;border-color:#e6c200;">
-              <div class="sr-row-label">All</div>
-              <div class="sr-row-val" id="pmAll">0</div>
-            </div>
-            <div class="sr-row sr-row--2" style="background:#e8f9f0;border-color:#5cb85c;">
-              <div class="sr-row-label" style="color:#1a6b3a;">Closed</div>
-              <div class="sr-row-val sr-row-val--sm" id="pmClosed">0</div>
-            </div>
-            <div class="sr-row sr-row--2" style="background:#ffd6d6;border-color:#f4a0a0;">
-              <div class="sr-row-label" style="color:#c0392b;">Overdue</div>
-              <div class="sr-row-val sr-row-val--sm" id="pmOverdue">0</div>
-            </div>
+          <div class="sr-row sr-row--2col sr-row--won" onclick="navigateSpares('Approved By Customer')">
+            <div class="sr-row-label">WON</div>
+            <div class="sr-row-val" id="sparesWonCount">0</div>
+            <div class="sr-amt" id="sparesWonAmt">0</div>
+          </div>
+          <div class="sr-row sr-row--2col sr-row--lost" onclick="navigateSpares('Rejected By Customer')">
+            <div class="sr-row-label">Lost</div>
+            <div class="sr-row-val sr-row-val--sm" id="sparesLostCount">0</div>
+            <div class="sr-amt" id="sparesLostAmt">0</div>
+          </div>
+          <div class="sr-row sr-row--2col sr-row--plain" onclick="navigateSpares('New')">
+            <div class="sr-row-label">Created</div>
+            <div class="sr-row-val sr-row-val--sm" id="sparesCreatedCount">0</div>
+            <div class="sr-amt" id="sparesCreatedAmt">0</div>
+          </div>
+          <div class="sr-row sr-row--2col sr-row--plain" style="background:#fff8e6;border-color:#ffe099;" onclick="navigateSpares('Waiting For Customer Approval')">
+            <div class="sr-row-label" style="color:#7a5a00;">Under<br>Discussions</div>
+            <div class="sr-row-val sr-row-val--sm" id="sparesUndiscCount">0</div>
+            <div class="sr-amt" id="sparesUndiscAmt">0</div>
           </div>
         </div>
       </div>
-    </div>
-  </div><!-- /.sr-grid -->
-</div><!-- /.sr-page -->
 
-<!-- Filter Modal -->
-<div id="filterBackdrop"></div>
-<div id="filterModal" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span class="modal-title" id="filterModalTitle">Filters</span>
-        <button type="button" class="btn-close" id="filterModalClose" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="filter-stack">
-          <div class="filter-field">
-            <label>Period</label>
-            <select id="periodSelect">
-              <option value="this_month">This month</option>
-              <option value="this_quarter">This quarter</option>
-              <option value="last_quarter">Last quarter</option>
-              <option value="this_year">This year</option>
-              <option value="custom">Custom range</option>
-            </select>
+      <!-- ── Service Quotations ── -->
+      <div class="sr-panel">
+        <div class="sr-panel-head sr-panel-head--wide">
+          <span class="sr-badge">Service Quotations</span>
+          <div class="sr-actions">
+            <span class="sr-filter-badge" id="serviceqFilterBadge" style="display:none"></span>
+            <span class="sr-period" id="serviceqPeriodLabel">This month</span>
+            <button class="sr-filter-btn" id="btn_serviceq" type="button" aria-label="Filter Service Quotations">
+              <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
+            </button>
           </div>
-          <div class="filter-field date-range-field"><label>From</label><input type="date" id="dateFrom"/></div>
-          <div class="filter-field date-range-field"><label>To</label><input type="date" id="dateTo"/></div>
+        </div>
+        <div class="sr-section-3col">
+          <div class="sr-col-heads">
+            <span class="sr-col-head"></span>
+            <span class="sr-col-head">Count</span>
+            <span class="sr-col-head">Spaces</span>
+            <span class="sr-col-head sr-col-head--wide">Amount</span>
+          </div>
+          <div class="sr-row sr-row--3 sr-row--won" onclick="navigateServiceQ('Pending')">
+            <div class="sr-row-label">Pending</div>
+            <div class="sr-row-val" id="serviceqPendingCount">0</div>
+            <div class="sr-row-val" id="serviceqPendingSpaces">0</div>
+            <div class="sr-amt" id="serviceqPendingAmt">0</div>
+          </div>
+          <div class="sr-row sr-row--3 sr-row--lost" onclick="navigateServiceQ('Closed Won')">
+            <div class="sr-row-label">Closed Won</div>
+            <div class="sr-row-val sr-row-val--sm" id="serviceqWonCount">0</div>
+            <div class="sr-row-val sr-row-val--sm" id="serviceqWonSpaces">0</div>
+            <div class="sr-amt" id="serviceqWonAmt">0</div>
+          </div>
+          <div class="sr-row sr-row--3 sr-row--plain" style="background:#f0eeff;border-color:#c9b8ff;" onclick="navigateServiceQ('Lost')">
+            <div class="sr-row-label" style="color:#4c2eaa;">Lost</div>
+            <div class="sr-row-val sr-row-val--sm" id="serviceqLostCount">0</div>
+            <div class="sr-row-val sr-row-val--sm" id="serviceqLostSpaces">0</div>
+            <div class="sr-amt" id="serviceqLostAmt">0</div>
+          </div>
+        </div>
+        <div class="sr-divider" style="margin-top:16px;"></div>
+        <div class="sr-pie-section">
+          <div class="sr-pie-title">This Quarter — Service Quotations</div>
+          <div class="sr-potential-wrap">
+            <canvas id="potentialPieCanvas" width="360" height="360" aria-label="Potential pie chart"></canvas>
+          </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn" id="filterClear">Reset</button>
-        <button type="button" class="btn btn-primary" id="filterApply">Apply</button>
+
+      <!-- ── Service Contracts ── -->
+      <div class="sr-panel">
+        <div class="sr-panel-head sr-panel-head--wide">
+          <span class="sr-badge">Service Contracts</span>
+          <div class="sr-actions">
+            <span class="sr-filter-badge" id="contractsFilterBadge" style="display:none"></span>
+            <span class="sr-period" id="contractsPeriodLabel">This month</span>
+            <button class="sr-filter-btn" id="btn_contracts" type="button" aria-label="Filter Contracts">
+              <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="sr-section-3col">
+          <div class="sr-col-heads">
+            <span class="sr-col-head"></span>
+            <span class="sr-col-head">Count</span>
+            <span class="sr-col-head">Spaces</span>
+            <span class="sr-col-head sr-col-head--wide">Amount</span>
+          </div>
+          <div class="sr-row sr-row--3 sr-row--live" onclick="navigateContracts('Live')">
+            <div class="sr-row-label">Live</div>
+            <div class="sr-row-val" id="contractsLiveCount">0</div>
+            <div class="sr-row-val" id="contractsLiveSpaces">0</div>
+            <div class="sr-amt" id="contractsLiveAmt">0</div>
+          </div>
+          <div class="sr-row sr-row--3 sr-row--onhold" onclick="navigateContracts('On Hold')">
+            <div class="sr-row-label">On Hold</div>
+            <div class="sr-row-val sr-row-val--sm" id="contractsOnHoldCount">0</div>
+            <div class="sr-row-val sr-row-val--sm" id="contractsOnHoldSpaces">0</div>
+            <div class="sr-amt" id="contractsOnHoldAmt">0</div>
+          </div>
+          <div class="sr-row sr-row--3 sr-row--suspended" onclick="navigateContracts('Suspended')">
+            <div class="sr-row-label">Suspended</div>
+            <div class="sr-row-val sr-row-val--sm" id="contractsSuspendedCount">0</div>
+            <div class="sr-row-val sr-row-val--sm" id="contractsSuspendedSpaces">0</div>
+            <div class="sr-amt" id="contractsSuspendedAmt">0</div>
+          </div>
+          <div class="sr-row sr-row--3 sr-row--expired" onclick="navigateContracts('Lost')">
+            <div class="sr-row-label">Expired</div>
+            <div class="sr-row-val sr-row-val--sm" id="contractsExpiredCount">0</div>
+            <div class="sr-row-val sr-row-val--sm" id="contractsExpiredSpaces">0</div>
+            <div class="sr-amt" id="contractsExpiredAmt">0</div>
+          </div>
+          <div class="sr-row sr-row--3 sr-row--term" onclick="navigateContracts('Terminated')">
+            <div class="sr-row-label">Terminated</div>
+            <div class="sr-row-val sr-row-val--sm" id="contractsTermCount">0</div>
+            <div class="sr-row-val sr-row-val--sm" id="contractsTermSpaces">0</div>
+            <div class="sr-amt" id="contractsTermAmt">0</div>
+          </div>
+          <!-- Expiring This Quarter — always quarterly, unaffected by period filter -->
+          <div class="sr-row sr-row--2 sr-row--expiring" style="margin-top:6px;border-top:2px dashed #86efac;" onclick="navigateContractsExpiring()">
+            <div class="sr-row-label" style="color:#166534;">Expiring<br>This Quarter</div>
+            <div class="sr-row-val" id="contractsExpiringCount" style="color:#166534;">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PM ── -->
+      <div class="sr-panel">
+        <div class="sr-panel-head sr-panel-head--wide">
+          <span class="sr-badge">PM</span>
+          <div class="sr-actions">
+            <span class="sr-filter-badge" id="pmFilterBadge" style="display:none"></span>
+            <span class="sr-period" id="pmPeriodLabel">This month</span>
+            <button class="sr-filter-btn" id="btn_pm" type="button" aria-label="Filter PM">
+              <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="sr-pm-flex" style="display:flex;align-items:center;gap:20px;margin-top:22px;">
+          <div class="sr-pm-pie" style="flex-shrink:0;">
+            <canvas id="pmPieCanvas" width="340" height="340" aria-label="PM pie chart"></canvas>
+          </div>
+          <div style="flex:1;width:100%;min-width:0;">
+            <div class="sr-col-heads" style="padding-right:10px;">
+              <span class="sr-col-head" style="min-width:80px;">Count</span>
+            </div>
+            <div class="sr-rows">
+              <div class="sr-row sr-row--2" style="background:#ffd84d;border-color:#e6c200;cursor:pointer;" onclick="navigatePM('all')">
+                <div class="sr-row-label">All</div>
+                <div class="sr-row-val" id="pmAll">0</div>
+              </div>
+              <div class="sr-row sr-row--2" style="background:#e8f9f0;border-color:#5cb85c;cursor:pointer;" onclick="navigatePM('closed')">
+                <div class="sr-row-label" style="color:#1a6b3a;">Closed</div>
+                <div class="sr-row-val sr-row-val--sm" id="pmClosed">0</div>
+              </div>
+              <div class="sr-row sr-row--2" style="background:#ffd6d6;border-color:#f4a0a0;cursor:pointer;" onclick="navigatePM('overdue')">
+                <div class="sr-row-label" style="color:#c0392b;">Overdue</div>
+                <div class="sr-row-val sr-row-val--sm" id="pmOverdue">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-/* ═══════════════════════════════════════════════════
-   CONFIGURATION  — update these when connecting Zoho
-═══════════════════════════════════════════════════ */
-const APP_NAME       = "service-management";
-const USER_REPORT    = "My_Users";
-const SPARES_REPORT  = "Spares_Quotation_Report";      // placeholder
-const SERVICEQ_REPORT= "Service_Quotation_Report";     // placeholder
-const CONTRACTS_REPORT="Service_Contracts_Report";     // placeholder
-const PM_REPORT      = "Scan_QR_Service_Request";      // placeholder
-const REPORT_BASE    = "https://creatorapp.zoho.in/wohr_parking/environment/development/service-management/#Report:";
+  <!-- Filter Modal -->
+  <div id="filterBackdrop"></div>
+  <div id="filterModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="modal-title" id="filterModalTitle">Filters</span>
+          <button type="button" class="btn-close" id="filterModalClose" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="filter-stack">
+            <div class="filter-field"><label>Period</label>
+              <select id="periodSelect">
+                <option value="this_month">This month</option>
+                <option value="this_quarter">This quarter</option>
+                <option value="last_quarter">Last quarter</option>
+                <option value="this_year">This year</option>
+                <option value="custom">Custom range</option>
+              </select>
+            </div>
+            <div class="filter-field date-range-field"><label>From</label><input type="date" id="dateFrom"/></div>
+            <div class="filter-field date-range-field"><label>To</label><input type="date" id="dateTo"/></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" id="filterClear">Reset</button>
+          <button type="button" class="btn btn-primary" id="filterApply">Apply</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-/* ── User state ── */
-let UserName = "", userID = "", currentRole = "", currentRegion = "";
+  <script>
+    /* ═══════════════════════════════════════════════
+       CONFIGURATION
+    ═══════════════════════════════════════════════ */
+    const APP_NAME        = "service-management";
+    const USER_REPORT     = "My_Users";
+    const SPARES_REPORT   = "Spare_Quotation_Report";   // ← your report name
+    const REPORT_BASE_URL = "https://creatorapp.zoho.in/wohr_parking/environment/development/service-management/#Report:";
+    const SERVICEQ_REPORT = "Service_Quotation_Report";
+    const CONTRACTS_REPORT= "Contract_Report";
+    const PM_REPORT       = "Scan_QR_Service_Request";
+    const OP_BETWEEN = 58, OP_NOT_EQ = 19;
 
-/* ── Period state per section ── */
-const mkState = () => ({ period:"this_month", from:null, to:null });
-const periodSpares    = mkState();
-const periodServiceQ  = mkState();
-const periodContracts = mkState();
-const periodPM        = mkState();
-let activeTarget = "spares";
+    /* URL query builder — same pattern as Supervisor/OI dashboards */
+    function buildQueryRaw(params) {
+      return Object.keys(params||{})
+        .filter(k => params[k] !== undefined && params[k] !== null && params[k] !== "")
+        .map(k => k + "=" + String(params[k])).join("&");
+    }
+    function openReport(reportName, params) {
+      const qs  = buildQueryRaw(params);
+      const url = REPORT_BASE_URL + reportName + (qs ? "?" + qs : "");
+      ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" });
+    }
+    function addBetween(p, field, f, t) { p[field] = `${f};${t}`; p[field + "_op"] = OP_BETWEEN; }
+    function addDueBetween(p, s) { const r = getRangeFromState(s); addBetween(p, "Due_Date", fmtDate(r.from), fmtDate(r.to)); }
 
-/* ═══════════════════════════════════════════════════
-   DATE HELPERS
-═══════════════════════════════════════════════════ */
-const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-function startOfDay(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,0,0);}
-function endOfDay(d)  {return new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,59,59);}
-function getFYStartYear(r){return r.getMonth()>=3?r.getFullYear():r.getFullYear()-1;}
-function quarterStart(ref){
-  const m=ref.getMonth();let q=0;
-  if(m>=3&&m<=5)q=3;else if(m>=6&&m<=8)q=6;else if(m>=9&&m<=11)q=9;
-  return new Date(ref.getFullYear(),q,1);
-}
-function getRangeFromState(s){
-  const now=new Date();
-  if(s.period==="custom"&&s.from&&s.to)return{from:startOfDay(s.from),to:endOfDay(s.to)};
-  if(s.period==="this_month")return{from:startOfDay(new Date(now.getFullYear(),now.getMonth(),1)),to:endOfDay(new Date(now.getFullYear(),now.getMonth()+1,0))};
-  if(s.period==="this_year"){const fy=getFYStartYear(now);return{from:startOfDay(new Date(fy,3,1)),to:endOfDay(new Date(fy+1,3,0))};}
-  if(s.period==="this_quarter"||s.period==="last_quarter"){
-    const qS=quarterStart(now),off=(s.period==="last_quarter")?-3:0;
-    const from=new Date(qS.getFullYear(),qS.getMonth()+off,1);
-    const to=new Date(from.getFullYear(),from.getMonth()+3,0);
-    return{from:startOfDay(from),to:endOfDay(to)};
-  }
-  return{from:startOfDay(new Date(now.getFullYear(),now.getMonth(),1)),to:endOfDay(new Date(now.getFullYear(),now.getMonth()+1,0))};
-}
-function fmtDate(d){return`${String(d.getDate()).padStart(2,"0")}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`;}
-function fmtDateTime(d){return`${fmtDate(d)} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;}
-function toInputDate(d){if(!d)return"";return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
-function parseInputDate(v){if(!v)return null;const[y,m,d]=v.split("-").map(Number);return new Date(y,m-1,d);}
-function labelFor(s){
-  if(s.period==="custom"&&s.from&&s.to){const r=getRangeFromState(s);return`${fmtDate(r.from)} – ${fmtDate(r.to)}`;}
-  return{this_month:"This month",this_quarter:"This quarter",last_quarter:"Last quarter",this_year:"This year"}[s.period]||"This month";
-}
-function getState(t){return t==="serviceq"?periodServiceQ:t==="contracts"?periodContracts:t==="pm"?periodPM:periodSpares;}
-
-/* ═══════════════════════════════════════════════════
-   UI HELPERS
-═══════════════════════════════════════════════════ */
-function setVal(sel,v){$(sel).text(v==null?"0":String(v));}
-
-function updatePeriodLabels(){
-  $("#sparesPeriodLabel").text(labelFor(periodSpares));
-  $("#serviceqPeriodLabel").text(labelFor(periodServiceQ));
-  $("#contractsPeriodLabel").text(labelFor(periodContracts));
-  $("#pmPeriodLabel").text(labelFor(periodPM));
-}
-
-/* ═══════════════════════════════════════════════════
-   PM PIE CHART  (outside-label style)
-═══════════════════════════════════════════════════ */
-let pmAll=0, pmClosed=0, pmOverdue=0, pmChart=null;
-Chart.register(ChartDataLabels);
-
-const outsideLabelsPlugin = {
-  id: "outsideLabels",
-  afterDatasetsDraw(chart) {
-    if(chart.$noData) return;
-    const {ctx, canvas} = chart;
-    const dataset = chart.data.datasets[0];
-    const meta    = chart.getDatasetMeta(0);
-    const total   = dataset.data.reduce((a,b)=>Number(a)+Number(b),0)||1;
-    const isMob   = canvas.width <= 220;
-    const RADIAL  = isMob ? 18 : 28;
-    const TICK    = isMob ? 14 : 22;
-    const FS      = isMob ? 10 : 12;
-    const VS      = isMob ? 11 : 13;
-    const LINE_H  = FS + VS + 8;
-
-    /* ── Pass 1: build item list with natural side ── */
-    const items = [];
-    meta.data.forEach((arc, i) => {
-      const value = Number(dataset.data[i]||0);
-      if(!value) return;
-      const midAngle = (arc.startAngle + arc.endAngle) / 2;
-      const outerR   = arc.outerRadius;
-      const ex = arc.x + (outerR + RADIAL) * Math.cos(midAngle); // elbow X
-      const ey = arc.y + (outerR + RADIAL) * Math.sin(midAngle); // elbow Y
-      items.push({
-        i, arc, value,
-        label: chart.data.labels[i],
-        color: dataset.backgroundColor[i],
-        pct:   Math.round(value/total*100),
-        midAngle, outerR, ex, ey,
-        side: Math.cos(midAngle) >= 0 ? "right" : "left"
-      });
-    });
-
-    /* ── Pass 2: if two items share a side and are too close vertically,
-          flip whichever is closer to vertical (|cos| smallest) ── */
-    for(let a = 0; a < items.length; a++){
-      for(let b = a+1; b < items.length; b++){
-        if(items[a].side !== items[b].side) continue;
-        if(Math.abs(items[a].ey - items[b].ey) < LINE_H * 1.6){
-          const ca = Math.abs(Math.cos(items[a].midAngle));
-          const cb = Math.abs(Math.cos(items[b].midAngle));
-          const flip = ca < cb ? a : b;
-          items[flip].side = items[flip].side === "right" ? "left" : "right";
-        }
-      }
+    /* Build route params for PM report — Route_Name=[Pune 1,Pune 2,...] */
+    function pmRouteParams() {
+      const routes = getExpandedRoutes();
+      if (!routes.length) return {};
+      return routes.length === 1
+        ? { Route_Name: routes[0] }
+        : { Route_Name: `[${routes.join(",")}]`, Route_Name_op: 26 };
     }
 
-    /* ── Pass 3: draw ── */
-    ctx.save();
-    items.forEach(({ arc, value, label, color, pct, midAngle, outerR, ex, ey, side }) => {
-      const cx = arc.x, cy = arc.y;
-      const isRight = side === "right";
-      const x1 = cx + (outerR + 4) * Math.cos(midAngle);
-      const y1 = cy + (outerR + 4) * Math.sin(midAngle);
-      const x3 = ex + (isRight ? TICK : -TICK);
+    /* ── Route expansion map (shared across all dashboards) ── */
+    const ROUTE_EXPANSION = {
+      "Pune All"            : ["Pune 1","Pune 2","Pune 3"],
+      "All Mumbai Region"   : ["Mumbai Western 1","Mumbai Western 2","Mumbai Western 3",
+                               "Mumbai Central 4","Mumbai Central 5","Mumbai Central 6","Mumbai Harbour 7"],
+      "All North Region"    : ["North 1","North 2","North 3","North 4","North 5","North 6"],
+      "All Hyderabad"       : ["Hyderabad 1","Hyderabad 2","Hyderabad 3"],
+      "All Chennai"         : ["Chennai 1","Chennai 2"],
+      "All Bangalore Region": ["Bangalore 1","Bangalore 2","Bangalore 3","Bangalore 4",
+                               "Bangalore 5","Bangalore 6","Bangalore 7"],
+      "All Ahmedabad"       : ["Ahmedabad 1","Ahmedabad 2"],
+    };
 
-      /* leader line */
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(ex, ey);
-      ctx.lineTo(x3, ey);
-      ctx.strokeStyle = "#9ca3af"; ctx.lineWidth = 1.2; ctx.lineJoin = "round";
-      ctx.stroke();
+    /* ═══════════════════════════════════════════════
+       STATE
+    ═══════════════════════════════════════════════ */
+    let UserName = "", userID = "", currentRole = "", currentRegion = "", currentRoute = "";
+    const mkState = () => ({ period: "this_month", from: null, to: null });
+    const periodSpares   = mkState(), periodServiceQ = mkState(),
+          periodContracts = mkState(), periodPM = mkState();
+    let activeTarget = "spares";
 
-      /* elbow dot */
-      ctx.beginPath(); ctx.arc(ex, ey, 3, 0, Math.PI*2);
-      ctx.fillStyle = color; ctx.fill();
+    /* ── All fetched spares records (cached, re-filtered on period change) ── */
+    let allSparesRecords = [];
 
-      /* label */
-      const tx = x3 + (isRight ? 5 : -5);
-      ctx.textAlign = isRight ? "left" : "right";
-      ctx.font = `700 ${FS}px "DM Sans",system-ui,sans-serif`;
-      ctx.fillStyle = "#374151"; ctx.textBaseline = "bottom";
-      ctx.fillText(label, tx, ey - 1);
-      ctx.font = `800 ${VS}px "DM Sans",system-ui,sans-serif`;
-      ctx.fillStyle = color === "#e5e7eb" ? "#9ca3af" : color;
-      ctx.textBaseline = "top";
-      ctx.fillText(`${value} (${pct}%)`, tx, ey + 2);
-    });
-    ctx.restore();
-  }
-};
-
-function initPMPieChart(){
-  const canvas=document.getElementById("pmPieCanvas");
-  if(!canvas) return;
-  if(pmChart){pmChart.destroy();pmChart=null;}
-  const size=canvas.width;
-  const pad=Math.round(size*0.30);
-  pmChart=new Chart(canvas.getContext("2d"),{
-    type:"doughnut",
-    plugins:[outsideLabelsPlugin],
-    data:{
-      labels:["Closed","Overdue","All"],
-      datasets:[{data:[0,0,1],backgroundColor:["#e5e7eb","#e5e7eb","#e5e7eb"],borderWidth:4,borderColor:"#fff",hoverOffset:6,borderRadius:4,spacing:1}]
-    },
-    options:{
-      responsive:false, maintainAspectRatio:false, cutout:"65%",
-      layout:{padding:{top:pad,right:pad+8,bottom:pad,left:pad+8}},
-      animation:{duration:600,easing:"easeInOutQuart"},
-      plugins:{
-        legend:{display:false},
-        tooltip:{enabled:true,backgroundColor:"rgba(17,24,39,.88)",padding:10,cornerRadius:8,callbacks:{label(ctx){const tot=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;return`  ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw)/tot*100)}%)`;}}},
-        datalabels:{display:false}
-      }
+    /* ═══════════════════════════════════════════════
+       ROUTE HELPERS
+    ═══════════════════════════════════════════════ */
+    /** Returns expanded list of route names for the current user */
+    function getExpandedRoutes() {
+      if (!currentRoute) return [];
+      return ROUTE_EXPANSION[currentRoute] || [currentRoute];
     }
-  });
-  pmChart.$noData=true;
-}
 
-function updatePMPieChart(all,closed,overdue){
-  all=Number(all||0);closed=Number(closed||0);overdue=Number(overdue||0);
-  if(!pmChart)initPMPieChart();if(!pmChart)return;
-  const has=all||closed||overdue;
-  pmChart.$noData=!has;
-  pmChart.data.datasets[0].data=has?[closed,overdue,all]:[0,0,1];
-  pmChart.data.datasets[0].backgroundColor=has?["#22c55e","#ef4444","#8b5cf6"]:["#e5e7eb","#e5e7eb","#e5e7eb"];
-  pmChart.update();
-}
-
-/* ═══════════════════════════════════════════════════
-   POTENTIAL PIE CHART
-═══════════════════════════════════════════════════ */
-let potentialChart=null;
-
-function initPotentialChart(){
-  const canvas=document.getElementById("potentialPieCanvas");
-  if(!canvas)return;
-  if(potentialChart){potentialChart.destroy();potentialChart=null;}
-  potentialChart=new Chart(canvas.getContext("2d"),{
-    type:"pie",
-    plugins:[ChartDataLabels],
-    data:{
-      labels:["Live","Suspended","On Hold"],
-      datasets:[{
-        data:[0,0,1],
-        backgroundColor:["#60a5fa","#d1d5db","#94a3b8"],
-        borderWidth:2,borderColor:"#fff",hoverOffset:6
-      }]
-    },
-    options:{
-      responsive:false,maintainAspectRatio:false,
-      layout:{padding:40},
-      plugins:{
-        legend:{display:false},
-        tooltip:{enabled:true,backgroundColor:"rgba(17,24,39,.88)",padding:10,cornerRadius:8},
-        datalabels:{
-          display(ctx){const tot=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;return(Number(ctx.dataset.data[ctx.dataIndex])/tot)>0.03;},
-          color:"#fff",font:{weight:"800",size:11},
-          textShadowBlur:4,textShadowColor:"rgba(0,0,0,.3)",
-          formatter(v,ctx){const tot=ctx.dataset.data.reduce((a,b)=>Number(a)+Number(b),0)||1;return ctx.chart.data.labels[ctx.dataIndex]+"\n"+v;}
-        }
-      }
+    /** Build Zoho criteria fragment for route filtering */
+    function buildRouteCrit() {
+      const routes = getExpandedRoutes();
+      if (!routes.length) return "";
+      if (routes.length === 1) return `Route_Name == "${routes[0]}"`;
+      return "(" + routes.map(r => `Route_Name == "${r}"`).join(" || ") + ")";
     }
-  });
-}
 
-function updatePotentialChart(live,suspended,onHold){
-  live=Number(live||0);suspended=Number(suspended||0);onHold=Number(onHold||0);
-  if(!potentialChart)initPotentialChart();if(!potentialChart)return;
-  const has=live||suspended||onHold;
-  potentialChart.data.datasets[0].data=has?[live,suspended,onHold]:[0,0,1];
-  potentialChart.data.datasets[0].backgroundColor=has?["#60a5fa","#d1d5db","#94a3b8"]:["#e5e7eb","#e5e7eb","#e5e7eb"];
-  potentialChart.update();
-}
+    /* ═══════════════════════════════════════════════
+       DATE HELPERS
+    ═══════════════════════════════════════════════ */
+    const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    function startOfDay(d) { return new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,0,0); }
+    function endOfDay(d)   { return new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,59,59); }
+    function getFYStartYear(r) { return r.getMonth()>=3 ? r.getFullYear() : r.getFullYear()-1; }
+    function quarterStart(ref) {
+      const m=ref.getMonth(); let q=0;
+      if(m>=3&&m<=5)q=3; else if(m>=6&&m<=8)q=6; else if(m>=9&&m<=11)q=9;
+      return new Date(ref.getFullYear(),q,1);
+    }
+    function getRangeFromState(s) {
+      const now=new Date();
+      if(s.period==="custom"&&s.from&&s.to) return {from:startOfDay(s.from),to:endOfDay(s.to)};
+      if(s.period==="this_month") return {from:startOfDay(new Date(now.getFullYear(),now.getMonth(),1)),to:endOfDay(new Date(now.getFullYear(),now.getMonth()+1,0))};
+      if(s.period==="this_year") { const fy=getFYStartYear(now); return {from:startOfDay(new Date(fy,3,1)),to:endOfDay(new Date(fy+1,3,0))}; }
+      if(s.period==="this_quarter"||s.period==="last_quarter") {
+        const qS=quarterStart(now), off=(s.period==="last_quarter")?-3:0;
+        const from=new Date(qS.getFullYear(),qS.getMonth()+off,1);
+        const to=new Date(from.getFullYear(),from.getMonth()+3,0);
+        return {from:startOfDay(from),to:endOfDay(to)};
+      }
+      return {from:startOfDay(new Date(now.getFullYear(),now.getMonth(),1)),to:endOfDay(new Date(now.getFullYear(),now.getMonth()+1,0))};
+    }
+    function fmtDate(d) { return `${String(d.getDate()).padStart(2,"0")}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`; }
+    function fmtDateTime(d) { return `${fmtDate(d)} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`; }
+    function toInputDate(d) { if(!d)return""; return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
+    function parseInputDate(v) { if(!v)return null; const[y,m,d]=v.split("-").map(Number); return new Date(y,m-1,d); }
+    function labelFor(s) { if(s.period==="custom"&&s.from&&s.to){const r=getRangeFromState(s);return`${fmtDate(r.from)} – ${fmtDate(r.to)}`;} return{this_month:"This month",this_quarter:"This quarter",last_quarter:"Last quarter",this_year:"This year"}[s.period]||"This month"; }
+    function getState(t) { return t==="serviceq"?periodServiceQ:t==="contracts"?periodContracts:t==="pm"?periodPM:periodSpares; }
+    function fmtAmt(v) {
+      const n = parseFloat(String(v || "0").replace(/,/g, "")) || 0;
+      if (n === 0) return "0";
+      // Show full number with 2 decimal places, strip trailing .00
+      return n % 1 === 0 ? String(Math.round(n)) : n.toFixed(2);
+    }
+    function setVal(sel,v) { $(sel).text(v==null?"0":String(v)); }
+    function setAmt(sel,v)  { $(sel).text(fmtAmt(v)); }
+    function updatePeriodLabels() { $("#sparesPeriodLabel").text(labelFor(periodSpares)); $("#serviceqPeriodLabel").text(labelFor(periodServiceQ)); $("#contractsPeriodLabel").text(labelFor(periodContracts)); $("#pmPeriodLabel").text(labelFor(periodPM)); }
 
-/* ═══════════════════════════════════════════════════
-   MODAL
-═══════════════════════════════════════════════════ */
-function openModal(){
-  const st=getState(activeTarget);
-  const labels={spares:"Spares Quotation",serviceq:"Service Quotations",contracts:"Service Contracts",pm:"PM"};
-  $("#filterModalTitle").text("Filters — "+labels[activeTarget]);
-  $("#periodSelect").val(st.period);
-  const isC=st.period==="custom";
-  $(".date-range-field").toggle(isC);
-  $("#dateFrom").val(isC?toInputDate(st.from):"");
-  $("#dateTo").val(isC?toInputDate(st.to):"");
-  $("#filterBackdrop").addClass("show");
-  $("#filterModal").addClass("show").attr("aria-hidden","false");
-  $("body").addClass("modal-open");
-}
-function closeModal(){
-  $("#filterModal").removeClass("show").attr("aria-hidden","true");
-  $("#filterBackdrop").removeClass("show");
-  $("body").removeClass("modal-open");
-}
+    /* ═══════════════════════════════════════════════
+       ZOHO DATE PARSER (handles both datetime and date-only strings)
+       Formats: "02-Mar-2026 16:29:06" | "02-Mar-2026"
+    ═══════════════════════════════════════════════ */
+    const MO = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+    function parseZDate(str) {
+      if (!str || str === "—" || str === "-") return null;
+      str = str.trim();
+      const parts = str.split(" ");
+      const datePart = parts[0], timePart = parts[1] || "0:0:0";
+      const dp = datePart.split("-");
+      if (dp.length !== 3) return null;
+      const [dd, mon, yyyy] = dp;
+      const [hh, mm, ss] = timePart.split(":");
+      const d = new Date(+yyyy, MO[mon] ?? 0, +dd, +hh||0, +mm||0, +ss||0);
+      return isNaN(d) ? null : d;
+    }
 
-$(document).on("click","#btn_spares,#btn_serviceq,#btn_contracts,#btn_pm",function(e){
-  e.preventDefault();e.stopPropagation();
-  activeTarget=this.id.replace("btn_","");
-  openModal();
-});
-$(document).on("click","#filterModalClose,#filterBackdrop",closeModal);
-$("#periodSelect").on("change",function(){
-  const c=$(this).val()==="custom";
-  $(".date-range-field").toggle(c);
-  if(!c)$("#dateFrom,#dateTo").val("");
-});
-$("#filterClear").on("click",function(){
-  const st=getState(activeTarget);
-  st.period="this_month";st.from=null;st.to=null;
-  closeModal();updatePeriodLabels();
-  if(userID)loadSection(activeTarget);
-});
-$("#filterApply").on("click",function(){
-  const st=getState(activeTarget);
-  st.period=$("#periodSelect").val();
-  if(st.period==="custom"){
-    const f=parseInputDate($("#dateFrom").val());
-    const t=parseInputDate($("#dateTo").val());
-    if(!f||!t){alert("Please select both dates.");return;}
-    st.from=f<=t?f:t;st.to=f<=t?t:f;
-  }else{st.from=null;st.to=null;}
-  closeModal();updatePeriodLabels();
-  if(userID)loadSection(activeTarget);
-});
+    /* ═══════════════════════════════════════════════
+       PM PIE CHART
+    ═══════════════════════════════════════════════ */
+    let pmChart = null;
+    Chart.register(ChartDataLabels);
+    const outsideLabelsPlugin = { id:"outsideLabels", afterDatasetsDraw(chart) { if(chart.$noData)return; const{ctx,canvas}=chart; const dataset=chart.data.datasets[0]; const meta=chart.getDatasetMeta(0); const total=dataset.data.reduce((a,b)=>Number(a)+Number(b),0)||1; const isMob=canvas.width<=220; const RADIAL=isMob?18:28; const TICK=isMob?14:22; const FS=isMob?10:12; const VS=isMob?11:13; const LINE_H=FS+VS+8; const items=[]; meta.data.forEach((arc,i)=>{ const value=Number(dataset.data[i]||0); if(!value)return; const midAngle=(arc.startAngle+arc.endAngle)/2; const outerR=arc.outerRadius; const ex=arc.x+(outerR+RADIAL)*Math.cos(midAngle); const ey=arc.y+(outerR+RADIAL)*Math.sin(midAngle); items.push({i,arc,value,label:chart.data.labels[i],color:dataset.backgroundColor[i],pct:Math.round(value/total*100),midAngle,outerR,ex,ey,side:Math.cos(midAngle)>=0?"right":"left"}); }); for(let a=0;a<items.length;a++){for(let b=a+1;b<items.length;b++){if(items[a].side!==items[b].side)continue;if(Math.abs(items[a].ey-items[b].ey)<LINE_H*1.6){const ca=Math.abs(Math.cos(items[a].midAngle));const cb=Math.abs(Math.cos(items[b].midAngle));const flip=ca<cb?a:b;items[flip].side=items[flip].side==="right"?"left":"right";}}} ctx.save(); items.forEach(({arc,value,label,color,pct,midAngle,outerR,ex,ey,side})=>{ const cx=arc.x,cy=arc.y; const isRight=side==="right"; const x1=cx+(outerR+4)*Math.cos(midAngle); const y1=cy+(outerR+4)*Math.sin(midAngle); const x3=ex+(isRight?TICK:-TICK); ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(ex,ey); ctx.lineTo(x3,ey); ctx.strokeStyle="#9ca3af"; ctx.lineWidth=1.2; ctx.lineJoin="round"; ctx.stroke(); ctx.beginPath(); ctx.arc(ex,ey,3,0,Math.PI*2); ctx.fillStyle=color; ctx.fill(); const tx=x3+(isRight?5:-5); ctx.textAlign=isRight?"left":"right"; ctx.font=`700 ${FS}px "DM Sans",system-ui,sans-serif`; ctx.fillStyle="#374151"; ctx.textBaseline="bottom"; ctx.fillText(label,tx,ey-1); ctx.font=`800 ${VS}px "DM Sans",system-ui,sans-serif`; ctx.fillStyle=color==="#e5e7eb"?"#9ca3af":color; ctx.textBaseline="top"; ctx.fillText(`${value} (${pct}%)`,tx,ey+2); }); ctx.restore(); } };
 
-/* ═══════════════════════════════════════════════════
-   DATA LOADING — ZOHO API CALLS
-   All criteria use userID / currentRegion.
-   Replace report names & field names to match your schema.
-═══════════════════════════════════════════════════ */
-function esc(s){return String(s||"").replace(/"/g,'\\"');}
+    function initPMPieChart() { const canvas=document.getElementById("pmPieCanvas"); if(!canvas)return; if(pmChart){pmChart.destroy();pmChart=null;} const size=canvas.width; const pad=Math.round(size*0.30); pmChart=new Chart(canvas.getContext("2d"),{type:"doughnut",plugins:[outsideLabelsPlugin],data:{labels:["Closed","Overdue","All"],datasets:[{data:[0,0,1],backgroundColor:["#e5e7eb","#e5e7eb","#e5e7eb"],borderWidth:4,borderColor:"#fff",hoverOffset:6,borderRadius:4,spacing:1}]},options:{responsive:false,maintainAspectRatio:false,cutout:"65%",layout:{padding:{top:pad,right:pad+8,bottom:pad,left:pad+8}},animation:{duration:600,easing:"easeInOutQuart"},plugins:{legend:{display:false},tooltip:{enabled:true,backgroundColor:"rgba(17,24,39,.88)",padding:10,cornerRadius:8,callbacks:{label(ctx){const tot=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;return`  ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw)/tot*100)}%)`}}},datalabels:{display:false}}}}); pmChart.$noData=true; }
+    function updatePMPieChart(all,closed,overdue) { all=Number(all||0);closed=Number(closed||0);overdue=Number(overdue||0); if(!pmChart)initPMPieChart(); if(!pmChart)return; const has=all||closed||overdue; pmChart.$noData=!has; pmChart.data.datasets[0].data=has?[closed,overdue,all]:[0,0,1]; pmChart.data.datasets[0].backgroundColor=has?["#22c55e","#ef4444","#8b5cf6"]:["#e5e7eb","#e5e7eb","#e5e7eb"]; pmChart.update(); }
 
-function loadSection(t){
-  $("#loader").show();
-  if(t==="spares")         loadSpares(()=>$("#loader").hide());
-  else if(t==="serviceq")  loadServiceQ(()=>$("#loader").hide());
-  else if(t==="contracts") loadContracts(()=>$("#loader").hide());
-  else if(t==="pm")        loadPM(()=>$("#loader").hide());
-}
+    let potentialChart = null;
+    function initPotentialChart() {
+      const canvas = document.getElementById("potentialPieCanvas");
+      if (!canvas) return;
+      if (potentialChart) { potentialChart.destroy(); potentialChart = null; }
 
-/* ── Helper: date criteria for a state ── */
-function addedCrit(s){const r=getRangeFromState(s);return`Added_Time>="${fmtDateTime(r.from)}"&&Added_Time<="${fmtDateTime(r.to)}"`;}
+      /* Outside-label plugin — same approach as PM chart, no overlapping */
+      const sqOutsideLabels = {
+        id: "sqOutsideLabels",
+        afterDatasetsDraw(chart) {
+          if (chart.$noData) return;
+          const { ctx } = chart;
+          const dataset  = chart.data.datasets[0];
+          const meta     = chart.getDatasetMeta(0);
+          const total    = dataset.data.reduce((a,b)=>Number(a)+Number(b),0) || 1;
+          const isMob    = canvas.width <= 220;
+          const RADIAL   = isMob ? 16 : 22;
+          const TICK     = isMob ? 12 : 20;
+          const FS       = isMob ? 9  : 11;
+          const VS       = isMob ? 10 : 12;
+          const LINE_H   = FS + VS + 10;
 
-/* ── Spares Quotation ── */
-function loadSpares(done){
-  // TODO: Replace with actual Zoho API calls
-  // Example structure:
-  // ZOHO.CREATOR.API.getRecordCount({ appName:APP_NAME, reportName:SPARES_REPORT,
-  //   criteria:`Sales_Rep.ID==${userID}&&Status=="WON"&&${addedCrit(periodSpares)}` })
-  //   .then(r=>{ setVal("#sparesWonCount", r.result.records_count); ... })
-  //
-  // For now showing placeholder zeros — wire up each status below:
-  setVal("#sparesWonCount",  0); setVal("#sparesWonSpaces",  0); setVal("#sparesWonAmt",   0);
-  setVal("#sparesLostCount", 0); setVal("#sparesLostSpaces", 0); setVal("#sparesLostAmt",  0);
-  setVal("#sparesCreatedCount",0);setVal("#sparesCreatedSpaces",0);setVal("#sparesCreatedAmt",0);
-  setVal("#sparesUndiscCount",0); setVal("#sparesUndiscSpaces",0);setVal("#sparesUndiscAmt", 0);
-  setVal("#sparesAwaitCount", 0); setVal("#sparesAwaitSpaces", 0);setVal("#sparesAwaitAmt",  0);
-  if(done)done();
-}
-
-/* ── Service Quotations ── */
-function loadServiceQ(done){
-  setVal("#serviceqWonCount",   0); setVal("#serviceqWonSpaces",   0); setVal("#serviceqWonAmt",   0);
-  setVal("#serviceqLostCount",  0); setVal("#serviceqLostSpaces",  0); setVal("#serviceqLostAmt",  0);
-  setVal("#serviceqCreatedCount",0);setVal("#serviceqCreatedSpaces",0);setVal("#serviceqCreatedAmt",0);
-  setVal("#serviceqUndiscCount", 0);setVal("#serviceqUndiscSpaces", 0);setVal("#serviceqUndiscAmt", 0);
-  setVal("#serviceqAwaitCount",  0);setVal("#serviceqAwaitSpaces",  0);setVal("#serviceqAwaitAmt",  0);
-  if(done)done();
-}
-
-/* ── Service Contracts ── */
-function loadContracts(done){
-  setVal("#contractsLiveCount",    0);setVal("#contractsLiveSpaces",    0);setVal("#contractsLiveAmt",    0);
-  setVal("#contractsExpiredCount", 0);setVal("#contractsExpiredSpaces", 0);setVal("#contractsExpiredAmt", 0);
-  setVal("#contractsTermCount",    0);setVal("#contractsTermSpaces",    0);setVal("#contractsTermAmt",    0);
-  if(done)done();
-}
-
-/* ── PM ── */
-function loadPM(done){
-  setVal("#pmAll",0); setVal("#pmClosed",0); setVal("#pmOverdue",0);
-  updatePMPieChart(0,0,0);
-  if(done)done();
-}
-
-/* ── Potential ── */
-function loadPotential(done){
-  updatePotentialChart(0,0,0);
-  if(done)done();
-}
-
-/* ── Load all ── */
-function loadAll(){
-  $("#loader").show();
-  loadSpares(()=>{
-    loadServiceQ(()=>{
-      loadContracts(()=>{
-        loadPM(()=>{
-          loadPotential(()=>{
-            updatePeriodLabels();
-            $("#loader").hide();
+          const items = [];
+          meta.data.forEach((arc, i) => {
+            const value = Number(dataset.data[i] || 0);
+            if (!value) return;
+            const midAngle = (arc.startAngle + arc.endAngle) / 2;
+            const outerR   = arc.outerRadius;
+            const ex = arc.x + (outerR + RADIAL) * Math.cos(midAngle);
+            const ey = arc.y + (outerR + RADIAL) * Math.sin(midAngle);
+            items.push({
+              arc, value,
+              label: chart.data.labels[i],
+              color: dataset.backgroundColor[i],
+              pct: Math.round(value / total * 100),
+              midAngle, outerR, ex, ey,
+              side: Math.cos(midAngle) >= 0 ? "right" : "left"
+            });
           });
-        });
-      });
-    });
-  });
-}
 
-/* ═══════════════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════════════ */
-$(document).ready(function(){
-  initPMPieChart();
-  initPotentialChart();
-  $(".date-range-field").hide();
+          /* Resolve overlapping labels on same side */
+          for (let a = 0; a < items.length; a++) {
+            for (let b = a + 1; b < items.length; b++) {
+              if (items[a].side !== items[b].side) continue;
+              if (Math.abs(items[a].ey - items[b].ey) < LINE_H * 2.2) {
+                const ca = Math.abs(Math.cos(items[a].midAngle));
+                const cb = Math.abs(Math.cos(items[b].midAngle));
+                const flip = ca < cb ? a : b;
+                items[flip].side = items[flip].side === "right" ? "left" : "right";
+              }
+            }
+          }
 
-  // Try Zoho init — falls back to demo mode if not in Zoho env
-  if(typeof ZOHO !== "undefined" && ZOHO.CREATOR){
-    ZOHO.CREATOR.init().then(()=>{
-      const params=ZOHO.CREATOR.UTIL.getInitParams()||{};
-      const loginUser=params.loginUser||"";
-      ZOHO.CREATOR.API.getAllRecords({
-        appName:APP_NAME, reportName:USER_REPORT,
-        criteria:`(Email=="${loginUser}")`, page:1, pageSize:1
-      }).then(res=>{
-        if(res.data&&res.data.length>0){
-          const rec=res.data[0];
-          UserName=rec.Name||""; userID=rec.ID||"";
-          currentRole=rec.Role||""; currentRegion=rec.Region||rec.New_Route_Name||"";
-          $("#srAvatar").text(currentRole?currentRole.substring(0,2).toUpperCase():"SR");
-          $("#srRegion").text(currentRegion||"—");
-          loadAll();
-        }else{
-          $("#loader").hide();
+          ctx.save();
+          items.forEach(({ arc, value, label, color, pct, midAngle, outerR, ex, ey, side }) => {
+            const isRight = side === "right";
+            const x1 = arc.x + (outerR + 4) * Math.cos(midAngle);
+            const y1 = arc.y + (outerR + 4) * Math.sin(midAngle);
+            const x3 = ex + (isRight ? TICK : -TICK);
+
+            /* Leader line */
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(ex, ey);
+            ctx.lineTo(x3, ey);
+            ctx.strokeStyle = "#9ca3af";
+            ctx.lineWidth = 1.2;
+            ctx.lineJoin = "round";
+            ctx.stroke();
+
+            /* Dot */
+            ctx.beginPath();
+            ctx.arc(ex, ey, 3, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+
+            /* Label text */
+            const tx = x3 + (isRight ? 5 : -5);
+            ctx.textAlign = isRight ? "left" : "right";
+            ctx.font = `700 ${FS}px "DM Sans",system-ui,sans-serif`;
+            ctx.fillStyle = "#374151";
+            ctx.textBaseline = "bottom";
+            ctx.fillText(label, tx, ey - 1);
+
+            /* Value + pct */
+            ctx.font = `800 ${VS}px "DM Sans",system-ui,sans-serif`;
+            ctx.fillStyle = "#111827";
+            ctx.textBaseline = "top";
+            ctx.fillText(`${value} (${pct}%)`, tx, ey + 2);
+          });
+          ctx.restore();
         }
-      }).catch(()=>{ demoMode(); });
-    }).catch(()=>{ demoMode(); });
-  } else {
-    demoMode();
-  }
-});
+      };
 
-/* ── Demo mode — populate with sample data ── */
-function demoMode(){
-  $("#srAvatar").text("MK");
-  $("#srRegion").text("South");
-  // Spares
-  setVal("#sparesWonCount",12);    setVal("#sparesWonSpaces",103);  setVal("#sparesWonAmt",325);
-  setVal("#sparesLostCount",5);    setVal("#sparesLostSpaces",67);  setVal("#sparesLostAmt",11);
-  setVal("#sparesCreatedCount",32);setVal("#sparesCreatedSpaces",624);setVal("#sparesCreatedAmt",525);
-  setVal("#sparesUndiscCount",5);  setVal("#sparesUndiscSpaces",322);setVal("#sparesUndiscAmt",41);
-  setVal("#sparesAwaitCount",10);  setVal("#sparesAwaitSpaces",187);setVal("#sparesAwaitAmt",121);
-  // Service Quotations
-  setVal("#serviceqWonCount",12);  setVal("#serviceqWonSpaces",103);  setVal("#serviceqWonAmt",325);
-  setVal("#serviceqLostCount",5);  setVal("#serviceqLostSpaces",67);   setVal("#serviceqLostAmt",11);
-  setVal("#serviceqCreatedCount",32);setVal("#serviceqCreatedSpaces",624);setVal("#serviceqCreatedAmt",525);
-  setVal("#serviceqUndiscCount",5);setVal("#serviceqUndiscSpaces",322);setVal("#serviceqUndiscAmt",41);
-  setVal("#serviceqAwaitCount",10);setVal("#serviceqAwaitSpaces",187); setVal("#serviceqAwaitAmt",121);
-  // Contracts
-  setVal("#contractsLiveCount",162);  setVal("#contractsLiveSpaces",5103); setVal("#contractsLiveAmt",3025);
-  setVal("#contractsExpiredCount",15);setVal("#contractsExpiredSpaces",167);setVal("#contractsExpiredAmt",101);
-  setVal("#contractsTermCount",0);    setVal("#contractsTermSpaces",0);    setVal("#contractsTermAmt",0);
-  // PM
-  setVal("#pmAll",250); setVal("#pmClosed",8); setVal("#pmOverdue",32);
-  updatePMPieChart(250,8,32);
-  // Potential
-  updatePotentialChart(4329,425,1205);
-  updatePeriodLabels();
-}
-</script>
+      potentialChart = new Chart(canvas.getContext("2d"), {
+        type: "pie",
+        plugins: [sqOutsideLabels],
+        data: {
+          labels: ["Pending", "Closed Won", "Lost"],
+          datasets: [{
+            data: [0, 0, 1],
+            backgroundColor: ["#ffd84d", "#22c55e", "#ef4444"],
+            borderWidth: 2, borderColor: "#fff", hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: false, maintainAspectRatio: false,
+          layout: { padding: { top: 30, right: 90, bottom: 40, left: 93.8 } },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              enabled: true, backgroundColor: "rgba(17,24,39,.88)", padding: 10, cornerRadius: 8,
+              callbacks: {
+                label(ctx) {
+                  const tot = ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
+                  return `  ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw)/tot*100)}%)`;
+                }
+              }
+            },
+            datalabels: { display: false }
+          }
+        }
+      });
+      potentialChart.$noData = true;
+    }
+    function updatePotentialChart(pending, won, lost) {
+      pending=Number(pending||0); won=Number(won||0); lost=Number(lost||0);
+      if (!potentialChart) initPotentialChart();
+      if (!potentialChart) return;
+      const has = pending || won || lost;
+      potentialChart.$noData = !has;
+      potentialChart.data.datasets[0].data        = has ? [pending, won, lost] : [0, 0, 1];
+      potentialChart.data.datasets[0].backgroundColor = has
+        ? ["#ffd84d", "#22c55e", "#ef4444"]
+        : ["#e5e7eb", "#e5e7eb", "#e5e7eb"];
+      potentialChart.update();
+    }
+
+    /* ═══════════════════════════════════════════════
+       MODAL
+    ═══════════════════════════════════════════════ */
+    function openModal() { const st=getState(activeTarget); const labels={spares:"Spares Quotation",serviceq:"Service Quotations",contracts:"Service Contracts",pm:"PM"}; $("#filterModalTitle").text("Filters — "+labels[activeTarget]); $("#periodSelect").val(st.period); const isC=st.period==="custom"; $(".date-range-field").toggle(isC); $("#dateFrom").val(isC?toInputDate(st.from):""); $("#dateTo").val(isC?toInputDate(st.to):""); $("#filterBackdrop").addClass("show"); $("#filterModal").addClass("show").attr("aria-hidden","false"); $("body").addClass("modal-open"); }
+    function closeModal() { $("#filterModal").removeClass("show").attr("aria-hidden","true"); $("#filterBackdrop").removeClass("show"); $("body").removeClass("modal-open"); }
+    $(document).on("click","#btn_spares,#btn_serviceq,#btn_contracts,#btn_pm",function(e){ e.preventDefault(); e.stopPropagation(); activeTarget=this.id.replace("btn_",""); openModal(); });
+    $(document).on("click","#filterModalClose,#filterBackdrop",closeModal);
+    $("#periodSelect").on("change",function(){ const c=$(this).val()==="custom"; $(".date-range-field").toggle(c); if(!c)$("#dateFrom,#dateTo").val(""); });
+    $("#filterClear").on("click",function(){ const st=getState(activeTarget); st.period="this_month"; st.from=null; st.to=null; closeModal(); updatePeriodLabels(); if(userID)loadSection(activeTarget); });
+    $("#filterApply").on("click",function(){ const st=getState(activeTarget); st.period=$("#periodSelect").val(); if(st.period==="custom"){ const f=parseInputDate($("#dateFrom").val()); const t=parseInputDate($("#dateTo").val()); if(!f||!t){alert("Please select both dates.");return;} st.from=f<=t?f:t; st.to=f<=t?t:f; } else { st.from=null; st.to=null; } closeModal(); updatePeriodLabels(); if(userID)loadSection(activeTarget); });
+
+    /* ═══════════════════════════════════════════════
+       DATA LOADING
+    ═══════════════════════════════════════════════ */
+    function loadSection(t) { $("#loader").show(); if(t==="spares")renderSpares(()=>$("#loader").hide()); else if(t==="serviceq")loadServiceQ(()=>$("#loader").hide()); else if(t==="contracts")loadContracts(()=>$("#loader").hide()); else if(t==="pm")loadPM(()=>$("#loader").hide()); }
+
+    /* ── Paginated fetch helper ── */
+    async function fetchAllPages(reportName, criteria) {
+      let all=[], page=1, hasMore=true;
+      while(hasMore) {
+        try {
+          const resp = await ZOHO.CREATOR.API.getAllRecords({appName:APP_NAME, reportName, criteria, page, pageSize:200});
+          const batch = resp?.data || [];
+          all = all.concat(batch); hasMore = batch.length===200; page++;
+        } catch(e) { console.error(`Fetch error [${reportName}]:`,e); hasMore=false; }
+      }
+      return all;
+    }
+
+    /* ═══════════════════════════════════════════════
+       SPARES QUOTATION
+       Status → date field mapping:
+         New                       → Added_Time
+         Waiting For Customer Approval → Customer_Approval_Date
+         Approved By Customer       → Accepted_Date
+         Rejected By Customer       → Rejected_Date
+    ═══════════════════════════════════════════════ */
+    const SPARES_STATUS_DATE_FIELD = {
+      "New"                            : "Added_Time",
+      "Waiting For Customer Approval"  : "Customer_Approval_Date",
+      "Approved By Customer"           : "Accepted_Date",
+      "Rejected By Customer"           : "Rejected_Date",
+    };
+
+    /* ═══════════════════════════════════════════════
+       NAVIGATE TO SPARES REPORT
+       Each status uses its own date field in the URL:
+         New                          → Added_Time
+         Waiting For Customer Approval → Customer_Approval_Date
+         Approved By Customer          → Accepted_Date
+         Rejected By Customer          → Rejected_Date
+    ═══════════════════════════════════════════════ */
+    const SPARES_STATUS_URL_FIELD = {
+      "New"                           : "Added_Time",
+      "Waiting For Customer Approval" : "Customer_Approval_Date",
+      "Approved By Customer"          : "Accepted_Date",
+      "Rejected By Customer"          : "Rejected_Date",
+    };
+
+    function navigateSpares(zohoStatus) {
+      const st      = periodSpares;
+      const { from, to } = getRangeFromState(st);
+      const dateField = SPARES_STATUS_URL_FIELD[zohoStatus] || "Added_Time";
+
+      // Pass raw values — navigateParentURL encodes once itself; pre-encoding causes %2520
+      const dateParam = `${fmtDate(from)};${fmtDate(to)}`;
+
+      // Route filter — each expanded route as separate param
+      const routes = getExpandedRoutes();
+      const routeParam = routes.length ? `&Route_Name=[${routes.join(",")}]` : "";
+
+      const url = REPORT_BASE_URL +
+        `Spare_Quotation_Report` +
+        `?${dateField}=${dateParam}&${dateField}_op=58` +
+        `&Quotation_Status=${zohoStatus}` +
+        routeParam;
+
+      console.log("[Spares Navigate]", url);
+      ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" });
+    }
+
+    /** Filter records for a given status using its own date field */
+    function filterSparesForStatus(records, status, from, to) {
+      const dateField = SPARES_STATUS_DATE_FIELD[status];
+      return records.filter(r => {
+        if (r.Quotation_Status !== status) return false;
+        const d = parseZDate(r[dateField]);
+        if (!d) return false;
+        return d >= from && d <= to;
+      });
+    }
+
+    /** Fetch spares records for the current route (all statuses, no date filter — filter client-side) */
+    async function fetchSparesRecords() {
+      const routeCrit = buildRouteCrit();
+      const criteria  = routeCrit || "";   // empty = no route filter (fallback)
+      console.log("[Spares] fetch criteria:", criteria);
+      allSparesRecords = await fetchAllPages(SPARES_REPORT, criteria);
+      console.log("[Spares] total records fetched:", allSparesRecords.length);
+    }
+
+    /** Render / re-render spares from cached records using current period state */
+    function renderSpares(done) {
+      const st = periodSpares;
+      const { from, to } = getRangeFromState(st);
+
+      // Each status filters by its own date field
+      const wonRecs   = filterSparesForStatus(allSparesRecords, "Approved By Customer", from, to);
+      const lostRecs  = filterSparesForStatus(allSparesRecords, "Rejected By Customer", from, to);
+      const newRecs   = filterSparesForStatus(allSparesRecords, "New", from, to);
+      const undiscRecs= filterSparesForStatus(allSparesRecords, "Waiting For Customer Approval", from, to);
+
+      /* Strip commas (Indian format "1,23,456.00") before parsing */
+      const parseAmt = v => parseFloat(String(v||"0").replace(/,/g,"")) || 0;
+      const sumAmt   = recs => Math.round(recs.reduce((s,r) => s + parseAmt(r.Grand_Total1), 0));
+
+      /* Debug: log first record keys so we can confirm field name */
+      if (allSparesRecords.length) {
+        const sample = allSparesRecords[0];
+        console.log("[Spares] sample record keys:", Object.keys(sample));
+        console.log("[Spares] Grand_Total1 value:", sample.Grand_Total1);
+      }
+
+      setVal("#sparesWonCount",   wonRecs.length);   setAmt("#sparesWonAmt",   sumAmt(wonRecs));
+      setVal("#sparesLostCount",  lostRecs.length);  setAmt("#sparesLostAmt",  sumAmt(lostRecs));
+      setVal("#sparesCreatedCount",newRecs.length);  setAmt("#sparesCreatedAmt",sumAmt(newRecs));
+      setVal("#sparesUndiscCount",undiscRecs.length);setAmt("#sparesUndiscAmt", sumAmt(undiscRecs));
+
+      console.log(`[Spares] Won:${wonRecs.length} Lost:${lostRecs.length} Created:${newRecs.length} UnderDisc:${undiscRecs.length}`);
+      if (done) done();
+    }
+
+    /* ═══════════════════════════════════════════════
+       SERVICE QUOTATION
+       UI Label      → Zoho Status    → Date field
+       Pending       → Pending        → Added_Time
+       Closed Won    → Closed Won     → Won_Date
+       Lost          → Lost           → Lost_Date
+       Spaces = Total_Quantity  |  Amount = Grand_Total
+    ═══════════════════════════════════════════════ */
+    const SQ_STATUS_DATE_FIELD = {
+      "Pending"    : "Added_Time",
+      "Closed Won" : "Won_Date",
+      "Lost"       : "Lost_Date",
+    };
+    const SQ_STATUS_URL_FIELD = SQ_STATUS_DATE_FIELD;
+
+    let allServiceQRecords = [];
+
+    async function fetchServiceQRecords() {
+      const routeCrit = buildRouteCrit();
+      const criteria  = routeCrit || "";
+      console.log("[ServiceQ] fetch criteria:", criteria);
+      allServiceQRecords = await fetchAllPages(SERVICEQ_REPORT, criteria);
+      console.log("[ServiceQ] total records fetched:", allServiceQRecords.length);
+      if (allServiceQRecords.length) {
+        const s = allServiceQRecords[0];
+        console.log("[ServiceQ] sample keys:", Object.keys(s));
+        console.log("[ServiceQ] Grand_Total:", s.Grand_Total, "| Total_Quantity:", s.Total_Quantity, "| Status:", s.Status);
+      }
+    }
+
+    function filterServiceQForStatus(records, status, from, to) {
+      const primaryField = SQ_STATUS_DATE_FIELD[status];
+      return records.filter(r => {
+        if (r.Service_Quotation_Status !== status) return false;
+        // Use the status-specific date field; fall back to Added_Time if empty
+        const d = parseZDate(r[primaryField]) || parseZDate(r["Added_Time"]);
+        if (!d) return false;
+        return d >= from && d <= to;
+      });
+    }
+
+    function navigateServiceQ(zohoStatus) {
+      const st = periodServiceQ;
+      const { from, to } = getRangeFromState(st);
+      const dateField = SQ_STATUS_URL_FIELD[zohoStatus] || "Added_Time";
+      const dateParam = `${fmtDate(from)};${fmtDate(to)}`;
+      const routes = getExpandedRoutes();
+      const routeParam = routes.length ? `&Route_Name=[${routes.join(",")}]` : "";
+      const url = REPORT_BASE_URL +
+        `Service_Quotation_Report` +
+        `?${dateField}=${dateParam}&${dateField}_op=58` +
+        `&Service_Quotation_Status=${zohoStatus}` +
+        routeParam;
+      console.log("[ServiceQ Navigate]", url);
+      ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" });
+    }
+
+    function renderServiceQ(done) {
+      const st = periodServiceQ;
+      const { from, to } = getRangeFromState(st);
+      const parseAmt = v => parseFloat(String(v||"0").replace(/,/g,"")) || 0;
+      const parseQty = v => parseInt(String(v||"0").replace(/,/g,"")) || 0;
+      const sumAmt   = recs => recs.reduce((s,r) => s + parseAmt(r.Grand_Total), 0).toFixed(2);
+      const sumQty   = recs => recs.reduce((s,r) => s + parseQty(r.Total_Quantity), 0);
+
+      const pendingRecs = filterServiceQForStatus(allServiceQRecords, "Pending",    from, to);
+      const wonRecs     = filterServiceQForStatus(allServiceQRecords, "Closed Won", from, to);
+      const lostRecs    = filterServiceQForStatus(allServiceQRecords, "Lost",       from, to);
+
+      setVal("#serviceqPendingCount",  pendingRecs.length); setVal("#serviceqPendingSpaces", sumQty(pendingRecs)); setAmt("#serviceqPendingAmt",  sumAmt(pendingRecs));
+      setVal("#serviceqWonCount",      wonRecs.length);     setVal("#serviceqWonSpaces",     sumQty(wonRecs));     setAmt("#serviceqWonAmt",      sumAmt(wonRecs));
+      setVal("#serviceqLostCount",     lostRecs.length);    setVal("#serviceqLostSpaces",    sumQty(lostRecs));    setAmt("#serviceqLostAmt",     sumAmt(lostRecs));
+
+      console.log(`[ServiceQ] Pending:${pendingRecs.length} Won:${wonRecs.length} Lost:${lostRecs.length}`);
+      console.log(`[ServiceQ] Total cached records:${allServiceQRecords.length} | Period from:${from} to:${to}`);
+      if (allServiceQRecords.length) {
+        const s = allServiceQRecords[0];
+        console.log(`[ServiceQ] Sample — Status:"${s.Service_Quotation_Status}" Added_Time:"${s.Added_Time}" Won_Date:"${s.Won_Date}" Lost_Date:"${s.Lost_Date}" Grand_Total:"${s.Grand_Total}" Total_Quantity:"${s.Total_Quantity}"`);
+      }
+      if (done) done();
+    }
+
+    function loadServiceQ(done) {
+      renderServiceQ(done);
+    }
+    /* ═══════════════════════════════════════════════
+       SERVICE CONTRACTS
+       UI Label     → Zoho Status  → Date field
+       Live         → Live         → Added_Time
+       On Hold      → On Hold      → On_Hold_Date
+       Suspended    → Suspended    → Suspended_Date
+       Expired      → Lost         → Lost_Date
+       Terminated   → Terminated   → Terminate_Date
+       Spaces = Total_Quantity | Amount = Grand_Total
+       Expiring This Quarter → days_before_contract_renewal falls in current quarter
+    ═══════════════════════════════════════════════ */
+    const CT_STATUS_DATE_FIELD = {
+      "Live"       : "Added_Time",
+      "On Hold"    : "On_Hold_Date",
+      "Suspended"  : "Suspended_Date",
+      "Lost"       : "Lost_Date",
+      "Terminated" : "Terminate_Date",
+    };
+    const CT_STATUS_URL_FIELD = CT_STATUS_DATE_FIELD;
+
+    let allContractsRecords = [];
+
+    async function fetchContractsRecords() {
+      const routeCrit = buildRouteCrit();
+      const criteria  = routeCrit || "";
+      console.log("[Contracts] fetch criteria:", criteria);
+      allContractsRecords = await fetchAllPages(CONTRACTS_REPORT, criteria);
+      console.log("[Contracts] total fetched:", allContractsRecords.length);
+      if (allContractsRecords.length) {
+        const s = allContractsRecords[0];
+        console.log("[Contracts] sample keys:", Object.keys(s));
+        console.log("[Contracts] sample:", JSON.stringify({
+          Contract_Status: s.Contract_Status,
+          Added_Time: s.Added_Time,
+          On_Hold_Date: s.On_Hold_Date,
+          Suspended_Date: s.Suspended_Date,
+          Lost_Date: s.Lost_Date,
+          Terminate_Date: s.Terminate_Date,
+          Grand_Total: s.Grand_Total,
+          Total_Quantity: s.Total_Quantity,
+          days_before_contract_renewal: s.days_before_contract_renewal
+        }));
+      }
+    }
+
+    function filterContractsForStatus(records, zohoStatus, from, to) {
+      const primaryField = CT_STATUS_DATE_FIELD[zohoStatus];
+      return records.filter(r => {
+        if (r.Contract_Status !== zohoStatus) return false;
+        const d = parseZDate(r[primaryField]) || parseZDate(r["Added_Time"]);
+        if (!d) return false;
+        return d >= from && d <= to;
+      });
+    }
+
+    function navigateContracts(zohoStatus) {
+      const st = periodContracts;
+      const { from, to } = getRangeFromState(st);
+      const dateField = CT_STATUS_URL_FIELD[zohoStatus] || "Added_Time";
+      const dateParam = `${fmtDate(from)};${fmtDate(to)}`;
+      const routes = getExpandedRoutes();
+      const routeParam = routes.length ? `&Route_Name=[${routes.join(",")}]` : "";
+      const url = REPORT_BASE_URL +
+        `Contract_Report` +
+        `?${dateField}=${dateParam}&${dateField}_op=58` +
+        `&Contract_Status=${zohoStatus}` +
+        routeParam;
+      console.log("[Contracts Navigate]", url);
+      ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" });
+    }
+
+    function navigateContractsExpiring() {
+      // Expiring This Quarter — filter by days_before_contract_renewal in current quarter
+      const qtState = { period: "this_quarter", from: null, to: null };
+      const { from, to } = getRangeFromState(qtState);
+      const dateParam = `${fmtDate(from)};${fmtDate(to)}`;
+      const routes = getExpandedRoutes();
+      const routeParam = routes.length ? `&Route_Name=[${routes.join(",")}]` : "";
+      const url = REPORT_BASE_URL +
+        `Contract_Report` +
+        `?days_before_contract_renewal=${dateParam}&days_before_contract_renewal_op=58` +
+        routeParam;
+      console.log("[Contracts Expiring Navigate]", url);
+      ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" });
+    }
+
+    function renderContracts(done) {
+      const st = periodContracts;
+      const { from, to } = getRangeFromState(st);
+      const parseAmt = v => parseFloat(String(v||"0").replace(/,/g,"")) || 0;
+      const parseQty = v => parseInt(String(v||"0").replace(/,/g,"")) || 0;
+      const sumAmt   = recs => recs.reduce((s,r) => s + parseAmt(r.Grand_Total), 0).toFixed(2);
+      const sumQty   = recs => recs.reduce((s,r) => s + parseQty(r.Total_Quantity), 0);
+
+      const liveRecs      = filterContractsForStatus(allContractsRecords, "Live",       from, to);
+      const onHoldRecs    = filterContractsForStatus(allContractsRecords, "On Hold",    from, to);
+      const suspendedRecs = filterContractsForStatus(allContractsRecords, "Suspended",  from, to);
+      const expiredRecs   = filterContractsForStatus(allContractsRecords, "Lost",       from, to);
+      const termRecs      = filterContractsForStatus(allContractsRecords, "Terminated", from, to);
+
+      // Expiring This Quarter — days_before_contract_renewal falls in current quarter
+      // Independent of period filter
+      const qtState = { period: "this_quarter", from: null, to: null };
+      const { from: qFrom, to: qTo } = getRangeFromState(qtState);
+      const expiringRecs = allContractsRecords.filter(r => {
+        const d = parseZDate(r.days_before_contract_renewal);
+        if (!d) return false;
+        return d >= qFrom && d <= qTo;
+      });
+
+      setVal("#contractsLiveCount",      liveRecs.length);      setVal("#contractsLiveSpaces",      sumQty(liveRecs));      setAmt("#contractsLiveAmt",      sumAmt(liveRecs));
+      setVal("#contractsOnHoldCount",    onHoldRecs.length);    setVal("#contractsOnHoldSpaces",    sumQty(onHoldRecs));    setAmt("#contractsOnHoldAmt",    sumAmt(onHoldRecs));
+      setVal("#contractsSuspendedCount", suspendedRecs.length); setVal("#contractsSuspendedSpaces", sumQty(suspendedRecs)); setAmt("#contractsSuspendedAmt", sumAmt(suspendedRecs));
+      setVal("#contractsExpiredCount",   expiredRecs.length);   setVal("#contractsExpiredSpaces",   sumQty(expiredRecs));   setAmt("#contractsExpiredAmt",   sumAmt(expiredRecs));
+      setVal("#contractsTermCount",      termRecs.length);      setVal("#contractsTermSpaces",      sumQty(termRecs));      setAmt("#contractsTermAmt",      sumAmt(termRecs));
+      setVal("#contractsExpiringCount",  expiringRecs.length);
+
+      console.log(`[Contracts] Live:${liveRecs.length} OnHold:${onHoldRecs.length} Suspended:${suspendedRecs.length} Expired:${expiredRecs.length} Term:${termRecs.length} | Expiring Q:${expiringRecs.length}`);
+      if (done) done();
+    }
+
+    function loadContracts(done) {
+      renderContracts(done);
+    }
+    /* ═══════════════════════════════════════════════
+       PM SECTION
+       Uses getRecordCount — 3 parallel calls
+       All     → Service_Request_Type=="Routine" && Status=="Current month due" && Due_Date in period
+       Closed  → Service_Request_Type=="Routine" && Status=="Closed"           && Closed_Date in period
+       Overdue → Service_Request_Type=="Routine" && Status=="Overdue"          (no date — always current)
+       Route filter applied via Route_Name
+    ═══════════════════════════════════════════════ */
+    function buildPMCrit(extra) {
+      const rc = buildRouteCrit();
+      return rc ? `${extra} && ${rc}` : extra;
+    }
+
+    function navigatePM(type) {
+      const p = { ...pmRouteParams() };
+      p.Service_Request_Type = "Routine";
+      if (type === "all") {
+        p.Status = "Current month due";
+        addDueBetween(p, periodPM);
+        openReport("Open_User_Service_Request", p);
+      } else if (type === "closed") {
+        p.Status = "Closed";
+        addBetween(p, "Closed_Date", fmtDate(getRangeFromState(periodPM).from), fmtDate(getRangeFromState(periodPM).to));
+        openReport("Closed_User_Service_Request", p);
+      } else if (type === "overdue") {
+        p.Status = "Overdue";
+        openReport("Open_User_Service_Request", p);
+      }
+    }
+
+    function loadPM(done) {
+      let pmAll = 0, pmClosed = 0, pmOverdue = 0;
+      const allCrit     = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Current month due" && ${dueDateRangeCrit(periodPM)}`);
+      const closedCrit  = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Closed" && ${closedDateRangeCrit(periodPM)}`);
+      const overdueCrit = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Overdue"`);
+
+      console.log("[PM] All crit:", allCrit);
+
+      const finish = () => {
+        setVal("#pmAll",     pmAll);
+        setVal("#pmClosed",  pmClosed);
+        setVal("#pmOverdue", pmOverdue);
+        updatePMPieChart(pmAll, pmClosed, pmOverdue);
+        if (done) done();
+      };
+
+      Promise.all([
+        ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: allCrit })
+          .then(r => { pmAll     = Number(r?.result?.records_count || 0); })
+          .catch(() => {}),
+        ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: closedCrit })
+          .then(r => { pmClosed  = Number(r?.result?.records_count || 0); })
+          .catch(() => {}),
+        ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: overdueCrit })
+          .then(r => { pmOverdue = Number(r?.result?.records_count || 0); })
+          .catch(() => {}),
+      ]).finally(finish);
+    }
+
+    function dueDateRangeCrit(s) {
+      const r = getRangeFromState(s);
+      return `Due_Date >= "${fmtDate(r.from)}" && Due_Date <= "${fmtDate(r.to)}"`;
+    }
+    function closedDateRangeCrit(s) {
+      const r = getRangeFromState(s);
+      return `Closed_Date >= "${fmtDate(r.from)}" && Closed_Date <= "${fmtDate(r.to)}"`;
+    }
+    function loadPotential(done) {
+      // Always use this_quarter for the pie regardless of the ServiceQ period filter
+      const qtState = { period: "this_quarter", from: null, to: null };
+      const { from, to } = getRangeFromState(qtState);
+
+      const pendingRecs = filterServiceQForStatus(allServiceQRecords, "Pending",    from, to);
+      const wonRecs     = filterServiceQForStatus(allServiceQRecords, "Closed Won", from, to);
+      const lostRecs    = filterServiceQForStatus(allServiceQRecords, "Lost",       from, to);
+
+      updatePotentialChart(pendingRecs.length, wonRecs.length, lostRecs.length);
+      console.log(`[Potential Pie] Q Pending:${pendingRecs.length} Won:${wonRecs.length} Lost:${lostRecs.length}`);
+      if (done) done();
+    }
+
+    async function loadAll() {
+      $("#loader").show();
+      try {
+        // Fetch spares first (async, then render)
+        await fetchSparesRecords();
+        await fetchServiceQRecords();
+        await fetchContractsRecords();
+        renderSpares();
+        loadServiceQ(()=>{loadContracts(()=>{loadPM(()=>{loadPotential(()=>{updatePeriodLabels();$("#loader").hide();});})}); });
+      } catch(e) {
+        console.error("loadAll error:", e);
+        $("#loader").hide();
+      }
+    }
+
+    /* ═══════════════════════════════════════════════
+       INIT
+    ═══════════════════════════════════════════════ */
+    $(document).ready(function() {
+      initPMPieChart(); initPotentialChart(); $(".date-range-field").hide();
+
+      if (typeof ZOHO !== "undefined" && ZOHO.CREATOR) {
+        ZOHO.CREATOR.init().then(() => {
+          const params  = ZOHO.CREATOR.UTIL.getInitParams() || {};
+          const loginUser = params.loginUser || "";
+          ZOHO.CREATOR.API.getAllRecords({
+            appName: APP_NAME, reportName: USER_REPORT,
+            criteria: `(Email=="${loginUser}")`, page: 1, pageSize: 1
+          }).then(res => {
+            if (res.data && res.data.length > 0) {
+              const rec    = res.data[0];
+              UserName     = rec.Name  || "";
+              userID       = rec.ID    || "";
+              currentRole  = rec.Role  || "";
+              currentRoute = rec.New_Route_Name || rec.Route || "";
+              currentRegion= rec.Region || currentRoute || "";
+
+              /* Avatar: abbreviate role (e.g. "Field User" → "FU") */
+              $("#srAvatar").text(
+                currentRole ? currentRole.split(" ").map(n=>n[0]).join("").toUpperCase() : "SR"
+              );
+              $("#srRegion").text(currentRegion || "—");
+
+              console.log("Role:", currentRole, "| Route:", currentRoute, "| Expanded:", getExpandedRoutes());
+              loadAll();
+            } else {
+              $("#loader").hide();
+            }
+          }).catch(() => { demoMode(); });
+        }).catch(() => { demoMode(); });
+      } else { demoMode(); }
+    });
+
+    function demoMode() {
+      $("#srAvatar").text("FU"); $("#srRegion").text("West");
+      setVal("#sparesWonCount",12);setAmt("#sparesWonAmt",325);
+      setVal("#sparesLostCount",5);setAmt("#sparesLostAmt",11);
+      setVal("#sparesCreatedCount",32);setAmt("#sparesCreatedAmt",525);
+      setVal("#sparesUndiscCount",5);setAmt("#sparesUndiscAmt",41);
+      setVal("#serviceqPendingCount",12);setVal("#serviceqPendingSpaces",103);setAmt("#serviceqPendingAmt","325.00");
+      setVal("#serviceqWonCount",5);setVal("#serviceqWonSpaces",67);setAmt("#serviceqWonAmt","11.00");
+      setVal("#serviceqLostCount",10);setVal("#serviceqLostSpaces",187);setAmt("#serviceqLostAmt","121.00");
+      setVal("#contractsLiveCount",162);setVal("#contractsLiveSpaces",5103);setAmt("#contractsLiveAmt","3025.00");
+      setVal("#contractsOnHoldCount",8);setVal("#contractsOnHoldSpaces",210);setAmt("#contractsOnHoldAmt","800.00");
+      setVal("#contractsSuspendedCount",5);setVal("#contractsSuspendedSpaces",120);setAmt("#contractsSuspendedAmt","500.00");
+      setVal("#contractsExpiredCount",15);setVal("#contractsExpiredSpaces",167);setAmt("#contractsExpiredAmt","101.00");
+      setVal("#contractsTermCount",0);setVal("#contractsTermSpaces",0);setAmt("#contractsTermAmt","0.00");
+      setVal("#contractsExpiringCount",23);
+      setVal("#pmAll",250);setVal("#pmClosed",8);setVal("#pmOverdue",32);
+      updatePMPieChart(250,8,32); updatePotentialChart(12,5,10); updatePeriodLabels();
+    }
+  </script>
 </body>
 </html>
