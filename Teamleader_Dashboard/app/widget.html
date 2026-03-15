@@ -45,15 +45,10 @@
     .cd-label{font-weight:700;color:#222;padding-left:2px;}
     .cd-label--center{display:flex;align-items:center;justify-content:center;font-weight:800;color:#333;}
     .cd-divider{height:2px;background:rgba(0,0,0,.20);margin:12px 0;border-radius:999px;}
-    /* ── PM Matrix ── */
     .cd-matrix{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;align-items:center;}
-    .cd-matrix .cd-label--center{font-size:13px;}
-    /* ── Pie wrap — overflows its 1fr cell but stays centred ── */
-    /* .cd-pie-wrap{display:flex;justify-content:center;align-items:center;overflow:visible;width:100%;height:280px;}
-    #pmPieCanvas{width:280px;height:280px;display:block;flex-shrink:0;} */
-    .cd-pie-wrap{display:flex;justify-content:center;align-items:center;width:100%;overflow:visible;}
-    #pmPieCanvas{width:280px !important;height:280px !important;display:block;}
-
+    .cd-pie-wrap{display:flex;justify-content:center;align-items:center;overflow:visible;width:100%;}
+    #pmPieCanvas{width:300px!important;height:300px!important;display:block;flex-shrink:0;}
+    @media(max-width:520px){#pmPieCanvas{width:240px!important;height:240px!important;}}
     .cd-stack{display:flex;flex-direction:column;gap:10px;}
     /* Filter active badge on section */
     .cd-filter-active{display:inline-flex;align-items:center;gap:4px;background:#eef2ff;border:1px solid #c7d4ff;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:700;color:#1f66ff;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis;}
@@ -104,22 +99,8 @@
     .sugg-item{padding:10px 12px;cursor:pointer;font-size:14px;}
     .sugg-item:hover{background:rgba(31,102,255,.08);}
     .sugg-empty{padding:10px 12px;font-size:13px;color:#666;}
-    /* @media(max-width:720px){.cd-row-3{grid-template-columns:1fr}.cd-row-4{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:420px){.cd-breakdown-row,.cd-matrix{flex-direction:column;align-items:flex-start}.cd-label--center{justify-content:flex-start}.cd-stack{width:100%}} */
-    /* AFTER */
-    @media(max-width:720px){
-      .cd-row-3{grid-template-columns:1fr}
-      .cd-row-4{grid-template-columns:repeat(2,1fr)}
-    }
-    @media(max-width:520px){
-      .cd-breakdown-row{grid-template-columns:1fr;text-align:left}
-      .cd-label--center{justify-content:flex-start}
-      .cd-stack{width:100%}
-      .cd-matrix{grid-template-columns:1fr;gap:8px;}       
-      .cd-matrix .cd-label--center{justify-content:flex-start;}
-      .cd-pie-wrap{justify-content:center;}
-      #pmPieCanvas{width:205px !important;height:220px !important;} 
-    }
+    @media(max-width:720px){.cd-row-3{grid-template-columns:1fr}.cd-row-4{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:420px){.cd-breakdown-row,.cd-matrix{grid-template-columns:1fr;text-align:left}.cd-label--center{justify-content:flex-start}.cd-stack{width:100%}}
   </style>
 </head>
 <body>
@@ -140,6 +121,7 @@
 
   <div class="cd-fullscreen">
     <div id="callDashboard">
+
       <div class="cd-top">
         <div class="cd-user">
           <div class="cd-avatar" id="user_Role">NA</div>
@@ -187,7 +169,7 @@
           <div class="cd-divider"></div>
           <div class="cd-matrix">
             <div class="cd-label cd-label--center">PM</div>
-            <div class="cd-pie-wrap"><canvas id="pmPieCanvas" width="280" height="280" aria-label="PM pie chart"></canvas></div>
+            <div class="cd-pie-wrap"><canvas id="pmPieCanvas" width="300" height="300"></canvas></div>
             <div class="cd-stack">
               <div class="cd-pill cd-pill--block"><span class="cd-pill-k">All</span><span class="cd-pill-v" id="PmAll">0</span></div>
               <div class="cd-pill cd-pill--block"><span class="cd-pill-k">Closed</span><span class="cd-pill-v" id="PmClosed">0</span></div>
@@ -261,6 +243,8 @@
         </div>
         <div class="modal-body">
           <div class="filter-stack">
+
+            <!-- Period -->
             <div class="filter-field">
               <label>Period</label>
               <select id="periodSelect">
@@ -273,12 +257,16 @@
             </div>
             <div class="filter-field date-range-field"><label>From</label><input type="date" id="dateFrom"/></div>
             <div class="filter-field date-range-field"><label>To</label><input type="date" id="dateTo"/></div>
+
+            <!-- Route — populated from ROUTE_EXPANSION on open -->
             <div class="filter-field">
               <label>Route</label>
               <select id="routeSelect">
                 <option value="">All Routes (Default)</option>
               </select>
             </div>
+
+            <!-- Service Technician — typeahead, scoped to selected route -->
             <div class="filter-field field-wrap">
               <label>Service Technician <span id="techLoadingSpinner" style="display:none;font-weight:400;color:#888;font-size:12px;">Loading...</span></label>
               <div class="tech-input-wrap">
@@ -288,6 +276,7 @@
               <input type="hidden" id="techID"/>
               <div id="techSuggestions" class="suggestions"></div>
             </div>
+
           </div>
         </div>
         <div class="modal-footer">
@@ -299,481 +288,632 @@
   </div>
 
   <script>
-    let UserName="",userID="",currentRole="",currentRoute="";
-    const applicationName="service-management";
-    const userReport="My_Users";
-    const serviceReport="Scan_QR_Service_Request";
-    const ESNReport="ESN_Scan_QR_Widget";
-    const REPORT_BASE_URL="https://creatorapp.zoho.in/wohr_parking/environment/development/service-management/#Report:";
-    const ROUTE_EXPANSION={
-      "Pune All":["Pune 1","Pune 2","Pune 3"],
-      "All Mumbai Region":["Mumbai Western 1","Mumbai Western 2","Mumbai Western 3","Mumbai Central 4","Mumbai Central 5","Mumbai Central 6","Mumbai Harbour 7"],
-      "All North Region":["North 1","North 2","North 3","North 4","North 5","North 6"],
-      "All Hyderabad":["Hyderabad 1","Hyderabad 2","Hyderabad 3"],
-      "All Chennai":["Chennai 1","Chennai 2"],
-      "All Bangalore Region":["Bangalore 1","Bangalore 2","Bangalore 3","Bangalore 4","Bangalore 5","Bangalore 6","Bangalore 7"],
-      "All Ahmedabad":["Ahmedabad 1","Ahmedabad 2"],
-    };
-    const periodOther={period:"this_month",from:null,to:null,filterRoute:"",filterTechID:"",filterTechName:""};
-    const periodEsn  ={period:"this_month",from:null,to:null,filterRoute:"",filterTechID:"",filterTechName:""};
-    const periodMe   ={period:"this_month",from:null,to:null,filterRoute:"",filterTechID:"",filterTechName:""};
-    let activeFilterTarget="other";
+    /* ═══════════════════════════════════════════════════════════
+       CONFIGURATION
+    ═══════════════════════════════════════════════════════════ */
+    let UserName     = "";
+    let userID       = "";
+    let currentRole  = "";
+    let currentRoute = "";
 
-    $(document).ready(function(){
-      const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-      function startOfDay(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,0,0);}
-      function endOfDay(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,59,59);}
-      function getFYStartYear(r){return(r.getMonth()>=3)?r.getFullYear():r.getFullYear()-1;}
-      function quarterStart(ref){const m=ref.getMonth();let qs=0;if(m>=3&&m<=5)qs=3;else if(m>=6&&m<=8)qs=6;else if(m>=9&&m<=11)qs=9;return new Date(ref.getFullYear(),qs,1);}
+    const applicationName = "service-management";
+    const userReport      = "My_Users";
+    const serviceReport   = "Scan_QR_Service_Request";
+    const ESNReport       = "ESN_Scan_QR_Widget";
+    const REPORT_BASE_URL = "https://creatorapp.zoho.in/wohr_parking/environment/development/service-management/#Report:";
+
+    /* ═══════════════════════════════════════════════════════════
+       ROUTE EXPANSION MAP
+    ═══════════════════════════════════════════════════════════ */
+    const ROUTE_EXPANSION = {
+      "Pune All"            : ["Pune 1", "Pune 2", "Pune 3"],
+      "All Mumbai Region"   : ["Mumbai Western 1", "Mumbai Western 2", "Mumbai Western 3",
+                               "Mumbai Central 4", "Mumbai Central 5", "Mumbai Central 6",
+                               "Mumbai Harbour 7"],
+      "All North Region"    : ["North 1", "North 2", "North 3", "North 4", "North 5", "North 6"],
+      "All Hyderabad"       : ["Hyderabad 1", "Hyderabad 2", "Hyderabad 3"],
+      "All Chennai"         : ["Chennai 1", "Chennai 2"],
+      "All Bangalore Region": ["Bangalore 1", "Bangalore 2", "Bangalore 3", "Bangalore 4",
+                               "Bangalore 5", "Bangalore 6", "Bangalore 7"],
+      "All Ahmedabad"       : ["Ahmedabad 1", "Ahmedabad 2"],
+    };
+
+    /* ═══════════════════════════════════════════════════════════
+       PERIOD STATE — each section has its own
+       filterRoute    : "" = all supervisor routes, "Pune 1" = specific
+       filterTechID   : "" = no tech filter, "274000..." = specific tech
+       filterTechName : display name for the badge
+    ═══════════════════════════════════════════════════════════ */
+    const periodOther = { period:"this_month", from:null, to:null, filterRoute:"", filterTechID:"", filterTechName:"" };
+    const periodEsn   = { period:"this_month", from:null, to:null, filterRoute:"", filterTechID:"", filterTechName:"" };
+    const periodMe    = { period:"this_month", from:null, to:null, filterRoute:"", filterTechID:"", filterTechName:"" };
+    let activeFilterTarget = "other";
+
+    $(document).ready(function () {
+
+      /* ─────────────────────────────────────────────────────────
+         DATE HELPERS
+      ───────────────────────────────────────────────────────── */
+      const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0); }
+      function endOfDay(d)  { return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59); }
+      function getFYStartYear(r){ return (r.getMonth() >= 3) ? r.getFullYear() : r.getFullYear() - 1; }
+      function quarterStart(ref){
+        const m = ref.getMonth(); let qs = 0;
+        if (m>=3&&m<=5) qs=3; else if (m>=6&&m<=8) qs=6; else if (m>=9&&m<=11) qs=9;
+        return new Date(ref.getFullYear(), qs, 1);
+      }
       function getRangeFromState(state){
-        const now=new Date();
-        if(state.period==="custom"&&state.from&&state.to)return{from:startOfDay(state.from),to:endOfDay(state.to)};
-        if(state.period==="this_month")return{from:startOfDay(new Date(now.getFullYear(),now.getMonth(),1)),to:endOfDay(new Date(now.getFullYear(),now.getMonth()+1,0))};
-        if(state.period==="this_year"){const fy=getFYStartYear(now);return{from:startOfDay(new Date(fy,3,1)),to:endOfDay(new Date(fy+1,3,0))};}
-        if(state.period==="this_quarter"||state.period==="last_quarter"){
-          const qS=quarterStart(now);const off=(state.period==="last_quarter")?-3:0;
+        const now = new Date();
+        if (state.period==="custom"&&state.from&&state.to) return{from:startOfDay(state.from),to:endOfDay(state.to)};
+        if (state.period==="this_month") return{from:startOfDay(new Date(now.getFullYear(),now.getMonth(),1)),to:endOfDay(new Date(now.getFullYear(),now.getMonth()+1,0))};
+        if (state.period==="this_year"){const fy=getFYStartYear(now);return{from:startOfDay(new Date(fy,3,1)),to:endOfDay(new Date(fy+1,3,0))};}
+        if (state.period==="this_quarter"||state.period==="last_quarter"){
+          const qS=quarterStart(now); const off=(state.period==="last_quarter")?-3:0;
           const from=new Date(qS.getFullYear(),qS.getMonth()+off,1);
           const to=new Date(from.getFullYear(),from.getMonth()+3,0);
           return{from:startOfDay(from),to:endOfDay(to)};
         }
         return{from:startOfDay(new Date(now.getFullYear(),now.getMonth(),1)),to:endOfDay(new Date(now.getFullYear(),now.getMonth()+1,0))};
       }
-      function fmtDate(d){return`${String(d.getDate()).padStart(2,"0")}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`;}
-      function fmtDateTime(d){return`${fmtDate(d)} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;}
-      function toInputDate(d){if(!d)return"";return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
-      function parseInputDate(val){if(!val)return null;const[y,m,d]=val.split("-").map(Number);return new Date(y,m-1,d);}
-      function dueDateRangeCrit(s){const r=getRangeFromState(s);return`Due_Date >= "${fmtDate(r.from)}" && Due_Date <= "${fmtDate(r.to)}"`;}
-      function addedTimeRangeCrit(s){const r=getRangeFromState(s);return`Added_Time >= "${fmtDateTime(r.from)}" && Added_Time <= "${fmtDateTime(r.to)}"`;}
-      function closedDateRangeCrit_ME(s){const r=getRangeFromState(s);return`Closed_Date >= "${fmtDate(r.from)}" && Closed_Date <= "${fmtDate(r.to)}"`;}
+      function fmtDate(d){ return `${String(d.getDate()).padStart(2,"0")}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`; }
+      function fmtDateTime(d){ return `${fmtDate(d)} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`; }
+      function toInputDate(d){ if(!d)return""; return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
+      function parseInputDate(val){ if(!val)return null; const[y,m,d]=val.split("-").map(Number); return new Date(y,m-1,d); }
+
+      function dueDateRangeCrit(s){ const r=getRangeFromState(s); return `Due_Date >= "${fmtDate(r.from)}" && Due_Date <= "${fmtDate(r.to)}"`; }
+      function addedTimeRangeCrit(s){ const r=getRangeFromState(s); return `Added_Time >= "${fmtDateTime(r.from)}" && Added_Time <= "${fmtDateTime(r.to)}"`; }
+      function completionDateRangeCrit(s){ const r=getRangeFromState(s); return `Completion_Date >= "${fmtDate(r.from)}" && Completion_Date <= "${fmtDate(r.to)}"`; }
+      function closedDateRangeCrit_ME(s){ const r=getRangeFromState(s); return `Closed_Date >= "${fmtDate(r.from)}" && Closed_Date <= "${fmtDate(r.to)}"`; }
+
       function labelForState(state){
-        if(state.period==="custom"&&state.from&&state.to){const r=getRangeFromState(state);return`${fmtDate(r.from)} – ${fmtDate(r.to)}`;}
+        if(state.period==="custom"&&state.from&&state.to){const r=getRangeFromState(state);return `${fmtDate(r.from)} – ${fmtDate(r.to)}`;}
         return{this_month:"This month",this_quarter:"This quarter",last_quarter:"Last quarter",this_year:"This year"}[state.period]||"This month";
       }
-      function getState(t){return t==="esn"?periodEsn:t==="me"?periodMe:periodOther;}
+      function getState(t){ return t==="esn"?periodEsn:t==="me"?periodMe:periodOther; }
       function setLabelForSection(t){
         const txt=labelForState(getState(t));
-        if(t==="other")$("#otherPeriodLabel").text(txt);
-        if(t==="esn")$("#esnPeriodLabel").text(txt);
-        if(t==="me")$("#mePeriodLabel").text(txt);
+        if(t==="other") $("#otherPeriodLabel").text(txt);
+        if(t==="esn")   $("#esnPeriodLabel").text(txt);
+        if(t==="me")    $("#mePeriodLabel").text(txt);
       }
+
+      /* Update filter badge shown on each section header */
       function updateFilterBadge(t){
         const st=getState(t);
-        const badgeId=t==="esn"?"#esnFilterBadge":t==="me"?"#meFilterBadge":"#otherFilterBadge";
-        const hasFilter=st.filterRoute||st.filterTechID;
-        if(hasFilter){const label=st.filterTechName?st.filterTechName:st.filterRoute;$(badgeId).text("🔍 "+label).show();}
-        else{$(badgeId).hide().text("");}
+        const badgeId = t==="esn"?"#esnFilterBadge":t==="me"?"#meFilterBadge":"#otherFilterBadge";
+        const hasFilter = st.filterRoute || st.filterTechID;
+        if(hasFilter){
+          const label = st.filterTechName ? st.filterTechName : st.filterRoute;
+          $(badgeId).text("🔍 "+label).show();
+        } else {
+          $(badgeId).hide().text("");
+        }
       }
-      function esc(s){return String(s||"").replace(/"/g,'\\"');}
+
+      /* ─────────────────────────────────────────────────────────
+         ESCAPE HELPER
+      ───────────────────────────────────────────────────────── */
+      function esc(s){ return String(s||"").replace(/"/g,'\\"'); }
+
+      /* ─────────────────────────────────────────────────────────
+         ROUTE HELPERS — default (no filter active)
+      ───────────────────────────────────────────────────────── */
       function routeCrit(){
-        const routes=ROUTE_EXPANSION[currentRoute];
-        if(routes&&routes.length)return"("+routes.map(r=>`Route_Name == "${esc(r)}"`).join(" || ")+")";
-        return`Route_Name == "${esc(currentRoute)}"`;
+        const routes = ROUTE_EXPANSION[currentRoute];
+        if(routes&&routes.length) return "("+routes.map(r=>`Route_Name == "${esc(r)}"`).join(" || ")+")";
+        return `Route_Name == "${esc(currentRoute)}"`;
       }
       function routeParamValue(){
-        const routes=ROUTE_EXPANSION[currentRoute];
-        if(routes&&routes.length)return`[${routes.join(",")}]`;
+        const routes = ROUTE_EXPANSION[currentRoute];
+        if(routes&&routes.length) return `[${routes.join(",")}]`;
         return fullyDecode(currentRoute);
       }
+
+      /* ─────────────────────────────────────────────────────────
+         STATE-AWARE CRITERIA BUILDERS
+         ─────────────────────────────────────────────────────────
+         When a filter is active:
+           filterRoute  set  → use that single Route_Name
+           filterTechID set  → use Service_Technician_Name.ID (not Supervisior_Name.ID)
+           both set          → tech scoped to specific route
+           neither           → default supervisor scope
+      ───────────────────────────────────────────────────────── */
+
+      /* Route criteria — respects filterRoute override */
       function activeRouteCrit(st){
-        if(st&&st.filterRoute)return`Route_Name == "${esc(st.filterRoute)}"`;
+        if(st&&st.filterRoute) return `Route_Name == "${esc(st.filterRoute)}"`;
         return routeCrit();
       }
-      function activeCrit(st,extra){
-        const rc=activeRouteCrit(st);
-        const base=(st&&st.filterTechID)?`Service_Technician_Name.ID == ${st.filterTechID} && ${rc}`:`Supervisior_Name.ID == ${userID} && ${rc}`;
-        return extra?`(${base} && ${extra})`:`(${base})`;
+
+      /* Base criteria for Service Report — respects tech + route filter */
+      function activeCrit(st, extra){
+        const rc   = activeRouteCrit(st);
+        const base = (st&&st.filterTechID)
+          ? `Service_Technician_Name.ID == ${st.filterTechID} && ${rc}`
+          : `Supervisior_Name.ID == ${userID} && ${rc}`;
+        return extra ? `(${base} && ${extra})` : `(${base})`;
       }
-      function activeCritESN(st,extra){
-        const rc=activeRouteCrit(st);
-        const base=(st&&st.filterTechID)?`Service_Technician_Name.ID == ${st.filterTechID} && ${rc}`:`Supervisor_Name.ID == ${userID} && ${rc}`;
-        return extra?`(${base} && ${extra})`:`(${base})`;
+
+      /* Base criteria for ESN Report — field is Supervisor_Name (single i) */
+      function activeCritESN(st, extra){
+        const rc   = activeRouteCrit(st);
+        const base = (st&&st.filterTechID)
+          ? `Service_Technician_Name.ID == ${st.filterTechID} && ${rc}`
+          : `Supervisor_Name.ID == ${userID} && ${rc}`;
+        return extra ? `(${base} && ${extra})` : `(${base})`;
       }
-      function activeRouteOnly(st,extra){
-        const rc=activeRouteCrit(st);
-        const ownerID=(st&&st.filterTechID)?st.filterTechID:userID;
-        const ownerPart=`Closed_Owner.ID == ${ownerID}`;
-        return extra?`(${rc} && ${ownerPart} && ${extra})`:`(${rc} && ${ownerPart})`;
+
+      /* Route-only criteria for Me section
+         When tech filtered: swap Closed_Owner to filterTechID
+         When no filter:     use logged-in supervisor (userID) */
+      function activeRouteOnly(st, extra){
+        const rc       = activeRouteCrit(st);
+        const ownerID  = (st&&st.filterTechID) ? st.filterTechID : userID;
+        const ownerPart = `Closed_Owner.ID == ${ownerID}`;
+        return extra
+          ? `(${rc} && ${ownerPart} && ${extra})`
+          : `(${rc} && ${ownerPart})`;
       }
-      const OP_BETWEEN=58,OP_NOT_EQ=19;
+
+      /* ─────────────────────────────────────────────────────────
+         URL / REPORT HELPERS
+      ───────────────────────────────────────────────────────── */
+      const OP_BETWEEN=58, OP_NOT_EQ=19;
+
       function fullyDecode(str){
         let out=String(str??"");
-        for(let i=0;i<10;i++){if(!/%[0-9A-Fa-f]{2}/.test(out))break;try{const dec=decodeURIComponent(out);if(dec===out)break;out=dec;}catch(e){break;}}
+        for(let i=0;i<10;i++){
+          if(!/%[0-9A-Fa-f]{2}/.test(out))break;
+          try{const dec=decodeURIComponent(out);if(dec===out)break;out=dec;}catch(e){break;}
+        }
         return out;
       }
-      function buildQueryRaw(params){return Object.keys(params||{}).filter(k=>params[k]!==undefined&&params[k]!==null&&params[k]!=="").map(k=>k+"="+String(params[k])).join("&");}
-      function openReport(reportName,params){const qs=buildQueryRaw(params);const url=REPORT_BASE_URL+reportName+(qs?"?"+qs:"");ZOHO.CREATOR.UTIL.navigateParentURL({action:"open",url,window:"same"});}
-      function addBetween(p,field,f,t){p[field]=`${f};${t}`;p[field+"_op"]=OP_BETWEEN;}
-      function addDueBetween(p,s){const r=getRangeFromState(s);addBetween(p,"Due_Date",fmtDate(r.from),fmtDate(r.to));}
-      function addAddedBetween(p,s){const r=getRangeFromState(s);addBetween(p,"Added_Time",fmtDateTime(r.from),fmtDateTime(r.to));}
-      function addClosedBetween_ME(p,s){const r=getRangeFromState(s);addBetween(p,"Closed_Date",fmtDate(r.from),fmtDate(r.to));}
+      function buildQueryRaw(params){
+        return Object.keys(params||{}).filter(k=>params[k]!==undefined&&params[k]!==null&&params[k]!=="").map(k=>k+"="+String(params[k])).join("&");
+      }
+      function openReport(reportName, params){
+        const qs=buildQueryRaw(params);
+        const url=REPORT_BASE_URL+reportName+(qs?"?"+qs:"");
+        ZOHO.CREATOR.UTIL.navigateParentURL({action:"open",url,window:"same"});
+      }
+      function addBetween(p,field,f,t){ p[field]=`${f};${t}`; p[field+"_op"]=OP_BETWEEN; }
+      function addDueBetween(p,s){ const r=getRangeFromState(s); addBetween(p,"Due_Date",fmtDate(r.from),fmtDate(r.to)); }
+      function addAddedBetween(p,s){ const r=getRangeFromState(s); addBetween(p,"Added_Time",fmtDateTime(r.from),fmtDateTime(r.to)); }
+      function addClosedBetween_ME(p,s){ const r=getRangeFromState(s); addBetween(p,"Closed_Date",fmtDate(r.from),fmtDate(r.to)); }
+
+      /* URL params — respects active filter:
+           no filter  → Supervisior_Name=[UserName], Route_Name=all routes
+           route only → Supervisior_Name=[UserName], Route_Name=selectedRoute
+           tech+route → Service_Technician_Name=[TechName], Route_Name=selectedRoute  */
       function paramsFor(st){
-        const route=st.filterRoute?st.filterRoute:routeParamValue();
-        if(st.filterTechID&&st.filterTechName)return{Route_Name:route,Service_Technician_Name:`[${st.filterTechName}]`};
-        return{Route_Name:route,Supervisior_Name:`[${UserName}]`};
+        const route = st.filterRoute ? st.filterRoute : routeParamValue();
+        if(st.filterTechID&&st.filterTechName)
+          return { Route_Name:route, Service_Technician_Name:`[${st.filterTechName}]` };
+        return { Route_Name:route, Supervisior_Name:`[${UserName}]` };
       }
       function paramsForMe(st){
-        const route=st.filterRoute?st.filterRoute:routeParamValue();
-        const p={Route_Name:route};
-        p.Closed_Owner=st.filterTechID&&st.filterTechName?`[${st.filterTechName}]`:`[${UserName}]`;
+        const route = st.filterRoute ? st.filterRoute : routeParamValue();
+        const p = { Route_Name:route };
+        p.Closed_Owner = st.filterTechID&&st.filterTechName ? `[${st.filterTechName}]` : `[${UserName}]`;
         return p;
       }
-      function setCount(sel,val){$(sel).text(val==null?"0":String(val));}
+
+      function setCount(sel,val){ $(sel).text(val==null?"0":String(val)); }
 
       /* ─────────────────────────────────────────────────────────
          CLICK REDIRECTS
       ───────────────────────────────────────────────────────── */
       function bindCountRedirects(){
-        $("#BreakdownAll").off("click.r").on("click.r",()=>{const p=paramsFor(periodOther);p.Service_Request_Type="Breakdown";p.Status="Closed";p.Status_op=OP_NOT_EQ;addDueBetween(p,periodOther);openReport("Breakdown_Calls",p);});
-        $("#BreakdownClosed").off("click.r").on("click.r",()=>{const p=paramsFor(periodOther);p.Service_Request_Type="Breakdown";p.Status="Closed";addDueBetween(p,periodOther);openReport("Breakdown_Calls",p);});
-        $("#PmAll").off("click.r").on("click.r",()=>{const p=paramsFor(periodOther);p.Service_Request_Type="Routine";p.Status="Current month due";addDueBetween(p,periodOther);openReport("Open_User_Service_Request",p);});
-        $("#PmClosed").off("click.r").on("click.r",()=>{const p=paramsFor(periodOther);p.Service_Request_Type="Routine";p.Status="Closed";addDueBetween(p,periodOther);openReport("Closed_User_Service_Request",p);});
-        $("#PmOverdue").off("click.r").on("click.r",()=>{const p=paramsFor(periodOther);p.Service_Request_Type="Routine";p.Status="Overdue";openReport("Open_User_Service_Request",p);});
-        $("#otherActive").off("click.r").on("click.r",()=>{const p=paramsFor(periodOther);p.Status="Closed";p.Status_op=OP_NOT_EQ;p.Service_Request_Type="[One Time Service,Repair,Inspection]";p.Service_Request_Type_op=26;addDueBetween(p,periodOther);openReport("Open_User_Service_Request",p);});
-        $("#otherClosed").off("click.r").on("click.r",()=>{const p=paramsFor(periodOther);p.Status="Closed";p.Service_Request_Type="[One Time Service,Repair,Inspection]";p.Service_Request_Type_op=26;addDueBetween(p,periodOther);openReport("Closed_User_Service_Request",p);});
-        $("#esnPending").off("click.r").on("click.r",()=>{const p=paramsFor(periodEsn);p.ESN_Status="Pending";openReport("My_ESN",p);});
-        $("#esnCompleted").off("click.r").on("click.r",()=>{const p=paramsFor(periodEsn);p.ESN_Status="Completed";addAddedBetween(p,periodEsn);openReport("My_ESN",p);});
-        $("#meBrkdwn").off("click.r").on("click.r",()=>{const p=paramsForMe(periodMe);p.Service_Request_Type="Breakdown";p.Status="Closed";addClosedBetween_ME(p,periodMe);openReport("Breakdown_Calls",p);});
-        $("#mePm").off("click.r").on("click.r",()=>{const p=paramsForMe(periodMe);p.Service_Request_Type="Routine";p.Status="Closed";addClosedBetween_ME(p,periodMe);openReport("Closed_User_Service_Request",p);});
-        $("#meOther").off("click.r").on("click.r",()=>{const p=paramsForMe(periodMe);p.Service_Request_Type="[One Time Service,Repair,Inspection]";p.Service_Request_Type_op=26;p.Status="Closed";addClosedBetween_ME(p,periodMe);openReport("Closed_User_Service_Request",p);});
-        $("#meEsn").off("click.r").on("click.r",()=>{const p=paramsFor(periodMe);p.ESN_Status="Completed";addAddedBetween(p,periodMe);openReport("My_ESN",p);});
+        $("#BreakdownAll").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Service_Request_Type="Breakdown"; p.Status="Closed"; p.Status_op=OP_NOT_EQ; addDueBetween(p,periodOther); openReport("Breakdown_Calls",p); });
+        $("#BreakdownClosed").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Service_Request_Type="Breakdown"; p.Status="Closed"; addDueBetween(p,periodOther); openReport("Breakdown_Calls",p); });
+        $("#PmAll").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Service_Request_Type="Routine"; p.Status="Current month due"; addDueBetween(p,periodOther); openReport("Open_User_Service_Request",p); });
+        $("#PmClosed").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Service_Request_Type="Routine"; p.Status="Closed"; addDueBetween(p,periodOther); openReport("Closed_User_Service_Request",p); });
+        $("#PmOverdue").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Service_Request_Type="Routine"; p.Status="Overdue"; openReport("Open_User_Service_Request",p); });
+        $("#otherActive").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Status="Closed"; p.Status_op=OP_NOT_EQ; p.Service_Request_Type="[One Time Service,Repair,Inspection]"; p.Service_Request_Type_op=26; addDueBetween(p,periodOther); openReport("Open_User_Service_Request",p); });
+        $("#otherClosed").off("click.r").on("click.r",()=>{ const p=paramsFor(periodOther); p.Status="Closed"; p.Service_Request_Type="[One Time Service,Repair,Inspection]"; p.Service_Request_Type_op=26; addDueBetween(p,periodOther); openReport("Closed_User_Service_Request",p); });
+        $("#esnPending").off("click.r").on("click.r",()=>{ const p=paramsFor(periodEsn); p.ESN_Status="Pending"; openReport("My_ESN",p); });
+        $("#esnCompleted").off("click.r").on("click.r",()=>{ const p=paramsFor(periodEsn); p.ESN_Status="Completed"; const r=getRangeFromState(periodEsn); addBetween(p,"Completion_Date",fmtDate(r.from),fmtDate(r.to)); openReport("My_ESN",p); });
+        $("#meBrkdwn").off("click.r").on("click.r",()=>{ const p=paramsForMe(periodMe); p.Service_Request_Type="Breakdown"; p.Status="Closed"; addClosedBetween_ME(p,periodMe); openReport("Breakdown_Calls",p); });
+        $("#mePm").off("click.r").on("click.r",()=>{ const p=paramsForMe(periodMe); p.Service_Request_Type="Routine"; p.Status="Closed"; addClosedBetween_ME(p,periodMe); openReport("Closed_User_Service_Request",p); });
+        $("#meOther").off("click.r").on("click.r",()=>{ const p=paramsForMe(periodMe); p.Service_Request_Type="[One Time Service,Repair,Inspection]"; p.Service_Request_Type_op=26; p.Status="Closed"; addClosedBetween_ME(p,periodMe); openReport("Closed_User_Service_Request",p); });
+        $("#meEsn").off("click.r").on("click.r",()=>{ const p={ESN_Status:"Completed",Completed_By:`[${UserName}]`}; const r=getRangeFromState(periodMe); addBetween(p,"Completion_Date",fmtDate(r.from),fmtDate(r.to)); openReport("My_ESN",p); });
       }
 
       /* ─────────────────────────────────────────────────────────
-         PM PIE CHART  —  professional outside-label style
-         • % values rendered inside each slice (white bold)
-         • Label names drawn outside with two-segment leader lines
+         PM PIE CHART
       ───────────────────────────────────────────────────────── */
-      let pmAll=0,pmClosed=0,pmOverdue=0,pmChart=null;
+      let pmAll=0, pmClosed=0, pmOverdue=0, pmChart=null;
       Chart.register(ChartDataLabels);
+      const PM_EMPTY=[0,0,1];
 
-      /* ── Outside-labels plugin: label name + count drawn outside ring ── */
+      /* Outside-labels plugin — draws label+count outside ring with leader lines */
       const outsideLabelsPlugin = {
         id: "outsideLabels",
         afterDatasetsDraw(chart) {
           if (chart.$noData) return;
-          const { ctx } = chart;
-          const dataset  = chart.data.datasets[0];
-          const meta     = chart.getDatasetMeta(0);
-          const total    = dataset.data.reduce((a,b)=>Number(a)+Number(b),0)||1;
-
-          ctx.save();
+          const { ctx, canvas } = chart;
+          const dataset = chart.data.datasets[0];
+          const meta    = chart.getDatasetMeta(0);
+          const total   = dataset.data.reduce((a,b)=>Number(a)+Number(b),0) || 1;
+          const isMob   = canvas.width <= 210;
+          const RADIAL  = isMob ? 18 : 28;
+          const TICK    = isMob ? 16 : 26;
+          const FS      = isMob ? 10 : 12;
+          const VS      = isMob ? 11 : 13;
+          const LINE_H  = FS + VS + 10;
+          const items   = [];
           meta.data.forEach((arc, i) => {
-            const value = Number(dataset.data[i]||0);
+            const value = Number(dataset.data[i] || 0);
             if (!value) return;
-
-            const label    = chart.data.labels[i];
-            const color    = dataset.backgroundColor[i];
-            const pct      = Math.round(value/total*100);
             const midAngle = (arc.startAngle + arc.endAngle) / 2;
             const outerR   = arc.outerRadius;
-            const cx = arc.x, cy = arc.y;
-            const isRight  = Math.cos(midAngle) >= 0;
-
-            /* ── leader line: short radial leg → elbow → horizontal tick ── */
-            const R1   = outerR + 10;
-            const R2   = outerR + 30;
-            const TICK = 22;
-
-            const x1 = cx + R1 * Math.cos(midAngle);
-            const y1 = cy + R1 * Math.sin(midAngle);
-            const x2 = cx + R2 * Math.cos(midAngle);
-            const y2 = cy + R2 * Math.sin(midAngle);
-            const x3 = x2 + (isRight ? TICK : -TICK);
-            const y3 = y2;
-
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.lineTo(x3, y3);
-            ctx.strokeStyle = "#adb5bd";
-            ctx.lineWidth   = 1.2;
-            ctx.lineJoin    = "round";
-            ctx.setLineDash([]);
-            ctx.stroke();
-
-            /* coloured dot at elbow */
-            ctx.beginPath();
-            ctx.arc(x2, y2, 3, 0, Math.PI*2);
-            ctx.fillStyle = color;
-            ctx.fill();
-
-            /* ── label text: "LabelName" on first line, count+% on second ── */
-            const tx  = x3 + (isRight ? 6 : -6);
-            const align = isRight ? "left" : "right";
-
-            /* label name */
-            ctx.font         = '700 12px "Segoe UI",system-ui,sans-serif';
-            ctx.fillStyle    = "#374151";
-            ctx.textAlign    = align;
-            ctx.textBaseline = "bottom";
-            ctx.fillText(label, tx, y3 - 1);
-
-            /* count + % */
-            ctx.font         = '800 13px "Segoe UI",system-ui,sans-serif';
+            const ex = arc.x + (outerR + RADIAL) * Math.cos(midAngle);
+            const ey = arc.y + (outerR + RADIAL) * Math.sin(midAngle);
+            items.push({ arc, value, label: chart.data.labels[i],
+              color: dataset.backgroundColor[i], pct: Math.round(value/total*100),
+              midAngle, outerR, ex, ey,
+              side: Math.cos(midAngle) >= 0 ? "right" : "left" });
+          });
+          for (let a=0; a<items.length; a++) {
+            for (let b=a+1; b<items.length; b++) {
+              if (items[a].side !== items[b].side) continue;
+              if (Math.abs(items[a].ey - items[b].ey) < LINE_H * 2.4) {
+                const ca = Math.abs(Math.cos(items[a].midAngle));
+                const cb = Math.abs(Math.cos(items[b].midAngle));
+                const flip = ca < cb ? a : b;
+                items[flip].side = items[flip].side === "right" ? "left" : "right";
+              }
+            }
+          }
+          ctx.save();
+          items.forEach(({ arc, value, label, color, pct, midAngle, outerR, ex, ey, side }) => {
+            const isRight = side === "right";
+            const x1 = arc.x + (outerR + 4) * Math.cos(midAngle);
+            const y1 = arc.y + (outerR + 4) * Math.sin(midAngle);
+            const x3 = ex + (isRight ? TICK : -TICK);
+            ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(ex,ey); ctx.lineTo(x3,ey);
+            ctx.strokeStyle="#9ca3af"; ctx.lineWidth=1.2; ctx.lineJoin="round"; ctx.stroke();
+            ctx.beginPath(); ctx.arc(ex,ey,3,0,Math.PI*2); ctx.fillStyle=color; ctx.fill();
+            const tx = x3 + (isRight ? 5 : -5);
+            ctx.textAlign    = isRight ? "left" : "right";
+            ctx.font         = `700 ${FS}px "DM Sans",system-ui,sans-serif`;
+            ctx.fillStyle    = "#374151"; ctx.textBaseline = "bottom";
+            ctx.fillText(label, tx, ey - 1);
+            ctx.font         = `800 ${VS}px "DM Sans",system-ui,sans-serif`;
             ctx.fillStyle    = color === "#e5e7eb" ? "#9ca3af" : color;
             ctx.textBaseline = "top";
-            ctx.fillText(`${value}  (${pct}%)`, tx, y3 + 2);
+            ctx.fillText(`${value} (${pct}%)`, tx, ey + 2);
           });
           ctx.restore();
         }
       };
 
-      function initPMPieChart() {
-        const canvas = document.getElementById("pmPieCanvas");
-        if (!canvas) return;
-        if (pmChart) { pmChart.destroy(); pmChart = null; }
-
-        pmChart = new Chart(canvas.getContext("2d"), {
-          type: "doughnut",
-          plugins: [outsideLabelsPlugin],
-          data: {
-            labels: ["Closed", "Overdue", "All"],
-            datasets: [{
-              data: [0, 0, 1],
-              backgroundColor: ["#e5e7eb", "#e5e7eb", "#e5e7eb"],
-              borderWidth: 5,
-              borderColor: "#fff",
-              hoverOffset: 8,
-              borderRadius: 5,
-              spacing: 2
-            }]
-          },
-          options: {
-            // responsive: false,
-            // maintainAspectRatio: false,
-            responsive: true,
-            maintainAspectRatio: true,
-            cutout: "65%",
-            /* generous padding so outside labels never clip */
-            layout: { padding: { top: 48, right: 75, bottom: 48, left: 72 } },
-            animation: { duration: 700, easing: "easeInOutQuart" },
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                enabled: true,
-                backgroundColor: "rgba(17,24,39,0.88)",
-                titleFont: { size: 12, weight: "700" },
-                bodyFont:  { size: 12 },
-                padding: 10,
-                cornerRadius: 8,
-                callbacks: {
-                  label(ctx) {
-                    if (ctx.chart.$noData) return ` ${ctx.label}: 0`;
-                    const tot = ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
-                    const v   = Number(ctx.raw||0);
-                    return `  ${ctx.label}: ${v}(${Math.round(v/tot*100)}%)`;
-                  }
-                }
-              },
-              /* no inside labels — everything drawn outside by our plugin */
-              datalabels: { display: false }
-            }
-          }
+      function initPMPieChart(){
+        const canvas=document.getElementById("pmPieCanvas");
+        if(!canvas)return; if(pmChart){pmChart.destroy();pmChart=null;}
+        const size = canvas.width;
+        const pad  = Math.round(size * 0.32);
+        pmChart=new Chart(canvas.getContext("2d"),{
+          type:"doughnut", plugins:[outsideLabelsPlugin],
+          data:{labels:["Closed","Overdue","All"],datasets:[{data:PM_EMPTY.slice(),
+            backgroundColor:["#e5e7eb","#e5e7eb","#e5e7eb"],
+            borderWidth:4,borderColor:"#fff",hoverOffset:6,borderRadius:4,spacing:1}]},
+          options:{responsive:false,maintainAspectRatio:false,cutout:"65%",
+            layout:{padding:{top:pad,right:pad+18,bottom:pad,left:pad+18}},
+            animation:{duration:600,easing:"easeInOutQuart"},
+            plugins:{legend:{display:false},
+              tooltip:{enabled:true,backgroundColor:"rgba(17,24,39,.88)",padding:10,cornerRadius:8,
+                callbacks:{label(ctx){const tot=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
+                  return`  ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw)/tot*100)}%)`}}},
+              datalabels:{display:false}}}
         });
-        pmChart.$noData = true;
-        resizePieCanvas(); // <- New
+        pmChart.$noData=true;
       }
-
-      function updatePMPieChart(all, closed, overdue) {
-        all = Number(all || 0); closed = Number(closed || 0); overdue = Number(overdue || 0);
-        if (!pmChart) initPMPieChart();
-        if (!pmChart) return;
-        const has = all || closed || overdue;
-        pmChart.$noData = !has;
-        pmChart.data.datasets[0].data            = has ? [closed, overdue, all] : [0, 0, 1];
-        pmChart.data.datasets[0].backgroundColor = has
-          ? ["#22c55e", "#ef4444", "#8b5cf6"]
-          : ["#e5e7eb", "#e5e7eb", "#e5e7eb"];
+      function updatePMPieChart(all,closed,overdue){
+        all=Number(all||0);closed=Number(closed||0);overdue=Number(overdue||0);
+        if(!pmChart)initPMPieChart();if(!pmChart)return;
+        const has=all||closed||overdue;
+        pmChart.$noData=!has;
+        pmChart.data.datasets[0].data=has?[closed,overdue,all]:PM_EMPTY.slice();
+        pmChart.data.datasets[0].backgroundColor=has?["#22c55e","#ef4444","#8b5cf6"]:["#e5e7eb","#e5e7eb","#e5e7eb"];
         pmChart.update();
       }
 
-      function resizePieCanvas(){  // ← NEW function
-        let canvas = document.getElementById("pmPieCanvas");
-        if(!canvas) return;
-        const size = window.innerWidth <= 520 ? 210 : 280;
-        canvas.width  = size;
-        canvas.height = size;
-        canvas.style.width  = size + "px";
-        canvas.style.height = size + "px";
-        if(pmChart) pmChart.resize();
-      }
-      window.addEventListener("resize", ()=>{ resizePieCanvas(); });
-
       /* ─────────────────────────────────────────────────────────
-         DATA LOADERS
+         SEQUENTIAL DATA LOADERS
+         Each function now passes its section's period state
+         to activeCrit/activeCritESN/activeRouteOnly so that
+         Route + Tech filters are applied automatically.
       ───────────────────────────────────────────────────────── */
       function refreshOnly(target){
         $("#loader").show();
-        const done=()=>{bindCountRedirects();$("#loader").hide();};
-        if(target==="other")refreshOtherCalls(done);
-        else if(target==="esn")refreshESN(done);
-        else refreshMe(done);
+        const done=()=>{ bindCountRedirects(); $("#loader").hide(); };
+        if(target==="other")    refreshOtherCalls(done);
+        else if(target==="esn") refreshESN(done);
+        else                    refreshMe(done);
       }
-      function refreshOtherCalls(done){setLabelForSection("other");Other_BreakdownAll(done);}
+
+      /* ── Other Calls ─────────────────────────────────────── */
+      function refreshOtherCalls(done){ setLabelForSection("other"); Other_BreakdownAll(done); }
+
       function Other_BreakdownAll(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:activeCrit(periodOther,`Service_Request_Type=="Breakdown" && Status!="Closed" && ${dueDateRangeCrit(periodOther)}`)})
+        const c=activeCrit(periodOther,`Service_Request_Type=="Breakdown" && Status!="Closed" && ${dueDateRangeCrit(periodOther)}`);
+        console.log("[Other] BreakdownAll criteria:", c);
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:c})
           .then(r=>{setCount("#BreakdownAll",r.result.records_count);Other_BreakdownClosed(done);}).catch(()=>Other_BreakdownClosed(done));
       }
       function Other_BreakdownClosed(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:activeCrit(periodOther,`Service_Request_Type=="Breakdown" && Status=="Closed" && ${dueDateRangeCrit(periodOther)}`)})
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeCrit(periodOther,`Service_Request_Type=="Breakdown" && Status=="Closed" && ${dueDateRangeCrit(periodOther)}`)})
           .then(r=>{setCount("#BreakdownClosed",r.result.records_count);Other_PMAll(done);}).catch(()=>Other_PMAll(done));
       }
       function Other_PMAll(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:activeCrit(periodOther,`Service_Request_Type=="Routine" && Status=="Current month due" && ${dueDateRangeCrit(periodOther)}`)})
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeCrit(periodOther,`Service_Request_Type=="Routine" && Status=="Current month due" && ${dueDateRangeCrit(periodOther)}`)})
           .then(r=>{pmAll=Number(r.result.records_count||0);setCount("#PmAll",pmAll);Other_PMOverdue(done);})
           .catch(()=>{pmAll=0;setCount("#PmAll",0);Other_PMOverdue(done);});
       }
       function Other_PMOverdue(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:activeCrit(periodOther,`Service_Request_Type=="Routine" && Status=="Overdue"`)})
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeCrit(periodOther,`Service_Request_Type=="Routine" && Status=="Overdue"`)})
           .then(r=>{pmOverdue=Number(r.result.records_count||0);setCount("#PmOverdue",pmOverdue);Other_PMClosed(done);})
           .catch(()=>{pmOverdue=0;setCount("#PmOverdue",0);Other_PMClosed(done);});
       }
       function Other_PMClosed(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:activeCrit(periodOther,`Service_Request_Type=="Routine" && Status=="Closed" && ${dueDateRangeCrit(periodOther)}`)})
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeCrit(periodOther,`Service_Request_Type=="Routine" && Status=="Closed" && ${dueDateRangeCrit(periodOther)}`)})
           .then(r=>{pmClosed=Number(r.result.records_count||0);setCount("#PmClosed",pmClosed);updatePMPieChart(pmAll,pmClosed,pmOverdue);Other_OtherActive(done);})
           .catch(()=>{pmClosed=0;setCount("#PmClosed",0);updatePMPieChart(pmAll,pmClosed,pmOverdue);Other_OtherActive(done);});
       }
       function Other_OtherActive(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:activeCrit(periodOther,`Service_Request_Type!="Routine" && Service_Request_Type!="Breakdown" && Status!="Closed" && ${dueDateRangeCrit(periodOther)}`)})
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeCrit(periodOther,`Service_Request_Type!="Routine" && Service_Request_Type!="Breakdown" && Status!="Closed" && ${dueDateRangeCrit(periodOther)}`)})
           .then(r=>{setCount("#otherActive",r.result.records_count);Other_OtherClosed(done);}).catch(()=>Other_OtherClosed(done));
       }
       function Other_OtherClosed(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:activeCrit(periodOther,`Service_Request_Type!="Routine" && Service_Request_Type!="Breakdown" && Status=="Closed" && ${dueDateRangeCrit(periodOther)}`)})
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeCrit(periodOther,`Service_Request_Type!="Routine" && Service_Request_Type!="Breakdown" && Status=="Closed" && ${dueDateRangeCrit(periodOther)}`)})
           .then(r=>{setCount("#otherClosed",r.result.records_count);if(done)done();}).catch(()=>{if(done)done();});
       }
-      function refreshESN(done){setLabelForSection("esn");ESN_Pending(done);}
+
+      /* ── ESN ─────────────────────────────────────────────── */
+      function refreshESN(done){ setLabelForSection("esn"); ESN_Pending(done); }
       function ESN_Pending(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,criteria:activeCritESN(periodEsn,`ESN_Status=="Pending"`)})
+        const c=activeCritESN(periodEsn,`ESN_Status=="Pending"`);
+        console.log("[ESN] Pending criteria:", c);
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,criteria:c})
           .then(r=>{setCount("#esnPending",r.result.records_count);ESN_Completed(done);}).catch(()=>ESN_Completed(done));
       }
       function ESN_Completed(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,criteria:activeCritESN(periodEsn,`ESN_Status=="Completed" && ${addedTimeRangeCrit(periodEsn)}`)})
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,
+          criteria:activeCritESN(periodEsn,`ESN_Status=="Completed" && ${completionDateRangeCrit(periodEsn)}`)})
           .then(r=>{setCount("#esnCompleted",r.result.records_count);if(done)done();}).catch(()=>{if(done)done();});
       }
-      function refreshMe(done){setLabelForSection("me");Me_Breakdown(done);}
+
+      /* ── Me ──────────────────────────────────────────────── */
+      function refreshMe(done){ setLabelForSection("me"); Me_Breakdown(done); }
       function Me_Breakdown(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:activeRouteOnly(periodMe,`Service_Request_Type=="Breakdown" && Status=="Closed" && ${closedDateRangeCrit_ME(periodMe)}`)})
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeRouteOnly(periodMe,`Service_Request_Type=="Breakdown" && Status=="Closed" && ${closedDateRangeCrit_ME(periodMe)}`)})
           .then(r=>{setCount("#meBrkdwn",r.result.records_count);Me_PM(done);}).catch(()=>{setCount("#meBrkdwn",0);Me_PM(done);});
       }
       function Me_PM(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:activeRouteOnly(periodMe,`Service_Request_Type=="Routine" && Status=="Closed" && ${closedDateRangeCrit_ME(periodMe)}`)})
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeRouteOnly(periodMe,`Service_Request_Type=="Routine" && Status=="Closed" && ${closedDateRangeCrit_ME(periodMe)}`)})
           .then(r=>{setCount("#mePm",r.result.records_count);Me_Other(done);}).catch(()=>{setCount("#mePm",0);Me_Other(done);});
       }
       function Me_Other(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:activeRouteOnly(periodMe,`(Service_Request_Type=="One Time Service"||Service_Request_Type=="Repair"||Service_Request_Type=="Inspection") && Status=="Closed" && ${closedDateRangeCrit_ME(periodMe)}`)})
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,
+          criteria:activeRouteOnly(periodMe,`(Service_Request_Type=="One Time Service"||Service_Request_Type=="Repair"||Service_Request_Type=="Inspection") && Status=="Closed" && ${closedDateRangeCrit_ME(periodMe)}`)})
           .then(r=>{setCount("#meOther",r.result.records_count);Me_ESN(done);}).catch(()=>{setCount("#meOther",0);Me_ESN(done);});
       }
       function Me_ESN(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,criteria:activeCritESN(periodMe,`ESN_Status=="Completed" && ${addedTimeRangeCrit(periodMe)}`)})
+        /* Me ESN: filter by Completed_By == logged-in user + Completion_Date in period */
+        const meCrit = `Completed_By.ID == ${userID} && ESN_Status=="Completed" && ${completionDateRangeCrit(periodMe)}`;
+        console.log("[Me ESN] criteria:", meCrit);
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,criteria:meCrit})
           .then(r=>{setCount("#meEsn",r.result.records_count);if(done)done();}).catch(()=>{setCount("#meEsn",0);if(done)done();});
       }
 
       /* ─────────────────────────────────────────────────────────
-         MODAL
+         MODAL — open / close / populate
       ───────────────────────────────────────────────────────── */
       function populateRouteSelect(st){
-        const routes=ROUTE_EXPANSION[currentRoute]||(currentRoute?[currentRoute]:[]);
-        const defaultText=currentRoute?`${currentRoute}`:"All Routes (Default)";
-        const $sel=$("#routeSelect").empty().append(`<option value="">${defaultText}</option>`);
-        routes.forEach(r=>$sel.append(`<option value="${r}">${r}</option>`));
-        $sel.val(st.filterRoute||"");
+        const routes = ROUTE_EXPANSION[currentRoute] || (currentRoute ? [currentRoute] : []);
+        const $sel = $("#routeSelect").empty().append('<option value="">All Routes (Default)</option>');
+        routes.forEach(r => $sel.append(`<option value="${r}">${r}</option>`));
+        $sel.val(st.filterRoute || "");
       }
+
       function updateTechFieldState(){
-        const routeVal=$("#routeSelect").val();
-        if(routeVal){$("#techSearch").prop("disabled",false).attr("placeholder","Type technician name...");}
-        else{$("#techSearch").prop("disabled",true).attr("placeholder","Select a route first...");$("#techSearch").val("");$("#techID").val("");$("#techClear").hide();$("#techSuggestions").hide().empty();}
+        const routeVal = $("#routeSelect").val();
+        if(routeVal){
+          $("#techSearch").prop("disabled", false).attr("placeholder","Type technician name...");
+        } else {
+          $("#techSearch").prop("disabled", true).attr("placeholder","Select a route first...");
+          $("#techSearch").val("");
+          $("#techID").val("");
+          $("#techClear").hide();
+          $("#techSuggestions").hide().empty();
+        }
       }
+
       function openModal(){
-        const st=getState(activeFilterTarget);
-        const sectionLabels={other:"Other Calls",esn:"ESN",me:"Me"};
+        const st = getState(activeFilterTarget);
+        const sectionLabels = {other:"Other Calls",esn:"ESN",me:"Me"};
         $("#filterModalTitle").text("Filters — "+sectionLabels[activeFilterTarget]);
+
+        // Period
         $("#periodSelect").val(st.period);
-        const isCustom=st.period==="custom";
+        const isCustom = st.period==="custom";
         $(".date-range-field").toggle(isCustom);
         $("#dateFrom").val(isCustom?toInputDate(st.from):"");
         $("#dateTo").val(isCustom?toInputDate(st.to):"");
+
+        // Route dropdown
         populateRouteSelect(st);
+
+        // Tech field
         $("#techSearch").val(st.filterTechName||"");
         $("#techID").val(st.filterTechID||"");
         $("#techClear").toggle(!!(st.filterTechName));
         updateTechFieldState();
+
+        // Show modal
         $("#filterBackdrop").addClass("show");
         $("#filterModal").addClass("show").attr("aria-hidden","false");
         $("body").addClass("modal-open");
       }
+
       function closeModal(){
         $("#filterModal").removeClass("show").attr("aria-hidden","true");
         $("#filterBackdrop").removeClass("show");
         $("body").removeClass("modal-open");
         $("#techSuggestions").hide().empty();
       }
-      $(document).on("click","#OtherCalls,#esn,#me",function(e){
-        e.preventDefault();e.stopPropagation();
-        activeFilterTarget=this.id==="esn"?"esn":this.id==="me"?"me":"other";
+
+      /* ─────────────────────────────────────────────────────────
+         MODAL EVENT HANDLERS
+      ───────────────────────────────────────────────────────── */
+      $(document).on("click","#OtherCalls,#esn,#me", function(e){
+        e.preventDefault(); e.stopPropagation();
+        activeFilterTarget = this.id==="esn"?"esn":this.id==="me"?"me":"other";
         openModal();
       });
-      $(document).on("click","#filterModalClose,#filterBackdrop",closeModal);
-      $("#periodSelect").on("change",function(){
+      $(document).on("click","#filterModalClose,#filterBackdrop", closeModal);
+
+      $("#periodSelect").on("change", function(){
         const c=$(this).val()==="custom";
         $(".date-range-field").toggle(c);
-        if(!c)$("#dateFrom,#dateTo").val("");
-      });
-      $("#routeSelect").on("change",function(){
-        $("#techSearch").val("");$("#techID").val("");$("#techClear").hide();
-        $("#techSuggestions").hide().empty();updateTechFieldState();
-      });
-      $("#techClear").on("click",function(){
-        $("#techSearch").val("");$("#techID").val("");$(this).hide();$("#techSuggestions").hide().empty();
-      });
-      $("#filterClear").on("click",function(){
-        const st=getState(activeFilterTarget);
-        st.period="this_month";st.from=null;st.to=null;st.filterRoute="";st.filterTechID="";st.filterTechName="";
-        updateFilterBadge(activeFilterTarget);closeModal();if(userID)refreshOnly(activeFilterTarget);
-      });
-      $("#filterApply").on("click",function(){
-        const st=getState(activeFilterTarget);
-        const p=$("#periodSelect").val();st.period=p;
-        if(p==="custom"){
-          const f=parseInputDate($("#dateFrom").val());const t=parseInputDate($("#dateTo").val());
-          if(!f||!t){alert("Please select both From and To dates.");return;}
-          st.from=f<=t?f:t;st.to=f<=t?t:f;
-        } else{st.from=null;st.to=null;}
-        st.filterRoute=$("#routeSelect").val();
-        const techName=$("#techSearch").val().trim();const techID=$("#techID").val().trim();
-        if(techID&&techName){st.filterTechID=techID;st.filterTechName=techName;}
-        else{st.filterTechID="";st.filterTechName="";}
-        updateFilterBadge(activeFilterTarget);closeModal();if(userID)refreshOnly(activeFilterTarget);
+        if(!c) $("#dateFrom,#dateTo").val("");
       });
 
-      /* Tech typeahead */
-      function esc2(s){return String(s||"").replace(/"/g,'\\"');}
-      let techTimer=null;
-      $("#techSearch").on("input",function(){
-        const val=$(this).val().trim();
-        $("#techID").val("");$("#techClear").hide();clearTimeout(techTimer);
-        if(!val){$("#techSuggestions").hide().empty();return;}
-        const selectedRoute=$("#routeSelect").val();
-        if(!selectedRoute)return;
-        techTimer=setTimeout(()=>{
+      /* Route changed → clear tech, enable/disable tech field */
+      $("#routeSelect").on("change", function(){
+        $("#techSearch").val("");
+        $("#techID").val("");
+        $("#techClear").hide();
+        $("#techSuggestions").hide().empty();
+        updateTechFieldState();
+      });
+
+      /* Clear tech button */
+      $("#techClear").on("click", function(){
+        $("#techSearch").val("");
+        $("#techID").val("");
+        $(this).hide();
+        $("#techSuggestions").hide().empty();
+      });
+
+      /* Reset button — clears ALL filters for this section */
+      $("#filterClear").on("click", function(){
+        const st = getState(activeFilterTarget);
+        st.period="this_month"; st.from=null; st.to=null;
+        st.filterRoute=""; st.filterTechID=""; st.filterTechName="";
+        updateFilterBadge(activeFilterTarget);
+        closeModal();
+        if(userID) refreshOnly(activeFilterTarget);
+      });
+
+      /* Apply button — save all filter state */
+      $("#filterApply").on("click", function(){
+        const st = getState(activeFilterTarget);
+
+        // Period
+        const p = $("#periodSelect").val();
+        st.period = p;
+        if(p==="custom"){
+          const f=parseInputDate($("#dateFrom").val());
+          const t=parseInputDate($("#dateTo").val());
+          if(!f||!t){ alert("Please select both From and To dates."); return; }
+          st.from=f<=t?f:t; st.to=f<=t?t:f;
+        } else { st.from=null; st.to=null; }
+
+        // Route
+        st.filterRoute = $("#routeSelect").val();
+
+        // Technician
+        const techName = $("#techSearch").val().trim();
+        const techID   = $("#techID").val().trim();
+        // Only save tech if we have both name and ID (selected from suggestions)
+        if(techID && techName){
+          st.filterTechID   = techID;
+          st.filterTechName = techName;
+        } else {
+          st.filterTechID   = "";
+          st.filterTechName = "";
+        }
+
+        updateFilterBadge(activeFilterTarget);
+        closeModal();
+        if(userID) refreshOnly(activeFilterTarget);
+      });
+
+      /* ─────────────────────────────────────────────────────────
+         TECH TYPEAHEAD
+         Searches Service Technicians scoped to selected route.
+         Stores ID in hidden #techID field on selection.
+      ───────────────────────────────────────────────────────── */
+      function esc2(s){ return String(s||"").replace(/"/g,'\\"'); }
+      let techTimer = null;
+
+      $("#techSearch").on("input", function(){
+        const val = $(this).val().trim();
+        $("#techID").val("");            // clear stored ID while typing
+        $("#techClear").hide();
+        clearTimeout(techTimer);
+        if(!val){ $("#techSuggestions").hide().empty(); return; }
+
+        const selectedRoute = $("#routeSelect").val();
+        if(!selectedRoute) return; // safety — button should be disabled anyway
+
+        techTimer = setTimeout(()=>{
           $("#techSuggestions").html('<div class="sugg-empty">Loading...</div>').show();
           $("#techLoadingSpinner").show();
-          const crit=`Role=="Service Technician" && User_Status=="Active" && New_Route_Name=="${esc2(selectedRoute)}"${val?` && Name.contains("${esc2(val)}")` : ""}`;
-          ZOHO.CREATOR.API.getAllRecords({appName:applicationName,reportName:userReport,criteria:crit,pageSize:50})
-            .then(res=>{
-              $("#techLoadingSpinner").hide();
-              const rows=res?.data||[];
-              if(!rows.length){$("#techSuggestions").html('<div class="sugg-empty">No technicians found</div>');return;}
-              const html=rows.map(r=>`<div class="sugg-item" data-id="${esc2(r.ID||"")}" data-name="${esc2(r.Name||"")}">${r.Name||""}</div>`).join("");
-              $("#techSuggestions").html(html).show();
-            }).catch(()=>{$("#techLoadingSpinner").hide();$("#techSuggestions").html('<div class="sugg-empty">Error loading technicians</div>');});
-        },350);
+
+          // Criteria: active STs in the selected route, name contains search term
+          const crit = `Role=="Service Technician" && User_Status=="Active" && New_Route_Name=="${esc2(selectedRoute)}"${val?` && Name.contains("${esc2(val)}")` : ""}`;
+
+          ZOHO.CREATOR.API.getAllRecords({
+            appName:applicationName, reportName:userReport,
+            criteria:crit, pageSize:50
+          }).then(res=>{
+            $("#techLoadingSpinner").hide();
+            const rows = res?.data || [];
+            if(!rows.length){
+              $("#techSuggestions").html('<div class="sugg-empty">No technicians found</div>');
+              return;
+            }
+            const html = rows.map(r =>
+              `<div class="sugg-item"
+                    data-id="${esc2(r.ID||"")}"
+                    data-name="${esc2(r.Name||"")}">
+                ${r.Name||""}
+               </div>`
+            ).join("");
+            $("#techSuggestions").html(html).show();
+          }).catch(()=>{
+            $("#techLoadingSpinner").hide();
+            $("#techSuggestions").html('<div class="sugg-empty">Error loading technicians</div>');
+          });
+        }, 350);
       });
-      $(document).on("click","#techSuggestions .sugg-item",function(){
-        const name=$(this).data("name")||"";const id=$(this).data("id")||"";
-        $("#techSearch").val(name);$("#techID").val(id);$("#techClear").show();$("#techSuggestions").hide().empty();
+
+      /* Select technician from suggestions */
+      $(document).on("click","#techSuggestions .sugg-item", function(){
+        const name = $(this).data("name") || "";
+        const id   = $(this).data("id")   || "";
+        $("#techSearch").val(name);
+        $("#techID").val(id);
+        $("#techClear").show();
+        $("#techSuggestions").hide().empty();
       });
-      $(document).on("click.sugg",function(e){
-        if(!$(e.target).closest("#techSearch,#techSuggestions").length)$("#techSuggestions").hide().empty();
+
+      /* Hide suggestions on outside click */
+      $(document).on("click.sugg", function(e){
+        if(!$(e.target).closest("#techSearch,#techSuggestions").length)
+          $("#techSuggestions").hide().empty();
       });
 
       /* ─────────────────────────────────────────────────────────
@@ -783,22 +923,41 @@
         $("#loader").show();
         initPMPieChart();
         $(".date-range-field").hide();
-        const params=ZOHO.CREATOR.UTIL.getInitParams()||{};
-        const loginuser=params.loginUser||"";
-        ZOHO.CREATOR.API.getAllRecords({appName:applicationName,reportName:userReport,criteria:`(Email == "${loginuser}")`,page:1,pageSize:1})
-          .then(res=>{
-            if(res.data&&res.data.length>0){
-              const rec=res.data[0];
-              console.log("User record:", rec);
-              UserName=rec.Name||"";userID=rec.ID||"";currentRole=rec.Role||"";
-              currentRoute=fullyDecode(rec.New_Route_Name||rec.Route||rec.Region||""); 
-              console.log("User role:", currentRole);
-              $("#user_Role").text(currentRole?currentRole.substring(0,2).toUpperCase():"NA");
-              $("#User_Route").text(currentRoute||"NA");
-              refreshOtherCalls(()=>{refreshESN(()=>{refreshMe(()=>{bindCountRedirects();$("#loader").hide();});});});
-            } else{$("#loader").hide();}
-          }).catch(err=>{console.error(err);$("#loader").hide();});
+
+        const params    = ZOHO.CREATOR.UTIL.getInitParams() || {};
+        const loginuser = params.loginUser || "";
+
+        ZOHO.CREATOR.API.getAllRecords({
+          appName:applicationName, reportName:userReport,
+          criteria:`(Email == "${loginuser}")`, page:1, pageSize:1
+        }).then(res=>{
+          if(res.data&&res.data.length>0){
+            const rec    = res.data[0];
+            UserName     = rec.Name  || "";
+            userID       = rec.ID    || "";
+            currentRole  = rec.Role  || "";
+            currentRoute = fullyDecode(rec.New_Route_Name||rec.Route||rec.Region||"");
+
+            console.log("userID:", userID, "| UserName:", UserName, "| Route:", currentRoute);
+            console.log("Expanded routes:", ROUTE_EXPANSION[currentRoute] || "single route");
+
+            $("#user_Role").text(currentRole?currentRole.substring(0,2).toUpperCase():"NA");
+            $("#User_Route").text(currentRoute||"NA");
+
+            refreshOtherCalls(()=>{
+              refreshESN(()=>{
+                refreshMe(()=>{
+                  bindCountRedirects();
+                  $("#loader").hide();
+                });
+              });
+            });
+          } else {
+            $("#loader").hide();
+          }
+        }).catch(err=>{ console.error(err); $("#loader").hide(); });
       });
+
     });
   </script>
 </body>
