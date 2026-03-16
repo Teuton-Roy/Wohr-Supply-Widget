@@ -249,7 +249,7 @@
     let currentMePeriod = "this_month";
     let currentHoFrom = null, currentHoTo = null;
     let currentMeFrom = null, currentMeTo = null;
-    let loginUser = "", userName = "", userRouteName = "";
+    let loginUser = "", userName = "", userID = "", userRouteName = "";
     let activeModalSection = null;
     let currentRole  = "";   // "Handover Engineer" | "Operation Incharge"
     let currentRoute = "";   // OI's route alias e.g. "Pune All"
@@ -370,7 +370,8 @@
     }
 
     /* ── Aggregate ── */
-    function aggregateData(handovers, esnRecords, from, to) {
+    /* meOnly=true → also filters ESN by Completed_By == userName (Me card) */
+    function aggregateData(handovers, esnRecords, from, to, meOnly) {
       const esnCountMap={}, esnCompletedMap={};
       esnRecords.forEach(r => {
         const key=r.APS_PS_Parking_Number;
@@ -392,14 +393,28 @@
         }
       });
 
-      const esnCompletedParkings=new Set();
+      /* ESN Completed — use Completion_Date for period filter
+         Me card additionally filters by Completed_By == logged-in user */
+      const esnCompletedParkings=new Set(); let _esnLogged=false;
       esnRecords.forEach(r => {
-        const d=parseZohoDate(r.Added_Time);
+        if(r.ESN_Status!=="Completed") return;
+        if(meOnly && !_esnLogged){ console.log("[ESN sample Completed_By]:", JSON.stringify(r.Completed_By), "| loginUser:", loginUser, "| userName:", userName, "| userID:", userID); _esnLogged=true; }
+        const d=parseZohoDate(r.Completion_Date);          // ← Completion_Date
         if(!d||d<from||d>to) return;
-        if(r.ESN_Status==="Completed") { esnCompleted.calls++; if(r.APS_PS_Parking_Number) esnCompletedParkings.add(r.APS_PS_Parking_Number); }
+        if(meOnly) {
+          /* Completed_By can be object {ID, zc_display_value} or plain string */
+          const cb = r.Completed_By;
+          const cbId    = cb?.ID    || cb?.id    || "";
+          const cbName  = cb?.zc_display_value || cb?.name || (typeof cb==="string"?cb:"");
+          const cbEmail = cb?.Email || cb?.email || "";
+          const isMe = (userID && cbId    === userID)   ||
+                       (cbName  === userName)             ||
+                       (loginUser && cbEmail === loginUser);
+          if(!isMe) return;
+        }  // ← Me filter
+        esnCompleted.calls++;
+        if(r.APS_PS_Parking_Number) esnCompleted.spaces++;
       });
-      esnCompleted.spaces=esnCompletedParkings.size;
-
       return {pending,handoverCompleted,esnCompleted};
     }
 
@@ -427,7 +442,7 @@
     function refreshMeCard(customFrom, customTo) {
       const {from,to}=getDateRange(currentMePeriod,customFrom,customTo);
       currentMeFrom=from; currentMeTo=to;
-      updateMeCard(aggregateData(allHandovers,allEsnRecords,from,to));
+      updateMeCard(aggregateData(allHandovers,allEsnRecords,from,to,true));
     }
 
     /* ── Navigate to report — role-aware ── */
@@ -452,9 +467,10 @@
               `&Quality_Inspection_Status=${encode(status)}`;
 
       } else if (type === "esn_completed") {
-        const dateParam = encode(`${formatZohoDateStr(from)};${formatZohoDateStr(to)}`);
+        /* Use Completion_Date (date-only) for period filter */
+        const dateParam = encode(`${formatZohoDateOnly(from)};${formatZohoDateOnly(to)}`);
         url = REPORT_BASE_URL +
-              `My_ESN?Added_Time=${dateParam}&Added_Time_op=58&ESN_Status=Completed`;
+              `My_ESN?Completion_Date=${dateParam}&Completion_Date_op=58&ESN_Status=Completed`;
       }
 
       console.log("Navigating to:", url);
@@ -477,8 +493,9 @@
         });
         if (userResp?.data?.length > 0) {
           const u      = userResp.data[0];
-          // console.log(u);
+          console.log(u);
           userName     = u.Name  || "";
+          userID       = u.ID    || "";
           currentRole  = u.Role  || "";
           currentRoute = u.New_Route_Name || u.Route || "";
           userRouteName = currentRoute;
@@ -503,7 +520,7 @@
              Handover Engineer   → own records only  (Handover_Engineer_Email)
              Operation Incharge  → all records from their city (Engineer_City)  */
         const handoverCriteria = (currentRole === "Operation Incharge" && currentCity)
-          ? `(City == "${currentCity}")`
+          ? `(Engineer_City == "${currentCity}")`
           : `(Handover_Engineer_Email == "${loginUser}")`;
 
         console.log("Handover fetch criteria:", handoverCriteria);
