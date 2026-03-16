@@ -182,7 +182,7 @@
       <div class="status-calls loading-val" id="meHandoverCalls">…</div>
       <div class="status-spaces loading-val" id="meHandoverSpaces">…</div>
     </div>
-    <div class="status-row esn" onclick="navigateToReport('esn_completed', currentMeFrom, currentMeTo)">
+    <div class="status-row esn" onclick="navigateToReport('esn_completed', currentMeFrom, currentMeTo, userName)">
       <div class="status-label">ESN <br class="label-br">Completed</div>
       <div class="status-calls loading-val" id="meEsnCalls">…</div>
       <div class="status-spaces loading-val" id="meEsnSpaces">…</div>
@@ -446,7 +446,7 @@
     }
 
     /* ── Navigate to report — role-aware ── */
-    function navigateToReport(type, from, to) {
+    function navigateToReport(type, from, to, completedBy) {
       if (!from||!to) return;
       const encode = (s) => String(s).replace(/ /g, "%20");
       let url = "";
@@ -469,8 +469,9 @@
       } else if (type === "esn_completed") {
         /* Use Completion_Date (date-only) for period filter */
         const dateParam = encode(`${formatZohoDateOnly(from)};${formatZohoDateOnly(to)}`);
+        const completedByParam = completedBy ? `&Completed_By=${encode(completedBy)}` : "";
         url = REPORT_BASE_URL +
-              `My_ESN?Completion_Date=${dateParam}&Completion_Date_op=58&ESN_Status=Completed`;
+              `My_ESN?Completion_Date=${dateParam}&Completion_Date_op=58&ESN_Status=Completed${completedByParam}`;
       }
 
       console.log("Navigating to:", url);
