@@ -40,7 +40,7 @@
     .cd-pill--block{width:100%;}
     .cd-pill-k{font-size:12px;font-weight:700;color:#222;white-space:nowrap;}
     .cd-pill-v{font-size:22px;font-weight:900;line-height:1;color:cornflowerblue;cursor:pointer;}
-    .cd-breakdown{margin-top:6px;}
+    .cd-breakdown{margin-top:6px;overflow:visible;}
     .cd-breakdown-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;align-items:center;}
     .cd-label{font-weight:700;color:#222;padding-left:2px;}
     .cd-label--center{display:flex;align-items:center;justify-content:center;font-weight:800;color:#333;}
@@ -48,7 +48,7 @@
     .cd-matrix{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;align-items:center;}
     .cd-matrix .cd-label--center{font-size:13px;}
     .cd-pie-wrap{display:flex;justify-content:center;align-items:center;width:100%;overflow:visible;}
-    #pmPieCanvas{width:280px !important;height:280px !important;display:block;}
+    #pmPieCanvas{width:300px!important;height:300px!important;display:block;aspect-ratio:1/1;flex-shrink:0;}
     .cd-stack{display:flex;flex-direction:column;gap:10px;}
     .cd-filter-active{display:inline-flex;align-items:center;gap:4px;background:#eef2ff;border:1px solid #c7d4ff;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:700;color:#1f66ff;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;}
     /* Loader */
@@ -105,7 +105,7 @@
       .cd-matrix{grid-template-columns:1fr;gap:8px;}
       .cd-matrix .cd-label--center{justify-content:flex-start;}
       .cd-pie-wrap{justify-content:center;}
-      #pmPieCanvas{width:210px !important;height:210px !important;}
+      #pmPieCanvas{width:240px!important;height:240px!important;aspect-ratio:1/1;}
     }
   </style>
 </head>
@@ -171,7 +171,7 @@
           <div class="cd-divider"></div>
           <div class="cd-matrix">
             <div class="cd-label cd-label--center">PM</div>
-            <div class="cd-pie-wrap"><canvas id="pmPieCanvas" width="280" height="280" aria-label="PM pie chart"></canvas></div>
+            <div class="cd-pie-wrap"><canvas id="pmPieCanvas" width="300" height="300" aria-label="PM pie chart"></canvas></div>
             <div class="cd-stack">
               <div class="cd-pill cd-pill--block"><span class="cd-pill-k">All</span><span class="cd-pill-v" id="PmAll">0</span></div>
               <div class="cd-pill cd-pill--block"><span class="cd-pill-k">Closed</span><span class="cd-pill-v" id="PmClosed">0</span></div>
@@ -379,7 +379,8 @@
       function toInputDate(d){if(!d)return"";return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
       function parseInputDate(val){if(!val)return null;const[y,m,d]=val.split("-").map(Number);return new Date(y,m-1,d);}
       function dueDateRangeCrit(s){const r=getRangeFromState(s);return`Due_Date >= "${fmtDate(r.from)}" && Due_Date <= "${fmtDate(r.to)}"`;}
-      function addedTimeRangeCrit(s){const r=getRangeFromState(s);return`Added_Time >= "${fmtDateTime(r.from)}" && Added_Time <= "${fmtDateTime(r.to)}"`;}
+      function addedTimeRangeCrit(s){const r=getRangeFromState(s);return`Added_Time >= "${fmtDateTime(r.from)}" && Added_Time <= "${fmtDateTime(r.to)}"`;
+      }function completionDateRangeCrit(s){const r=getRangeFromState(s);return`Completion_Date >= "${fmtDate(r.from)}" && Completion_Date <= "${fmtDate(r.to)}"`;}
       function closedDateRangeCrit_ME(s){const r=getRangeFromState(s);return`Closed_Date >= "${fmtDate(r.from)}" && Closed_Date <= "${fmtDate(r.to)}"`;}
       function labelForState(state){
         if(state.period==="custom"&&state.from&&state.to){const r=getRangeFromState(state);return`${fmtDate(r.from)} – ${fmtDate(r.to)}`;}
@@ -528,11 +529,11 @@
         $("#otherActive").off("click.r").on("click.r",()=>{const p=paramsFor(periodOther);p.Status="Closed";p.Status_op=OP_NOT_EQ;p.Service_Request_Type="[One Time Service,Repair,Inspection]";p.Service_Request_Type_op=26;addDueBetween(p,periodOther);openReport("Open_User_Service_Request",p);});
         $("#otherClosed").off("click.r").on("click.r",()=>{const p=paramsFor(periodOther);p.Status="Closed";p.Service_Request_Type="[One Time Service,Repair,Inspection]";p.Service_Request_Type_op=26;addDueBetween(p,periodOther);openReport("Closed_User_Service_Request",p);});
         $("#esnPending").off("click.r").on("click.r",()=>{const p=paramsFor(periodEsn);p.ESN_Status="Pending";openReport("My_ESN",p);});
-        $("#esnCompleted").off("click.r").on("click.r",()=>{const p=paramsFor(periodEsn);p.ESN_Status="Completed";addAddedBetween(p,periodEsn);openReport("My_ESN",p);});
+        $("#esnCompleted").off("click.r").on("click.r",()=>{const p=paramsFor(periodEsn);p.ESN_Status="Completed";const r=getRangeFromState(periodEsn);addBetween(p,"Completion_Date",fmtDate(r.from),fmtDate(r.to));openReport("My_ESN",p);});
         $("#meBrkdwn").off("click.r").on("click.r",()=>{const p=paramsForMe(periodMe);p.Service_Request_Type="Breakdown";p.Status="Closed";addClosedBetween_ME(p,periodMe);openReport("Breakdown_Calls",p);});
         $("#mePm").off("click.r").on("click.r",()=>{const p=paramsForMe(periodMe);p.Service_Request_Type="Routine";p.Status="Closed";addClosedBetween_ME(p,periodMe);openReport("Closed_User_Service_Request",p);});
         $("#meOther").off("click.r").on("click.r",()=>{const p=paramsForMe(periodMe);p.Service_Request_Type="[One Time Service,Repair,Inspection]";p.Service_Request_Type_op=26;p.Status="Closed";addClosedBetween_ME(p,periodMe);openReport("Closed_User_Service_Request",p);});
-        $("#meEsn").off("click.r").on("click.r",()=>{const p=paramsFor(periodMe);p.ESN_Status="Completed";addAddedBetween(p,periodMe);openReport("My_ESN",p);});
+        $("#meEsn").off("click.r").on("click.r",()=>{const p={ESN_Status:"Completed",Completed_By:`[${UserName}]`};const r=getRangeFromState(periodMe);addBetween(p,"Completion_Date",fmtDate(r.from),fmtDate(r.to));openReport("My_ESN",p);});
       }
 
       /* ─────────────────────────────────────────────────────────
@@ -545,31 +546,52 @@
         id:"outsideLabels",
         afterDatasetsDraw(chart){
           if(chart.$noData)return;
-          const{ctx}=chart;
+          const{ctx,canvas}=chart;
           const dataset=chart.data.datasets[0];
           const meta=chart.getDatasetMeta(0);
           const total=dataset.data.reduce((a,b)=>Number(a)+Number(b),0)||1;
-          ctx.save();
+          const isMob=canvas.width<=220;
+          const RADIAL=isMob?18:28,TICK=isMob?16:26;
+          const FS=isMob?10:12,VS=isMob?11:13;
+          const LINE_H=FS+VS+10;
+          const items=[];
           meta.data.forEach((arc,i)=>{
             const value=Number(dataset.data[i]||0);
             if(!value)return;
-            const label=chart.data.labels[i];
-            const color=dataset.backgroundColor[i];
-            const pct=Math.round(value/total*100);
             const midAngle=(arc.startAngle+arc.endAngle)/2;
             const outerR=arc.outerRadius;
-            const cx=arc.x,cy=arc.y;
-            const isRight=Math.cos(midAngle)>=0;
-            const R1=outerR+10,R2=outerR+30,TICK=22;
-            const x1=cx+R1*Math.cos(midAngle),y1=cy+R1*Math.sin(midAngle);
-            const x2=cx+R2*Math.cos(midAngle),y2=cy+R2*Math.sin(midAngle);
-            const x3=x2+(isRight?TICK:-TICK),y3=y2;
-            ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.lineTo(x3,y3);
-            ctx.strokeStyle="#adb5bd";ctx.lineWidth=1.2;ctx.lineJoin="round";ctx.setLineDash([]);ctx.stroke();
-            ctx.beginPath();ctx.arc(x2,y2,3,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
-            const tx=x3+(isRight?6:-6);const align=isRight?"left":"right";
-            ctx.font='700 12px "Segoe UI",system-ui,sans-serif';ctx.fillStyle="#374151";ctx.textAlign=align;ctx.textBaseline="bottom";ctx.fillText(label,tx,y3-1);
-            ctx.font='800 13px "Segoe UI",system-ui,sans-serif';ctx.fillStyle=color==="#e5e7eb"?"#9ca3af":color;ctx.textBaseline="top";ctx.fillText(`${value}  (${pct}%)`,tx,y3+2);
+            const ex=arc.x+(outerR+RADIAL)*Math.cos(midAngle);
+            const ey=arc.y+(outerR+RADIAL)*Math.sin(midAngle);
+            items.push({arc,value,label:chart.data.labels[i],color:dataset.backgroundColor[i],
+              pct:Math.round(value/total*100),midAngle,outerR,ex,ey,
+              side:Math.cos(midAngle)>=0?"right":"left"});
+          });
+          for(let a=0;a<items.length;a++){
+            for(let b=a+1;b<items.length;b++){
+              if(items[a].side!==items[b].side)continue;
+              if(Math.abs(items[a].ey-items[b].ey)<LINE_H*2.4){
+                const ca=Math.abs(Math.cos(items[a].midAngle));
+                const cb=Math.abs(Math.cos(items[b].midAngle));
+                const flip=ca<cb?a:b;
+                items[flip].side=items[flip].side==="right"?"left":"right";
+              }
+            }
+          }
+          ctx.save();
+          items.forEach(({arc,value,label,color,pct,midAngle,outerR,ex,ey,side})=>{
+            const isRight=side==="right";
+            const x1=arc.x+(outerR+4)*Math.cos(midAngle),y1=arc.y+(outerR+4)*Math.sin(midAngle);
+            const x3=ex+(isRight?TICK:-TICK);
+            ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(ex,ey);ctx.lineTo(x3,ey);
+            ctx.strokeStyle="#9ca3af";ctx.lineWidth=1.2;ctx.lineJoin="round";ctx.stroke();
+            ctx.beginPath();ctx.arc(ex,ey,3,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
+            const tx=x3+(isRight?5:-5);
+            ctx.textAlign=isRight?"left":"right";
+            ctx.font=`700 ${FS}px "DM Sans",system-ui,sans-serif`;
+            ctx.fillStyle="#374151";ctx.textBaseline="bottom";ctx.fillText(label,tx,ey-1);
+            ctx.font=`800 ${VS}px "DM Sans",system-ui,sans-serif`;
+            ctx.fillStyle=color==="#e5e7eb"?"#9ca3af":color;
+            ctx.textBaseline="top";ctx.fillText(`${value} (${pct}%)`,tx,ey+2);
           });
           ctx.restore();
         }
@@ -577,19 +599,24 @@
 
       function initPMPieChart(){
         const canvas=document.getElementById("pmPieCanvas");
-        if(!canvas)return;if(pmChart){pmChart.destroy();pmChart=null;}
+        if(!canvas)return; if(pmChart){pmChart.destroy();pmChart=null;}
+        const size=canvas.width;
+        const pad=Math.round(size*0.32);
         pmChart=new Chart(canvas.getContext("2d"),{
           type:"doughnut",plugins:[outsideLabelsPlugin],
-          data:{labels:["Closed","Overdue","All"],datasets:[{data:[0,0,1],backgroundColor:["#e5e7eb","#e5e7eb","#e5e7eb"],borderWidth:5,borderColor:"#fff",hoverOffset:8,borderRadius:5,spacing:2}]},
-          options:{responsive:true,maintainAspectRatio:true,cutout:"65%",
-            layout:{padding:{top:48,right:75,bottom:48,left:72}},
-            animation:{duration:700,easing:"easeInOutQuart"},
+          data:{labels:["Closed","Overdue","All"],datasets:[{data:[0,0,1],
+            backgroundColor:["#e5e7eb","#e5e7eb","#e5e7eb"],
+            borderWidth:4,borderColor:"#fff",hoverOffset:6,borderRadius:4,spacing:1}]},
+          options:{responsive:false,maintainAspectRatio:false,cutout:"65%",
+            layout:{padding:{top:pad,right:pad+18,bottom:pad,left:pad+18}},
+            animation:{duration:600,easing:"easeInOutQuart"},
             plugins:{legend:{display:false},
-              tooltip:{enabled:true,backgroundColor:"rgba(17,24,39,0.88)",titleFont:{size:12,weight:"700"},bodyFont:{size:12},padding:10,cornerRadius:8,
-                callbacks:{label(ctx){if(ctx.chart.$noData)return` ${ctx.label}: 0`;const tot=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;const v=Number(ctx.raw||0);return`  ${ctx.label}: ${v}(${Math.round(v/tot*100)}%)`}}},
+              tooltip:{enabled:true,backgroundColor:"rgba(17,24,39,.88)",padding:10,cornerRadius:8,
+                callbacks:{label(ctx){const tot=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
+                  return`  ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw)/tot*100)}%)`}}},
               datalabels:{display:false}}}
         });
-        pmChart.$noData=true;resizePieCanvas();
+        pmChart.$noData=true;
       }
       function updatePMPieChart(all,closed,overdue){
         all=Number(all||0);closed=Number(closed||0);overdue=Number(overdue||0);
@@ -601,12 +628,15 @@
         pmChart.update();
       }
       function resizePieCanvas(){
-        const canvas=document.getElementById("pmPieCanvas");if(!canvas)return;
-        const size=window.innerWidth<=520?210:280;
-        canvas.width=size;canvas.height=size;canvas.style.width=size+"px";canvas.style.height=size+"px";
-        if(pmChart)pmChart.resize();
+        const canvas=document.getElementById("pmPieCanvas");
+        if(!canvas)return;
+        const size=window.innerWidth<=520?240:300;
+        if(canvas.width===size)return;
+        canvas.width=size; canvas.height=size;
+        canvas.style.width=size+"px"; canvas.style.height=size+"px";
+        if(pmChart){pmChart.destroy();pmChart=null;initPMPieChart();}
       }
-      window.addEventListener("resize",resizePieCanvas);
+      window.addEventListener("resize",()=>{clearTimeout(window._rpt);window._rpt=setTimeout(resizePieCanvas,150);});
 
       /* ─────────────────────────────────────────────────────────
          DATA LOADERS
@@ -622,11 +652,11 @@
         else refreshMe(done);
       }
 
-      /* ── Other Calls Breakdown ─────────────────────────────────────── */
+      /* ── Other Calls ─────────────────────────────────────── */
       function refreshOtherCalls(done){setLabelForSection("other");Other_BreakdownAll(done);}
       function Other_BreakdownAll(done){
         const c=activeCrit(periodOther,`Service_Request_Type=="Breakdown" && Status!="Closed" && ${dueDateRangeCrit(periodOther)}`);
-        // console.log("[OI Other] BreakdownAll criteria:",c);
+        console.log("[OI Other] BreakdownAll criteria:",c);
         ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:c})
           .then(r=>{setCount("#BreakdownAll",r.result.records_count);Other_BreakdownClosed(done);}).catch(()=>Other_BreakdownClosed(done));
       }
@@ -634,8 +664,6 @@
         ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:activeCrit(periodOther,`Service_Request_Type=="Breakdown" && Status=="Closed" && ${dueDateRangeCrit(periodOther)}`)})
           .then(r=>{setCount("#BreakdownClosed",r.result.records_count);Other_PMAll(done);}).catch(()=>Other_PMAll(done));
       }
-
-      /* ── Other Calls PM ─────────────────────────────────────── */
       function Other_PMAll(done){
         ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:serviceReport,criteria:activeCrit(periodOther,`Service_Request_Type=="Routine" && Status=="Current month due" && ${dueDateRangeCrit(periodOther)}`)})
           .then(r=>{pmAll=Number(r.result.records_count||0);setCount("#PmAll",pmAll);Other_PMOverdue(done);})
@@ -664,12 +692,12 @@
       function refreshESN(done){setLabelForSection("esn");ESN_Pending(done);}
       function ESN_Pending(done){
         const c=activeCritESN(periodEsn,`ESN_Status=="Pending"`);
-        // console.log("[OI ESN] Pending criteria:",c);
+        console.log("[OI ESN] Pending criteria:",c);
         ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,criteria:c})
           .then(r=>{setCount("#esnPending",r.result.records_count);ESN_Completed(done);}).catch(()=>ESN_Completed(done));
       }
       function ESN_Completed(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,criteria:activeCritESN(periodEsn,`ESN_Status=="Completed" && ${addedTimeRangeCrit(periodEsn)}`)})
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,criteria:activeCritESN(periodEsn,`ESN_Status=="Completed" && ${completionDateRangeCrit(periodEsn)}`)})
           .then(r=>{setCount("#esnCompleted",r.result.records_count);if(done)done();}).catch(()=>{if(done)done();});
       }
 
@@ -688,7 +716,9 @@
           .then(r=>{setCount("#meOther",r.result.records_count);Me_ESN(done);}).catch(()=>{setCount("#meOther",0);Me_ESN(done);});
       }
       function Me_ESN(done){
-        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,criteria:activeCritESN(periodMe,`ESN_Status=="Completed" && ${addedTimeRangeCrit(periodMe)}`)})
+        const meCrit=`Completed_By.ID == ${userID} && ESN_Status=="Completed" && ${completionDateRangeCrit(periodMe)}`;
+        console.log("[Me ESN] criteria:", meCrit);
+        ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,criteria:meCrit})
           .then(r=>{setCount("#meEsn",r.result.records_count);if(done)done();}).catch(()=>{setCount("#meEsn",0);if(done)done();});
       }
 
@@ -719,17 +749,14 @@
         const routes = ROUTE_EXPANSION[currentRoute] || (currentRoute ? [currentRoute] : []);
         if(!routes.length) return;
         $("#tlLoadingSpinner").show();
-        // Build OR criteria for all routes in OI's scope
-        const routeParts = routes.map(r => `New_Route_Name=="${r}"`).join(" || ");
-        // const crit = `Role=="Team Leader" && User_Status=="Active" && (${routeParts})`;
-        const crit = `Role=="Team Leader" && User_Status=="Active" && New_Route_Name == "${currentRoute}")`;
-        // console.log("[OI] TL fetch criteria:", crit);
+        const crit = `Role=="Team Leader" && User_Status=="Active" && New_Route_Name=="${currentRoute}"`;
+        console.log("[OI] TL fetch criteria:", crit);
         ZOHO.CREATOR.API.getAllRecords({
           appName:applicationName, reportName:userReport, criteria:crit, pageSize:100
         }).then(res=>{
           $("#tlLoadingSpinner").hide();
           const rows = res?.data || [];
-          const $sel = $("#tlSelect").empty().append('<option value="">Select Team Leader</option>');
+          const $sel = $("#tlSelect").empty().append('<option value="">All Team Leaders</option>');
           rows.forEach(r => {
             $sel.append(`<option value="${r.ID||""}">${r.Name||""}</option>`);
           });
@@ -913,15 +940,13 @@
             userID       = rec.ID||"";
             currentRole  = rec.Role||"";
             currentRoute = fullyDecode(rec.New_Route_Name||rec.Route||"");
-            // console.log("currentRoute raw:", currentRoute);
             currentRegion= fullyDecode(rec.Region||rec.User_Region||"");
 
-            // console.log("OI userID:",userID,"| Route:",currentRoute,"| Region:",currentRegion);
-            // console.log("Expanded routes:",ROUTE_EXPANSION[currentRoute]||"single route");
+            console.log("OI userID:",userID,"| Route:",currentRoute,"| Region:",currentRegion);
+            console.log("Expanded routes:",ROUTE_EXPANSION[currentRoute]||"single route");
 
             // Avatar: "OI" — show region below
-            // $("#user_Role").text("OI");
-            $("#user_Role").text(currentRole.split(" ").map(w=>w[0]).join(""));
+            $("#user_Role").text("OI");
             $("#User_Region").text(currentRegion||currentRoute||"NA");
 
             // Pre-load Team Leaders dropdown (route-scoped)
