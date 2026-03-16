@@ -6,25 +6,26 @@
   <script src=" https://static.zohocdn.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
   <style>
     :root {
-      --tag-blue: #0088ff; --tag-blue-dk: #006fcc; --border: #e0e4ea; --funnel: #165579;
-      --open: #FDDC13; --open-border: #ceb50f; --partial: #ede6c2; --partial-border: #a17f0f;
+      --tag-blue: #0088ff; --tag-blue-dk: #006fcc; --border: #e0e4ea; --funnel: #1a2a7a;
+      --open: #FFDC00; --open-border: #ceb50f; --partial: #ede6c2; --partial-border: #f6d25b;
       --closed: #e6f5e4; --closed-border: #5cb85c; --text: #111; --text-muted: #6b7280;
       --bg: #f4f6fb; --card-bg: #ffffff; --shadow: 0 4px 24px rgba(0,0,0,.08);
       --shadow-hover: 0 8px 32px rgba(0,136,255,.13);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); font-size: 10px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: var(--text); padding: 20px 16px 40px; min-height: 100vh; }
-    .top-user { display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; gap: 8px; margin-bottom: 18px; margin-right: 10px; }
-    .avatar { width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #cfe4ff 0%, #a8d0ff 100%); border: 2.5px solid #4d86c6; display: grid; place-items: center; font-weight: 800; font-size: 15px; color: #1a5fa8; box-shadow: 0 2px 8px rgba(77,134,198,.25); flex-shrink: 0; }
-    .loc { font-weight: 700; font-size: 15px; color: var(--text-muted); line-height: 1.2; }
-    .status-card { position: relative; background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 20px; padding: 22px 18px 18px; margin: 28px 0 20px; box-shadow: var(--shadow); transition: box-shadow .25s ease; }
+    body { background: #F2EFEF; font-size: 10px;font-family: ui-sans-serif, system-ui, -apple-system; color: var(--text); padding: 20px 16px 40px; min-height: 100vh; }
+    .top-user { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; margin-bottom: 18px; margin-right: 10px;}
+    .avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #cfe4ff 0%, #a8d0ff 100%); border: 2.5px solid #4d86c6; display: grid; place-items: center; font-weight: 800; font-size: 15px; color: #1a5fa8; box-shadow: 0 2px 8px rgba(77,134,198,.25); flex-shrink: 0; }
+    .loc { font-weight: 700; font-size: 15px; color: var(--text-muted); line-height: 1.2;right: 1px; }
+    .status-card { position: relative; background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 20px; padding: 4px 18px 18px; margin: 28px 0 20px; box-shadow: var(--shadow); transition: box-shadow .25s ease; }
     .status-card:hover { box-shadow: var(--shadow-hover); }
-    .card-tag { position: absolute; top: -18px; left: 16px; background: linear-gradient(135deg, #0099ff 0%, #005fcc 100%); color: #fff; padding: 10px 20px; border-radius: 12px; font-size: 18px; font-weight: 500; line-height: 1; letter-spacing: .3px; box-shadow: 0 6px 18px rgba(0,136,255,.35); }
+    .card-tag { position: absolute; top: -18px; left: 16px; background: linear-gradient(135deg, #0099ff 0%, #005fcc 100%); color: #fff; padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 800; line-height: 1; letter-spacing: .3px; box-shadow: 0 0 0 6px #fff, 0 2px 0 rgba(0, 0, 0, .08); }
     .card-top-right { display: flex; justify-content: flex-end; align-items: center; padding-top: 6px; margin-bottom: 4px; }
-    .filter-btn { border: none; background: transparent !important; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 10px; border-radius: 10px; transition: background .15s; -webkit-tap-highlight-color: transparent; }
+    .filter-btn { border: none; background: transparent !important; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; padding: -1px 10px; border-radius: 10px; transition: background .15s; -webkit-tap-highlight-color: transparent; }
     .filter-btn:hover { background: #f0f4ff; }
-    .active-period { font-style: italic; font-size: 18px; color: var(--text-muted); font-weight: 500; }
-    .funnel { font-size: 18px; color: var(--funnel); transform: translateY(2px); }
+    .active-period { font-style: italic; font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    svg path{ fill:#1a2a7a; }
+    .funnel { font-size: 14px; color: var(--funnel); transform: translateY(2px); }
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45) !important; z-index: 2000; display: none; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex !important; }
     .modal-dialog { background: #fff !important; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.2); width: 320px; max-width: calc(100vw - 32px); padding: 0; }
@@ -33,7 +34,7 @@
     .modal-close { width: 30px; height: 30px; border: none; background: #f3f4f6; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 15px; color: #555; transition: background .15s; }
     .modal-close:hover { background: #e5e7eb; }
     .modal-body { padding: 20px 20px 8px; }
-    .modal-field-label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 8px; display: block; }
+    .modal-field-label { font-size: 13px; font-weight: 700; color: var(--text-muted); letter-spacing: .6px; margin-bottom: 8px; display: block; }
     .period-select { width: 100%; padding: 10px 36px 10px 13px; border: 1.5px solid #dde3ed; border-radius: 10px; font-size: 14px; font-family: inherit; color: var(--text); background: #f8faff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 13px center; -webkit-appearance: none; appearance: none; cursor: pointer; transition: border-color .15s; }
     .period-select:focus { outline: none; border-color: var(--tag-blue); background-color: #fff; }
     .custom-dates { display: none; flex-direction: column; gap: 14px; margin-top: 16px; }
@@ -47,12 +48,12 @@
     .btn-apply { padding: 9px 24px; border: none; border-radius: 20px; background: linear-gradient(135deg, #0099ff, #005fcc); color: #fff; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; box-shadow: 0 3px 10px rgba(0,136,255,.35); transition: transform .15s, box-shadow .15s, opacity .15s; }
     .btn-apply:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(0,136,255,.45); }
     .btn-apply:active { transform: translateY(0); opacity: .85; }
-    .table-head { display: grid; grid-template-columns: 1.3fr .7fr .9fr; align-items: center; padding: 4px 16px 2px; font-size: 20px; font-weight: 400; color: var(--text-muted); margin-top: 4px; }
+    .table-head { display: grid; grid-template-columns: 1.3fr .7fr .9fr; align-items: center; padding: 4px 16px 2px; font-size: 20px; font-weight: 650; color: black; margin-top: 4px; }
     .table-head div:nth-child(2), .table-head div:nth-child(3) { text-align: center; }
     .status-row { display: grid; grid-template-columns: 1.3fr .7fr .9fr; align-items: center; margin: 10px 4px; border-radius: 14px; padding: 16px 20px; border: 2px solid transparent; transition: transform .15s, box-shadow .15s; -webkit-transform: translateZ(0); transform: translateZ(0); }
     .status-row:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.10); }
-    .status-label { font-size: 20px; font-weight: 500; line-height: 1.15; }
-    .status-calls, .status-spaces { text-align: center; font-weight: 500; font-size: 30px; letter-spacing: .5px; border-left: 1.5px solid rgba(0,0,0,.10); }
+    .status-label { font-size: 16px; font-weight: 750; line-height: 1.15; }
+    .status-calls, .status-spaces { text-align: center; font-weight: 500; font-size: 20px; letter-spacing: .5px; border-left: 1.5px solid rgba(0,0,0,.10); }
     .open { background: var(--open); border-color: var(--open-border); }
     .partial { background: var(--partial); border-color: var(--partial-border); }
     .closed { background: var(--closed); border-color: var(--closed-border); }
@@ -61,10 +62,10 @@
     .partial-br { display: none; }
     @media (max-width: 500px) { .partial-br { display: block; } }
     @media (max-width: 500px) {
-      .card-tag { font-size: 16px; padding: 8px 14px; top: -15px; }
-      .active-period { font-size: 16px; }
-      .funnel { font-size: 18px; }
-      .table-head { font-size: 18px; padding: 4px 10px 2px; }
+      .card-tag { font-size: 14px; padding: 8px 14px; top: -15px; }
+      .active-period { font-size: 12px; }
+      .funnel { font-size: 14px; }
+      .table-head { font-size: 18px; padding: 8px 16px 0px; }
       .status-row { margin: 8px 2px; padding: 13px 14px; }
       .status-label { font-size: 17px; }
       .status-calls, .status-spaces { font-size: 20px; }
@@ -117,7 +118,10 @@
     <div class="card-top-right">
       <button type="button" class="filter-btn" onclick="openModal('qi')">
         <span class="active-period" id="qiPeriodLabel">This month</span>
-        <i class="bi bi-funnel-fill funnel"></i>
+        <!-- <i class="bi bi-funnel-fill funnel"></i> -->
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"></path>
+        </svg>
       </button>
     </div>
     <div class="table-head">
@@ -148,7 +152,10 @@
     <div class="card-top-right">
       <button type="button" class="filter-btn" onclick="openModal('me')">
         <span class="active-period" id="mePeriodLabel">This month</span>
-        <i class="bi bi-funnel-fill funnel"></i>
+        <!-- <i class="bi bi-funnel-fill funnel"></i> -->
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"></path>
+        </svg>
       </button>
     </div>
     <div class="status-row closed" style="margin-top:22px;" onclick="navigateToReport('Closed', currentMeFrom, currentMeTo)">
@@ -290,18 +297,21 @@
 
     /* ── Navigate to report — role-aware ── */
     function navigateToReport(status, from, to) {
-      const encode     = (s) => String(s).replace(/ /g, "%20");
-      const dateParam  = `${encode(formatZohoDateStr(from))};${encode(formatZohoDateStr(to))}`;
+      /* Pass raw values — navigateParentURL encodes once itself.
+         Pre-encoding causes %2520 double-encoding in the browser. */
+      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      const fmt = (d) => `${String(d.getDate()).padStart(2,"0")}-${months[d.getMonth()]}-${d.getFullYear()}`;
+      const dateParam = `${fmt(from)};${fmt(to)}`;
 
       /* OI → filter by city; QI Engineer → filter by own name */
       const personFilter = (currentRole === "Operation Incharge")
-        ? `&Engineer_City=${encode(currentCity)}`
-        : `&Quality_Inspection_Engineer_Name=${encode(userName)}`;
+        ? `&Engineer_City=${currentCity}`
+        : `&Quality_Inspection_Engineer_Name=${userName}`;
 
       const url = `${REPORT_BASE_URL}Widget_Quality_Inspection` +
                   `?Added_Time=${dateParam}&Added_Time_op=58` +
                   personFilter +
-                  `&Quality_Inspection_Status=${encode(status)}`;
+                  `&Quality_Inspection_Status=${status}`;
       console.log("Navigating to:", url);
       ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" });
     }
@@ -406,8 +416,6 @@
             currentCity  = (currentRole === "Operation Incharge")
                            ? (ROUTE_TO_CITY[currentRoute] || "")
                            : "";
-            
-                           console.log("Current City:", currentCity);
 
             /* Avatar: QIE and OI both show "QI" */
             let initials = "--";
@@ -430,7 +438,7 @@
              QI Engineer   → own records only  (QC_Engineer_Email)
              Operation Incharge → all records from their city (Engineer_City) */
         const fetchCriteria = (currentRole === "Operation Incharge" && currentCity)
-          ? `(City == "${currentCity}")`
+          ? `(Engineer_City == "${currentCity}")`
           : `(QC_Engineer_Email == "${loginUser}")`;
 
         console.log("QI fetch criteria:", fetchCriteria);
