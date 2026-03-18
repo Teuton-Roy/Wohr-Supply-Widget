@@ -47,8 +47,9 @@
     .cd-divider{height:2px;background:rgba(0,0,0,.20);margin:12px 0;border-radius:999px;}
     .cd-matrix{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;align-items:center;}
     .cd-pie-wrap{display:flex;justify-content:center;align-items:center;overflow:visible;width:100%;}
-    #pmPieCanvas{width:300px!important;height:300px!important;display:block;flex-shrink:0;}
-    @media(max-width:520px){#pmPieCanvas{width:240px!important;height:240px!important;}}
+    #pmPieCanvas{width:240px!important;height:200px!important;display:block;flex-shrink:0;}
+    @media(max-width:520px){#pmPieCanvas{width:210px!important;height:190px!important;}}
+    @media(max-width:420px){#pmPieCanvas{width:190px!important;height:175px!important;}}
     .cd-stack{display:flex;flex-direction:column;gap:10px;}
     /* Filter active badge on section */
     .cd-filter-active{display:inline-flex;align-items:center;gap:4px;background:#eef2ff;border:1px solid #c7d4ff;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:700;color:#1f66ff;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis;}
@@ -169,7 +170,7 @@
           <div class="cd-divider"></div>
           <div class="cd-matrix">
             <div class="cd-label cd-label--center">PM</div>
-            <div class="cd-pie-wrap"><canvas id="pmPieCanvas" width="300" height="300"></canvas></div>
+            <div class="cd-pie-wrap"><canvas id="pmPieCanvas" width="240" height="200"></canvas></div>
             <div class="cd-stack">
               <div class="cd-pill cd-pill--block"><span class="cd-pill-k">All</span><span class="cd-pill-v" id="PmAll">0</span></div>
               <div class="cd-pill cd-pill--block"><span class="cd-pill-k">Closed</span><span class="cd-pill-v" id="PmClosed">0</span></div>
@@ -320,9 +321,6 @@
 
     /* ═══════════════════════════════════════════════════════════
        PERIOD STATE — each section has its own
-       filterRoute    : "" = all supervisor routes, "Pune 1" = specific
-       filterTechID   : "" = no tech filter, "274000..." = specific tech
-       filterTechName : display name for the badge
     ═══════════════════════════════════════════════════════════ */
     const periodOther = { period:"this_month", from:null, to:null, filterRoute:"", filterTechID:"", filterTechName:"" };
     const periodEsn   = { period:"this_month", from:null, to:null, filterRoute:"", filterTechID:"", filterTechName:"" };
@@ -378,7 +376,6 @@
         if(t==="me")    $("#mePeriodLabel").text(txt);
       }
 
-      /* Update filter badge shown on each section header */
       function updateFilterBadge(t){
         const st=getState(t);
         const badgeId = t==="esn"?"#esnFilterBadge":t==="me"?"#meFilterBadge":"#otherFilterBadge";
@@ -397,7 +394,7 @@
       function esc(s){ return String(s||"").replace(/"/g,'\\"'); }
 
       /* ─────────────────────────────────────────────────────────
-         ROUTE HELPERS — default (no filter active)
+         ROUTE HELPERS
       ───────────────────────────────────────────────────────── */
       function routeCrit(){
         const routes = ROUTE_EXPANSION[currentRoute];
@@ -412,21 +409,11 @@
 
       /* ─────────────────────────────────────────────────────────
          STATE-AWARE CRITERIA BUILDERS
-         ─────────────────────────────────────────────────────────
-         When a filter is active:
-           filterRoute  set  → use that single Route_Name
-           filterTechID set  → use Service_Technician_Name.ID (not Supervisior_Name.ID)
-           both set          → tech scoped to specific route
-           neither           → default supervisor scope
       ───────────────────────────────────────────────────────── */
-
-      /* Route criteria — respects filterRoute override */
       function activeRouteCrit(st){
         if(st&&st.filterRoute) return `Route_Name == "${esc(st.filterRoute)}"`;
         return routeCrit();
       }
-
-      /* Base criteria for Service Report — respects tech + route filter */
       function activeCrit(st, extra){
         const rc   = activeRouteCrit(st);
         const base = (st&&st.filterTechID)
@@ -434,8 +421,6 @@
           : `Supervisior_Name.ID == ${userID} && ${rc}`;
         return extra ? `(${base} && ${extra})` : `(${base})`;
       }
-
-      /* Base criteria for ESN Report — field is Supervisor_Name (single i) */
       function activeCritESN(st, extra){
         const rc   = activeRouteCrit(st);
         const base = (st&&st.filterTechID)
@@ -443,10 +428,6 @@
           : `Supervisor_Name.ID == ${userID} && ${rc}`;
         return extra ? `(${base} && ${extra})` : `(${base})`;
       }
-
-      /* Route-only criteria for Me section
-         When tech filtered: swap Closed_Owner to filterTechID
-         When no filter:     use logged-in supervisor (userID) */
       function activeRouteOnly(st, extra){
         const rc       = activeRouteCrit(st);
         const ownerID  = (st&&st.filterTechID) ? st.filterTechID : userID;
@@ -482,10 +463,6 @@
       function addAddedBetween(p,s){ const r=getRangeFromState(s); addBetween(p,"Added_Time",fmtDateTime(r.from),fmtDateTime(r.to)); }
       function addClosedBetween_ME(p,s){ const r=getRangeFromState(s); addBetween(p,"Closed_Date",fmtDate(r.from),fmtDate(r.to)); }
 
-      /* URL params — respects active filter:
-           no filter  → Supervisior_Name=[UserName], Route_Name=all routes
-           route only → Supervisior_Name=[UserName], Route_Name=selectedRoute
-           tech+route → Service_Technician_Name=[TechName], Route_Name=selectedRoute  */
       function paramsFor(st){
         const route = st.filterRoute ? st.filterRoute : routeParamValue();
         if(st.filterTechID&&st.filterTechName)
@@ -521,69 +498,88 @@
       }
 
       /* ─────────────────────────────────────────────────────────
-         PM PIE CHART
+         PM PIE CHART — COMPACT STYLE (labels inside segments)
       ───────────────────────────────────────────────────────── */
       let pmAll=0, pmClosed=0, pmOverdue=0, pmChart=null;
       Chart.register(ChartDataLabels);
       const PM_EMPTY=[0,0,1];
 
-      /* Outside-labels plugin — draws label+count outside ring with leader lines */
-      const outsideLabelsPlugin = {
-        id: "outsideLabels",
+      const PM_COLORS   = ["#22c55e","#ef4444","#8b5cf6"];
+      const PM_EMPTY_BG = ["#e5e7eb","#e5e7eb","#e5e7eb"];
+
+      /* Arrow labels plugin — draws only label NAME outside with leader line */
+      const arrowLabelsPlugin = {
+        id: "arrowLabels",
         afterDatasetsDraw(chart) {
           if (chart.$noData) return;
           const { ctx, canvas } = chart;
           const dataset = chart.data.datasets[0];
           const meta    = chart.getDatasetMeta(0);
           const total   = dataset.data.reduce((a,b)=>Number(a)+Number(b),0) || 1;
-          const isMob   = canvas.width <= 210;
-          const RADIAL  = isMob ? 18 : 28;
-          const TICK    = isMob ? 16 : 26;
+          const renderedW = canvas.clientWidth || canvas.width / (window.devicePixelRatio||1);
+          const isMob   = renderedW <= 190;
+          const RADIAL  = isMob ? 5  : 15;
+          const TICK    = isMob ? 6  : 15;
           const FS      = isMob ? 10 : 12;
-          const VS      = isMob ? 11 : 13;
-          const LINE_H  = FS + VS + 10;
-          const items   = [];
+          const GAP     = 2;
+          const LINE_H  = FS + 8;
+
+          const items = [];
           meta.data.forEach((arc, i) => {
             const value = Number(dataset.data[i] || 0);
             if (!value) return;
-            const midAngle = (arc.startAngle + arc.endAngle) / 2;
-            const outerR   = arc.outerRadius;
-            const ex = arc.x + (outerR + RADIAL) * Math.cos(midAngle);
-            const ey = arc.y + (outerR + RADIAL) * Math.sin(midAngle);
-            items.push({ arc, value, label: chart.data.labels[i],
-              color: dataset.backgroundColor[i], pct: Math.round(value/total*100),
-              midAngle, outerR, ex, ey,
-              side: Math.cos(midAngle) >= 0 ? "right" : "left" });
+            const pct = value / total * 100;
+
+            /* For large segments (>50%), bias the label toward the
+               far end of the arc (70% point) so it appears at
+               the bottom-right instead of the side */
+            let labelAngle;
+            if (pct > 50) {
+              labelAngle = arc.startAngle + (arc.endAngle - arc.startAngle) * 0.70;
+            } else {
+              labelAngle = (arc.startAngle + arc.endAngle) / 2;
+            }
+
+            const outerR = arc.outerRadius;
+            const ex = arc.x + (outerR + RADIAL) * Math.cos(labelAngle);
+            const ey = arc.y + (outerR + RADIAL) * Math.sin(labelAngle);
+            items.push({ arc, label: chart.data.labels[i],
+              color: dataset.backgroundColor[i],
+              labelAngle, outerR, ex, ey,
+              side: Math.cos(labelAngle) >= 0 ? "right" : "left" });
           });
-          for (let a=0; a<items.length; a++) {
-            for (let b=a+1; b<items.length; b++) {
+
+          // Avoid overlap — nudge if two labels on same side are too close
+          for (let a = 0; a < items.length; a++) {
+            for (let b = a + 1; b < items.length; b++) {
               if (items[a].side !== items[b].side) continue;
-              if (Math.abs(items[a].ey - items[b].ey) < LINE_H * 2.4) {
-                const ca = Math.abs(Math.cos(items[a].midAngle));
-                const cb = Math.abs(Math.cos(items[b].midAngle));
+              if (Math.abs(items[a].ey - items[b].ey) < LINE_H * 2) {
+                const ca = Math.abs(Math.cos(items[a].labelAngle));
+                const cb = Math.abs(Math.cos(items[b].labelAngle));
                 const flip = ca < cb ? a : b;
                 items[flip].side = items[flip].side === "right" ? "left" : "right";
               }
             }
           }
+
           ctx.save();
-          items.forEach(({ arc, value, label, color, pct, midAngle, outerR, ex, ey, side }) => {
+          items.forEach(({ arc, label, color, labelAngle, outerR, ex, ey, side }) => {
             const isRight = side === "right";
-            const x1 = arc.x + (outerR + 4) * Math.cos(midAngle);
-            const y1 = arc.y + (outerR + 4) * Math.sin(midAngle);
+            const x1 = arc.x + (outerR + 3) * Math.cos(labelAngle);
+            const y1 = arc.y + (outerR + 3) * Math.sin(labelAngle);
             const x3 = ex + (isRight ? TICK : -TICK);
-            ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(ex,ey); ctx.lineTo(x3,ey);
-            ctx.strokeStyle="#9ca3af"; ctx.lineWidth=1.2; ctx.lineJoin="round"; ctx.stroke();
-            ctx.beginPath(); ctx.arc(ex,ey,3,0,Math.PI*2); ctx.fillStyle=color; ctx.fill();
-            const tx = x3 + (isRight ? 5 : -5);
+
+            // Leader line
+            ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(ex, ey); ctx.lineTo(x3, ey);
+            ctx.strokeStyle = "#9ca3af"; ctx.lineWidth = 1.2; ctx.lineJoin = "round"; ctx.stroke();
+
+            // Label name
+            const tx = x3 + (isRight ? GAP : -GAP);
             ctx.textAlign    = isRight ? "left" : "right";
-            ctx.font         = `700 ${FS}px "DM Sans",system-ui,sans-serif`;
-            ctx.fillStyle    = "#374151"; ctx.textBaseline = "bottom";
-            ctx.fillText(label, tx, ey - 1);
-            ctx.font         = `800 ${VS}px "DM Sans",system-ui,sans-serif`;
-            ctx.fillStyle    = color === "#e5e7eb" ? "#9ca3af" : color;
-            ctx.textBaseline = "top";
-            ctx.fillText(`${value} (${pct}%)`, tx, ey + 2);
+            ctx.textBaseline = "middle";
+            ctx.font         = `700 ${FS}px system-ui,sans-serif`;
+            ctx.fillStyle    = "#374151";
+            ctx.fillText(label, tx, ey);
           });
           ctx.restore();
         }
@@ -592,39 +588,100 @@
       function initPMPieChart(){
         const canvas=document.getElementById("pmPieCanvas");
         if(!canvas)return; if(pmChart){pmChart.destroy();pmChart=null;}
-        const size = canvas.width;
-        const pad  = Math.round(size * 0.32);
+        const renderedW = canvas.clientWidth || canvas.width;
+        const renderedH = canvas.clientHeight || canvas.height;
+        const isMob = renderedW <= 190;
+
+        /* ── Calculate padLR from actual measured text width ── */
+        const tmpCtx  = canvas.getContext("2d");
+        const labelFS = isMob ? 10 : 11;
+        tmpCtx.font   = `700 ${labelFS}px system-ui,sans-serif`;
+        const maxLabelW = Math.max(
+          tmpCtx.measureText("Closed").width,
+          tmpCtx.measureText("Overdue").width,
+          tmpCtx.measureText("All").width
+        );
+        const RADIAL = isMob ? 5  : 7;
+        const TICK   = isMob ? 6  : 8;
+        const GAP    = 2;
+        /* padLR = arrow + text + tiny buffer */
+        const padLR  = Math.ceil(RADIAL + TICK + GAP + maxLabelW + 1);
+        const padTB  = Math.ceil(renderedH * 0.08); // vertical padding to prevent top/bottom label cutoff
+
         pmChart=new Chart(canvas.getContext("2d"),{
-          type:"doughnut", plugins:[outsideLabelsPlugin],
-          data:{labels:["Closed","Overdue","All"],datasets:[{data:PM_EMPTY.slice(),
-            backgroundColor:["#e5e7eb","#e5e7eb","#e5e7eb"],
-            borderWidth:4,borderColor:"#fff",hoverOffset:6,borderRadius:4,spacing:1}]},
-          options:{responsive:false,maintainAspectRatio:false,cutout:"65%",
-            layout:{padding:{top:pad,right:pad+18,bottom:pad,left:pad+18}},
-            animation:{duration:600,easing:"easeInOutQuart"},
-            plugins:{legend:{display:false},
-              tooltip:{enabled:true,backgroundColor:"rgba(17,24,39,.88)",padding:10,cornerRadius:8,
-                callbacks:{label(ctx){const tot=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
-                  return`  ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw)/tot*100)}%)`}}},
-              datalabels:{display:false}}}
+          type:"doughnut",
+          plugins:[arrowLabelsPlugin],
+          data:{
+            labels:["Closed","Overdue","All"],
+            datasets:[{
+              data: PM_EMPTY.slice(),
+              backgroundColor: PM_EMPTY_BG.slice(),
+              borderWidth: 2,
+              borderColor: "#fff",
+              hoverOffset: 4,
+              borderRadius: 2,
+              spacing: 1
+            }]
+          },
+          options:{
+            responsive: false,
+            maintainAspectRatio: false,
+            devicePixelRatio: window.devicePixelRatio || 1,
+            cutout: "58%",
+            layout:{ padding: { top: padTB, right: padLR, bottom: padTB, left: padLR } },
+            animation:{ duration:600, easing:"easeInOutQuart" },
+            plugins:{
+              legend:{ display: false },
+              tooltip:{
+                enabled: true,
+                backgroundColor: "rgba(17,24,39,.88)",
+                padding: 10,
+                cornerRadius: 8,
+                callbacks:{
+                  label(ctx){
+                    const tot = ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
+                    return ` ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw)/tot*100)}%)`;
+                  }
+                }
+              },
+              /* ── Datalabels: percentage INSIDE each segment — BLACK color ── */
+              datalabels:{
+                display: function(ctx){
+                  if(pmChart && pmChart.$noData) return false;
+                  const val = ctx.dataset.data[ctx.dataIndex];
+                  const tot = ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
+                  const pct = val/tot*100;
+                  return pct >= 3;
+                },
+                formatter: function(value, ctx){
+                  const tot = ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
+                  return Math.round(value/tot*100) + "%";
+                },
+                color: "#000",
+                font:{ weight:"800", size: isMob ? 10 : 12, family:"system-ui, sans-serif" },
+                anchor: "center",
+                align: "center",
+                textStrokeColor: "rgba(255,255,255,0.6)",
+                textStrokeWidth: 2
+              }
+            }
+          }
         });
         pmChart.$noData=true;
       }
+
       function updatePMPieChart(all,closed,overdue){
-        all=Number(all||0);closed=Number(closed||0);overdue=Number(overdue||0);
-        if(!pmChart)initPMPieChart();if(!pmChart)return;
-        const has=all||closed||overdue;
-        pmChart.$noData=!has;
-        pmChart.data.datasets[0].data=has?[closed,overdue,all]:PM_EMPTY.slice();
-        pmChart.data.datasets[0].backgroundColor=has?["#22c55e","#ef4444","#8b5cf6"]:["#e5e7eb","#e5e7eb","#e5e7eb"];
+        all=Number(all||0); closed=Number(closed||0); overdue=Number(overdue||0);
+        if(!pmChart) initPMPieChart(); if(!pmChart) return;
+        const has = all||closed||overdue;
+        pmChart.$noData = !has;
+        pmChart.data.datasets[0].data            = has ? [closed,overdue,all] : PM_EMPTY.slice();
+        pmChart.data.datasets[0].backgroundColor = has ? PM_COLORS.slice()   : PM_EMPTY_BG.slice();
         pmChart.update();
       }
 
       /* ─────────────────────────────────────────────────────────
          SEQUENTIAL DATA LOADERS
-         Each function now passes its section's period state
-         to activeCrit/activeCritESN/activeRouteOnly so that
-         Route + Tech filters are applied automatically.
       ───────────────────────────────────────────────────────── */
       function refreshOnly(target){
         $("#loader").show();
@@ -709,7 +766,6 @@
           .then(r=>{setCount("#meOther",r.result.records_count);Me_ESN(done);}).catch(()=>{setCount("#meOther",0);Me_ESN(done);});
       }
       function Me_ESN(done){
-        /* Me ESN: filter by Completed_By == logged-in user + Completion_Date in period */
         const meCrit = `Completed_By.ID == ${userID} && ESN_Status=="Completed" && ${completionDateRangeCrit(periodMe)}`;
         console.log("[Me ESN] criteria:", meCrit);
         ZOHO.CREATOR.API.getRecordCount({appName:applicationName,reportName:ESNReport,criteria:meCrit})
@@ -717,7 +773,7 @@
       }
 
       /* ─────────────────────────────────────────────────────────
-         MODAL — open / close / populate
+         MODAL
       ───────────────────────────────────────────────────────── */
       function populateRouteSelect(st){
         const routes = ROUTE_EXPANSION[currentRoute] || (currentRoute ? [currentRoute] : []);
@@ -743,24 +799,16 @@
         const st = getState(activeFilterTarget);
         const sectionLabels = {other:"Other Calls",esn:"ESN",me:"Me"};
         $("#filterModalTitle").text("Filters — "+sectionLabels[activeFilterTarget]);
-
-        // Period
         $("#periodSelect").val(st.period);
         const isCustom = st.period==="custom";
         $(".date-range-field").toggle(isCustom);
         $("#dateFrom").val(isCustom?toInputDate(st.from):"");
         $("#dateTo").val(isCustom?toInputDate(st.to):"");
-
-        // Route dropdown
         populateRouteSelect(st);
-
-        // Tech field
         $("#techSearch").val(st.filterTechName||"");
         $("#techID").val(st.filterTechID||"");
         $("#techClear").toggle(!!(st.filterTechName));
         updateTechFieldState();
-
-        // Show modal
         $("#filterBackdrop").addClass("show");
         $("#filterModal").addClass("show").attr("aria-hidden","false");
         $("body").addClass("modal-open");
@@ -789,7 +837,6 @@
         if(!c) $("#dateFrom,#dateTo").val("");
       });
 
-      /* Route changed → clear tech, enable/disable tech field */
       $("#routeSelect").on("change", function(){
         $("#techSearch").val("");
         $("#techID").val("");
@@ -798,7 +845,6 @@
         updateTechFieldState();
       });
 
-      /* Clear tech button */
       $("#techClear").on("click", function(){
         $("#techSearch").val("");
         $("#techID").val("");
@@ -806,7 +852,6 @@
         $("#techSuggestions").hide().empty();
       });
 
-      /* Reset button — clears ALL filters for this section */
       $("#filterClear").on("click", function(){
         const st = getState(activeFilterTarget);
         st.period="this_month"; st.from=null; st.to=null;
@@ -816,11 +861,8 @@
         if(userID) refreshOnly(activeFilterTarget);
       });
 
-      /* Apply button — save all filter state */
       $("#filterApply").on("click", function(){
         const st = getState(activeFilterTarget);
-
-        // Period
         const p = $("#periodSelect").val();
         st.period = p;
         if(p==="custom"){
@@ -829,14 +871,9 @@
           if(!f||!t){ alert("Please select both From and To dates."); return; }
           st.from=f<=t?f:t; st.to=f<=t?t:f;
         } else { st.from=null; st.to=null; }
-
-        // Route
         st.filterRoute = $("#routeSelect").val();
-
-        // Technician
         const techName = $("#techSearch").val().trim();
         const techID   = $("#techID").val().trim();
-        // Only save tech if we have both name and ID (selected from suggestions)
         if(techID && techName){
           st.filterTechID   = techID;
           st.filterTechName = techName;
@@ -844,7 +881,6 @@
           st.filterTechID   = "";
           st.filterTechName = "";
         }
-
         updateFilterBadge(activeFilterTarget);
         closeModal();
         if(userID) refreshOnly(activeFilterTarget);
@@ -852,29 +888,22 @@
 
       /* ─────────────────────────────────────────────────────────
          TECH TYPEAHEAD
-         Searches Service Technicians scoped to selected route.
-         Stores ID in hidden #techID field on selection.
       ───────────────────────────────────────────────────────── */
       function esc2(s){ return String(s||"").replace(/"/g,'\\"'); }
       let techTimer = null;
 
       $("#techSearch").on("input", function(){
         const val = $(this).val().trim();
-        $("#techID").val("");            // clear stored ID while typing
+        $("#techID").val("");
         $("#techClear").hide();
         clearTimeout(techTimer);
         if(!val){ $("#techSuggestions").hide().empty(); return; }
-
         const selectedRoute = $("#routeSelect").val();
-        if(!selectedRoute) return; // safety — button should be disabled anyway
-
+        if(!selectedRoute) return;
         techTimer = setTimeout(()=>{
           $("#techSuggestions").html('<div class="sugg-empty">Loading...</div>').show();
           $("#techLoadingSpinner").show();
-
-          // Criteria: active STs in the selected route, name contains search term
           const crit = `Role=="Service Technician" && User_Status=="Active" && New_Route_Name=="${esc2(selectedRoute)}"${val?` && Name.contains("${esc2(val)}")` : ""}`;
-
           ZOHO.CREATOR.API.getAllRecords({
             appName:applicationName, reportName:userReport,
             criteria:crit, pageSize:50
@@ -900,7 +929,6 @@
         }, 350);
       });
 
-      /* Select technician from suggestions */
       $(document).on("click","#techSuggestions .sugg-item", function(){
         const name = $(this).data("name") || "";
         const id   = $(this).data("id")   || "";
@@ -910,7 +938,6 @@
         $("#techSuggestions").hide().empty();
       });
 
-      /* Hide suggestions on outside click */
       $(document).on("click.sugg", function(e){
         if(!$(e.target).closest("#techSearch,#techSuggestions").length)
           $("#techSuggestions").hide().empty();
