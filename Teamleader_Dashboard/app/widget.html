@@ -27,7 +27,7 @@
     .cd-row-3{grid-template-columns:repeat(3,1fr);}
     .cd-row-4{grid-template-columns:repeat(4,1fr);}
     .cd-stat{border:1px solid rgba(0,0,0,.18);border-radius:10px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:50px;font-size:14px}
-    .cd-stat-label{font-weight:800;font-size:15px;line-height:1.05;color:black;}
+    .cd-stat-label{font-weight:900;font-size:13px;line-height:1.05;color:black;}
     .cd-stat-label-within{font-weight:900;font-size:13px;line-height:1.05;color:#000000;}
     .cd-stat-label-sla{font-weight:900;font-size:13px;line-height:1.05;color:#fff;}
     .cd-stat-label-pending{font-weight:800;font-size:13px;line-height:1.05;color:red;}
@@ -48,11 +48,11 @@
     .cd-matrix{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;align-items:center;}
     .cd-pie-wrap{display:flex;justify-content:center;align-items:center;overflow:visible;width:100%;}
     #pmPieCanvas{width:240px!important;height:200px!important;display:block;flex-shrink:0;}
-    @media(max-width:520px){#pmPieCanvas{width:210px!important;height:190px!important;}}
-    @media(max-width:420px){#pmPieCanvas{width:190px!important;height:175px!important;}}
+    @media(max-width:520px){#pmPieCanvas{width:210px!important;height:180px!important;}}
+    @media(max-width:420px){#pmPieCanvas{width:190px!important;height:160px!important;}}
     .cd-stack{display:flex;flex-direction:column;gap:10px;}
     /* Filter active badge on section */
-    .cd-filter-active{display:inline-flex;align-items:center;gap:4px;background:#eef2ff;border:1px solid #c7d4ff;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:700;color:#1f66ff;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis;}
+    .cd-filter-active{display:inline-flex;align-items:center;gap:4px;background:#eef2ff;border:1px solid #c7d4ff;border-radius:6px;padding:0px 1px;font-size:11px;font-weight:700;color:#000000;white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis;}
     /* Loader */
     #loader{display:none;position:fixed;inset:0;z-index:9999;background-color:rgba(0,0,0,.45);text-align:center;}
     #loader .loader-wrap{width:200px;height:200px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);filter:url(#goo);animation:rotate-move 2s ease-in-out infinite;}
