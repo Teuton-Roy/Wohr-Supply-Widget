@@ -7,8 +7,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
   <script defer src="https://js.zohostatic.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
   <style>
-    :root{--brand:#1f66ff;}*,*::before,*::after{box-sizing:border-box;}html,body{height:100%;margin:0;}
-    .cd-fullscreen{position:fixed;inset:0;overflow:auto;background:#f6f7fb;padding:16px;}
+    :root{--brand:#1f66ff;}*,*::before,*::after{box-sizing:border-box;}html,body{height:100%;margin:0;font-family: ui-sans-serif, system-ui, -apple-system;}
+    .cd-fullscreen{position:fixed;inset:0;overflow:auto;background:#F2EFEF;padding:14px;}
     .cd-top{display:flex;justify-content:flex-end;margin-bottom:10px;}
     .cd-user{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
     .cd-avatar{width:32px;height:32px;border-radius:999px;border:2px solid #111;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;background:#eef2ff;}
@@ -16,9 +16,9 @@
     .cd-panel{border:2px solid #aeb3b8;border-radius:12px;padding:13px 12px 12px;margin:24px 0;position:relative;background:#fff;overflow:visible;}
     .cd-panel-head{position:absolute;top:-14px;left:12px;z-index:6;background:transparent;padding:0;}
     .cd-panel-head--with-actions{left:12px;right:12px;width:auto;}
-    .cd-badge{background:#1f66ff;color:#fff;padding:6px 12px;border-radius:7px;font-weight:800;font-size:14px;line-height:1;display:inline-flex;align-items:center;box-shadow:0 0 0 6px #fff,0 2px 0 rgba(0,0,0,.08);}
-    .cd-actions{position:absolute;top:10px;right:12px;display:flex;align-items:center;gap:8px;z-index:5;}
-    .cd-muted{font-size:12px;font-style:italic;color:#444;white-space:nowrap;}
+    .cd-badge{background:#1f66ff;color:#fff;padding:6px 12px;border-radius:7px;font-weight:900;font-size:14px;line-height:1;display:inline-flex;align-items:center;box-shadow:0 0 0 6px #fff,0 2px 0 rgba(0,0,0,.08);}
+    .cd-actions{position:absolute;top:10px;right:-3px;display:flex;align-items:center;gap:8px;z-index:5;}
+    .cd-muted{font-size:12px;font-style:italic;font-weight:700;color:#6b7280;white-space:nowrap;}
     .cd-filter{border:0;background:transparent;padding:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:8px;}
     .cd-filter:hover{background:rgba(31,102,255,.08);}
     .cd-filter svg path{fill:#1a2a7a;}
@@ -26,29 +26,33 @@
     .cd-row-2{grid-template-columns:repeat(2,1fr);}
     .cd-row-3{grid-template-columns:repeat(3,1fr);}
     .cd-row-4{grid-template-columns:repeat(4,1fr);}
-    .cd-stat{border:1px solid rgba(0,0,0,.18);border-radius:10px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:50px;}
-    .cd-stat-label{font-weight:800;font-size:12px;line-height:1.05;color:blueviolet;}
-    .cd-stat-label-within{font-weight:800;font-size:12px;line-height:1.05;color:#1f66ff;}
-    .cd-stat-label-sla{font-weight:800;font-size:12px;line-height:1.05;color:#fff;}
-    .cd-stat-label-pending{font-weight:800;font-size:12px;line-height:1.05;color:red;}
-    .cd-stat-label-done{font-weight:800;font-size:12px;line-height:1.05;color:green;}
-    .cd-stat-value{font-weight:900;font-size:22px;line-height:1;cursor:pointer;}
-    .cd-stat-value-within{font-weight:900;font-size:22px;line-height:1;color:#373d36;}
-    .cd-stat-value-sla{font-weight:900;font-size:22px;line-height:1;color:#fff;}
+    .cd-stat{border:1px solid rgba(0,0,0,.18);border-radius:10px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:50px;font-size:14px}
+    .cd-stat-label{font-weight:900;font-size:13px;line-height:1.05;color:black;}
+    .cd-stat-label-within{font-weight:900;font-size:13px;line-height:1.05;color:black;}
+    .cd-stat-label-sla{font-weight:900;font-size:13px;line-height:1.05;color:#fff;}
+    .cd-stat-label-pending{font-weight:900;font-size:13px;line-height:1.05;color:red;}
+    .cd-stat-label-done{font-weight:900;font-size:13px;line-height:1.05;color:green;}
+    .cd-stat-value{font-weight:900;font-size:15px;line-height:1;cursor:pointer;}
+    .cd-stat-value-within{font-weight:900;font-size:15px;line-height:1;color:#373d36;}
+    .cd-stat-value-sla{font-weight:900;font-size:15px;line-height:1;color:#fff;}
     .cd-yellow{background:#ffe65b;}.cd-orange{background:#ff4b1f;color:#111;}.cd-green{background:#d7f1d3;}.cd-blue{background:#cfe0ff;}
-    .cd-pill{border:1px solid rgba(0,0,0,.18);border-radius:10px;background:#fff;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;}
+    .cd-pill{font-size:14px;border:1px solid rgba(0,0,0,.18);border-radius:10px;background:#fff;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;}
     .cd-pill--block{width:100%;}
-    .cd-pill-k{font-size:12px;font-weight:700;color:#222;white-space:nowrap;}
-    .cd-pill-v{font-size:22px;font-weight:900;line-height:1;color:cornflowerblue;cursor:pointer;}
+    .cd-pill-k{font-size:13px;font-weight:900;color:#222;white-space:nowrap;}
+    .cd-pill-v{font-size:15px;font-weight:900;line-height:1;color:#111;cursor:pointer;}
     .cd-breakdown{margin-top:6px;overflow:visible;}
-    .cd-breakdown-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;align-items:center;}
-    .cd-label{font-weight:700;color:#222;padding-left:2px;}
-    .cd-label--center{display:flex;align-items:center;justify-content:center;font-weight:800;color:#333;}
+    .cd-breakdown-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;align-items:center;font-size: 14px;}
+    .cd-label{font-weight:700;color:#222;padding-left:2px;font-size: 13px !important;font-weight: 900 !important;}
+    .cd-label--center{display:flex;align-items:center;justify-content:left;font-weight:800;color:#333;}
     .cd-divider{height:2px;background:rgba(0,0,0,.20);margin:12px 0;border-radius:999px;}
-    .cd-matrix{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;align-items:center;}
+    .cd-matrix{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;align-items:center;font-size: 14px;}
     .cd-matrix .cd-label--center{font-size:13px;}
-    .cd-pie-wrap{display:flex;justify-content:center;align-items:center;width:100%;overflow:visible;}
-    #pmPieCanvas{width:300px!important;height:300px!important;display:block;aspect-ratio:1/1;flex-shrink:0;}
+    .cd-pie-wrap{display:flex;justify-content:center;align-items:center;width:240px!important;height:200px!important;}
+    /* #pmPieCanvas{width:300px!important;height:300px!important;display:block;aspect-ratio:1/1;flex-shrink:0;} */
+    #pmPieCanvas{width:240px!important;height:200px!important;display:block;flex-shrink:0;}
+    @media(max-width:520px){#pmPieCanvas{width:210px!important;height:180px!important;}}
+    @media(max-width:420px){#pmPieCanvas{width:190px!important;height:160px!important;}}
+
     .cd-stack{display:flex;flex-direction:column;gap:10px;}
     .cd-filter-active{display:inline-flex;align-items:center;gap:4px;background:#eef2ff;border:1px solid #c7d4ff;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:700;color:#1f66ff;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;}
     /* Loader */
@@ -171,7 +175,7 @@
           <div class="cd-divider"></div>
           <div class="cd-matrix">
             <div class="cd-label cd-label--center">PM</div>
-            <div class="cd-pie-wrap"><canvas id="pmPieCanvas" width="300" height="300" aria-label="PM pie chart"></canvas></div>
+            <div class="cd-pie-wrap"><canvas id="pmPieCanvas" width="240" height="200" aria-label="PM pie chart"></canvas></div>
             <div class="cd-stack">
               <div class="cd-pill cd-pill--block"><span class="cd-pill-k">All</span><span class="cd-pill-v" id="PmAll">0</span></div>
               <div class="cd-pill cd-pill--block"><span class="cd-pill-k">Closed</span><span class="cd-pill-v" id="PmClosed">0</span></div>
@@ -539,59 +543,86 @@
       /* ─────────────────────────────────────────────────────────
          PM PIE CHART
       ───────────────────────────────────────────────────────── */
-      let pmAll=0,pmClosed=0,pmOverdue=0,pmChart=null;
+      let pmAll=0, pmClosed=0, pmOverdue=0, pmChart=null;
       Chart.register(ChartDataLabels);
+      const PM_EMPTY=[0,0,1];
 
-      const outsideLabelsPlugin={
-        id:"outsideLabels",
-        afterDatasetsDraw(chart){
-          if(chart.$noData)return;
-          const{ctx,canvas}=chart;
-          const dataset=chart.data.datasets[0];
-          const meta=chart.getDatasetMeta(0);
-          const total=dataset.data.reduce((a,b)=>Number(a)+Number(b),0)||1;
-          const isMob=canvas.width<=220;
-          const RADIAL=isMob?18:28,TICK=isMob?16:26;
-          const FS=isMob?10:12,VS=isMob?11:13;
-          const LINE_H=FS+VS+10;
-          const items=[];
-          meta.data.forEach((arc,i)=>{
-            const value=Number(dataset.data[i]||0);
-            if(!value)return;
-            const midAngle=(arc.startAngle+arc.endAngle)/2;
-            const outerR=arc.outerRadius;
-            const ex=arc.x+(outerR+RADIAL)*Math.cos(midAngle);
-            const ey=arc.y+(outerR+RADIAL)*Math.sin(midAngle);
-            items.push({arc,value,label:chart.data.labels[i],color:dataset.backgroundColor[i],
-              pct:Math.round(value/total*100),midAngle,outerR,ex,ey,
-              side:Math.cos(midAngle)>=0?"right":"left"});
+      const PM_COLORS   = ["#22c55e","#ef4444","#8b5cf6"];
+      const PM_EMPTY_BG = ["#e5e7eb","#e5e7eb","#e5e7eb"];
+
+      /* Arrow labels plugin — draws only label NAME outside with leader line */
+      const arrowLabelsPlugin = {
+        id: "arrowLabels",
+        afterDatasetsDraw(chart) {
+          if (chart.$noData) return;
+          const { ctx, canvas } = chart;
+          const dataset = chart.data.datasets[0];
+          const meta    = chart.getDatasetMeta(0);
+          const total   = dataset.data.reduce((a,b)=>Number(a)+Number(b),0) || 1;
+          const renderedW = canvas.clientWidth || canvas.width / (window.devicePixelRatio||1);
+          const isMob   = renderedW <= 190;
+          const RADIAL  = isMob ? 5  : 11.5;
+          const TICK    = isMob ? 6  : 11.5;
+          const FS      = isMob ? 10 : 10.5;
+          const GAP     = 2;
+          const LINE_H  = FS + 8;
+
+          const items = [];
+          meta.data.forEach((arc, i) => {
+            const value = Number(dataset.data[i] || 0);
+            if (!value) return;
+            const pct = value / total * 100;
+
+            /* For large segments (>50%), bias the label toward the
+               far end of the arc (70% point) so it appears at
+               the bottom-right instead of the side */
+            let labelAngle;
+            if (pct > 50) {
+              labelAngle = arc.startAngle + (arc.endAngle - arc.startAngle) * 0.70;
+            } else {
+              labelAngle = (arc.startAngle + arc.endAngle) / 2;
+            }
+
+            const outerR = arc.outerRadius;
+            const ex = arc.x + (outerR + RADIAL) * Math.cos(labelAngle);
+            const ey = arc.y + (outerR + RADIAL) * Math.sin(labelAngle);
+            items.push({ arc, label: chart.data.labels[i],
+              color: dataset.backgroundColor[i],
+              labelAngle, outerR, ex, ey,
+              side: Math.cos(labelAngle) >= 0 ? "right" : "left" });
           });
-          for(let a=0;a<items.length;a++){
-            for(let b=a+1;b<items.length;b++){
-              if(items[a].side!==items[b].side)continue;
-              if(Math.abs(items[a].ey-items[b].ey)<LINE_H*2.4){
-                const ca=Math.abs(Math.cos(items[a].midAngle));
-                const cb=Math.abs(Math.cos(items[b].midAngle));
-                const flip=ca<cb?a:b;
-                items[flip].side=items[flip].side==="right"?"left":"right";
+
+          // Avoid overlap — nudge if two labels on same side are too close
+          for (let a = 0; a < items.length; a++) {
+            for (let b = a + 1; b < items.length; b++) {
+              if (items[a].side !== items[b].side) continue;
+              if (Math.abs(items[a].ey - items[b].ey) < LINE_H * 2) {
+                const ca = Math.abs(Math.cos(items[a].labelAngle));
+                const cb = Math.abs(Math.cos(items[b].labelAngle));
+                const flip = ca < cb ? a : b;
+                items[flip].side = items[flip].side === "right" ? "left" : "right";
               }
             }
           }
+
           ctx.save();
-          items.forEach(({arc,value,label,color,pct,midAngle,outerR,ex,ey,side})=>{
-            const isRight=side==="right";
-            const x1=arc.x+(outerR+4)*Math.cos(midAngle),y1=arc.y+(outerR+4)*Math.sin(midAngle);
-            const x3=ex+(isRight?TICK:-TICK);
-            ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(ex,ey);ctx.lineTo(x3,ey);
-            ctx.strokeStyle="#9ca3af";ctx.lineWidth=1.2;ctx.lineJoin="round";ctx.stroke();
-            ctx.beginPath();ctx.arc(ex,ey,3,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
-            const tx=x3+(isRight?5:-5);
-            ctx.textAlign=isRight?"left":"right";
-            ctx.font=`700 ${FS}px "DM Sans",system-ui,sans-serif`;
-            ctx.fillStyle="#374151";ctx.textBaseline="bottom";ctx.fillText(label,tx,ey-1);
-            ctx.font=`800 ${VS}px "DM Sans",system-ui,sans-serif`;
-            ctx.fillStyle=color==="#e5e7eb"?"#9ca3af":color;
-            ctx.textBaseline="top";ctx.fillText(`${value} (${pct}%)`,tx,ey+2);
+          items.forEach(({ arc, label, color, labelAngle, outerR, ex, ey, side }) => {
+            const isRight = side === "right";
+            const x1 = arc.x + (outerR + 3) * Math.cos(labelAngle);
+            const y1 = arc.y + (outerR + 3) * Math.sin(labelAngle);
+            const x3 = ex + (isRight ? TICK : -TICK);
+
+            // Leader line
+            ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(ex, ey); ctx.lineTo(x3, ey);
+            ctx.strokeStyle = "#9ca3af"; ctx.lineWidth = 1.2; ctx.lineJoin = "round"; ctx.stroke();
+
+            // Label name
+            const tx = x3 + (isRight ? GAP : -GAP);
+            ctx.textAlign    = isRight ? "left" : "right";
+            ctx.textBaseline = "middle";
+            ctx.font         = `700 ${FS}px system-ui,sans-serif`;
+            ctx.fillStyle    = "#374151";
+            ctx.fillText(label, tx, ey);
           });
           ctx.restore();
         }
@@ -600,44 +631,97 @@
       function initPMPieChart(){
         const canvas=document.getElementById("pmPieCanvas");
         if(!canvas)return; if(pmChart){pmChart.destroy();pmChart=null;}
-        const size=canvas.width;
-        const pad=Math.round(size*0.32);
+        const renderedW = canvas.clientWidth || canvas.width;
+        const renderedH = canvas.clientHeight || canvas.height;
+        const isMob = renderedW <= 190;
+
+        /* ── Calculate padLR from actual measured text width ── */
+        const tmpCtx  = canvas.getContext("2d");
+        const labelFS = isMob ? 10 : 11;
+        tmpCtx.font   = `700 ${labelFS}px system-ui,sans-serif`;
+        const maxLabelW = Math.max(
+          tmpCtx.measureText("Closed").width,
+          tmpCtx.measureText("Overdue").width,
+          tmpCtx.measureText("All").width
+        );
+        const RADIAL = isMob ? 5  : 7;
+        const TICK   = isMob ? 6  : 8;
+        const GAP    = 2;
+        /* padLR = arrow + text + tiny buffer */
+        const padLR  = Math.ceil(RADIAL + TICK + GAP + maxLabelW + 1);
+        const padTB  = Math.ceil(renderedH * 0.08); // vertical padding to prevent top/bottom label cutoff
+
         pmChart=new Chart(canvas.getContext("2d"),{
-          type:"doughnut",plugins:[outsideLabelsPlugin],
-          data:{labels:["Closed","Overdue","All"],datasets:[{data:[0,0,1],
-            backgroundColor:["#e5e7eb","#e5e7eb","#e5e7eb"],
-            borderWidth:4,borderColor:"#fff",hoverOffset:6,borderRadius:4,spacing:1}]},
-          options:{responsive:false,maintainAspectRatio:false,cutout:"65%",
-            layout:{padding:{top:pad,right:pad+18,bottom:pad,left:pad+18}},
-            animation:{duration:600,easing:"easeInOutQuart"},
-            plugins:{legend:{display:false},
-              tooltip:{enabled:true,backgroundColor:"rgba(17,24,39,.88)",padding:10,cornerRadius:8,
-                callbacks:{label(ctx){const tot=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
-                  return`  ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw)/tot*100)}%)`}}},
-              datalabels:{display:false}}}
+          type:"doughnut",
+          plugins:[arrowLabelsPlugin],
+          data:{
+            labels:["Closed","Overdue","All"],
+            datasets:[{
+              data: PM_EMPTY.slice(),
+              backgroundColor: PM_EMPTY_BG.slice(),
+              borderWidth: 2,
+              borderColor: "#fff",
+              hoverOffset: 4,
+              borderRadius: 2,
+              spacing: 1
+            }]
+          },
+          options:{
+            responsive: false,
+            maintainAspectRatio: false,
+            devicePixelRatio: window.devicePixelRatio || 1,
+            cutout: "58%",
+            layout:{ padding: { top: padTB, right: padLR, bottom: padTB, left: padLR } },
+            animation:{ duration:500, easing:"easeInOutQuart" },
+            plugins:{
+              legend:{ display: false },
+              tooltip:{
+                enabled: true,
+                backgroundColor: "rgba(17,24,39,.88)",
+                padding: 10,
+                cornerRadius: 8,
+                callbacks:{
+                  label(ctx){
+                    const tot = ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
+                    return ` ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw)/tot*100)}%)`;
+                  }
+                }
+              },
+              /* ── Datalabels: percentage INSIDE each segment — BLACK color ── */
+              datalabels:{
+                display: function(ctx){
+                  if(pmChart && pmChart.$noData) return false;
+                  const val = ctx.dataset.data[ctx.dataIndex];
+                  const tot = ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
+                  const pct = val/tot*100;
+                  return pct >= 3;
+                },
+                formatter: function(value, ctx){
+                  const tot = ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
+                  return Math.round(value/tot*100) + "%";
+                },
+                color: "#000",
+                font:{ weight:"800", size: isMob ? 10 : 12, family:"system-ui, sans-serif" },
+                anchor: "center",
+                align: "center",
+                textStrokeColor: "rgba(255,255,255,0.6)",
+                textStrokeWidth: 2
+              }
+            }
+          }
         });
         pmChart.$noData=true;
       }
+
       function updatePMPieChart(all,closed,overdue){
-        all=Number(all||0);closed=Number(closed||0);overdue=Number(overdue||0);
-        if(!pmChart)initPMPieChart();if(!pmChart)return;
-        const has=all||closed||overdue;
-        pmChart.$noData=!has;
-        pmChart.data.datasets[0].data=has?[closed,overdue,all]:[0,0,1];
-        pmChart.data.datasets[0].backgroundColor=has?["#22c55e","#ef4444","#8b5cf6"]:["#e5e7eb","#e5e7eb","#e5e7eb"];
+        all=Number(all||0); closed=Number(closed||0); overdue=Number(overdue||0);
+        if(!pmChart) initPMPieChart(); if(!pmChart) return;
+        const has = all||closed||overdue;
+        pmChart.$noData = !has;
+        pmChart.data.datasets[0].data            = has ? [closed,overdue,all] : PM_EMPTY.slice();
+        pmChart.data.datasets[0].backgroundColor = has ? PM_COLORS.slice()   : PM_EMPTY_BG.slice();
         pmChart.update();
       }
-      function resizePieCanvas(){
-        const canvas=document.getElementById("pmPieCanvas");
-        if(!canvas)return;
-        const size=window.innerWidth<=520?240:300;
-        if(canvas.width===size)return;
-        canvas.width=size; canvas.height=size;
-        canvas.style.width=size+"px"; canvas.style.height=size+"px";
-        if(pmChart){pmChart.destroy();pmChart=null;initPMPieChart();}
-      }
-      window.addEventListener("resize",()=>{clearTimeout(window._rpt);window._rpt=setTimeout(resizePieCanvas,150);});
-
       /* ─────────────────────────────────────────────────────────
          DATA LOADERS
          OI default: criteria = routeCrit() only (no person ID)
