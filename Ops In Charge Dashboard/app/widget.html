@@ -102,15 +102,16 @@
     .sugg-item:hover{background:rgba(31,102,255,.08);}
     .sugg-empty{padding:10px 12px;font-size:13px;color:#666;}
     @media(max-width:720px){.cd-row-3{grid-template-columns:1fr}.cd-row-4{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:520px){
-      .cd-breakdown-row{grid-template-columns:1fr;text-align:left}
+    @media(max-width:420px){.cd-breakdown-row,.cd-matrix{grid-template-columns:1fr;text-align:left}.cd-label--center{justify-content:flex-start}.cd-stack{width:100%}}
+    /* @media(max-width:520px){
+      .cd-breakdown-row,.cd-matrix{grid-template-columns:1fr;text-align:left}
       .cd-label--center{justify-content:flex-start}
       .cd-stack{width:100%}
       .cd-matrix{grid-template-columns:1fr;gap:8px;}
       .cd-matrix .cd-label--center{justify-content:flex-start;}
       .cd-pie-wrap{justify-content:center;}
       #pmPieCanvas{width:240px!important;height:240px!important;aspect-ratio:1/1;}
-    }
+    } */
   </style>
 </head>
 <body>
