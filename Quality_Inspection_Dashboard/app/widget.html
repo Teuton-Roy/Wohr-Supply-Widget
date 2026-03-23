@@ -351,7 +351,7 @@
     }
 
     /* ── Aggregate ── */
-    function aggregateRecords(records, from, to) {
+    function aggregateRecords(records, from, to, meOnly) {
       const b = {
         "Open":             { calls:0, totalQty:0, inspectedQty:0 },
         "Partially Closed": { calls:0, totalQty:0, inspectedQty:0 },
@@ -360,6 +360,10 @@
       records.forEach(r => {
         const d = parseZohoDate(r.Added_Time);
         if (!d || d < from || d > to) return;
+        /* Me card for QI Engineer: only own records */
+        if (meOnly && currentRole !== "Quality Inspection Engineer") {
+          if (r.QC_Engineer_Email !== loginUser) return;
+        }
         const s = r.Quality_Inspection_Status;
         if (!b[s]) return;
         b[s].calls++;
@@ -391,7 +395,7 @@
     function refreshMeCard(customFrom, customTo) {
       const { from, to } = getDateRange(currentMePeriod, customFrom, customTo);
       currentMeFrom = from; currentMeTo = to;
-      updateMeCard(aggregateRecords(allQualityRecords, from, to));
+      updateMeCard(aggregateRecords(allQualityRecords, from, to, true));
     }
 
     /* ── Zoho init ── */
@@ -419,9 +423,13 @@
 
             /* Avatar: QIE and OI both show "QI" */
             let initials = "--";
-            if (currentRole === "Quality Inspection Engineer" || currentRole === "Operation Incharge") {
+            if (currentRole === "Quality Inspection Engineer") {
               initials = "QI";
-            } else {
+            }
+            else if (currentRole === "Operation Incharge") {
+              initials = "OI";
+            }
+            else {
               initials = userName.split(" ").map(n => n[0]).join("").toUpperCase() || "--";
             }
             document.getElementById("userInitials").textContent = initials;
@@ -438,7 +446,7 @@
              QI Engineer   → own records only  (QC_Engineer_Email)
              Operation Incharge → all records from their city (Engineer_City) */
         const fetchCriteria = (currentRole === "Operation Incharge" && currentCity)
-          ? `(Engineer_City == "${currentCity}")`
+          ? `(City == "${currentCity}")`
           : `(QC_Engineer_Email == "${loginUser}")`;
 
         console.log("QI fetch criteria:", fetchCriteria);
