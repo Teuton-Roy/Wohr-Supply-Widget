@@ -46,7 +46,7 @@
     .cd-label--center{display:flex;align-items:center;justify-content:left;font-weight:800;color:#333;}
     .cd-divider{height:2px;background:rgba(0,0,0,.20);margin:12px 0;border-radius:999px;}
     .cd-matrix{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;align-items:center;}
-    .cd-pie-wrap{display:flex;justify-content:center;align-items:center;overflow:visible;width:100%;}
+    .cd-pie-wrap{display:flex;justify-content:center;align-items:center;overflow:visible;width:240px!important;height:200px!important;}
     #pmPieCanvas{width:240px!important;height:200px!important;display:block;flex-shrink:0;}
     @media(max-width:520px){#pmPieCanvas{width:210px!important;height:180px!important;}}
     @media(max-width:420px){#pmPieCanvas{width:190px!important;height:160px!important;}}
@@ -518,9 +518,9 @@
           const total   = dataset.data.reduce((a,b)=>Number(a)+Number(b),0) || 1;
           const renderedW = canvas.clientWidth || canvas.width / (window.devicePixelRatio||1);
           const isMob   = renderedW <= 190;
-          const RADIAL  = isMob ? 5  : 15;
-          const TICK    = isMob ? 6  : 15;
-          const FS      = isMob ? 10 : 12;
+          const RADIAL  = isMob ? 5  : 11.5;
+          const TICK    = isMob ? 6  : 11.5;
+          const FS      = isMob ? 10 : 10.5;
           const GAP     = 2;
           const LINE_H  = FS + 8;
 
