@@ -391,6 +391,10 @@
       handovers.forEach(r => {
         const d=parseZohoDate(r.Added_Time);
         if(!d||d<from||d>to) return;
+        // ── ADD THIS LINE ──
+        if (meOnly && currentRole !== "Handover Engineer") {
+          if (r.Handover_Engineer_Email !== loginUser) return;
+        }
         const status=r.Quality_Inspection_Status, parking=r.APS_PS_Parking_Number;
         const totalQty=parseInt(r.Total_Quantity)||0, inspQty=parseInt(r.Inspected_Quantity)||0;
         if(status==="Partially Closed") { pending.calls++; pending.spaces+=inspQty; }
