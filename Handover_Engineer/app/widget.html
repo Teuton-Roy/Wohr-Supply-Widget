@@ -528,7 +528,7 @@
              Handover Engineer   → own records only  (Handover_Engineer_Email)
              Operation Incharge  → all records from their city (Engineer_City)  */
         const handoverCriteria = (currentRole === "Operation Incharge" && currentCity)
-          ? `(Engineer_City == "${currentCity}")`
+          ? `(City == "${currentCity}")`
           : `(Handover_Engineer_Email == "${loginUser}")`;
 
         console.log("Handover fetch criteria:", handoverCriteria);
