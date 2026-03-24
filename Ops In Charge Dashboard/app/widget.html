@@ -49,7 +49,7 @@
     .cd-matrix .cd-label--center{font-size:13px;}
     .cd-pie-wrap{display:flex;justify-content:center;align-items:center;width:240px !important;height:200px !important;}
     /* #pmPieCanvas{width:300px!important;height:300px!important;display:block;aspect-ratio:1/1;flex-shrink:0;} */
-    #pmPieCanvas{width:240px!important;height:200px!important;display:block;flex-shrink:0;}
+    #pmPieCanvas{width:250px!important;height:210px!important;display:block;flex-shrink:0;}
     @media(max-width:520px){#pmPieCanvas{width:210px!important;height:180px!important;}}
     @media(max-width:420px){#pmPieCanvas{width:190px!important;height:160px!important;}}
 
@@ -564,7 +564,7 @@
           const isMob   = renderedW <= 190;
           const RADIAL  = isMob ? 5  : 11.5;
           const TICK    = isMob ? 6  : 11.5;
-          const FS      = isMob ? 10 : 10.5;
+          const FS      = isMob ? 10 : 10.8;
           const GAP     = 2;
           const LINE_H  = FS + 8;
 
@@ -622,7 +622,7 @@
             ctx.textAlign    = isRight ? "left" : "right";
             ctx.textBaseline = "middle";
             ctx.font         = `700 ${FS}px system-ui,sans-serif`;
-            ctx.fillStyle    = "#374151";
+            ctx.fillStyle    = "#111";
             ctx.fillText(label, tx, ey);
           });
           ctx.restore();
@@ -662,16 +662,16 @@
               backgroundColor: PM_EMPTY_BG.slice(),
               borderWidth: 2,
               borderColor: "#fff",
-              hoverOffset: 4,
-              borderRadius: 2,
-              spacing: 1
+              hoverOffset: 6,
+              borderRadius: 0,
+              spacing: 2
             }]
           },
           options:{
             responsive: false,
             maintainAspectRatio: false,
             devicePixelRatio: window.devicePixelRatio || 1,
-            cutout: "58%",
+            cutout: "60%",
             layout:{ padding: { top: padTB, right: padLR, bottom: padTB, left: padLR } },
             animation:{ duration:500, easing:"easeInOutQuart" },
             plugins:{
@@ -695,18 +695,18 @@
                   const val = ctx.dataset.data[ctx.dataIndex];
                   const tot = ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
                   const pct = val/tot*100;
-                  return pct >= 3;
+                  return pct >= 2;
                 },
                 formatter: function(value, ctx){
                   const tot = ctx.dataset.data.reduce((a,b)=>a+b,0)||1;
                   return Math.round(value/tot*100) + "%";
                 },
-                color: "#000",
-                font:{ weight:"800", size: isMob ? 10 : 12, family:"system-ui, sans-serif" },
+                color: "#00",
+                font:{ weight:"800", size: isMob ? 10 : 11, family:"system-ui, sans-serif" },
                 anchor: "center",
                 align: "center",
                 textStrokeColor: "rgba(255,255,255,0.6)",
-                textStrokeWidth: 2
+                textStrokeWidth: 1
               }
             }
           }
