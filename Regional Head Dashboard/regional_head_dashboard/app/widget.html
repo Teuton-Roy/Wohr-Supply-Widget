@@ -1042,7 +1042,7 @@
         </div>
       </div>
       <!-- PM -->
-      <!-- <div class="sr-panel">
+      <div class="sr-panel">
         <div class="sr-panel-head sr-panel-head--wide"><span class="sr-badge">PM</span>
           <div class="sr-actions"><span class="sr-filter-badge" id="pmFilterBadge" style="display:none"></span><span
               class="sr-period" id="pmPeriodLabel">This month</span><button class="sr-filter-btn" id="btn_pm"
@@ -1077,7 +1077,7 @@
             </div>
           </div>
         </div>
-      </div> -->
+      </div>
     </div>
   </div>
   <!-- Filter Modal -->
@@ -1192,13 +1192,13 @@
     function loadContracts(done) { renderContracts(done); }
 
     /* ═══ PM ═══ */
-    // function buildPMCrit(x) { const rc = buildRouteCrit(); return rc ? `${x} && ${rc}` : x; }
-    // function navigatePM(t) { const p = { ...pmRouteParams() }; p.Service_Request_Type = "Routine"; if (t === "all") { p.Status = "Current month due"; addDueBetween(p, periodPM); openReport("Open_User_Service_Request", p); } else if (t === "closed") { p.Status = "Closed"; addBetween(p, "Closed_Date", fmtDate(getRangeFromState(periodPM).from), fmtDate(getRangeFromState(periodPM).to)); openReport("Closed_User_Service_Request", p); } else if (t === "overdue") { p.Status = "Overdue"; openReport("Open_User_Service_Request", p); } }
-    // function dueDateRangeCrit(s) { const r = getRangeFromState(s); return `Due_Date >= "${fmtDate(r.from)}" && Due_Date <= "${fmtDate(r.to)}"`; }
-    // function closedDateRangeCrit(s) { const r = getRangeFromState(s); return `Closed_Date >= "${fmtDate(r.from)}" && Closed_Date <= "${fmtDate(r.to)}"`; }
-    // function loadPM(done) { let a = 0, c = 0, o = 0; const ac = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Current month due" && ${dueDateRangeCrit(periodPM)}`); const cc = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Closed" && ${closedDateRangeCrit(periodPM)}`); const oc = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Overdue"`); const fin = () => { setVal("#pmAll", a); setVal("#pmClosed", c); setVal("#pmOverdue", o); updatePMPieChart(a, c, o); if (done) done(); }; Promise.all([ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: ac }).then(r => { a = Number(r?.result?.records_count || 0); }).catch(() => { }), ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: cc }).then(r => { c = Number(r?.result?.records_count || 0); }).catch(() => { }), ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: oc }).then(r => { o = Number(r?.result?.records_count || 0); }).catch(() => { })]).finally(fin); }
-    // function loadPotential(done) { const qt = { period: "this_quarter", from: null, to: null }; const { from, to } = getRangeFromState(qt); const p = filterSQ(allServiceQRecords, "Pending", from, to), w = filterSQ(allServiceQRecords, "Closed Won", from, to), l = filterSQ(allServiceQRecords, "Lost", from, to); updatePotentialChart(p.length, w.length, l.length); if (done) done(); }
-    // async function loadAll() { $("#loader").show(); try { await fetchSparesRecords(); await fetchServiceQRecords(); await fetchContractsRecords(); renderSpares(); loadServiceQ(() => { loadContracts(() => { loadPM(() => { loadPotential(() => { updatePeriodLabels(); $("#loader").hide(); }); }); }); }); } catch (e) { console.error("loadAll error:", e); $("#loader").hide(); } }
+    function buildPMCrit(x) { const rc = buildRouteCrit(); return rc ? `${x} && ${rc}` : x; }
+    function navigatePM(t) { const p = { ...pmRouteParams() }; p.Service_Request_Type = "Routine"; if (t === "all") { p.Status = "Current month due"; addDueBetween(p, periodPM); openReport("Open_User_Service_Request", p); } else if (t === "closed") { p.Status = "Closed"; addBetween(p, "Closed_Date", fmtDate(getRangeFromState(periodPM).from), fmtDate(getRangeFromState(periodPM).to)); openReport("Closed_User_Service_Request", p); } else if (t === "overdue") { p.Status = "Overdue"; openReport("Open_User_Service_Request", p); } }
+    function dueDateRangeCrit(s) { const r = getRangeFromState(s); return `Due_Date >= "${fmtDate(r.from)}" && Due_Date <= "${fmtDate(r.to)}"`; }
+    function closedDateRangeCrit(s) { const r = getRangeFromState(s); return `Closed_Date >= "${fmtDate(r.from)}" && Closed_Date <= "${fmtDate(r.to)}"`; }
+    function loadPM(done) { let a = 0, c = 0, o = 0; const ac = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Current month due" && ${dueDateRangeCrit(periodPM)}`); const cc = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Closed" && ${closedDateRangeCrit(periodPM)}`); const oc = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Overdue"`); const fin = () => { setVal("#pmAll", a); setVal("#pmClosed", c); setVal("#pmOverdue", o); updatePMPieChart(a, c, o); if (done) done(); }; Promise.all([ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: ac }).then(r => { a = Number(r?.result?.records_count || 0); }).catch(() => { }), ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: cc }).then(r => { c = Number(r?.result?.records_count || 0); }).catch(() => { }), ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: oc }).then(r => { o = Number(r?.result?.records_count || 0); }).catch(() => { })]).finally(fin); }
+    function loadPotential(done) { const qt = { period: "this_quarter", from: null, to: null }; const { from, to } = getRangeFromState(qt); const p = filterSQ(allServiceQRecords, "Pending", from, to), w = filterSQ(allServiceQRecords, "Closed Won", from, to), l = filterSQ(allServiceQRecords, "Lost", from, to); updatePotentialChart(p.length, w.length, l.length); if (done) done(); }
+    async function loadAll() { $("#loader").show(); try { await fetchSparesRecords(); await fetchServiceQRecords(); await fetchContractsRecords(); renderSpares(); loadServiceQ(() => { loadContracts(() => { loadPM(() => { loadPotential(() => { updatePeriodLabels(); $("#loader").hide(); }); }); }); }); } catch (e) { console.error("loadAll error:", e); $("#loader").hide(); } }
 
     /* ═══ INIT ═══ */
     $(document).ready(function () { initPMPieChart(); initPotentialChart(); $(".date-range-field").hide(); if (typeof ZOHO !== "undefined" && ZOHO.CREATOR) { ZOHO.CREATOR.init().then(() => { const params = ZOHO.CREATOR.UTIL.getInitParams() || {}; const lu = params.loginUser || ""; ZOHO.CREATOR.API.getAllRecords({ appName: APP_NAME, reportName: USER_REPORT, criteria: `(Email=="${lu}")`, page: 1, pageSize: 1 }).then(res => { if (res.data && res.data.length > 0) { const r = res.data[0]; UserName = r.Name || ""; userID = r.ID || ""; currentRole = r.Role || ""; currentRoute = r.New_Route_Name || r.Route || ""; currentRegion = r.Region || currentRoute || ""; console.log("Role:- ", currentRole);
