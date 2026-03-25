@@ -21,7 +21,7 @@
       --border: #dde1ea;
       --text: #111827;
       --muted: #6b7280;
-      --won: #ffd84d;
+      --won: #ffe65b;
       --won-border: #e6b800;
       --lost: #ffd6d6;
       --lost-border: #f4a0a0;
@@ -155,6 +155,7 @@
 
     .sr-period {
       font-size: 12px;
+      font-style: italic;
       font-weight: 700;
       color: var(--muted);
     }
@@ -174,7 +175,7 @@
     }
 
     .sr-filter-btn svg path {
-      fill: var(--brand-dk);
+      fill: #1a2a7a;
     }
 
     :root {
@@ -913,7 +914,7 @@
     <div class="sr-grid">
       <!-- Spares Quotation -->
       <div class="sr-panel">
-        <div class="sr-panel-head sr-panel-head--wide"><span class="sr-badge">Spares Quotation</span>
+        <div class="sr-panel-head sr-panel-head--wide"><span class="sr-badge">Spare Quotations</span>
           <div class="sr-actions"><span class="sr-filter-badge" id="sparesFilterBadge" style="display:none"></span><span
               class="sr-period" id="sparesPeriodLabel">This month</span><button class="sr-filter-btn" id="btn_spares"
               type="button" aria-label="Filter Spares"><svg width="18" height="18" viewBox="0 0 24 24">
@@ -925,7 +926,7 @@
               class="sr-col-head sr-col-head--wide">Amount<br><span style="font-weight:500">Rs.(<span
                   id="sparesTotalAmt">—</span>)</span></span></div>
           <div class="sr-row sr-row--2col sr-row--won" onclick="navigateSpares('Approved By Customer')">
-            <div class="sr-row-label">WON</div>
+            <div class="sr-row-label">Won</div>
             <div class="sr-row-val" id="sparesWonCount">0</div>
             <div class="sr-amt" id="sparesWonAmt">0</div>
           </div>
@@ -983,7 +984,7 @@
         </div>
         <div class="sr-divider" style="margin-top:16px;"></div>
         <div class="sr-pie-section">
-          <div class="sr-pie-title">This Quarter — Service Quotations</div>
+          <div class="sr-pie-title">Potential For This Quarter (Spaces)</div>
           <div class="sr-potential-wrap"><canvas id="potentialPieCanvas" width="275" height="230"
               aria-label="Potential pie chart"></canvas></div>
         </div>
