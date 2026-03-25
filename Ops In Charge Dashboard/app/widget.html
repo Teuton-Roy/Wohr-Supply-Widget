@@ -1027,11 +1027,12 @@
             currentRoute = fullyDecode(rec.New_Route_Name||rec.Route||"");
             currentRegion= fullyDecode(rec.Region||rec.User_Region||"");
 
-            console.log("OI userID:",userID,"| Route:",currentRoute,"| Region:",currentRegion);
+            console.log("OI userID:",userID,"| Route:",currentRoute,"| Region:",currentRegion, "| Role:",currentRole);
             console.log("Expanded routes:",ROUTE_EXPANSION[currentRoute]||"single route");
 
             // Avatar: "OI" — show region below
-            $("#user_Role").text("OI");
+            // $("#user_Role").text("OI");
+            $("#user_Role").text(currentRole.split(" ").map(w=>w[0]).join(""));
             $("#User_Region").text(currentRegion||currentRoute||"NA");
 
             // Pre-load Team Leaders dropdown (route-scoped)
