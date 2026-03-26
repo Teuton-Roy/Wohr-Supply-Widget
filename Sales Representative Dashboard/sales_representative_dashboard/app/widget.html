@@ -175,7 +175,7 @@
     }
 
     .sr-filter-btn svg path {
-      fill: var(--brand-dk);
+      fill: #1a2a7a;
     }
 
     :root {
@@ -323,6 +323,7 @@
       font-size: 13px;
       font-weight: 900;
       line-height: 1.2;
+      color:#075985;
     }
 
     .sr-row-val {
@@ -1068,7 +1069,7 @@
             <div class="sr-rows">
               <div class="sr-row sr-row--2" style="background:#ffd84d;border-color:#e6c200;cursor:pointer;"
                 onclick="navigatePM('all')">
-                <div class="sr-row-label">All</div>
+                <div class="sr-row-label" style="color:#7a5a00";>All</div>
                 <div class="sr-row-val" id="pmAll">0</div>
               </div>
               <div class="sr-row sr-row--2" style="background:#e8f9f0;border-color:#5cb85c;cursor:pointer;"
@@ -1147,7 +1148,7 @@
 
     /* ═══ PM PIE CHART ═══ */
     let pmChart = null; Chart.register(ChartDataLabels);
-    const PM_COLORS = ["#5cb85c", "#f98282", "#ffd84d"], PM_EMPTY_BG = ["#e5e7eb", "#e5e7eb", "#e5e7eb"];
+    const PM_COLORS = ["#5cb85c", "#e47367", "#ffd84d"], PM_EMPTY_BG = ["#e5e7eb", "#e5e7eb", "#e5e7eb"];
     const arrowLabelsPlugin = { id: "arrowLabels", afterDatasetsDraw(chart) { if (chart.$noData) return; const { ctx, canvas } = chart; const ds = chart.data.datasets[0]; const meta = chart.getDatasetMeta(0); const total = ds.data.reduce((a, b) => Number(a) + Number(b), 0) || 1; const rW = canvas.clientWidth || canvas.width / (window.devicePixelRatio || 1); const mob = rW <= 190; const RAD = mob ? 5 : 11.5, TK = mob ? 6 : 11.5, FS = mob ? 10 : 10.8, GAP = 2, LH = FS + 8; const items = []; meta.data.forEach((arc, i) => { const v = Number(ds.data[i] || 0); if (!v) return; const pct = v / total * 100; let la; if (pct > 50) la = arc.startAngle + (arc.endAngle - arc.startAngle) * 0.70; else la = (arc.startAngle + arc.endAngle) / 2; const oR = arc.outerRadius; const ex = arc.x + (oR + RAD) * Math.cos(la), ey = arc.y + (oR + RAD) * Math.sin(la); items.push({ arc, label: chart.data.labels[i], color: ds.backgroundColor[i], la, oR, ex, ey, side: Math.cos(la) >= 0 ? "right" : "left" }); }); for (let a = 0; a < items.length; a++)for (let b = a + 1; b < items.length; b++) { if (items[a].side !== items[b].side) continue; if (Math.abs(items[a].ey - items[b].ey) < LH * 2) { const ca = Math.abs(Math.cos(items[a].la)), cb = Math.abs(Math.cos(items[b].la)); const f = ca < cb ? a : b; items[f].side = items[f].side === "right" ? "left" : "right"; } } ctx.save(); items.forEach(({ arc, label, la, oR, ex, ey, side }) => { const isR = side === "right"; const x1 = arc.x + (oR + 3) * Math.cos(la), y1 = arc.y + (oR + 3) * Math.sin(la), x3 = ex + (isR ? TK : -TK); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(ex, ey); ctx.lineTo(x3, ey); ctx.strokeStyle = "#9ca3af"; ctx.lineWidth = 1.2; ctx.lineJoin = "round"; ctx.stroke(); const tx = x3 + (isR ? GAP : -GAP); ctx.textAlign = isR ? "left" : "right"; ctx.textBaseline = "middle"; ctx.font = `700 ${FS}px system-ui,sans-serif`; ctx.fillStyle = "#111"; ctx.fillText(label, tx, ey); }); ctx.restore(); } };
     function initPMPieChart() { const c = document.getElementById("pmPieCanvas"); if (!c) return; if (pmChart) { pmChart.destroy(); pmChart = null; } const rW = c.clientWidth || c.width, rH = c.clientHeight || c.height, mob = rW <= 190; const tx = c.getContext("2d"); const lf = mob ? 10 : 11; tx.font = `700 ${lf}px system-ui,sans-serif`; const mW = Math.max(tx.measureText("Closed").width, tx.measureText("Overdue").width, tx.measureText("All").width); const R = mob ? 5 : 7, T = mob ? 6 : 8, G = 2; const pLR = Math.ceil(R + T + G + mW + 1), pTB = Math.ceil(rH * 0.08); pmChart = new Chart(c.getContext("2d"), { type: "doughnut", plugins: [arrowLabelsPlugin], data: { labels: ["Closed", "Overdue", "All"], datasets: [{ data: [0, 0, 1], backgroundColor: PM_EMPTY_BG.slice(), borderWidth: 2, borderColor: "#fff", hoverOffset: 6, borderRadius: 0, spacing: 2 }] }, options: { responsive: false, maintainAspectRatio: false, devicePixelRatio: window.devicePixelRatio || 1, cutout: "60%", layout: { padding: { top: pTB, right: pLR, bottom: pTB, left: pLR } }, animation: { duration: 600, easing: "easeInOutQuart" }, plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: "rgba(17,24,39,.88)", padding: 10, cornerRadius: 8, callbacks: { label(ctx) { const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return ` ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw) / t * 100)}%)`; } } }, datalabels: { display: function (ctx) { if (pmChart && pmChart.$noData) return false; const v = ctx.dataset.data[ctx.dataIndex]; const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return (v / t * 100) >= 2; }, formatter: function (v, ctx) { const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return Math.round(v / t * 100) + "%"; }, color: "#00", font: { weight: "800", size: mob ? 10 : 11.5, family: "system-ui,sans-serif" }, anchor: "center", align: "center", textStrokeColor: "rgba(255,255,255,0.6)", textStrokeWidth: 1 } } } }); pmChart.$noData = true; }
     function updatePMPieChart(all, cl, ov) { all = Number(all || 0); cl = Number(cl || 0); ov = Number(ov || 0); if (!pmChart) initPMPieChart(); if (!pmChart) return; const h = all || cl || ov; pmChart.$noData = !h; pmChart.data.datasets[0].data = h ? [cl, ov, all] : [0, 0, 1]; pmChart.data.datasets[0].backgroundColor = h ? PM_COLORS.slice() : PM_EMPTY_BG.slice(); pmChart.update(); }
