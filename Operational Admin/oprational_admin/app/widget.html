@@ -284,16 +284,13 @@
             </div>
 
             <!-- Service Technician — scoped to selected route -->
-            <div class="filter-field field-wrap">
+            <div class="filter-field">
               <label>Service Technician
                 <span id="techLoadingSpinner" style="display:none;font-weight:400;color:#888;font-size:12px;">Loading...</span>
               </label>
-              <div class="ta-wrap">
-                <input type="text" id="techSearch" placeholder="Select a route first..." autocomplete="off" disabled/>
-                <button type="button" class="ta-clear" id="techClear" title="Clear technician">✕</button>
-              </div>
-              <input type="hidden" id="techID"/>
-              <div id="techSuggestions" class="suggestions"></div>
+              <select id="techSelect" disabled>
+                <option value="">All Technicians</option>
+              </select>
             </div>
 
           </div>
@@ -315,12 +312,21 @@
     let currentRole  = "";
     let currentRoute = "";   // e.g. "Pune All" — OI's assigned group alias
     let currentRegion = "";  // e.g. "West"
+    let isAdmin       = false;
 
     const applicationName = "service-management";
     const userReport      = "My_Users";
     const serviceReport   = "Scan_QR_Service_Request";
     const ESNReport       = "ESN_Scan_QR_Widget";
     const REPORT_BASE_URL = "https://creatorapp.zoho.in/wohr_parking/environment/development/service-management/#Report:";
+
+    const ADMIN_ROLES = [
+      "Wohr Parking Administrator",
+      "Manager- Aftersales",
+      "Back Office TL",
+      "Back Office Pune",
+      "Back Office-Mumbai"
+    ];
 
     /* ═══════════════════════════════════════════════════════════
        ROUTE EXPANSION MAP
@@ -430,22 +436,39 @@
       /* ─────────────────────────────────────────────────────────
          ROUTE HELPERS — default (no filter active)
          OI's base scope = all individual routes in their group
+         Admin's base scope = all routes across all regions
       ───────────────────────────────────────────────────────── */
+      function getAllRoutes(){
+        return Object.values(ROUTE_EXPANSION).flat();
+      }
       function routeCrit(){
+        if(isAdmin){
+          const all=getAllRoutes();
+          return"("+all.map(r=>`Route_Name == "${esc(r)}"`).join(" || ")+")";
+        }
         const routes=ROUTE_EXPANSION[currentRoute];
         if(routes&&routes.length)return"("+routes.map(r=>`Route_Name == "${esc(r)}"`).join(" || ")+")";
         return`Route_Name == "${esc(currentRoute)}"`;
       }
       function routeParamValue(){
+        if(isAdmin){
+          const all=getAllRoutes();
+          return`[${all.join(",")}]`;
+        }
         const routes=ROUTE_EXPANSION[currentRoute];
         if(routes&&routes.length)return`[${routes.join(",")}]`;
         return fullyDecode(currentRoute);
       }
 
-      /* Returns the route criteria for a given filter state */
+      /* Returns the route criteria for a given filter state.
+         If filterRoute is a group alias (e.g. "Pune All"), expands to individual routes. */
       function activeRouteCrit(st){
-        if(st&&st.filterRoute)return`Route_Name == "${esc(st.filterRoute)}"`;
-        return routeCrit(); // full expanded set
+        if(st&&st.filterRoute){
+          const exp=ROUTE_EXPANSION[st.filterRoute];
+          if(exp&&exp.length)return"("+exp.map(r=>`Route_Name == "${esc(r)}"`).join(" || ")+")";
+          return`Route_Name == "${esc(st.filterRoute)}"`;
+        }
+        return routeCrit(); // full expanded set (or all routes for admin)
       }
 
       /* ─────────────────────────────────────────────────────────
@@ -504,7 +527,9 @@
       function addClosedBetween_ME(p,s){const r=getRangeFromState(s);addBetween(p,"Closed_Date",fmtDate(r.from),fmtDate(r.to));}
 
       function paramsFor(st){
-        const route = st.filterRoute ? st.filterRoute : routeParamValue();
+        let route;
+        if(st.filterRoute){const exp=ROUTE_EXPANSION[st.filterRoute];route=exp?`[${exp.join(",")}]`:st.filterRoute;}
+        else{route=routeParamValue();}
         if(st.filterTechID && st.filterTechName)
           return { Route_Name:route, Service_Technician_Name:`[${st.filterTechName}]` };
         if(st.filterTLID && st.filterTLName)
@@ -811,33 +836,61 @@
          MODAL — open / close / populate
       ───────────────────────────────────────────────────────── */
       function populateRouteSelect(st){
-        const routes=ROUTE_EXPANSION[currentRoute]||(currentRoute?[currentRoute]:[]);
-        const defaultLabel=currentRoute?`${currentRoute} (All)`:"All Routes";
-        const $sel=$("#routeSelect").empty().append(`<option value="">${defaultLabel}</option>`);
-        routes.forEach(r=>$sel.append(`<option value="${r}">${r}</option>`));
+        const $sel=$("#routeSelect").empty();
+        if(isAdmin){
+          $sel.append('<option value="">All Routes</option>');
+          const $grpRegions=$('<optgroup label="─ Combined Routes ─">');
+          Object.keys(ROUTE_EXPANSION).forEach(g=>$grpRegions.append(`<option value="${g}">${g}</option>`));
+          $sel.append($grpRegions);
+          const $grpRoutes=$('<optgroup label="─ Individual Routes ─">');
+          getAllRoutes().forEach(r=>$grpRoutes.append(`<option value="${r}">${r}</option>`));
+          $sel.append($grpRoutes);
+        } else {
+          const routes=ROUTE_EXPANSION[currentRoute]||(currentRoute?[currentRoute]:[]);
+          const defaultLabel=currentRoute?`${currentRoute} (All)`:"All Routes";
+          $sel.append(`<option value="">${defaultLabel}</option>`);
+          routes.forEach(r=>$sel.append(`<option value="${r}">${r}</option>`));
+        }
         $sel.val(st.filterRoute||"");
       }
 
-      function updatePersonFieldState(){
-        // Tech requires a route to be selected; TL is a pre-loaded dropdown (no change needed)
-        const routeVal=$("#routeSelect").val();
-        if(routeVal){
-          $("#techSearch").prop("disabled",false).attr("placeholder","Type technician name...");
-        } else {
-          $("#techSearch").prop("disabled",true).attr("placeholder","Select a route first...");
-          $("#techSearch").val("");$("#techID").val("");$("#techClear").hide();$("#techSuggestions").hide().empty();
-        }
+      /* Load all STs for selected route into #techSelect.
+         Handles group aliases (e.g. "Pune All") by expanding to individual routes.
+         selectID: optional — pre-selects a saved tech ID after load. */
+      function loadTechDropdown(routeVal, selectID){
+        const $sel=$("#techSelect").empty().append('<option value="">All Technicians</option>');
+        if(!routeVal){$sel.prop("disabled",true);return;}
+        $("#techLoadingSpinner").show();
+        $sel.prop("disabled",true);
+        const exp=ROUTE_EXPANSION[routeVal];
+        const crit=exp&&exp.length
+          ?`Role=="Service Technician" && User_Status=="Active" && (${exp.map(r=>`New_Route_Name=="${esc2(r)}"`).join(" || ")})`
+          :`Role=="Service Technician" && User_Status=="Active" && New_Route_Name=="${esc2(routeVal)}"`;
+        ZOHO.CREATOR.API.getAllRecords({appName:applicationName,reportName:userReport,criteria:crit,pageSize:200})
+          .then(res=>{
+            $("#techLoadingSpinner").hide();
+            const rows=res?.data||[];
+            rows.forEach(r=>$sel.append(`<option value="${r.ID||""}">${r.Name||""}</option>`));
+            $sel.prop("disabled",false);
+            if(selectID)$sel.val(selectID);
+          }).catch(()=>{$("#techLoadingSpinner").hide();$sel.prop("disabled",false);});
       }
 
-      /* Fetch all Team Leaders for the OI's expanded routes and populate #tlSelect */
+      /* Fetch all Team Leaders and populate #tlSelect
+         Admin: all TLs across all regions/routes
+         OI: TLs scoped to their assigned route group */
       function loadTLDropdown(){
-        const routes = ROUTE_EXPANSION[currentRoute] || (currentRoute ? [currentRoute] : []);
-        if(!routes.length) return;
+        if(!isAdmin){
+          const routes = ROUTE_EXPANSION[currentRoute] || (currentRoute ? [currentRoute] : []);
+          if(!routes.length) return;
+        }
         $("#tlLoadingSpinner").show();
-        const crit = `Role=="Team Leader" && User_Status=="Active" && New_Route_Name=="${currentRoute}"`;
+        const crit = isAdmin
+          ? `Role=="Team Leader" && User_Status=="Active"`
+          : `Role=="Team Leader" && User_Status=="Active" && New_Route_Name=="${currentRoute}"`;
         console.log("[OI] TL fetch criteria:", crit);
         ZOHO.CREATOR.API.getAllRecords({
-          appName:applicationName, reportName:userReport, criteria:crit, pageSize:100
+          appName:applicationName, reportName:userReport, criteria:crit, pageSize:200
         }).then(res=>{
           $("#tlLoadingSpinner").hide();
           const rows = res?.data || [];
@@ -862,12 +915,8 @@
         populateRouteSelect(st);
         // TL dropdown — restore saved selection
         $("#tlSelect").val(st.filterTLID||"");
-        // Tech
-        $("#techSearch").val(st.filterTechName||"");
-        $("#techID").val(st.filterTechID||"");
-        $("#techClear").toggle(!!(st.filterTechName));
-        // Enable/disable person fields based on route
-        updatePersonFieldState();
+        // Tech — load dropdown for current route and restore saved selection
+        loadTechDropdown(st.filterRoute||"", st.filterTechID||"");
         // Show
         $("#filterBackdrop").addClass("show");
         $("#filterModal").addClass("show").attr("aria-hidden","false");
@@ -878,7 +927,6 @@
         $("#filterModal").removeClass("show").attr("aria-hidden","true");
         $("#filterBackdrop").removeClass("show");
         $("body").removeClass("modal-open");
-        $("#techSuggestions").hide().empty();
       }
 
       /* ─────────────────────────────────────────────────────────
@@ -895,23 +943,18 @@
         const c=$(this).val()==="custom";$(".date-range-field").toggle(c);if(!c)$("#dateFrom,#dateTo").val("");
       });
 
-      /* Route change → only clear Tech (TL is region-scoped, stays active) */
+      /* Route change → reload tech dropdown for new route */
       $("#routeSelect").on("change",function(){
-        $("#techSearch").val("");$("#techID").val("");$("#techClear").hide();$("#techSuggestions").hide().empty();
-        updatePersonFieldState();
+        loadTechDropdown($(this).val());
       });
 
-
-      /* Tech clear */
-      $("#techClear").on("click",function(){
-        $("#techSearch").val("");$("#techID").val("");$(this).hide();$("#techSuggestions").hide().empty();
-      });
 
       /* Reset — clears everything */
       $("#filterClear").on("click",function(){
         const st=getState(activeFilterTarget);
         Object.assign(st,blankState());
         $("#tlSelect").val("");
+        $("#techSelect").val("").prop("disabled",true).empty().append('<option value="">All Technicians</option>');
         updateFilterBadge(activeFilterTarget);closeModal();if(userID)refreshOnly(activeFilterTarget);
       });
 
@@ -932,77 +975,14 @@
         if(tlID&&tlName){st.filterTLID=tlID;st.filterTLName=tlName;}
         else{st.filterTLID="";st.filterTLName="";}
         // Tech
-        const techName=$("#techSearch").val().trim();const techID=$("#techID").val().trim();
+        const techID=$("#techSelect").val();
+        const techName=techID?($("#techSelect option:selected").text()||""):"";
         if(techID&&techName){st.filterTechID=techID;st.filterTechName=techName;}
         else{st.filterTechID="";st.filterTechName="";}
         updateFilterBadge(activeFilterTarget);closeModal();if(userID)refreshOnly(activeFilterTarget);
       });
 
-      /* ─────────────────────────────────────────────────────────
-         TEAM LEADER TYPEAHEAD
-         Searches Supervisors from selected route
-      ───────────────────────────────────────────────────────── */
       function esc2(s){return String(s||"").replace(/"/g,'\\"');}
-      let tlTimer=null, techTimer=null;
-
-      $("#tlSearch").on("input",function(){
-        const val=$(this).val().trim();
-        $("#tlID").val("");$("#tlClear").hide();clearTimeout(tlTimer);
-        if(!val){$("#tlSuggestions").hide().empty();return;}
-        // No route needed — TL is scoped to region
-        tlTimer=setTimeout(()=>{
-          $("#tlSuggestions").html('<div class="sugg-empty">Loading...</div>').show();
-          $("#tlLoadingSpinner").show();
-          // Search Team Leaders by Region — TL covers whole region, not one route
-          const crit=`Role=="Team Leader" && User_Status=="Active" && Region=="${esc2(currentRegion)}" && Name.contains("${esc2(val)}")`;
-          ZOHO.CREATOR.API.getAllRecords({appName:applicationName,reportName:userReport,criteria:crit,pageSize:50})
-            .then(res=>{
-              $("#tlLoadingSpinner").hide();
-              const rows=res?.data||[];
-              if(!rows.length){$("#tlSuggestions").html('<div class="sugg-empty">No team leaders found</div>');return;}
-              const html=rows.map(r=>`<div class="sugg-item" data-id="${esc2(r.ID||"")}" data-name="${esc2(r.Name||"")}">${r.Name||""}</div>`).join("");
-              $("#tlSuggestions").html(html).show();
-            }).catch(()=>{$("#tlLoadingSpinner").hide();$("#tlSuggestions").html('<div class="sugg-empty">Error loading team leaders</div>');});
-        },350);
-      });
-
-      /* ─────────────────────────────────────────────────────────
-         SERVICE TECHNICIAN TYPEAHEAD
-         Searches STs from selected route
-      ───────────────────────────────────────────────────────── */
-      $("#techSearch").on("input",function(){
-        const val=$(this).val().trim();
-        $("#techID").val("");$("#techClear").hide();clearTimeout(techTimer);
-        if(!val){$("#techSuggestions").hide().empty();return;}
-        const selectedRoute=$("#routeSelect").val();
-        if(!selectedRoute)return;
-        techTimer=setTimeout(()=>{
-          $("#techSuggestions").html('<div class="sugg-empty">Loading...</div>').show();
-          $("#techLoadingSpinner").show();
-          const crit=`Role=="Service Technician" && User_Status=="Active" && New_Route_Name=="${esc2(selectedRoute)}" && Name.contains("${esc2(val)}")`;
-          ZOHO.CREATOR.API.getAllRecords({appName:applicationName,reportName:userReport,criteria:crit,pageSize:50})
-            .then(res=>{
-              $("#techLoadingSpinner").hide();
-              const rows=res?.data||[];
-              if(!rows.length){$("#techSuggestions").html('<div class="sugg-empty">No technicians found</div>');return;}
-              const html=rows.map(r=>`<div class="sugg-item" data-id="${esc2(r.ID||"")}" data-name="${esc2(r.Name||"")}">${r.Name||""}</div>`).join("");
-              $("#techSuggestions").html(html).show();
-            }).catch(()=>{$("#techLoadingSpinner").hide();$("#techSuggestions").html('<div class="sugg-empty">Error loading technicians</div>');});
-        },350);
-      });
-
-      /* Select suggestion items */
-      $(document).on("click","#techSuggestions .sugg-item",function(){
-        $("#techSearch").val($(this).data("name")||"");
-        $("#techID").val($(this).data("id")||"");
-        $("#techClear").show();
-        $("#techSuggestions").hide().empty();
-      });
-
-      /* Hide suggestions on outside click */
-      $(document).on("click.sugg",function(e){
-        if(!$(e.target).closest("#techSearch,#techSuggestions").length) $("#techSuggestions").hide().empty();
-      });
 
       /* ─────────────────────────────────────────────────────────
          ZOHO INIT
@@ -1026,9 +1006,10 @@
             currentRole  = rec.Role||"";
             currentRoute = fullyDecode(rec.New_Route_Name||rec.Route||"");
             currentRegion= fullyDecode(rec.Region||rec.User_Region||"");
+            isAdmin      = ADMIN_ROLES.includes(currentRole);
 
-            console.log("OI userID:",userID,"| Route:",currentRoute,"| Region:",currentRegion, "| Role:",currentRole);
-            console.log("Expanded routes:",ROUTE_EXPANSION[currentRoute]||"single route");
+            console.log("OI userID:",userID,"| Route:",currentRoute,"| Region:",currentRegion, "| Role:",currentRole,"| isAdmin:",isAdmin);
+            console.log("Expanded routes:",isAdmin?"ALL (admin)":ROUTE_EXPANSION[currentRoute]||"single route");
 
             // Avatar: "OI" — show region below
             // $("#user_Role").text("OI");
