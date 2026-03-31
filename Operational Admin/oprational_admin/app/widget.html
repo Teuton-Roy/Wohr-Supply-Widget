@@ -302,7 +302,6 @@
       </div>
     </div>
   </div>
-
   <script>
     /* ═══════════════════════════════════════════════════════════
        CONFIGURATION
@@ -367,10 +366,27 @@
       function startOfDay(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,0,0);}
       function endOfDay(d)  {return new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,59,59);}
       function getFYStartYear(r){return(r.getMonth()>=3)?r.getFullYear():r.getFullYear()-1;}
+      // function quarterStart(ref){
+      //   const m=ref.getMonth();let qs=0;
+      //   if(m>=3&&m<=5)qs=3;else if(m>=6&&m<=8)qs=6;else if(m>=9&&m<=11)qs=9;
+      //   return new Date(ref.getFullYear(),qs,1);
+      // }
       function quarterStart(ref){
-        const m=ref.getMonth();let qs=0;
-        if(m>=3&&m<=5)qs=3;else if(m>=6&&m<=8)qs=6;else if(m>=9&&m<=11)qs=9;
-        return new Date(ref.getFullYear(),qs,1);
+        const m = ref.getMonth();
+        let year = ref.getFullYear();
+        let qs;
+
+        if (m >= 3 && m <= 5) {        // Apr-Jun
+          qs = 3;
+        } else if (m >= 6 && m <= 8) { // Jul-Sep
+          qs = 6;
+        } else if (m >= 9 && m <= 11) { // Oct-Dec
+          qs = 9;
+        } else {                       // Jan-Mar => FY Q4, starts in previous year
+          qs = 0;
+        }
+
+        return new Date(year, qs, 1);
       }
       function getRangeFromState(state){
         const now=new Date();
