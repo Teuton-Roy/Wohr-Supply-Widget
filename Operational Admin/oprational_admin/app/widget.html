@@ -451,13 +451,21 @@
         return`Route_Name == "${esc(currentRoute)}"`;
       }
       function routeParamValue(){
-        if(isAdmin){
-          const all=getAllRoutes();
-          return`[${all.join(",")}]`;
-        }
+        if(isAdmin) return null; // admin default = all data; no Route_Name in URL
         const routes=ROUTE_EXPANSION[currentRoute];
         if(routes&&routes.length)return`[${routes.join(",")}]`;
         return fullyDecode(currentRoute);
+      }
+
+      /* Resolve a filterRoute value to a URL param string.
+         Zoho Creator accepts max 6 values — skip Route_Name if >6. */
+      function resolveRouteParam(filterRoute){
+        if(!filterRoute) return routeParamValue();
+        const exp=ROUTE_EXPANSION[filterRoute];
+        if(exp&&exp.length){
+          return exp.length<=6?`[${exp.join(",")}]`:null; // >6 → omit Route_Name
+        }
+        return filterRoute; // individual route
       }
 
       /* Returns the route criteria for a given filter state.
@@ -527,21 +535,20 @@
       function addClosedBetween_ME(p,s){const r=getRangeFromState(s);addBetween(p,"Closed_Date",fmtDate(r.from),fmtDate(r.to));}
 
       function paramsFor(st){
-        let route;
-        if(st.filterRoute){const exp=ROUTE_EXPANSION[st.filterRoute];route=exp?`[${exp.join(",")}]`:st.filterRoute;}
-        else{route=routeParamValue();}
-        if(st.filterTechID && st.filterTechName)
-          return { Route_Name:route, Service_Technician_Name:`[${st.filterTechName}]` };
-        if(st.filterTLID && st.filterTLName)
-          return { Route_Name:route, Supervisior_Name:`[${st.filterTLName}]` };
-        return { Route_Name:route }; // OI: no person param, just route
+        const route=resolveRouteParam(st.filterRoute);
+        const p={};
+        if(route)p.Route_Name=route; // omit if null (>6 routes or admin default)
+        if(st.filterTechID && st.filterTechName)p.Service_Technician_Name=`[${st.filterTechName}]`;
+        else if(st.filterTLID && st.filterTLName)p.Supervisior_Name=`[${st.filterTLName}]`;
+        return p;
       }
       function paramsForMe(st){
-        const route = st.filterRoute ? st.filterRoute : routeParamValue();
-        const p = { Route_Name:route };
-        if(st.filterTechID && st.filterTechName)      p.Closed_Owner = `[${st.filterTechName}]`;
-        else if(st.filterTLID && st.filterTLName)     p.Closed_Owner = `[${st.filterTLName}]`;
-        else                                           p.Closed_Owner = `[${UserName}]`;
+        const route=resolveRouteParam(st.filterRoute);
+        const p={};
+        if(route)p.Route_Name=route;
+        if(st.filterTechID && st.filterTechName)      p.Closed_Owner=`[${st.filterTechName}]`;
+        else if(st.filterTLID && st.filterTLName)     p.Closed_Owner=`[${st.filterTLName}]`;
+        else                                           p.Closed_Owner=`[${UserName}]`;
         return p;
       }
 
