@@ -323,7 +323,7 @@
       font-size: 13px;
       font-weight: 900;
       line-height: 1.2;
-      color:#075985;
+      color: #075985;
     }
 
     .sr-row-val {
@@ -863,7 +863,8 @@
         height: 240px !important;
         align-self: center;
       }
-/* 
+
+      /* 
       #pmPieCanvas {
         width: 210px !important;
         height: 180px !important;
@@ -1040,8 +1041,7 @@
             <div class="sr-row-val sr-row-val--sm" id="contractsTermSpaces">0</div>
             <div class="sr-amt" id="contractsTermAmt">0</div>
           </div>
-          <div class="sr-row sr-row--3 sr-row--expiring" style="margin-top:6px;"
-            onclick="navigateContractsExpiring()">
+          <div class="sr-row sr-row--3 sr-row--expiring" style="margin-top:6px;" onclick="navigateContractsExpiring()">
             <div class="sr-row-label" style="color:#166534;">Expiring This<br class="mobile-break"> Quarter</div>
             <div class="sr-row-val" id="contractsExpiringCount" style="color:black;">0</div>
             <div class="sr-row-val" id="contractsExpiringSpaces" style="color:black;">0</div>
@@ -1069,7 +1069,7 @@
             <div class="sr-rows">
               <div class="sr-row sr-row--2" style="background:#ffd84d;border-color:#e6c200;cursor:pointer;"
                 onclick="navigatePM('all')">
-                <div class="sr-row-label" style="color:#7a5a00";>All</div>
+                <div class="sr-row-label" style="color:#7a5a00" ;>All</div>
                 <div class="sr-row-val" id="pmAll">0</div>
               </div>
               <div class="sr-row sr-row--2" style="background:#e8f9f0;border-color:#5cb85c;cursor:pointer;"
@@ -1116,217 +1116,231 @@
   <script>
     const APP_NAME = "service-management", USER_REPORT = "My_Users", SPARES_REPORT = "Spare_Quotation_Report", REPORT_BASE_URL = "https://creatorapp.zoho.in/wohr_parking/environment/development/service-management/#Report:", SERVICEQ_REPORT = "Service_Quotation_Report", CONTRACTS_REPORT = "Contract_Report", PM_REPORT = "Scan_QR_Service_Request", OP_BETWEEN = 58, OP_NOT_EQ = 19;
     $(document).ready(function () {
-    function buildQueryRaw(p) { return Object.keys(p || {}).filter(k => p[k] !== undefined && p[k] !== null && p[k] !== "").map(k => k + "=" + String(p[k])).join("&"); }
-    function openReport(rn, p) { const qs = buildQueryRaw(p); const url = REPORT_BASE_URL + rn + (qs ? "?" + qs : ""); ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" }); }
-    function addBetween(p, f, a, b) { p[f] = `${a};${b}`; p[f + "_op"] = OP_BETWEEN; }
-    function addDueBetween(p, s) { const r = getRangeFromState(s); addBetween(p, "Due_Date", fmtDate(r.from), fmtDate(r.to)); }
-    function pmRouteParams() { const routes = getExpandedRoutes(); if (!routes.length) return {}; return routes.length === 1 ? { Route_Name: routes[0] } : { Route_Name: `[${routes.join(",")}]`, Route_Name_op: 26 }; }
-    const ROUTE_EXPANSION = { "Pune All": ["Pune 1", "Pune 2", "Pune 3"], "All Mumbai Region": ["Mumbai Western 1", "Mumbai Western 2", "Mumbai Western 3", "Mumbai Central 4", "Mumbai Central 5", "Mumbai Central 6", "Mumbai Harbour 7"], "All North Region": ["North 1", "North 2", "North 3", "North 4", "North 5", "North 6"], "All Hyderabad": ["Hyderabad 1", "Hyderabad 2", "Hyderabad 3"], "All Chennai": ["Chennai 1", "Chennai 2"], "All Bangalore Region": ["Bangalore 1", "Bangalore 2", "Bangalore 3", "Bangalore 4", "Bangalore 5", "Bangalore 6", "Bangalore 7"], "All Ahmedabad": ["Ahmedabad 1", "Ahmedabad 2"] };
-    let UserName = "", userID = "", currentRole = "", currentRegion = "", currentRoute = "";
-    const mkState = () => ({ period: "this_month", from: null, to: null });
-    const periodSpares = mkState(), periodServiceQ = mkState(), periodContracts = mkState(), periodPM = mkState();
-    let activeTarget = "spares", allSparesRecords = [];
-    function getExpandedRoutes() { if (!currentRoute) return []; return ROUTE_EXPANSION[currentRoute] || [currentRoute]; }
-    function buildRouteCrit() { const r = getExpandedRoutes(); if (!r.length) return ""; if (r.length === 1) return `Route_Name == "${r[0]}"`; return "(" + r.map(x => `Route_Name == "${x}"`).join(" || ") + ")"; }
-    const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    function startOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0); }
-    function endOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59); }
-    function getFYStartYear(r) { return r.getMonth() >= 3 ? r.getFullYear() : r.getFullYear() - 1; }
-    function quarterStart(ref) { const m = ref.getMonth(); let q = 0; if (m >= 3 && m <= 5) q = 3; else if (m >= 6 && m <= 8) q = 6; else if (m >= 9 && m <= 11) q = 9; return new Date(ref.getFullYear(), q, 1); }
-    function getRangeFromState(s) { const now = new Date(); if (s.period === "custom" && s.from && s.to) return { from: startOfDay(s.from), to: endOfDay(s.to) }; if (s.period === "this_month") return { from: startOfDay(new Date(now.getFullYear(), now.getMonth(), 1)), to: endOfDay(new Date(now.getFullYear(), now.getMonth() + 1, 0)) }; if (s.period === "this_year") { const fy = getFYStartYear(now); return { from: startOfDay(new Date(fy, 3, 1)), to: endOfDay(new Date(fy + 1, 3, 0)) }; } if (s.period === "this_quarter" || s.period === "last_quarter") { const qS = quarterStart(now), off = (s.period === "last_quarter") ? -3 : 0; const from = new Date(qS.getFullYear(), qS.getMonth() + off, 1); const to = new Date(from.getFullYear(), from.getMonth() + 3, 0); return { from: startOfDay(from), to: endOfDay(to) }; } return { from: startOfDay(new Date(now.getFullYear(), now.getMonth(), 1)), to: endOfDay(new Date(now.getFullYear(), now.getMonth() + 1, 0)) }; }
-    function fmtDate(d) { return `${String(d.getDate()).padStart(2, "0")}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`; }
-    function fmtDateTime(d) { return `${fmtDate(d)} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}`; }
-    function toInputDate(d) { if (!d) return ""; return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; }
-    function parseInputDate(v) { if (!v) return null; const [y, m, d] = v.split("-").map(Number); return new Date(y, m - 1, d); }
-    function labelFor(s) { if (s.period === "custom" && s.from && s.to) { const r = getRangeFromState(s); return `${fmtDate(r.from)} – ${fmtDate(r.to)}`; } return { this_month: "This month", this_quarter: "This quarter", last_quarter: "Last quarter", this_year: "This year" }[s.period] || "This month"; }
-    function getState(t) { return t === "serviceq" ? periodServiceQ : t === "contracts" ? periodContracts : t === "pm" ? periodPM : periodSpares; }
-    function fmtAmt(v) { const n = parseFloat(String(v || "0").replace(/,/g, "")) || 0; if (n === 0) return "0"; return n % 1 === 0 ? String(Math.round(n)) : n.toFixed(2); }
-    function setVal(sel, v) { $(sel).text(v == null ? "0" : String(v)); }
-    function setAmt(sel, v) { $(sel).text(fmtAmt(v)); }
-    function updatePeriodLabels() { $("#sparesPeriodLabel").text(labelFor(periodSpares)); $("#serviceqPeriodLabel").text(labelFor(periodServiceQ)); $("#contractsPeriodLabel").text(labelFor(periodContracts)); $("#pmPeriodLabel").text(labelFor(periodPM)); }
-    const MO = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
-    function parseZDate(str) { if (!str || str === "—" || str === "-") return null; str = str.trim(); const parts = str.split(" "); const dp = parts[0].split("-"); if (dp.length !== 3) return null; const [dd, mon, yyyy] = dp; const tp = (parts[1] || "0:0:0").split(":"); const d = new Date(+yyyy, MO[mon] ?? 0, +dd, +tp[0] || 0, +tp[1] || 0, +tp[2] || 0); return isNaN(d) ? null : d; }
+      function buildQueryRaw(p) { return Object.keys(p || {}).filter(k => p[k] !== undefined && p[k] !== null && p[k] !== "").map(k => k + "=" + String(p[k])).join("&"); }
+      function openReport(rn, p) { const qs = buildQueryRaw(p); const url = REPORT_BASE_URL + rn + (qs ? "?" + qs : ""); ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" }); }
+      function addBetween(p, f, a, b) { p[f] = `${a};${b}`; p[f + "_op"] = OP_BETWEEN; }
+      function addDueBetween(p, s) { const r = getRangeFromState(s); addBetween(p, "Due_Date", fmtDate(r.from), fmtDate(r.to)); }
+      function pmRouteParams() { const routes = getExpandedRoutes(); if (!routes.length) return {}; return routes.length === 1 ? { Route_Name: routes[0] } : { Route_Name: `[${routes.join(",")}]`, Route_Name_op: 26 }; }
+      const ROUTE_EXPANSION = { "Pune All": ["Pune 1", "Pune 2", "Pune 3"], "All Mumbai Region": ["Mumbai Western 1", "Mumbai Western 2", "Mumbai Western 3", "Mumbai Central 4", "Mumbai Central 5", "Mumbai Central 6", "Mumbai Harbour 7"], "All North Region": ["North 1", "North 2", "North 3", "North 4", "North 5", "North 6"], "All Hyderabad": ["Hyderabad 1", "Hyderabad 2", "Hyderabad 3"], "All Chennai": ["Chennai 1", "Chennai 2"], "All Bangalore Region": ["Bangalore 1", "Bangalore 2", "Bangalore 3", "Bangalore 4", "Bangalore 5", "Bangalore 6", "Bangalore 7"], "All Ahmedabad": ["Ahmedabad 1", "Ahmedabad 2"] };
+      let UserName = "", userID = "", currentRole = "", currentRegion = "", currentRoute = "";
+      const mkState = () => ({ period: "this_month", from: null, to: null });
+      const periodSpares = mkState(), periodServiceQ = mkState(), periodContracts = mkState(), periodPM = mkState();
+      let activeTarget = "spares", allSparesRecords = [];
+      function getExpandedRoutes() { if (!currentRoute) return []; return ROUTE_EXPANSION[currentRoute] || [currentRoute]; }
+      function buildRouteCrit() { const r = getExpandedRoutes(); if (!r.length) return ""; if (r.length === 1) return `Route_Name == "${r[0]}"`; return "(" + r.map(x => `Route_Name == "${x}"`).join(" || ") + ")"; }
+      const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      function startOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0); }
+      function endOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59); }
+      function getFYStartYear(r) { return r.getMonth() >= 3 ? r.getFullYear() : r.getFullYear() - 1; }
+      function quarterStart(ref) { const m = ref.getMonth(); let q = 0; if (m >= 3 && m <= 5) q = 3; else if (m >= 6 && m <= 8) q = 6; else if (m >= 9 && m <= 11) q = 9; return new Date(ref.getFullYear(), q, 1); }
+      function getRangeFromState(s) { const now = new Date(); if (s.period === "custom" && s.from && s.to) return { from: startOfDay(s.from), to: endOfDay(s.to) }; if (s.period === "this_month") return { from: startOfDay(new Date(now.getFullYear(), now.getMonth(), 1)), to: endOfDay(new Date(now.getFullYear(), now.getMonth() + 1, 0)) }; if (s.period === "this_year") { const fy = getFYStartYear(now); return { from: startOfDay(new Date(fy, 3, 1)), to: endOfDay(new Date(fy + 1, 3, 0)) }; } if (s.period === "this_quarter" || s.period === "last_quarter") { const qS = quarterStart(now), off = (s.period === "last_quarter") ? -3 : 0; const from = new Date(qS.getFullYear(), qS.getMonth() + off, 1); const to = new Date(from.getFullYear(), from.getMonth() + 3, 0); return { from: startOfDay(from), to: endOfDay(to) }; } return { from: startOfDay(new Date(now.getFullYear(), now.getMonth(), 1)), to: endOfDay(new Date(now.getFullYear(), now.getMonth() + 1, 0)) }; }
+      function fmtDate(d) { return `${String(d.getDate()).padStart(2, "0")}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`; }
+      function fmtDateTime(d) { return `${fmtDate(d)} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}`; }
+      function toInputDate(d) { if (!d) return ""; return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; }
+      function parseInputDate(v) { if (!v) return null; const [y, m, d] = v.split("-").map(Number); return new Date(y, m - 1, d); }
+      function labelFor(s) { if (s.period === "custom" && s.from && s.to) { const r = getRangeFromState(s); return `${fmtDate(r.from)} – ${fmtDate(r.to)}`; } return { this_month: "This month", this_quarter: "This quarter", last_quarter: "Last quarter", this_year: "This year" }[s.period] || "This month"; }
+      function getState(t) { return t === "serviceq" ? periodServiceQ : t === "contracts" ? periodContracts : t === "pm" ? periodPM : periodSpares; }
+      function fmtAmt(v) { const n = parseFloat(String(v || "0").replace(/,/g, "")) || 0; if (n === 0) return "0"; return n % 1 === 0 ? String(Math.round(n)) : n.toFixed(2); }
+      function setVal(sel, v) { $(sel).text(v == null ? "0" : String(v)); }
+      function setAmt(sel, v) { $(sel).text(fmtAmt(v)); }
+      function updatePeriodLabels() { $("#sparesPeriodLabel").text(labelFor(periodSpares)); $("#serviceqPeriodLabel").text(labelFor(periodServiceQ)); $("#contractsPeriodLabel").text(labelFor(periodContracts)); $("#pmPeriodLabel").text(labelFor(periodPM)); }
+      const MO = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+      function parseZDate(str) { if (!str || str === "—" || str === "-") return null; str = str.trim(); const parts = str.split(" "); const dp = parts[0].split("-"); if (dp.length !== 3) return null; const [dd, mon, yyyy] = dp; const tp = (parts[1] || "0:0:0").split(":"); const d = new Date(+yyyy, MO[mon] ?? 0, +dd, +tp[0] || 0, +tp[1] || 0, +tp[2] || 0); return isNaN(d) ? null : d; }
 
-    /* ═══ PM PIE CHART ═══ */
-    let pmChart = null; Chart.register(ChartDataLabels);
-    const PM_COLORS = ["#5cb85c", "#e47367", "#ffd84d"], PM_EMPTY_BG = ["#e5e7eb", "#e5e7eb", "#e5e7eb"];
-    const arrowLabelsPlugin = { id: "arrowLabels", afterDatasetsDraw(chart) { if (chart.$noData) return; const { ctx, canvas } = chart; const ds = chart.data.datasets[0]; const meta = chart.getDatasetMeta(0); const total = ds.data.reduce((a, b) => Number(a) + Number(b), 0) || 1; const rW = canvas.clientWidth || canvas.width / (window.devicePixelRatio || 1); const mob = rW <= 190; const RAD = mob ? 5 : 11.5, TK = mob ? 6 : 11.5, FS = mob ? 10 : 10.8, GAP = 2, LH = FS + 8; const items = []; meta.data.forEach((arc, i) => { const v = Number(ds.data[i] || 0); if (!v) return; const pct = v / total * 100; let la; if (pct > 50) la = arc.startAngle + (arc.endAngle - arc.startAngle) * 0.70; else la = (arc.startAngle + arc.endAngle) / 2; const oR = arc.outerRadius; const ex = arc.x + (oR + RAD) * Math.cos(la), ey = arc.y + (oR + RAD) * Math.sin(la); items.push({ arc, label: chart.data.labels[i], color: ds.backgroundColor[i], la, oR, ex, ey, side: Math.cos(la) >= 0 ? "right" : "left" }); }); for (let a = 0; a < items.length; a++)for (let b = a + 1; b < items.length; b++) { if (items[a].side !== items[b].side) continue; if (Math.abs(items[a].ey - items[b].ey) < LH * 2) { const ca = Math.abs(Math.cos(items[a].la)), cb = Math.abs(Math.cos(items[b].la)); const f = ca < cb ? a : b; items[f].side = items[f].side === "right" ? "left" : "right"; } } ctx.save(); items.forEach(({ arc, label, la, oR, ex, ey, side }) => { const isR = side === "right"; const x1 = arc.x + (oR + 3) * Math.cos(la), y1 = arc.y + (oR + 3) * Math.sin(la), x3 = ex + (isR ? TK : -TK); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(ex, ey); ctx.lineTo(x3, ey); ctx.strokeStyle = "#9ca3af"; ctx.lineWidth = 1.2; ctx.lineJoin = "round"; ctx.stroke(); const tx = x3 + (isR ? GAP : -GAP); ctx.textAlign = isR ? "left" : "right"; ctx.textBaseline = "middle"; ctx.font = `700 ${FS}px system-ui,sans-serif`; ctx.fillStyle = "#111"; ctx.fillText(label, tx, ey); }); ctx.restore(); } };
-    function initPMPieChart() { const c = document.getElementById("pmPieCanvas"); if (!c) return; if (pmChart) { pmChart.destroy(); pmChart = null; } const rW = c.clientWidth || c.width, rH = c.clientHeight || c.height, mob = rW <= 190; const tx = c.getContext("2d"); const lf = mob ? 10 : 11; tx.font = `700 ${lf}px system-ui,sans-serif`; const mW = Math.max(tx.measureText("Closed").width, tx.measureText("Overdue").width, tx.measureText("All").width); const R = mob ? 5 : 7, T = mob ? 6 : 8, G = 2; const pLR = Math.ceil(R + T + G + mW + 1), pTB = Math.ceil(rH * 0.08); pmChart = new Chart(c.getContext("2d"), { type: "doughnut", plugins: [arrowLabelsPlugin], data: { labels: ["Closed", "Overdue", "All"], datasets: [{ data: [0, 0, 1], backgroundColor: PM_EMPTY_BG.slice(), borderWidth: 2, borderColor: "#fff", hoverOffset: 6, borderRadius: 0, spacing: 2 }] }, options: { responsive: false, maintainAspectRatio: false, devicePixelRatio: window.devicePixelRatio || 1, cutout: "60%", layout: { padding: { top: pTB, right: pLR, bottom: pTB, left: pLR } }, animation: { duration: 500, easing: "easeInOutQuart" }, plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: "rgba(17,24,39,.88)", padding: 10, cornerRadius: 8, callbacks: { label(ctx) { const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return ` ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw) / t * 100)}%)`; } } }, datalabels: { display: function (ctx) { if (pmChart && pmChart.$noData) return false; const v = ctx.dataset.data[ctx.dataIndex]; const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return (v / t * 100) >= 2; }, formatter: function (v, ctx) { const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return Math.round(v / t * 100) + "%"; }, color: "#00", font: { weight: "800", size: mob ? 10 : 11.5, family: "system-ui,sans-serif" }, anchor: "center", align: "center", textStrokeColor: "rgba(255,255,255,0.6)", textStrokeWidth: 1 } } } }); pmChart.$noData = true; }
-    function updatePMPieChart(all, cl, ov) { all = Number(all || 0); cl = Number(cl || 0); ov = Number(ov || 0); if (!pmChart) initPMPieChart(); if (!pmChart) return; const h = all || cl || ov; pmChart.$noData = !h; pmChart.data.datasets[0].data = h ? [cl, ov, all] : [0, 0, 1]; pmChart.data.datasets[0].backgroundColor = h ? PM_COLORS.slice() : PM_EMPTY_BG.slice(); pmChart.update(); }
+      /* ═══ PM PIE CHART ═══ */
+      let pmChart = null; Chart.register(ChartDataLabels);
+      const PM_COLORS = ["#5cb85c", "#e47367", "#ffd84d"], PM_EMPTY_BG = ["#e5e7eb", "#e5e7eb", "#e5e7eb"];
+      const arrowLabelsPlugin = { id: "arrowLabels", afterDatasetsDraw(chart) { if (chart.$noData) return; const { ctx, canvas } = chart; const ds = chart.data.datasets[0]; const meta = chart.getDatasetMeta(0); const total = ds.data.reduce((a, b) => Number(a) + Number(b), 0) || 1; const rW = canvas.clientWidth || canvas.width / (window.devicePixelRatio || 1); const mob = rW <= 190; const RAD = mob ? 5 : 11.5, TK = mob ? 6 : 11.5, FS = mob ? 10 : 10.8, GAP = 2, LH = FS + 8; const items = []; meta.data.forEach((arc, i) => { const v = Number(ds.data[i] || 0); if (!v) return; const pct = v / total * 100; let la; if (pct > 50) la = arc.startAngle + (arc.endAngle - arc.startAngle) * 0.70; else la = (arc.startAngle + arc.endAngle) / 2; const oR = arc.outerRadius; const ex = arc.x + (oR + RAD) * Math.cos(la), ey = arc.y + (oR + RAD) * Math.sin(la); items.push({ arc, label: chart.data.labels[i], color: ds.backgroundColor[i], la, oR, ex, ey, side: Math.cos(la) >= 0 ? "right" : "left" }); }); for (let a = 0; a < items.length; a++)for (let b = a + 1; b < items.length; b++) { if (items[a].side !== items[b].side) continue; if (Math.abs(items[a].ey - items[b].ey) < LH * 2) { const ca = Math.abs(Math.cos(items[a].la)), cb = Math.abs(Math.cos(items[b].la)); const f = ca < cb ? a : b; items[f].side = items[f].side === "right" ? "left" : "right"; } } ctx.save(); items.forEach(({ arc, label, la, oR, ex, ey, side }) => { const isR = side === "right"; const x1 = arc.x + (oR + 3) * Math.cos(la), y1 = arc.y + (oR + 3) * Math.sin(la), x3 = ex + (isR ? TK : -TK); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(ex, ey); ctx.lineTo(x3, ey); ctx.strokeStyle = "#9ca3af"; ctx.lineWidth = 1.2; ctx.lineJoin = "round"; ctx.stroke(); const tx = x3 + (isR ? GAP : -GAP); ctx.textAlign = isR ? "left" : "right"; ctx.textBaseline = "middle"; ctx.font = `700 ${FS}px system-ui,sans-serif`; ctx.fillStyle = "#111"; ctx.fillText(label, tx, ey); }); ctx.restore(); } };
+      function initPMPieChart() { const c = document.getElementById("pmPieCanvas"); if (!c) return; if (pmChart) { pmChart.destroy(); pmChart = null; } const rW = c.clientWidth || c.width, rH = c.clientHeight || c.height, mob = rW <= 190; const tx = c.getContext("2d"); const lf = mob ? 10 : 11; tx.font = `700 ${lf}px system-ui,sans-serif`; const mW = Math.max(tx.measureText("Closed").width, tx.measureText("Overdue").width, tx.measureText("All").width); const R = mob ? 5 : 7, T = mob ? 6 : 8, G = 2; const pLR = Math.ceil(R + T + G + mW + 1), pTB = Math.ceil(rH * 0.08); pmChart = new Chart(c.getContext("2d"), { type: "doughnut", plugins: [arrowLabelsPlugin], data: { labels: ["Closed", "Overdue", "All"], datasets: [{ data: [0, 0, 1], backgroundColor: PM_EMPTY_BG.slice(), borderWidth: 2, borderColor: "#fff", hoverOffset: 6, borderRadius: 0, spacing: 2 }] }, options: { responsive: false, maintainAspectRatio: false, devicePixelRatio: window.devicePixelRatio || 1, cutout: "60%", layout: { padding: { top: pTB, right: pLR, bottom: pTB, left: pLR } }, animation: { duration: 500, easing: "easeInOutQuart" }, plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: "rgba(17,24,39,.88)", padding: 10, cornerRadius: 8, callbacks: { label(ctx) { const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return ` ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw) / t * 100)}%)`; } } }, datalabels: { display: function (ctx) { if (pmChart && pmChart.$noData) return false; const v = ctx.dataset.data[ctx.dataIndex]; const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return (v / t * 100) >= 2; }, formatter: function (v, ctx) { const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return Math.round(v / t * 100) + "%"; }, color: "#00", font: { weight: "800", size: mob ? 10 : 11.5, family: "system-ui,sans-serif" }, anchor: "center", align: "center", textStrokeColor: "rgba(255,255,255,0.6)", textStrokeWidth: 1 } } } }); pmChart.$noData = true; }
+      function updatePMPieChart(all, cl, ov) { all = Number(all || 0); cl = Number(cl || 0); ov = Number(ov || 0); if (!pmChart) initPMPieChart(); if (!pmChart) return; const h = all || cl || ov; pmChart.$noData = !h; pmChart.data.datasets[0].data = h ? [cl, ov, all] : [0, 0, 1]; pmChart.data.datasets[0].backgroundColor = h ? PM_COLORS.slice() : PM_EMPTY_BG.slice(); pmChart.update(); }
 
-    /* ═══ POTENTIAL PIE — PM STYLE ═══ */
-    let potentialChart = null;
-    const SQ_COLORS = ["#a5dbff", "#ffe13b", "#f98282"], SQ_EMPTY_BG = ["#e5e7eb", "#e5e7eb", "#e5e7eb"];
-    const sqArrowPlugin = { id: "sqArrow", afterDatasetsDraw(chart) { if (chart.$noData) return; const { ctx, canvas } = chart; const ds = chart.data.datasets[0]; const meta = chart.getDatasetMeta(0); const total = ds.data.reduce((a, b) => Number(a) + Number(b), 0) || 1; const rW = canvas.clientWidth || canvas.width / (window.devicePixelRatio || 1); const mob = rW <= 190; const RAD = mob ? 5 : 11.5, TK = mob ? 6 : 11.5, FS = mob ? 10 : 10.8, GAP = 2, LH = FS + 8; const items = []; meta.data.forEach((arc, i) => { const v = Number(ds.data[i] || 0); if (!v) return; const pct = v / total * 100; let la; if (pct > 50) la = arc.startAngle + (arc.endAngle - arc.startAngle) * 0.70; else la = (arc.startAngle + arc.endAngle) / 2; const oR = arc.outerRadius; const ex = arc.x + (oR + RAD) * Math.cos(la), ey = arc.y + (oR + RAD) * Math.sin(la); items.push({ arc, label: chart.data.labels[i], color: ds.backgroundColor[i], la, oR, ex, ey, side: Math.cos(la) >= 0 ? "right" : "left" }); }); for (let a = 0; a < items.length; a++)for (let b = a + 1; b < items.length; b++) { if (items[a].side !== items[b].side) continue; if (Math.abs(items[a].ey - items[b].ey) < LH * 2) { const ca = Math.abs(Math.cos(items[a].la)), cb = Math.abs(Math.cos(items[b].la)); const f = ca < cb ? a : b; items[f].side = items[f].side === "right" ? "left" : "right"; } } ctx.save(); items.forEach(({ arc, label, la, oR, ex, ey, side }) => { const isR = side === "right"; const x1 = arc.x + (oR + 3) * Math.cos(la), y1 = arc.y + (oR + 3) * Math.sin(la), x3 = ex + (isR ? TK : -TK); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(ex, ey); ctx.lineTo(x3, ey); ctx.strokeStyle = "#9ca3af"; ctx.lineWidth = 1.2; ctx.lineJoin = "round"; ctx.stroke(); const tx = x3 + (isR ? GAP : -GAP); ctx.textAlign = isR ? "left" : "right"; ctx.textBaseline = "middle"; ctx.font = `700 ${FS}px system-ui,sans-serif`; ctx.fillStyle = "#111"; ctx.fillText(label, tx, ey); }); ctx.restore(); } };
-    function initPotentialChart() { const c = document.getElementById("potentialPieCanvas"); if (!c) return; if (potentialChart) { potentialChart.destroy(); potentialChart = null; } const rW = c.clientWidth || c.width, rH = c.clientHeight || c.height, mob = rW <= 190; const tx = c.getContext("2d"); const lf = mob ? 10 : 11; tx.font = `700 ${lf}px system-ui,sans-serif`; const mW = Math.max(tx.measureText("Pending").width, tx.measureText("Closed Won").width, tx.measureText("Lost").width); const R = mob ? 5 : 7, T = mob ? 6 : 8, G = 2; const pLR = Math.ceil(R + T + G + mW + 1), pTB = Math.ceil(rH * 0.08); potentialChart = new Chart(c.getContext("2d"), { type: "doughnut", plugins: [sqArrowPlugin], data: { labels: ["Pending", "Closed Won", "Lost"], datasets: [{ data: [0, 0, 1], backgroundColor: SQ_EMPTY_BG.slice(), borderWidth: 2, borderColor: "#fff", hoverOffset: 6, borderRadius: 0, spacing: 2 }] }, options: { responsive: false, maintainAspectRatio: false, devicePixelRatio: window.devicePixelRatio || 1, cutout: "61%", layout: { padding: { top: pTB, right: pLR, bottom: pTB, left: pLR } }, animation: { duration: 600, easing: "easeInOutQuart" }, plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: "rgba(17,24,39,.88)", padding: 10, cornerRadius: 8, callbacks: { label(ctx) { const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return ` ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw) / t * 100)}%)`; } } }, datalabels: { display: function (ctx) { if (potentialChart && potentialChart.$noData) return false; const v = ctx.dataset.data[ctx.dataIndex]; const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return (v / t * 100) >= 2; }, formatter: function (v, ctx) { const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return Math.round(v / t * 100) + "%"; }, color: "#00", font: { weight: "800", size: mob ? 10 : 11.5, family: "system-ui,sans-serif" }, anchor: "center", align: "center", textStrokeColor: "rgba(255,255,255,0.6)", textStrokeWidth: 1 } } } }); potentialChart.$noData = true; }
-    function updatePotentialChart(p, w, l) { p = Number(p || 0); w = Number(w || 0); l = Number(l || 0); if (!potentialChart) initPotentialChart(); if (!potentialChart) return; const h = p || w || l; potentialChart.$noData = !h; potentialChart.data.datasets[0].data = h ? [p, w, l] : [0, 0, 1]; potentialChart.data.datasets[0].backgroundColor = h ? SQ_COLORS.slice() : SQ_EMPTY_BG.slice(); potentialChart.update(); }
+      /* ═══ POTENTIAL PIE — PM STYLE ═══ */
+      let potentialChart = null;
+      const SQ_COLORS = ["#a5dbff", "#ffe13b", "#f98282"], SQ_EMPTY_BG = ["#e5e7eb", "#e5e7eb", "#e5e7eb"];
+      const sqArrowPlugin = { id: "sqArrow", afterDatasetsDraw(chart) { if (chart.$noData) return; const { ctx, canvas } = chart; const ds = chart.data.datasets[0]; const meta = chart.getDatasetMeta(0); const total = ds.data.reduce((a, b) => Number(a) + Number(b), 0) || 1; const rW = canvas.clientWidth || canvas.width / (window.devicePixelRatio || 1); const mob = rW <= 190; const RAD = mob ? 5 : 11.5, TK = mob ? 6 : 11.5, FS = mob ? 10 : 10.8, GAP = 2, LH = FS + 8; const items = []; meta.data.forEach((arc, i) => { const v = Number(ds.data[i] || 0); if (!v) return; const pct = v / total * 100; let la; if (pct > 50) la = arc.startAngle + (arc.endAngle - arc.startAngle) * 0.70; else la = (arc.startAngle + arc.endAngle) / 2; const oR = arc.outerRadius; const ex = arc.x + (oR + RAD) * Math.cos(la), ey = arc.y + (oR + RAD) * Math.sin(la); items.push({ arc, label: chart.data.labels[i], color: ds.backgroundColor[i], la, oR, ex, ey, side: Math.cos(la) >= 0 ? "right" : "left" }); }); for (let a = 0; a < items.length; a++)for (let b = a + 1; b < items.length; b++) { if (items[a].side !== items[b].side) continue; if (Math.abs(items[a].ey - items[b].ey) < LH * 2) { const ca = Math.abs(Math.cos(items[a].la)), cb = Math.abs(Math.cos(items[b].la)); const f = ca < cb ? a : b; items[f].side = items[f].side === "right" ? "left" : "right"; } } ctx.save(); items.forEach(({ arc, label, la, oR, ex, ey, side }) => { const isR = side === "right"; const x1 = arc.x + (oR + 3) * Math.cos(la), y1 = arc.y + (oR + 3) * Math.sin(la), x3 = ex + (isR ? TK : -TK); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(ex, ey); ctx.lineTo(x3, ey); ctx.strokeStyle = "#9ca3af"; ctx.lineWidth = 1.2; ctx.lineJoin = "round"; ctx.stroke(); const tx = x3 + (isR ? GAP : -GAP); ctx.textAlign = isR ? "left" : "right"; ctx.textBaseline = "middle"; ctx.font = `700 ${FS}px system-ui,sans-serif`; ctx.fillStyle = "#111"; ctx.fillText(label, tx, ey); }); ctx.restore(); } };
+      function initPotentialChart() { const c = document.getElementById("potentialPieCanvas"); if (!c) return; if (potentialChart) { potentialChart.destroy(); potentialChart = null; } const rW = c.clientWidth || c.width, rH = c.clientHeight || c.height, mob = rW <= 190; const tx = c.getContext("2d"); const lf = mob ? 10 : 11; tx.font = `700 ${lf}px system-ui,sans-serif`; const mW = Math.max(tx.measureText("Pending").width, tx.measureText("Closed Won").width, tx.measureText("Lost").width); const R = mob ? 5 : 7, T = mob ? 6 : 8, G = 2; const pLR = Math.ceil(R + T + G + mW + 1), pTB = Math.ceil(rH * 0.08); potentialChart = new Chart(c.getContext("2d"), { type: "doughnut", plugins: [sqArrowPlugin], data: { labels: ["Pending", "Closed Won", "Lost"], datasets: [{ data: [0, 0, 1], backgroundColor: SQ_EMPTY_BG.slice(), borderWidth: 2, borderColor: "#fff", hoverOffset: 6, borderRadius: 0, spacing: 2 }] }, options: { responsive: false, maintainAspectRatio: false, devicePixelRatio: window.devicePixelRatio || 1, cutout: "61%", layout: { padding: { top: pTB, right: pLR, bottom: pTB, left: pLR } }, animation: { duration: 600, easing: "easeInOutQuart" }, plugins: { legend: { display: false }, tooltip: { enabled: true, backgroundColor: "rgba(17,24,39,.88)", padding: 10, cornerRadius: 8, callbacks: { label(ctx) { const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return ` ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw) / t * 100)}%)`; } } }, datalabels: { display: function (ctx) { if (potentialChart && potentialChart.$noData) return false; const v = ctx.dataset.data[ctx.dataIndex]; const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return (v / t * 100) >= 2; }, formatter: function (v, ctx) { const t = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1; return Math.round(v / t * 100) + "%"; }, color: "#00", font: { weight: "800", size: mob ? 10 : 11.5, family: "system-ui,sans-serif" }, anchor: "center", align: "center", textStrokeColor: "rgba(255,255,255,0.6)", textStrokeWidth: 1 } } } }); potentialChart.$noData = true; }
+      function updatePotentialChart(p, w, l) { p = Number(p || 0); w = Number(w || 0); l = Number(l || 0); if (!potentialChart) initPotentialChart(); if (!potentialChart) return; const h = p || w || l; potentialChart.$noData = !h; potentialChart.data.datasets[0].data = h ? [p, w, l] : [0, 0, 1]; potentialChart.data.datasets[0].backgroundColor = h ? SQ_COLORS.slice() : SQ_EMPTY_BG.slice(); potentialChart.update(); }
 
-    /* ═══ MODAL ═══ */
-    function openModal() { const st = getState(activeTarget); const lb = { spares: "Spares Quotation", serviceq: "Service Quotations", contracts: "Service Contracts", pm: "PM" }; $("#filterModalTitle").text("Filters — " + lb[activeTarget]); $("#periodSelect").val(st.period); const isC = st.period === "custom"; $(".date-range-field").toggle(isC); $("#dateFrom").val(isC ? toInputDate(st.from) : ""); $("#dateTo").val(isC ? toInputDate(st.to) : ""); $("#filterBackdrop").addClass("show"); $("#filterModal").addClass("show").attr("aria-hidden", "false"); $("body").addClass("modal-open"); }
-    function closeModal() { $("#filterModal").removeClass("show").attr("aria-hidden", "true"); $("#filterBackdrop").removeClass("show"); $("body").removeClass("modal-open"); }
-    $(document).on("click", "#btn_spares,#btn_serviceq,#btn_contracts,#btn_pm", function (e) { e.preventDefault(); e.stopPropagation(); activeTarget = this.id.replace("btn_", ""); openModal(); });
-    $(document).on("click", "#filterModalClose,#filterBackdrop", closeModal);
-    $("#periodSelect").on("change", function () { const c = $(this).val() === "custom"; $(".date-range-field").toggle(c); if (!c) $("#dateFrom,#dateTo").val(""); });
-    $("#filterClear").on("click", function () { const st = getState(activeTarget); st.period = "this_month"; st.from = null; st.to = null; closeModal(); updatePeriodLabels(); if (userID) loadSection(activeTarget); });
-    $("#filterApply").on("click", function () { const st = getState(activeTarget); st.period = $("#periodSelect").val(); if (st.period === "custom") { const f = parseInputDate($("#dateFrom").val()); const t = parseInputDate($("#dateTo").val()); if (!f || !t) { alert("Please select both dates."); return; } st.from = f <= t ? f : t; st.to = f <= t ? t : f; } else { st.from = null; st.to = null; } closeModal(); updatePeriodLabels(); if (userID) loadSection(activeTarget); });
+      /* ═══ MODAL ═══ */
+      function openModal() { const st = getState(activeTarget); const lb = { spares: "Spares Quotation", serviceq: "Service Quotations", contracts: "Service Contracts", pm: "PM" }; $("#filterModalTitle").text("Filters — " + lb[activeTarget]); $("#periodSelect").val(st.period); const isC = st.period === "custom"; $(".date-range-field").toggle(isC); $("#dateFrom").val(isC ? toInputDate(st.from) : ""); $("#dateTo").val(isC ? toInputDate(st.to) : ""); $("#filterBackdrop").addClass("show"); $("#filterModal").addClass("show").attr("aria-hidden", "false"); $("body").addClass("modal-open"); }
+      function closeModal() { $("#filterModal").removeClass("show").attr("aria-hidden", "true"); $("#filterBackdrop").removeClass("show"); $("body").removeClass("modal-open"); }
+      $(document).on("click", "#btn_spares,#btn_serviceq,#btn_contracts,#btn_pm", function (e) { e.preventDefault(); e.stopPropagation(); activeTarget = this.id.replace("btn_", ""); openModal(); });
+      $(document).on("click", "#filterModalClose,#filterBackdrop", closeModal);
+      $("#periodSelect").on("change", function () { const c = $(this).val() === "custom"; $(".date-range-field").toggle(c); if (!c) $("#dateFrom,#dateTo").val(""); });
+      $("#filterClear").on("click", function () { const st = getState(activeTarget); st.period = "this_month"; st.from = null; st.to = null; closeModal(); updatePeriodLabels(); if (userID) loadSection(activeTarget); });
+      $("#filterApply").on("click", function () { const st = getState(activeTarget); st.period = $("#periodSelect").val(); if (st.period === "custom") { const f = parseInputDate($("#dateFrom").val()); const t = parseInputDate($("#dateTo").val()); if (!f || !t) { alert("Please select both dates."); return; } st.from = f <= t ? f : t; st.to = f <= t ? t : f; } else { st.from = null; st.to = null; } closeModal(); updatePeriodLabels(); if (userID) loadSection(activeTarget); });
 
-    /* ═══ DATA ═══ */
-    function loadSection(t) { $("#loader").show(); if (t === "spares") renderSpares(() => $("#loader").hide()); else if (t === "serviceq") loadServiceQ(() => $("#loader").hide()); else if (t === "contracts") loadContracts(() => $("#loader").hide()); else if (t === "pm") loadPM(() => $("#loader").hide()); }
-    async function fetchAllPages(rn, crit) { let all = [], pg = 1, more = true; while (more) { try { const r = await ZOHO.CREATOR.API.getAllRecords({ appName: APP_NAME, reportName: rn, criteria: crit, page: pg, pageSize: 200 }); const b = r?.data || []; all = all.concat(b); more = b.length === 200; pg++; } catch (e) { console.error(`Fetch err [${rn}]:`, e); more = false; } } return all; }
+      /* ═══ DATA ═══ */
+      function loadSection(t) { $("#loader").show(); if (t === "spares") renderSpares(() => $("#loader").hide()); else if (t === "serviceq") loadServiceQ(() => $("#loader").hide()); else if (t === "contracts") loadContracts(() => $("#loader").hide()); else if (t === "pm") loadPM(() => $("#loader").hide()); }
+      async function fetchAllPages(rn, crit) { let all = [], pg = 1, more = true; while (more) { try { const r = await ZOHO.CREATOR.API.getAllRecords({ appName: APP_NAME, reportName: rn, criteria: crit, page: pg, pageSize: 200 }); const b = r?.data || []; all = all.concat(b); more = b.length === 200; pg++; } catch (e) { console.error(`Fetch err [${rn}]:`, e); more = false; } } return all; }
 
-    /* ═══ SPARES ═══ */
-    const SPARES_DATE = { "New": "Added_Time", "Waiting For Customer Approval": "Customer_Approval_Date", "Approved By Customer": "Accepted_Date", "Rejected By Customer": "Rejected_Date" };
-    function navigateSpares(s) { const st = periodSpares; const { from, to } = getRangeFromState(st); const df = SPARES_DATE[s] || "Added_Time"; const dp = `${fmtDate(from)};${fmtDate(to)}`; const routes = getExpandedRoutes(); const rp = routes.length ? `&Route_Name=[${routes.join(",")}]` : ""; const url = REPORT_BASE_URL + `Spare_Quotation_Report?${df}=${dp}&${df}_op=58&Quotation_Status=${s}` + rp; ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" }); }
-    function filterSpares(recs, status, from, to) { const df = SPARES_DATE[status]; return recs.filter(r => { if (r.Quotation_Status !== status) return false; const d = parseZDate(r[df]); return d && d >= from && d <= to; }); }
-    async function fetchSparesRecords() { const c = buildRouteCrit(); allSparesRecords = await fetchAllPages(SPARES_REPORT, c || ""); }
-    function renderSpares(done) { const { from, to } = getRangeFromState(periodSpares); const w = filterSpares(allSparesRecords, "Approved By Customer", from, to), l = filterSpares(allSparesRecords, "Rejected By Customer", from, to), n = filterSpares(allSparesRecords, "New", from, to), u = filterSpares(allSparesRecords, "Waiting For Customer Approval", from, to); const pa = v => parseFloat(String(v || "0").replace(/,/g, "")) || 0; const sa = r => Math.round(r.reduce((s, x) => s + pa(x.Grand_Total1), 0)); setVal("#sparesWonCount", w.length); setAmt("#sparesWonAmt", sa(w)); setVal("#sparesLostCount", l.length); setAmt("#sparesLostAmt", sa(l)); setVal("#sparesCreatedCount", n.length); setAmt("#sparesCreatedAmt", sa(n)); setVal("#sparesUndiscCount", u.length); setAmt("#sparesUndiscAmt", sa(u)); setAmt("#sparesTotalAmt", sa([...w, ...l, ...n, ...u])); if (done) done(); }
+      /* ═══ SPARES ═══ */
+      const SPARES_DATE = { "New": "Added_Time", "Waiting For Customer Approval": "Customer_Approval_Date", "Approved By Customer": "Accepted_Date", "Rejected By Customer": "Rejected_Date" };
+      function navigateSpares(s) { const st = periodSpares; const { from, to } = getRangeFromState(st); const df = SPARES_DATE[s] || "Added_Time"; const dp = `${fmtDate(from)};${fmtDate(to)}`; const routes = getExpandedRoutes(); const rp = routes.length ? `&Route_Name=[${routes.join(",")}]` : ""; const url = REPORT_BASE_URL + `Spare_Quotation_Report?${df}=${dp}&${df}_op=58&Quotation_Status=${s}` + rp; ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" }); }
+      function filterSpares(recs, status, from, to) { const df = SPARES_DATE[status]; return recs.filter(r => { if (r.Quotation_Status !== status) return false; const d = parseZDate(r[df]); return d && d >= from && d <= to; }); }
+      async function fetchSparesRecords() { const c = buildRouteCrit(); allSparesRecords = await fetchAllPages(SPARES_REPORT, c || ""); }
+      function renderSpares(done) { const { from, to } = getRangeFromState(periodSpares); const w = filterSpares(allSparesRecords, "Approved By Customer", from, to), l = filterSpares(allSparesRecords, "Rejected By Customer", from, to), n = filterSpares(allSparesRecords, "New", from, to), u = filterSpares(allSparesRecords, "Waiting For Customer Approval", from, to); const pa = v => parseFloat(String(v || "0").replace(/,/g, "")) || 0; const sa = r => Math.round(r.reduce((s, x) => s + pa(x.Grand_Total1), 0)); setVal("#sparesWonCount", w.length); setAmt("#sparesWonAmt", sa(w)); setVal("#sparesLostCount", l.length); setAmt("#sparesLostAmt", sa(l)); setVal("#sparesCreatedCount", n.length); setAmt("#sparesCreatedAmt", sa(n)); setVal("#sparesUndiscCount", u.length); setAmt("#sparesUndiscAmt", sa(u)); setAmt("#sparesTotalAmt", sa([...w, ...l, ...n, ...u])); if (done) done(); }
 
-    /* ═══ SERVICE Q ═══ */
-    const SQ_DATE = { "Pending": "Added_Time", "Closed Won": "Won_Date", "Lost": "Lost_Date" };
-    let allServiceQRecords = [];
-    async function fetchServiceQRecords() { const c = buildRouteCrit(); allServiceQRecords = await fetchAllPages(SERVICEQ_REPORT, c || ""); }
-    function filterSQ(recs, status, from, to) { const df = SQ_DATE[status]; return recs.filter(r => { if (r.Service_Quotation_Status !== status) return false; const d = parseZDate(r[df]) || parseZDate(r.Added_Time); return d && d >= from && d <= to; }); }
-    function navigateServiceQ(s) { const { from, to } = getRangeFromState(periodServiceQ); const df = SQ_DATE[s] || "Added_Time"; const dp = `${fmtDate(from)};${fmtDate(to)}`; const routes = getExpandedRoutes(); const rp = routes.length ? `&Route_Name=[${routes.join(",")}]` : ""; const url = REPORT_BASE_URL + `Service_Quotation_Report?${df}=${dp}&${df}_op=58&Service_Quotation_Status=${s}` + rp; ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" }); }
-    function renderServiceQ(done) { const { from, to } = getRangeFromState(periodServiceQ); const pa = v => parseFloat(String(v || "0").replace(/,/g, "")) || 0; const pq = v => parseInt(String(v || "0").replace(/,/g, "")) || 0; const sa = r => r.reduce((s, x) => s + pa(x.Grand_Total), 0).toFixed(2); const sq = r => r.reduce((s, x) => s + pq(x.Total_Quantity), 0); const p = filterSQ(allServiceQRecords, "Pending", from, to), w = filterSQ(allServiceQRecords, "Closed Won", from, to), l = filterSQ(allServiceQRecords, "Lost", from, to); setVal("#serviceqPendingCount", p.length); setVal("#serviceqPendingSpaces", sq(p)); setAmt("#serviceqPendingAmt", sa(p)); setVal("#serviceqWonCount", w.length); setVal("#serviceqWonSpaces", sq(w)); setAmt("#serviceqWonAmt", sa(w)); setVal("#serviceqLostCount", l.length); setVal("#serviceqLostSpaces", sq(l)); setAmt("#serviceqLostAmt", sa(l)); setAmt("#serviceqTotalAmt", sa([...p, ...w, ...l])); if (done) done(); }
-    function loadServiceQ(done) { renderServiceQ(done); }
+      /* ═══ SERVICE Q ═══ */
+      const SQ_DATE = { "Pending": "Added_Time", "Closed Won": "Won_Date", "Lost": "Lost_Date" };
+      let allServiceQRecords = [];
+      async function fetchServiceQRecords() { const c = buildRouteCrit(); allServiceQRecords = await fetchAllPages(SERVICEQ_REPORT, c || ""); }
+      function filterSQ(recs, status, from, to) { const df = SQ_DATE[status]; return recs.filter(r => { if (r.Service_Quotation_Status !== status) return false; const d = parseZDate(r[df]) || parseZDate(r.Added_Time); return d && d >= from && d <= to; }); }
+      function navigateServiceQ(s) { const { from, to } = getRangeFromState(periodServiceQ); const df = SQ_DATE[s] || "Added_Time"; const dp = `${fmtDate(from)};${fmtDate(to)}`; const routes = getExpandedRoutes(); const rp = routes.length ? `&Route_Name=[${routes.join(",")}]` : ""; const url = REPORT_BASE_URL + `Service_Quotation_Report?${df}=${dp}&${df}_op=58&Service_Quotation_Status=${s}` + rp; ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" }); }
+      function renderServiceQ(done) { const { from, to } = getRangeFromState(periodServiceQ); const pa = v => parseFloat(String(v || "0").replace(/,/g, "")) || 0; const pq = v => parseInt(String(v || "0").replace(/,/g, "")) || 0; const sa = r => r.reduce((s, x) => s + pa(x.Grand_Total), 0).toFixed(2); const sq = r => r.reduce((s, x) => s + pq(x.Total_Quantity), 0); const p = filterSQ(allServiceQRecords, "Pending", from, to), w = filterSQ(allServiceQRecords, "Closed Won", from, to), l = filterSQ(allServiceQRecords, "Lost", from, to); setVal("#serviceqPendingCount", p.length); setVal("#serviceqPendingSpaces", sq(p)); setAmt("#serviceqPendingAmt", sa(p)); setVal("#serviceqWonCount", w.length); setVal("#serviceqWonSpaces", sq(w)); setAmt("#serviceqWonAmt", sa(w)); setVal("#serviceqLostCount", l.length); setVal("#serviceqLostSpaces", sq(l)); setAmt("#serviceqLostAmt", sa(l)); setAmt("#serviceqTotalAmt", sa([...p, ...w, ...l])); if (done) done(); }
+      function loadServiceQ(done) { renderServiceQ(done); }
 
-    /* ═══ CONTRACTS ═══ */
-    const CT_DATE = { "Live": "Added_Time", "On Hold": "On_Hold_Date", "Suspended": "Suspended_Date", "Lost": "Lost_Date", "Terminated": "Terminate_Date" };
-    let allContractsRecords = [];
-    async function fetchContractsRecords() { const c = buildRouteCrit(); allContractsRecords = await fetchAllPages(CONTRACTS_REPORT, c || ""); }
-    function filterCT(recs, status, from, to) { const df = CT_DATE[status]; return recs.filter(r => { if (r.Contract_Status !== status) return false; const d = parseZDate(r[df]) || parseZDate(r.Added_Time); return d && d >= from && d <= to; }); }
-    function navigateContracts(s) { const { from, to } = getRangeFromState(periodContracts); const df = CT_DATE[s] || "Added_Time"; const dp = `${fmtDate(from)};${fmtDate(to)}`; const routes = getExpandedRoutes(); const rp = routes.length ? `&Route_Name=[${routes.join(",")}]` : ""; const url = REPORT_BASE_URL + `Contract_Report?${df}=${dp}&${df}_op=58&Contract_Status=${s}` + rp; ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" }); }
-    function navigateContractsExpiring() { const qt = { period: "this_quarter", from: null, to: null }; const { from, to } = getRangeFromState(qt); const dp = `${fmtDate(from)};${fmtDate(to)}`; const routes = getExpandedRoutes(); const rp = routes.length ? `&Route_Name=[${routes.join(",")}]` : ""; const url = REPORT_BASE_URL + `Contract_Report?days_before_contract_renewal=${dp}&days_before_contract_renewal_op=58` + rp; ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" }); }
-    function renderContracts(done) { const { from, to } = getRangeFromState(periodContracts); const pa = v => parseFloat(String(v || "0").replace(/,/g, "")) || 0; const pq = v => parseInt(String(v || "0").replace(/,/g, "")) || 0; const sa = r => r.reduce((s, x) => s + pa(x.Grand_Total), 0).toFixed(2); const sq = r => r.reduce((s, x) => s + pq(x.Total_Quantity), 0); const li = filterCT(allContractsRecords, "Live", from, to), oh = filterCT(allContractsRecords, "On Hold", from, to), su = filterCT(allContractsRecords, "Suspended", from, to), ex = filterCT(allContractsRecords, "Lost", from, to), tm = filterCT(allContractsRecords, "Terminated", from, to); const qt = { period: "this_quarter", from: null, to: null }; const { from: qF, to: qT } = getRangeFromState(qt); const ep = allContractsRecords.filter(r => { const d = parseZDate(r.days_before_contract_renewal); return d && d >= qF && d <= qT; }); setVal("#contractsLiveCount", li.length); setVal("#contractsLiveSpaces", sq(li)); setAmt("#contractsLiveAmt", sa(li)); setVal("#contractsOnHoldCount", oh.length); setVal("#contractsOnHoldSpaces", sq(oh)); setAmt("#contractsOnHoldAmt", sa(oh)); setVal("#contractsSuspendedCount", su.length); setVal("#contractsSuspendedSpaces", sq(su)); setAmt("#contractsSuspendedAmt", sa(su)); setVal("#contractsExpiredCount", ex.length); setVal("#contractsExpiredSpaces", sq(ex)); setAmt("#contractsExpiredAmt", sa(ex)); setVal("#contractsTermCount", tm.length); setVal("#contractsTermSpaces", sq(tm)); setAmt("#contractsTermAmt", sa(tm)); setVal("#contractsExpiringCount", ep.length); setVal("#contractsExpiringSpaces", sq(ep)); setAmt("#contractsExpiringAmt", sa(ep)); const all = [...li, ...oh, ...su, ...ex, ...tm, ...ep]; setAmt("#contractsTotalAmt", sa(all)); if (done) done(); }
-    function loadContracts(done) { renderContracts(done); }
+      /* ═══ CONTRACTS ═══ */
+      const CT_DATE = { "Live": "Added_Time", "On Hold": "On_Hold_Date", "Suspended": "Suspended_Date", "Lost": "Lost_Date", "Terminated": "Terminate_Date" };
+      let allContractsRecords = [];
+      async function fetchContractsRecords() { const c = buildRouteCrit(); allContractsRecords = await fetchAllPages(CONTRACTS_REPORT, c || ""); }
+      function filterCT(recs, status, from, to) { const df = CT_DATE[status]; return recs.filter(r => { if (r.Contract_Status !== status) return false; const d = parseZDate(r[df]) || parseZDate(r.Added_Time); return d && d >= from && d <= to; }); }
+      function navigateContracts(s) { const { from, to } = getRangeFromState(periodContracts); const df = CT_DATE[s] || "Added_Time"; const dp = `${fmtDate(from)};${fmtDate(to)}`; const routes = getExpandedRoutes(); const rp = routes.length ? `&Route_Name=[${routes.join(",")}]` : ""; const url = REPORT_BASE_URL + `Contract_Report?${df}=${dp}&${df}_op=58&Contract_Status=${s}` + rp; ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" }); }
+      function navigateContractsExpiring() { const qt = { period: "this_quarter", from: null, to: null }; const { from, to } = getRangeFromState(qt); const dp = `${fmtDate(from)};${fmtDate(to)}`; const routes = getExpandedRoutes(); const rp = routes.length ? `&Route_Name=[${routes.join(",")}]` : ""; const url = REPORT_BASE_URL + `Contract_Report?days_before_contract_renewal=${dp}&days_before_contract_renewal_op=58` + rp; ZOHO.CREATOR.UTIL.navigateParentURL({ action: "open", url, window: "same" }); }
+      function renderContracts(done) { const { from, to } = getRangeFromState(periodContracts); const pa = v => parseFloat(String(v || "0").replace(/,/g, "")) || 0; const pq = v => parseInt(String(v || "0").replace(/,/g, "")) || 0; const sa = r => r.reduce((s, x) => s + pa(x.Grand_Total), 0).toFixed(2); const sq = r => r.reduce((s, x) => s + pq(x.Total_Quantity), 0); const li = filterCT(allContractsRecords, "Live", from, to), oh = filterCT(allContractsRecords, "On Hold", from, to), su = filterCT(allContractsRecords, "Suspended", from, to), ex = filterCT(allContractsRecords, "Lost", from, to), tm = filterCT(allContractsRecords, "Terminated", from, to); const qt = { period: "this_quarter", from: null, to: null }; const { from: qF, to: qT } = getRangeFromState(qt); const ep = allContractsRecords.filter(r => { const d = parseZDate(r.days_before_contract_renewal); return d && d >= qF && d <= qT; }); setVal("#contractsLiveCount", li.length); setVal("#contractsLiveSpaces", sq(li)); setAmt("#contractsLiveAmt", sa(li)); setVal("#contractsOnHoldCount", oh.length); setVal("#contractsOnHoldSpaces", sq(oh)); setAmt("#contractsOnHoldAmt", sa(oh)); setVal("#contractsSuspendedCount", su.length); setVal("#contractsSuspendedSpaces", sq(su)); setAmt("#contractsSuspendedAmt", sa(su)); setVal("#contractsExpiredCount", ex.length); setVal("#contractsExpiredSpaces", sq(ex)); setAmt("#contractsExpiredAmt", sa(ex)); setVal("#contractsTermCount", tm.length); setVal("#contractsTermSpaces", sq(tm)); setAmt("#contractsTermAmt", sa(tm)); setVal("#contractsExpiringCount", ep.length); setVal("#contractsExpiringSpaces", sq(ep)); setAmt("#contractsExpiringAmt", sa(ep)); const all = [...li, ...oh, ...su, ...ex, ...tm, ...ep]; setAmt("#contractsTotalAmt", sa(all)); if (done) done(); }
+      function loadContracts(done) { renderContracts(done); }
 
-    /* ═══ PM ═══ */
-    function buildPMCrit(x) { const rc = buildRouteCrit(); return rc ? `${x} && ${rc}` : x; }
-    function navigatePM(t) { const p = { ...pmRouteParams() }; p.Service_Request_Type = "Routine"; if (t === "all") { p.Status = "Current month due"; addDueBetween(p, periodPM); openReport("Open_User_Service_Request", p); } else if (t === "closed") { p.Status = "Closed"; addBetween(p, "Closed_Date", fmtDate(getRangeFromState(periodPM).from), fmtDate(getRangeFromState(periodPM).to)); openReport("Closed_User_Service_Request", p); } else if (t === "overdue") { p.Status = "Overdue"; openReport("Open_User_Service_Request", p); } }
-    function dueDateRangeCrit(s) { const r = getRangeFromState(s); return `Due_Date >= "${fmtDate(r.from)}" && Due_Date <= "${fmtDate(r.to)}"`; }
-    function closedDateRangeCrit(s) { const r = getRangeFromState(s); return `Closed_Date >= "${fmtDate(r.from)}" && Closed_Date <= "${fmtDate(r.to)}"`; }
-    // function loadPM(done) { 
-    // let a = 0, c = 0, o = 0; 
-    // const ac = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Current month due" && ${dueDateRangeCrit(periodPM)}`); 
-    // const cc = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Closed" && ${closedDateRangeCrit(periodPM)}`); 
-    // const oc = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Overdue"`); 
-    // const fin = () => { setVal("#pmAll", a); setVal("#pmClosed", c); 
-    // setVal("#pmOverdue", o); 
-    // updatePMPieChart(a, c, o); 
-    // if (done) done(); }; 
-    // Promise.all([
-    // ZOHO.CREATOR.API.getRecordCount({ 
-    // appName: APP_NAME, 
-    // reportName: PM_REPORT, 
-    // criteria: ac 
-    // }).then(r => { 
-    // a = Number(r?.result?.records_count || 0); 
-    // }).catch(() => { 
-    // }), 
-    // ZOHO.CREATOR.API.getRecordCount({ 
-    // appName: APP_NAME, 
-    // reportName: PM_REPORT, 
-    // criteria: cc }).then(r => { 
-    // c = Number(r?.result?.records_count || 0); 
-    // }).catch(() => { 
-    // }), 
-    // ZOHO.CREATOR.API.getRecordCount({ 
-    // appName: APP_NAME, 
-    // reportName: PM_REPORT, 
-    // criteria: oc }).then(r => { 
-    // o = Number(r?.result?.records_count || 0); 
-    // }).catch(() => { 
-    // })]).finally(fin); 
-    // }
-    // ✅ REPLACE the entire loadPM function in SR with this:
-    function loadPM(done) {
-      const ac = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Current month due" && ${dueDateRangeCrit(periodPM)}`);
-      const cc = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Closed" && ${closedDateRangeCrit(periodPM)}`);
-      const oc = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Overdue"`);
+      /* ═══ PM ═══ */
+      function buildPMCrit(x) { const rc = buildRouteCrit(); return rc ? `${x} && ${rc}` : x; }
+      function navigatePM(t) { const p = { ...pmRouteParams() }; p.Service_Request_Type = "Routine"; if (t === "all") { p.Status = "Current month due"; addDueBetween(p, periodPM); openReport("Open_User_Service_Request", p); } else if (t === "closed") { p.Status = "Closed"; addBetween(p, "Closed_Date", fmtDate(getRangeFromState(periodPM).from), fmtDate(getRangeFromState(periodPM).to)); openReport("Closed_User_Service_Request", p); } else if (t === "overdue") { p.Status = "Overdue"; openReport("Open_User_Service_Request", p); } }
+      function dueDateRangeCrit(s) { const r = getRangeFromState(s); return `Due_Date >= "${fmtDate(r.from)}" && Due_Date <= "${fmtDate(r.to)}"`; }
+      function closedDateRangeCrit(s) { const r = getRangeFromState(s); return `Closed_Date >= "${fmtDate(r.from)}" && Closed_Date <= "${fmtDate(r.to)}"`; }
+      // function loadPM(done) { 
+      // let a = 0, c = 0, o = 0; 
+      // const ac = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Current month due" && ${dueDateRangeCrit(periodPM)}`); 
+      // const cc = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Closed" && ${closedDateRangeCrit(periodPM)}`); 
+      // const oc = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Overdue"`); 
+      // const fin = () => { setVal("#pmAll", a); setVal("#pmClosed", c); 
+      // setVal("#pmOverdue", o); 
+      // updatePMPieChart(a, c, o); 
+      // if (done) done(); }; 
+      // Promise.all([
+      // ZOHO.CREATOR.API.getRecordCount({ 
+      // appName: APP_NAME, 
+      // reportName: PM_REPORT, 
+      // criteria: ac 
+      // }).then(r => { 
+      // a = Number(r?.result?.records_count || 0); 
+      // }).catch(() => { 
+      // }), 
+      // ZOHO.CREATOR.API.getRecordCount({ 
+      // appName: APP_NAME, 
+      // reportName: PM_REPORT, 
+      // criteria: cc }).then(r => { 
+      // c = Number(r?.result?.records_count || 0); 
+      // }).catch(() => { 
+      // }), 
+      // ZOHO.CREATOR.API.getRecordCount({ 
+      // appName: APP_NAME, 
+      // reportName: PM_REPORT, 
+      // criteria: oc }).then(r => { 
+      // o = Number(r?.result?.records_count || 0); 
+      // }).catch(() => { 
+      // })]).finally(fin); 
+      // }
+      // ✅ REPLACE the entire loadPM function in SR with this:
+      function loadPM(done) {
+        const ac = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Current month due" && ${dueDateRangeCrit(periodPM)}`);
+        const cc = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Closed" && ${closedDateRangeCrit(periodPM)}`);
+        const oc = buildPMCrit(`Service_Request_Type=="Routine" && Status=="Overdue"`);
 
-      // Step 1: fetch All
-      ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: ac })
-        .then(r => { setVal("#pmAll", Number(r?.result?.records_count || 0)); })
-        .catch(() => { setVal("#pmAll", 0); })
-        .finally(() => {
+        // Step 1: fetch All
+        ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: ac })
+          .then(r => { setVal("#pmAll", Number(r?.result?.records_count || 0)); })
+          .catch(() => { setVal("#pmAll", 0); })
+          .finally(() => {
 
-          // Step 2: fetch Closed
-          ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: cc })
-            .then(r => { setVal("#pmClosed", Number(r?.result?.records_count || 0)); })
-            .catch(() => { setVal("#pmClosed", 0); })
-            .finally(() => {
+            // Step 2: fetch Closed
+            ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: cc })
+              .then(r => { setVal("#pmClosed", Number(r?.result?.records_count || 0)); })
+              .catch(() => { setVal("#pmClosed", 0); })
+              .finally(() => {
 
-              // Step 3: fetch Overdue → then update chart
-              ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: oc })
-                .then(r => { setVal("#pmOverdue", Number(r?.result?.records_count || 0)); })
-                .catch(() => { setVal("#pmOverdue", 0); })
-                .finally(() => {
-                  // Read back the values already set in DOM and update chart
-                  const a = parseInt($("#pmAll").text())   || 0;
-                  const c = parseInt($("#pmClosed").text()) || 0;
-                  const o = parseInt($("#pmOverdue").text()) || 0;
-                  updatePMPieChart(a, c, o);
-                  if (done) done();
-                });
-            });
-        });
-    }
-    function loadPotential(done) { const qt = { period: "this_quarter", from: null, to: null }; const { from, to } = getRangeFromState(qt); const p = filterSQ(allServiceQRecords, "Pending", from, to), w = filterSQ(allServiceQRecords, "Closed Won", from, to), l = filterSQ(allServiceQRecords, "Lost", from, to); updatePotentialChart(p.length, w.length, l.length); if (done) done(); }
-    async function loadAll() { 
-      $("#loader").show(); 
-      try { 
-        await fetchSparesRecords(); 
-        await fetchServiceQRecords(); 
-        await fetchContractsRecords(); 
-        renderSpares(); 
-        loadServiceQ(() => { 
-          loadContracts(() => { 
-            loadPM(() => { 
-              loadPotential(() => { 
-                updatePeriodLabels(); 
-                $("#loader").hide(); 
+                // Step 3: fetch Overdue → then update chart
+                ZOHO.CREATOR.API.getRecordCount({ appName: APP_NAME, reportName: PM_REPORT, criteria: oc })
+                  .then(r => { setVal("#pmOverdue", Number(r?.result?.records_count || 0)); })
+                  .catch(() => { setVal("#pmOverdue", 0); })
+                  .finally(() => {
+                    // Read back the values already set in DOM and update chart
+                    const a = parseInt($("#pmAll").text()) || 0;
+                    const c = parseInt($("#pmClosed").text()) || 0;
+                    const o = parseInt($("#pmOverdue").text()) || 0;
+                    updatePMPieChart(a, c, o);
+                    if (done) done();
+                  });
               });
-             }); 
+          });
+      }
+      function loadPotential(done) { const qt = { period: "this_quarter", from: null, to: null }; const { from, to } = getRangeFromState(qt); const p = filterSQ(allServiceQRecords, "Pending", from, to), w = filterSQ(allServiceQRecords, "Closed Won", from, to), l = filterSQ(allServiceQRecords, "Lost", from, to); updatePotentialChart(p.length, w.length, l.length); if (done) done(); }
+      
+      async function loadAll() {
+        $("#loader").show();
+        try {
+          await fetchSparesRecords();
+          await fetchServiceQRecords();
+          await fetchContractsRecords();
+          renderSpares();
+          loadServiceQ(() => {
+            loadContracts(() => {
+              loadPM(() => {
+                loadPotential(() => {
+                  updatePeriodLabels();
+                  $("#loader").hide();
+                });
+              });
             });
-           });
-           } catch (e) { 
-            console.error("loadAll error:", e); 
-            $("#loader").hide(); 
-          } 
+          });
+        } catch (e) {
+          console.error("loadAll error:", e);
+          $("#loader").hide();
         }
+      }
 
-    /* ═══ INIT ═══ */
-    ZOHO.CREATOR.init().then(() => { 
-      initPMPieChart(); 
-      // initPotentialChart(); 
-      $(".date-range-field").hide(); 
-      const params = ZOHO.CREATOR.UTIL.getInitParams() || {}; 
-      const lu = params.loginUser || ""; 
-      ZOHO.CREATOR.API.getAllRecords
-      ({ appName: APP_NAME, reportName: 
-        USER_REPORT, 
-        criteria: `(Email=="${lu}")`, 
-        page: 1, 
-        pageSize: 1 
-      }).then(res => { 
-        if (res.data && res.data.length > 0) { 
-        const r = res.data[0]; UserName = r.Name || ""; 
-        userID = r.ID || ""; 
-        currentRole = r.Role || ""; 
-        currentRoute = r.New_Route_Name || r.Route || ""; 
-        currentRegion = r.Region || currentRoute || ""; 
-        $("#srAvatar").text(currentRole ? currentRole.split(" ").map(n => n[0]).join("").toUpperCase() : "SR"); 
-        $("#srRegion").text(currentRegion || "—"); loadAll(); } else { $("#loader").hide();
-        } }).catch(() => { 
-          demoMode(); 
-        });
-       }).catch(() => { 
+
+      /* ═══ INIT ═══ */
+      ZOHO.CREATOR.init().then(() => {
+        initPMPieChart();
+        initPotentialChart();
+        $(".date-range-field").hide();
+        const params = ZOHO.CREATOR.UTIL.getInitParams() || {};
+        const lu = params.loginUser || "";
+        ZOHO.CREATOR.API.getAllRecords
+          ({
+            appName: APP_NAME, reportName:
+              USER_REPORT,
+            criteria: `(Email=="${lu}")`,
+            page: 1,
+            pageSize: 1
+          }).then(res => {
+            if (res.data && res.data.length > 0) {
+              const r = res.data[0]; UserName = r.Name || "";
+              userID = r.ID || "";
+              currentRole = r.Role || "";
+              currentRoute = r.New_Route_Name || r.Route || "";
+              currentRegion = r.Region || currentRoute || "";
+              $("#srAvatar").text(currentRole ? currentRole.split(" ").map(n => n[0]).join("").toUpperCase() : "SR");
+              $("#srRegion").text(currentRegion || "—"); 
+              loadAll();
+            } else {
+              $("#loader").hide();
+            }
+          }).catch(() => {
+            demoMode();
+          });
+      }).catch(() => {
         demoMode();
-       }); 
-        //  else { 
-        //   demoMode(); 
       });
+      //  else {
+      //   demoMode();
+      // }
+      window.navigateSpares            = navigateSpares;
+      window.navigateServiceQ          = navigateServiceQ;
+      window.navigateContracts         = navigateContracts;
+      window.navigateContractsExpiring = navigateContractsExpiring;
+      window.navigatePM                = navigatePM;
+    });
     function demoMode() { $("#srAvatar").text("FU"); $("#srRegion").text("West"); setVal("#sparesWonCount", 12); setAmt("#sparesWonAmt", 325); setVal("#sparesLostCount", 5); setAmt("#sparesLostAmt", 11); setVal("#sparesCreatedCount", 32); setAmt("#sparesCreatedAmt", 525); setVal("#sparesUndiscCount", 5); setAmt("#sparesUndiscAmt", 41); setAmt("#sparesTotalAmt", 902); setVal("#serviceqPendingCount", 12); setVal("#serviceqPendingSpaces", 103); setAmt("#serviceqPendingAmt", "325.00"); setVal("#serviceqWonCount", 5); setVal("#serviceqWonSpaces", 67); setAmt("#serviceqWonAmt", "11.00"); setVal("#serviceqLostCount", 10); setVal("#serviceqLostSpaces", 187); setAmt("#serviceqLostAmt", "121.00"); setAmt("#serviceqTotalAmt", "457.00"); setVal("#contractsLiveCount", 162); setVal("#contractsLiveSpaces", 5103); setAmt("#contractsLiveAmt", "3025.00"); setVal("#contractsOnHoldCount", 8); setVal("#contractsOnHoldSpaces", 210); setAmt("#contractsOnHoldAmt", "800.00"); setVal("#contractsSuspendedCount", 5); setVal("#contractsSuspendedSpaces", 120); setAmt("#contractsSuspendedAmt", "500.00"); setVal("#contractsExpiredCount", 15); setVal("#contractsExpiredSpaces", 167); setAmt("#contractsExpiredAmt", "101.00"); setVal("#contractsTermCount", 0); setVal("#contractsTermSpaces", 0); setAmt("#contractsTermAmt", "0.00"); setVal("#contractsExpiringCount", 23); setVal("#contractsExpiringSpaces", 450); setAmt("#contractsExpiringAmt", "1200.00"); setAmt("#contractsTotalAmt", "5626.00"); setVal("#pmAll", 250); setVal("#pmClosed", 8); setVal("#pmOverdue", 32); updatePMPieChart(250, 8, 32); updatePotentialChart(12, 5, 10); updatePeriodLabels(); }
   </script>
 </body>
+
 </html>
