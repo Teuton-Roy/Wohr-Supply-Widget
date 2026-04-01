@@ -1296,7 +1296,19 @@
     const sqArrowPlugin = {
       id:"sqArrow",
       afterDatasetsDraw(chart) {
-        if (chart.$noData) return;
+        if (chart.$noData) {
+          const {ctx, chartArea} = chart;
+          const cx = (chartArea.left + chartArea.right) / 2;
+          const cy = (chartArea.top  + chartArea.bottom) / 2;
+          ctx.save();
+          ctx.textAlign    = "center";
+          ctx.textBaseline = "middle";
+          ctx.font         = "700 12px system-ui,sans-serif";
+          ctx.fillStyle    = "#9ca3af";
+          ctx.fillText("No data available", cx, cy);
+          ctx.restore();
+          return;
+        }
         const {ctx,canvas}=chart, ds=chart.data.datasets[0], meta=chart.getDatasetMeta(0);
         const total=ds.data.reduce((a,b)=>Number(a)+Number(b),0)||1;
         const rW=canvas.clientWidth||canvas.width/(window.devicePixelRatio||1), mob=rW<=190;
@@ -1345,7 +1357,7 @@
           animation:{duration:600,easing:"easeInOutQuart"},
           plugins:{
             legend:{display:false},
-            tooltip:{enabled:true,backgroundColor:"rgba(17,24,39,.88)",padding:10,cornerRadius:8,callbacks:{label(ctx){const t=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;return ` ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw)/t*100)}%)`; }}},
+            tooltip:{enabled:true,backgroundColor:"rgba(17,24,39,.88)",padding:10,cornerRadius:8,filter:()=>potentialChart&&!potentialChart.$noData,callbacks:{label(ctx){const t=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;return ` ${ctx.label}: ${ctx.raw} (${Math.round(Number(ctx.raw)/t*100)}%)`; }}},
             datalabels:{
               display(ctx){if(potentialChart&&potentialChart.$noData)return false;const v=ctx.dataset.data[ctx.dataIndex],t=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;return(v/t*100)>=2;},
               formatter(v,ctx){const t=ctx.dataset.data.reduce((a,b)=>a+b,0)||1;return Math.round(v/t*100)+"%";},
