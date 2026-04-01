@@ -898,6 +898,7 @@
           <div class="sr-pie-title">Potential For This Quarter (Spaces)</div>
           <div class="sr-potential-wrap">
             <canvas id="potentialPieCanvas" width="275" height="230" aria-label="Potential pie chart"></canvas>
+            <div id="potentialNoData" style="display:none;font-size:14px;font-weight:700;color:#000;text-align:center;">No Data Available</div>
           </div>
         </div>
       </div>
@@ -1296,19 +1297,7 @@
     const sqArrowPlugin = {
       id:"sqArrow",
       afterDatasetsDraw(chart) {
-        if (chart.$noData) {
-          const {ctx, chartArea} = chart;
-          const cx = (chartArea.left + chartArea.right) / 2;
-          const cy = (chartArea.top  + chartArea.bottom) / 2;
-          ctx.save();
-          ctx.textAlign    = "center";
-          ctx.textBaseline = "middle";
-          ctx.font         = "700 12px system-ui,sans-serif";
-          ctx.fillStyle    = "#9ca3af";
-          ctx.fillText("No data available", cx, cy);
-          ctx.restore();
-          return;
-        }
+        if (chart.$noData) return;
         const {ctx,canvas}=chart, ds=chart.data.datasets[0], meta=chart.getDatasetMeta(0);
         const total=ds.data.reduce((a,b)=>Number(a)+Number(b),0)||1;
         const rW=canvas.clientWidth||canvas.width/(window.devicePixelRatio||1), mob=rW<=190;
@@ -1371,10 +1360,18 @@
 
     function updatePotentialChart(p,w,l) {
       p=Number(p||0); w=Number(w||0); l=Number(l||0);
+      const h=p||w||l;
+      if (!h) {
+        $("#potentialPieCanvas").hide();
+        $("#potentialNoData").show();
+        return;
+      }
+      $("#potentialNoData").hide();
+      $("#potentialPieCanvas").show();
       if (!potentialChart) initPotentialChart(); if (!potentialChart) return;
-      const h=p||w||l; potentialChart.$noData=!h;
-      potentialChart.data.datasets[0].data=h?[p,w,l]:[0,0,1];
-      potentialChart.data.datasets[0].backgroundColor=h?SQ_COLORS.slice():SQ_EMPTY_BG.slice();
+      potentialChart.$noData=false;
+      potentialChart.data.datasets[0].data=[p,w,l];
+      potentialChart.data.datasets[0].backgroundColor=SQ_COLORS.slice();
       potentialChart.update();
     }
 
