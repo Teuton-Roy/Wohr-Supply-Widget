@@ -684,21 +684,22 @@
         const renderedH = canvas.clientHeight || canvas.height;
         const isMob = renderedW <= 190;
 
-        /* ── Calculate padLR from actual measured text width ── */
+        /* ── Calculate padding using the same constants as arrowLabelsPlugin ── */
         const tmpCtx  = canvas.getContext("2d");
-        const labelFS = isMob ? 10 : 11;
+        const labelFS = isMob ? 10 : 10.8; // must match FS in arrowLabelsPlugin
         tmpCtx.font   = `700 ${labelFS}px system-ui,sans-serif`;
-        const maxLabelW = Math.max(
-          tmpCtx.measureText("Closed").width,
-          tmpCtx.measureText("Overdue").width,
-          tmpCtx.measureText("All").width
-        );
-        const RADIAL = isMob ? 5  : 7;
-        const TICK   = isMob ? 6  : 8;
+        const wAll     = tmpCtx.measureText("All").width;
+        const wClosed  = tmpCtx.measureText("Closed").width;
+        const wOverdue = tmpCtx.measureText("Overdue").width;
+        const RADIAL = isMob ? 5  : 11.5; // must match arrowLabelsPlugin
+        const TICK   = isMob ? 6  : 11.5; // must match arrowLabelsPlugin
         const GAP    = 2;
-        /* padLR = arrow + text + tiny buffer */
-        const padLR  = Math.ceil(RADIAL + TICK + GAP + maxLabelW + 1);
-        const padTB  = Math.ceil(renderedH * 0.08); // vertical padding to prevent top/bottom label cutoff
+        const BASE   = RADIAL + TICK + GAP;
+        /* "All" always lands on the left; "Overdue"/"Closed" on the right.
+           Use per-side label widths so the ring stays centred. */
+        const padLeft  = Math.ceil(BASE + wAll     + 6);
+        const padRight = Math.ceil(BASE + Math.max(wOverdue, wClosed) + 6);
+        const padTB    = Math.ceil(renderedH * 0.08);
 
         pmChart=new Chart(canvas.getContext("2d"),{
           type:"doughnut",
@@ -719,8 +720,8 @@
             responsive: false,
             maintainAspectRatio: false,
             devicePixelRatio: window.devicePixelRatio || 1,
-            cutout: "60%",
-            layout:{ padding: { top: padTB, right: padLR, bottom: padTB, left: padLR } },
+            cutout: "57%",
+            layout:{ padding: { top: padTB, right: padRight, bottom: padTB, left: padLeft } },
             animation:{ duration:500, easing:"easeInOutQuart" },
             plugins:{
               legend:{ display: false },
